@@ -1,0 +1,46 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<configuration>
+	<appender name="STDOUT" class="ch.qos.logback.core.ConsoleAppender">
+		<encoder>
+			<pattern>%relative %level [%thread] %logger{25} %message\n</pattern>
+		</encoder>
+	</appender>
+	<appender name="STDOUT-only-INFO" class="ch.qos.logback.core.ConsoleAppender">
+		<encoder>
+			<pattern>%relative %level [%thread] %logger{25} %message\n</pattern>
+		</encoder>
+		<filter class="ch.qos.logback.classic.filter.LevelFilter">
+			<level>INFO</level>
+			<onMatch>NEUTRAL</onMatch>
+			<onMismatch>DENY</onMismatch>
+		</filter>
+	</appender>
+	<appender name="STDERR-at-least-WARN" class="ch.qos.logback.core.ConsoleAppender">
+		<target>System.err</target>
+		<encoder>
+			<pattern>%relative %level [%thread] %logger{25} %message\n</pattern>
+		</encoder>
+		<filter class="ch.qos.logback.classic.filter.ThresholdFilter">
+			<level>WARN</level>
+		</filter>
+	</appender>
+	<appender name="FILE" class="ch.qos.logback.core.FileAppender">
+		<File>out.log</File>
+		<Append>FALSE</Append>
+		<encoder>
+			<pattern>%date [%thread] %-5level %logger{35} - %msg%n</pattern>
+		</encoder>
+	</appender>
+
+	<root level="DEBUG">
+		<appender-ref ref="STDOUT-only-INFO" />
+		<appender-ref ref="STDERR-at-least-WARN" />
+		<appender-ref ref="FILE" />
+	</root>
+	<logger name="io.github.oliviercailloux.y2018.j_voting.Alternative" level="ERROR" />
+	<logger name="io.github.oliviercailloux.y2018.j_voting.Generator" level="ERROR" />
+	<logger name="io.github.oliviercailloux.y2018.j_voting.Preference" level="ERROR" />
+	<logger name="io.github.oliviercailloux.y2018.j_voting.StrictPreference" level="ERROR" />
+	<logger name="io.github.oliviercailloux.y2018.j_voting.Voter" level="ERROR" />
+	<logger name="io.github.oliviercailloux.jlp.or_tools.OrToolsSolver" level="ERROR" />
+</configuration>
