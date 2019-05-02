@@ -10,6 +10,8 @@ import io.github.oliviercailloux.minimax.XPRunner;
 import io.github.oliviercailloux.minimax.elicitation.Answer;
 import io.github.oliviercailloux.minimax.elicitation.PSRWeights;
 import io.github.oliviercailloux.minimax.elicitation.QuestionCommittee;
+import io.github.oliviercailloux.minimax.utils.Generator;
+import io.github.oliviercailloux.minimax.utils.Rounder;
 
 public class PSRWeightsTest {
 
@@ -18,7 +20,7 @@ public class PSRWeightsTest {
 		Aprational a = new Aprational(new Apint(2), new Apint(3));
 		QuestionCommittee qc = QuestionCommittee.given(a, 1);
 		Answer answ;
-		PSRWeights weights = XPRunner.genWeights(7);
+		PSRWeights weights = Generator.genWeights(7,Rounder.given(Rounder.Mode.ROUND_HALF_UP, 3));
 		double left = (weights.getWeightAtRank(1) - weights.getWeightAtRank(2));
 		double right = a.doubleValue() * (weights.getWeightAtRank(2) - weights.getWeightAtRank(3));
 		if (left > right) {

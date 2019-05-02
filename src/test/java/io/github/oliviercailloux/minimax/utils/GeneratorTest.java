@@ -1,4 +1,4 @@
-package io.github.oliviercailloux.minimax;
+package io.github.oliviercailloux.minimax.utils;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
@@ -11,10 +11,11 @@ import org.junit.Test;
 import io.github.oliviercailloux.j_voting.VoterStrictPreference;
 import io.github.oliviercailloux.minimax.XPRunner;
 import io.github.oliviercailloux.minimax.elicitation.PSRWeights;
+import io.github.oliviercailloux.minimax.utils.Rounder;
 import io.github.oliviercailloux.y2018.j_voting.Alternative;
 import io.github.oliviercailloux.y2018.j_voting.Voter;
 
-public class XPRunnerTest {
+public class GeneratorTest {
 
 	@Test
 	public void testOracle() {
@@ -24,7 +25,7 @@ public class XPRunnerTest {
 	@Test
 	public void testGenWeights() {
 		int m = 9;
-		final PSRWeights weights = XPRunner.genWeights(m);
+		final PSRWeights weights = Generator.genWeights(m,Rounder.given(Rounder.Mode.ROUND_HALF_UP, 3));
 		assertEquals(m, weights.getWeights().size());
 	}
 
@@ -32,7 +33,7 @@ public class XPRunnerTest {
 	public void testGenProfile() {
 		int m = 3;
 		int n = 2;
-		final Map<Voter, VoterStrictPreference> rv = XPRunner.genProfile(n, m);
+		final Map<Voter, VoterStrictPreference> rv = Generator.genProfile(n, m);
 
 		final List<Alternative> alt = new LinkedList<>();
 		for (int i = 1; i <= m; i++) {

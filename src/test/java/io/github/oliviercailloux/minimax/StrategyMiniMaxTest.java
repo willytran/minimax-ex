@@ -138,18 +138,4 @@ public class StrategyMiniMaxTest {
 		}
 	}
 
-	@Test
-	void testFourAltsFourVs() {
-		final PrefKnowledge k = PrefKnowledge.given(Generator.getAlternatives(4), Generator.getVoters(4));
-		k.addConstraint(1, ComparisonOperator.EQ, new Apint(1));
-		StrategyMiniMax s = StrategyMiniMax.build(k, AggOps.MAX);
-		s.nextQuestion();
-		for (Question qq : StrategyMiniMax.getQuestions().keySet()) {
-			if (!qq.getType().equals(QuestionType.VOTER_QUESTION)) {
-				System.out.println(qq);
-			}
-		}
-
-	}
-
 }

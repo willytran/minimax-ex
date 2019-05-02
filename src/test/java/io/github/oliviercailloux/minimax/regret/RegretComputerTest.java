@@ -66,7 +66,7 @@ class RegretComputerTest {
 		Voter v1 = new Voter(1);
 		Voter v2 = new Voter(2);
 		Voter v3 = new Voter(3);
-		Set<Voter> voters = new HashSet<Voter>();
+		Set<Voter> voters = new HashSet<>();
 		voters.add(v1);
 		voters.add(v2);
 		voters.add(v3);
@@ -75,7 +75,7 @@ class RegretComputerTest {
 		Alternative b = new Alternative(2);
 		Alternative c = new Alternative(3);
 		Alternative d = new Alternative(4);
-		Set<Alternative> alt = new HashSet<Alternative>();
+		Set<Alternative> alt = new HashSet<>();
 		alt.add(a);
 		alt.add(b);
 		alt.add(c);
@@ -104,7 +104,7 @@ class RegretComputerTest {
 		SetMultimap<Alternative, PairwiseMaxRegret> mrs = regretComputer.getMinimalMaxRegrets();
 		assertEquals(1,mrs.keySet().size());
 		
-		Set<Alternative> mmrAlt=new HashSet<Alternative>();
+		Set<Alternative> mmrAlt=new HashSet<>();
 		mmrAlt.add(a);
 		assertEquals(mmrAlt,mrs.keySet());
 		
@@ -122,7 +122,7 @@ class RegretComputerTest {
 		Voter v1 = new Voter(1);
 		Voter v2 = new Voter(2);
 		Voter v3 = new Voter(3);
-		Set<Voter> voters = new HashSet<Voter>();
+		Set<Voter> voters = new HashSet<>();
 		voters.add(v1);
 		voters.add(v2);
 		voters.add(v3);
@@ -131,7 +131,7 @@ class RegretComputerTest {
 		Alternative b = new Alternative(2);
 		Alternative c = new Alternative(3);
 		Alternative d = new Alternative(4);
-		Set<Alternative> alt = new HashSet<Alternative>();
+		Set<Alternative> alt = new HashSet<>();
 		alt.add(a);
 		alt.add(b);
 		alt.add(c);
@@ -168,7 +168,7 @@ class RegretComputerTest {
 	void testRanksXpreferredY() throws Exception {
 		/** case 1: x>y put as much alts as possible above x **/
 		Voter v1 = new Voter(1);
-		Set<Voter> voters = new HashSet<Voter>();
+		Set<Voter> voters = new HashSet<>();
 		voters.add(v1);
 
 		Alternative x = new Alternative(1);
@@ -186,7 +186,7 @@ class RegretComputerTest {
 		Alternative d1 = new Alternative(12);
 		Alternative u1 = new Alternative(13);
 
-		Set<Alternative> alt = new HashSet<Alternative>();
+		Set<Alternative> alt = new HashSet<>();
 		alt.add(a);
 		alt.add(b);
 		alt.add(c);
@@ -230,7 +230,7 @@ class RegretComputerTest {
 	void testRanksXprefY() throws Exception {
 		/** case 1: x>y put as much alts as possible above x **/
 		Voter v1 = new Voter(1);
-		Set<Voter> voters = new HashSet<Voter>();
+		Set<Voter> voters = new HashSet<>();
 		voters.add(v1);
 
 		Alternative x = new Alternative(1);
@@ -243,7 +243,7 @@ class RegretComputerTest {
 		Alternative d = new Alternative(7);
 		Alternative f = new Alternative(8);
 
-		Set<Alternative> alt = new HashSet<Alternative>();
+		Set<Alternative> alt = new HashSet<>();
 		alt.add(a);
 		alt.add(b);
 		alt.add(c);
@@ -276,7 +276,7 @@ class RegretComputerTest {
 	void TestRanksYPreferredX() throws Exception {
 		/** case 2: y>x put as much alts as possible in between **/
 		Voter v1 = new Voter(1);
-		Set<Voter> voters = new HashSet<Voter>();
+		Set<Voter> voters = new HashSet<>();
 		voters.add(v1);
 
 		Alternative x = new Alternative(1);
@@ -294,7 +294,7 @@ class RegretComputerTest {
 		Alternative d1 = new Alternative(12);
 		Alternative u1 = new Alternative(13);
 
-		Set<Alternative> alt = new HashSet<Alternative>();
+		Set<Alternative> alt = new HashSet<>();
 		alt.add(a);
 		alt.add(b);
 		alt.add(c);
@@ -338,7 +338,7 @@ class RegretComputerTest {
 	void TestRanksYPrefX() throws Exception {
 		/** case 2: y>x put as much alts as possible in between **/
 		Voter v1 = new Voter(1);
-		Set<Voter> voters = new HashSet<Voter>();
+		Set<Voter> voters = new HashSet<>();
 		voters.add(v1);
 
 		Alternative x = new Alternative(1);
@@ -351,7 +351,7 @@ class RegretComputerTest {
 		Alternative d = new Alternative(7);
 		Alternative f = new Alternative(8);
 
-		Set<Alternative> alt = new HashSet<Alternative>();
+		Set<Alternative> alt = new HashSet<>();
 		alt.add(a);
 		alt.add(b);
 		alt.add(c);
@@ -387,7 +387,7 @@ class RegretComputerTest {
 		 * between)
 		 **/
 		Voter v1 = new Voter(1);
-		Set<Voter> voters = new HashSet<Voter>();
+		Set<Voter> voters = new HashSet<>();
 		voters.add(v1);
 
 		Alternative x = new Alternative(1);
@@ -400,7 +400,7 @@ class RegretComputerTest {
 		Alternative d = new Alternative(7);
 		Alternative f = new Alternative(8);
 
-		Set<Alternative> alt = new HashSet<Alternative>();
+		Set<Alternative> alt = new HashSet<>();
 		alt.add(a);
 		alt.add(b);
 		alt.add(c);

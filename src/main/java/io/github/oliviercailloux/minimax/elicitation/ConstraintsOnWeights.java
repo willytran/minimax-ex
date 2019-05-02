@@ -226,7 +226,7 @@ public class ConstraintsOnWeights {
 	public PSRWeights getLastSolution() {
 		/** PSRWeights only accept convex weights. */
 		checkState(convexityConstraintSet);
-		final List<Double> weights = new LinkedList<Double>();
+		final List<Double> weights = new LinkedList<>();
 		for (int r = 1; r <= getM(); ++r) {
 			final double value = rounder.round(lastSolution.getValue(getVariable(r)));
 			weights.add(value);

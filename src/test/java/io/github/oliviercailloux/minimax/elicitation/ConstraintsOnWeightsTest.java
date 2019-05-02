@@ -11,11 +11,13 @@ import io.github.oliviercailloux.jlp.elements.ComparisonOperator;
 import io.github.oliviercailloux.jlp.elements.SumTerms;
 import io.github.oliviercailloux.jlp.elements.SumTermsBuilder;
 import io.github.oliviercailloux.minimax.elicitation.ConstraintsOnWeights;
+import io.github.oliviercailloux.minimax.utils.Rounder;
 
 public class ConstraintsOnWeightsTest {
 	@Test
 	void testOneC() throws Exception {
 		final ConstraintsOnWeights cow = ConstraintsOnWeights.withRankNumber(3);
+		cow.setRounder(Rounder.given(Rounder.Mode.ROUND_HALF_UP, 3));
 		/** (w1 − w2) ≥ 3(w2 − w3) thus w1 + 3 w3 ≥ 4 w2 thus w2 ≤ 1/4. **/
 		cow.addConstraint(1, ComparisonOperator.GE, 3d);
 		assertThrows(IllegalArgumentException.class, () -> cow.getWeightRange(0));
@@ -27,19 +29,20 @@ public class ConstraintsOnWeightsTest {
 	@Test
 	void testMax() throws Exception {
 		final ConstraintsOnWeights cow = ConstraintsOnWeights.withRankNumber(6);
+		cow.setRounder(Rounder.given(Rounder.Mode.ROUND_HALF_UP, 3));
 		SumTermsBuilder sb = SumTerms.builder();
 		sb.add(cow.getTerm(1d, 1));
 		sb.add(cow.getTerm(-2d, 3));
 		sb.add(cow.getTerm(1d, 5));
 		final SumTerms objective = sb.build();
-
 		assertEquals(2d, cow.maximize(objective));
 //		assertEquals(1d, cow.getLastSolution().getWeightAtRank(1));
 //		assertEquals(0d, cow.getLastSolution().getWeightAtRank(3));
 //		assertEquals(1d, cow.getLastSolution().getWeightAtRank(5));
-
 		cow.setConvexityConstraint();
+	
 		assertEquals(1d, cow.maximize(objective));
+		System.out.println(cow.getLastSolution());
 		assertEquals(1d, cow.getLastSolution().getWeightAtRank(1));
 		assertEquals(0d, cow.getLastSolution().getWeightAtRank(3));
 		assertEquals(0d, cow.getLastSolution().getWeightAtRank(5));
@@ -48,6 +51,7 @@ public class ConstraintsOnWeightsTest {
 	@Test
 	void testMax1() throws Exception {
 		final ConstraintsOnWeights cow = ConstraintsOnWeights.withRankNumber(2);
+		cow.setRounder(Rounder.given(Rounder.Mode.ROUND_HALF_UP, 3));
 		assertEquals(2d, cow.maximize(SumTerms.of(cow.getTerm(2d, 1), cow.getTerm(3d, 2))));
 	}
 }
