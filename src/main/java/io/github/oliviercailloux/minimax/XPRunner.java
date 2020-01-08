@@ -66,7 +66,7 @@ public class XPRunner {
 		String title;
 		String root = Paths.get("").toAbsolutePath() + "/experiments/";
 
-		run(4, 8, "prova", StrategyType.EXTREME_COMPLETION);
+		run(15, 15, root, StrategyType.EXTREME_COMPLETION);
 
 //	    m=6;n=4;
 //	    System.out.println(m+" "+n);
@@ -105,16 +105,22 @@ public class XPRunner {
 //		}
 	}
 
-	private static void run(int m, int n, String file, StrategyType st) throws IOException {
+	private static void run(int m, int n, String root, StrategyType st) throws IOException {
 		final long startTime = System.currentTimeMillis();
 		int maxQuestions = 30;
-		int runs = 10;
-		rounder = Rounder.given(Rounder.Mode.ROUND_HALF_UP, 3);
-		BufferedWriter b = initFile(file);
+		int runs = 1;
+		rounder = Rounder.given(Rounder.Mode.ROUND_HALF_UP, 6); //if we use less decimal places sometimes is not able to find a convex sequence
+		BufferedWriter b = initFile(root+"m"+m+"n"+n+st+"_stats");
 		b.write(st + "\n");
 		b.write(n + " Voters " + m + " Alternatives \n");
 		b.write(maxQuestions + " Questions for " + runs + " runs \n");
 		b.flush();
+		
+		BufferedWriter b1 = initFile(root+"m"+m+"n"+n+st+"_questions");
+		b1.write(st + "\n");
+		b1.write(n + " Voters " + m + " Alternatives \n");
+		b1.flush();
+		
 		int qstVot = 0;
 		int qstCom = 0;
 		ArrayList<Double> regretSeriesMean = new ArrayList<>();
@@ -126,6 +132,8 @@ public class XPRunner {
 		double initialRegret = 1;
 		double initialAvgLoss = 1;
 		for (int nbquest = 1; nbquest <= maxQuestions; nbquest++) {
+			b1.write(nbquest + " questions: \n");
+					
 			avglosses = new LinkedList<>();
 			regrets = new LinkedList<>();
 			for (int j = 0; j < runs; j++) {
@@ -162,27 +170,32 @@ public class XPRunner {
 				case EXTREME_COMPLETION:
 					strategy = StrategyExtremeCompletion.build(knowledge);
 					break;
+				default:
+					throw new IllegalStateException();
 				}
 				sumOfRanks = new double[m];
 				trueWinners = computeTrueWinners();
-
+				double qCom = 0, qVt = 0;
 				for (k = 1; k <= nbquest; k++) {
 					Question q;
 					try {
 						q = strategy.nextQuestion();
+						b1.write(q.toString() + "\n");
 						if (q.getType() == QuestionType.COMMITTEE_QUESTION) {
-							qstCom++;
+							qstCom++; qCom++;
 						} else {
-							qstVot++;
+							qstVot++; qVt++;
 						}
 						Answer a = context.getAnswer(q);
 						updateKnowledge(q, a);
 					} catch (Exception e) {
-//						e.printStackTrace();
+						e.printStackTrace();
 						break;
 					}
 				}
-
+				b1.write("Questions to the voters: " + qVt + " Question to the committee: " + qCom+ "\n\n");
+				b1.flush();
+				
 				winners = Regret.getMMRAlternatives(knowledge);
 				regret = Regret.getMMR();
 				regrets.add(regret);
@@ -273,6 +286,8 @@ public class XPRunner {
 		b.write("Questions to the voters: " + qstVot + " Question to the committee: " + qstCom);
 		b.flush();
 		b.close();
+		b1.flush();
+		b1.close();
 	}
 
 
