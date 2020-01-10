@@ -40,7 +40,7 @@ public class StrategyTwoPhases implements Strategy {
 	private static Iterator<QuestionCommittee> i;
 
 	@SuppressWarnings("unused")
-	private static final Logger LOGGER = LoggerFactory.getLogger(StrategyMiniMax.class);
+	private static final Logger LOGGER = LoggerFactory.getLogger(StrategyTwoPhases.class);
 
 	public static StrategyTwoPhases build(PrefKnowledge knowledge) {
 		op = AggOps.MAX;

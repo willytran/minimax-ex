@@ -66,8 +66,9 @@ public class XPRunner {
 		String title;
 		String root = Paths.get("").toAbsolutePath() + "/experiments/";
 
-		run(15, 15, root, StrategyType.EXTREME_COMPLETION);
-
+//		run(7, 7, root, StrategyType.TWO_PHASES_TAU);
+		run(7, 7, root, StrategyType.EXTREME_COMPLETION);
+		
 //	    m=6;n=4;
 //	    System.out.println(m+" "+n);
 //	    title = root + "m" + m + "n" + n + "MiniMax_WeightedAvg";
@@ -107,20 +108,27 @@ public class XPRunner {
 
 	private static void run(int m, int n, String root, StrategyType st) throws IOException {
 		final long startTime = System.currentTimeMillis();
-		int maxQuestions = 30;
+		int maxQuestions = 50;
 		int runs = 1;
-		rounder = Rounder.given(Rounder.Mode.ROUND_HALF_UP, 6); //if we use less decimal places sometimes is not able to find a convex sequence
-		BufferedWriter b = initFile(root+"m"+m+"n"+n+st+"_stats");
+
+		// for strategyTwoPhasesTau
+		int nbCommitteeQuestions = 10;
+		int nbVotersQuestions = 40;
+		boolean committeeFirst = true;
+
+		rounder = Rounder.given(Rounder.Mode.ROUND_HALF_UP, 6); // if we use less decimal places sometimes is not able
+																// to find a convex sequence
+		BufferedWriter b = initFile(root + "m" + m + "n" + n + st + "_stats");
 		b.write(st + "\n");
 		b.write(n + " Voters " + m + " Alternatives \n");
 		b.write(maxQuestions + " Questions for " + runs + " runs \n");
 		b.flush();
-		
-		BufferedWriter b1 = initFile(root+"m"+m+"n"+n+st+"_questions");
+
+		BufferedWriter b1 = initFile(root + "m" + m + "n" + n + st + "_questions");
 		b1.write(st + "\n");
 		b1.write(n + " Voters " + m + " Alternatives \n");
 		b1.flush();
-		
+
 		int qstVot = 0;
 		int qstCom = 0;
 		ArrayList<Double> regretSeriesMean = new ArrayList<>();
@@ -133,7 +141,7 @@ public class XPRunner {
 		double initialAvgLoss = 1;
 		for (int nbquest = 1; nbquest <= maxQuestions; nbquest++) {
 			b1.write(nbquest + " questions: \n");
-					
+
 			avglosses = new LinkedList<>();
 			regrets = new LinkedList<>();
 			for (int j = 0; j < runs; j++) {
@@ -145,7 +153,8 @@ public class XPRunner {
 				for (int i = 1; i <= n; i++) {
 					voters.add(new Voter(i));
 				}
-				context = Oracle.build(ImmutableMap.copyOf(Generator.genProfile(n, m)), Generator.genWeights(m,rounder));
+				context = Oracle.build(ImmutableMap.copyOf(Generator.genProfile(n, m)),
+						Generator.genWeights(m, rounder));
 				knowledge = PrefKnowledge.given(alternatives, voters);
 				knowledge.setRounder(rounder);
 				Strategy strategy = null;
@@ -167,6 +176,14 @@ public class XPRunner {
 					strategy = StrategyTwoPhases.build(knowledge, AggOps.WEIGHTED_AVERAGE, 1d,
 							context.getWeights().getWeightAtRank(m - 1) / 2 * n);
 					break;
+				case TWO_PHASES_TAU:
+					strategy = StrategyTwoPhasesTau.build(knowledge, nbCommitteeQuestions, nbVotersQuestions,
+							committeeFirst);
+					break;
+				case TWO_PHASES_RANDOM:
+					strategy = StrategyTwoPhasesRandom.build(knowledge, nbCommitteeQuestions, nbVotersQuestions,
+							committeeFirst);
+					break;
 				case EXTREME_COMPLETION:
 					strategy = StrategyExtremeCompletion.build(knowledge);
 					break;
@@ -182,9 +199,11 @@ public class XPRunner {
 						q = strategy.nextQuestion();
 						b1.write(q.toString() + "\n");
 						if (q.getType() == QuestionType.COMMITTEE_QUESTION) {
-							qstCom++; qCom++;
+							qstCom++;
+							qCom++;
 						} else {
-							qstVot++; qVt++;
+							qstVot++;
+							qVt++;
 						}
 						Answer a = context.getAnswer(q);
 						updateKnowledge(q, a);
@@ -193,9 +212,9 @@ public class XPRunner {
 						break;
 					}
 				}
-				b1.write("Questions to the voters: " + qVt + " Question to the committee: " + qCom+ "\n\n");
+				b1.write("Questions to the voters: " + qVt + " Question to the committee: " + qCom + "\n\n");
 				b1.flush();
-				
+
 				winners = Regret.getMMRAlternatives(knowledge);
 				regret = Regret.getMMR();
 				regrets.add(regret);
@@ -289,7 +308,6 @@ public class XPRunner {
 		b1.flush();
 		b1.close();
 	}
-
 
 	private static BufferedWriter initFile(String tfile) {
 		BufferedWriter b = null;

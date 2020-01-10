@@ -2,7 +2,8 @@ package io.github.oliviercailloux.minimax;
 
 public enum StrategyType {
 
-	MINIMAX_MIN, MINIMAX_AVG, MINIMAX_WEIGHTED_AVG, RANDOM, TWO_PHASES, EXTREME_COMPLETION;
+	MINIMAX_MIN, MINIMAX_AVG, MINIMAX_WEIGHTED_AVG, RANDOM, TWO_PHASES, EXTREME_COMPLETION, 
+	TWO_PHASES_TAU, TWO_PHASES_RANDOM;
 
 	@Override
 	public String toString() {
@@ -19,9 +20,13 @@ public enum StrategyType {
 			return "Two Phases Strategy";
 		case EXTREME_COMPLETION:
 			return "Extreme Completion Strategy";
+		case TWO_PHASES_TAU:
+			return "Two Phases Tau Strategy";
+		case TWO_PHASES_RANDOM:
+			return "Two Phases Random Strategy";
 		default:
 			throw new IllegalStateException();
 		}
 	}
-	
+
 }

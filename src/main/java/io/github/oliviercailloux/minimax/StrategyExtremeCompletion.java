@@ -6,6 +6,7 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Optional;
 import java.util.Random;
+import java.util.concurrent.ThreadLocalRandom;
 
 import org.apfloat.Apint;
 import org.apfloat.Aprational;
@@ -33,7 +34,7 @@ public class StrategyExtremeCompletion implements Strategy {
 	private static PSRWeights wBar;
 	
 	@SuppressWarnings("unused")
-	private static final Logger LOGGER = LoggerFactory.getLogger(StrategyMiniMax.class);
+	private static final Logger LOGGER = LoggerFactory.getLogger(StrategyExtremeCompletion.class);
 
 	public static StrategyExtremeCompletion build(PrefKnowledge knowledge) {
 		return new StrategyExtremeCompletion(knowledge);
@@ -41,6 +42,7 @@ public class StrategyExtremeCompletion implements Strategy {
 
 	private StrategyExtremeCompletion(PrefKnowledge knowledge) {
 		this.knowledge = knowledge;
+		LOGGER.info("INFO"+System.currentTimeMillis());
 	}
 
 	@Override
@@ -143,8 +145,8 @@ public class StrategyExtremeCompletion implements Strategy {
 		for (Voter v : knowledge.getProfile().keySet()) {
 			if (v.equals(vi)) {
 				r = Regret.getWorstRanks(yAdv, xOpt, knowledge.getProfile().get(v));
-				xrank[r[0]]++;
 				yrank[r[1]]++;
+				xrank[r[0]]++;
 			} else {
 				r = Regret.getWorstRanks(xOpt, yAdv, knowledge.getProfile().get(v));
 				xrank[r[0]]++;
