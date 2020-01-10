@@ -151,5 +151,16 @@ public class PrefKnowledge {
 		checkArgument(rank <= alternatives.size() - 2);
 		return lambdaRanges.get(rank);
 	}
+	
+	@Override
+	public String toString() {
+		StringBuilder sb = new StringBuilder();
+		sb.append("Constraints on weights: \n"+ cow.rangesAsString()+"\n");
+		sb.append("Preference profile \n");
+		for(int i=1;i<=partialProfile.size();i++) {
+			sb.append("Voter "+i+" "+partialProfile.get(new Voter(i))+"\n");
+		}
+		return sb.toString();
+	}
 
 }

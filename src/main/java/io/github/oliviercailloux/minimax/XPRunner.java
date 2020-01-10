@@ -66,8 +66,8 @@ public class XPRunner {
 		String title;
 		String root = Paths.get("").toAbsolutePath() + "/experiments/";
 
-//		run(7, 7, root, StrategyType.TWO_PHASES_TAU);
-		run(7, 7, root, StrategyType.EXTREME_COMPLETION);
+		run(10, 10, root, StrategyType.TWO_PHASES_TAU);
+//		run(3, 3, root, StrategyType.EXTREME_COMPLETION);
 		
 //	    m=6;n=4;
 //	    System.out.println(m+" "+n);
@@ -112,8 +112,8 @@ public class XPRunner {
 		int runs = 1;
 
 		// for strategyTwoPhasesTau
-		int nbCommitteeQuestions = 10;
-		int nbVotersQuestions = 40;
+		int nbCommitteeQuestions = 40;
+		int nbVotersQuestions = 10;
 		boolean committeeFirst = true;
 
 		rounder = Rounder.given(Rounder.Mode.ROUND_HALF_UP, 6); // if we use less decimal places sometimes is not able
@@ -209,6 +209,7 @@ public class XPRunner {
 						updateKnowledge(q, a);
 					} catch (Exception e) {
 						e.printStackTrace();
+						System.out.println(knowledge.toString());
 						break;
 					}
 				}
