@@ -46,12 +46,7 @@ import io.github.oliviercailloux.minimax.utils.Rounder;
  *
  */
 public class ConstraintsOnWeights {
-	private MPBuilder builder;
-	private OrToolsSolver solver;
-	private Solution lastSolution;
-	private boolean convexityConstraintSet;
 	public static final double EPSILON = 1e-5;
-	public Rounder rounder;
 
 	/**
 	 * @param m at least one: the number of ranks, or equivalently, the number of
@@ -63,19 +58,17 @@ public class ConstraintsOnWeights {
 
 	public static ConstraintsOnWeights copyOf(ConstraintsOnWeights cw) {
 		ConstraintsOnWeights c = new ConstraintsOnWeights(cw.getM());
-		c.builder = MPBuilder.copyOf(cw.getBuilder());
+		c.builder = MPBuilder.copyOf(cw.builder);
 		return c;
 	}
 
-	private MPBuilder getBuilder() {
-		return builder;
-	}
+	private MPBuilder builder;
+	private final OrToolsSolver solver;
+	private Solution lastSolution;
+	private boolean convexityConstraintSet;
+	private Rounder rounder;
 
-	public void setRounder(Rounder r) {
-		rounder = r;
-	}
-
-	ConstraintsOnWeights(int m) {
+	private ConstraintsOnWeights(int m) {
 		checkArgument(m >= 1);
 		builder = MP.builder();
 		builder.addVariable(
@@ -92,6 +85,23 @@ public class ConstraintsOnWeights {
 		lastSolution = null;
 		convexityConstraintSet = false;
 		rounder = Rounder.given(Rounder.Mode.NULL, 0);
+	}
+
+	public void setRounder(Rounder r) {
+		rounder = r;
+	}
+
+	/**
+	 * May be called only once.
+	 */
+	public void setConvexityConstraint() {
+		checkState(!convexityConstraintSet);
+		for (int rank = 1; rank <= getM() - 2; ++rank) {
+			builder.addConstraint(Constraint.of("Convexity rank " + rank,
+					SumTerms.of(1d, getVariable(rank), -2d, getVariable(rank + 1), 1d, getVariable(rank + 2)),
+					ComparisonOperator.GE, EPSILON));
+		}
+		convexityConstraintSet = true;
 	}
 
 	/**
@@ -115,16 +125,10 @@ public class ConstraintsOnWeights {
 	}
 
 	/**
-	 * May be called only once.
+	 * @return at least one.
 	 */
-	public void setConvexityConstraint() {
-		checkState(!convexityConstraintSet);
-		for (int rank = 1; rank <= getM() - 2; ++rank) {
-			builder.addConstraint(Constraint.of("Convexity rank " + rank,
-					SumTerms.of(1d, getVariable(rank), -2d, getVariable(rank + 1), 1d, getVariable(rank + 2)),
-					ComparisonOperator.GE, EPSILON));
-		}
-		convexityConstraintSet = true;
+	public int getM() {
+		return builder.getVariables().size();
 	}
 
 	public Range<Double> getWeightRange(int rank) {
@@ -134,13 +138,6 @@ public class ConstraintsOnWeights {
 		return boundObjective(SumTerms.of(1d, getVariable(rank)));
 	}
 
-	/**
-	 * @return at least one.
-	 */
-	public int getM() {
-		return builder.getVariables().size();
-	}
-
 	public Term getTerm(double coefficient, int rank) {
 		return Term.of(coefficient, getVariable(rank));
 	}
@@ -148,14 +145,6 @@ public class ConstraintsOnWeights {
 	public double maximize(SumTerms sum) {
 		final Objective obj = Objective.max(sum);
 		return optimize(obj);
-	}
-
-	private double optimize(Objective obj) {
-		builder.setObjective(obj);
-		final Result result = solver.solve(builder);
-		checkArgument(result.getResultStatus().equals(ResultStatus.OPTIMAL));
-		lastSolution = result.getSolution().get();
-		return lastSolution.getObjectiveValue();
 	}
 
 	public double minimize(SumTerms sum) {
@@ -168,6 +157,17 @@ public class ConstraintsOnWeights {
 		return optimize(obj);
 	}
 
+	public PSRWeights getLastSolution() {
+		/** PSRWeights only accept convex weights. */
+		checkState(convexityConstraintSet);
+		final List<Double> weights = new LinkedList<>();
+		for (int r = 1; r <= getM(); ++r) {
+			final double value = rounder.round(lastSolution.getValue(getVariable(r)));
+			weights.add(value);
+		}
+		return PSRWeights.given(weights);
+	}
+
 	private Variable getVariable(int rank) {
 		checkArgument(rank >= 1);
 		checkArgument(rank <= getM());
@@ -176,6 +176,14 @@ public class ConstraintsOnWeights {
 
 	private String getVariableDescription(int rank) {
 		return Variable.getDefaultDescription("w", ImmutableList.of(rank));
+	}
+
+	private double optimize(Objective obj) {
+		builder.setObjective(obj);
+		final Result result = solver.solve(builder);
+		checkArgument(result.getResultStatus().equals(ResultStatus.OPTIMAL));
+		lastSolution = result.getSolution().get();
+		return lastSolution.getObjectiveValue();
 	}
 
 	private double bound(IMP mp) {
@@ -221,16 +229,5 @@ public class ConstraintsOnWeights {
 			sb.append("\n");
 		}
 		return sb.toString();
-	}
-
-	public PSRWeights getLastSolution() {
-		/** PSRWeights only accept convex weights. */
-		checkState(convexityConstraintSet);
-		final List<Double> weights = new LinkedList<>();
-		for (int r = 1; r <= getM(); ++r) {
-			final double value = rounder.round(lastSolution.getValue(getVariable(r)));
-			weights.add(value);
-		}
-		return PSRWeights.given(weights);
 	}
 }
