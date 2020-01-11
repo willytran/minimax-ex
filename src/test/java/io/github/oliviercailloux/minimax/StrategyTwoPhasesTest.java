@@ -7,8 +7,6 @@ import java.util.List;
 
 import org.junit.jupiter.api.Test;
 
-import io.github.oliviercailloux.minimax.StrategyMiniMax;
-import io.github.oliviercailloux.minimax.StrategyTwoPhases;
 import io.github.oliviercailloux.minimax.elicitation.PrefKnowledge;
 import io.github.oliviercailloux.minimax.elicitation.Question;
 import io.github.oliviercailloux.minimax.elicitation.QuestionType;
@@ -25,7 +23,10 @@ public class StrategyTwoPhasesTest {
 		assertEquals(QuestionType.VOTER_QUESTION, s.nextQuestion().getType());
 	}
 
-	@Test
+	/**
+	 * @Test should be run occasionally, ’cause it’s too slow
+	 *
+	 */
 	void testTenAlts() {
 		final PrefKnowledge k = PrefKnowledge.given(Generator.getAlternatives(10), Generator.getVoters(2));
 		final StrategyTwoPhases s = StrategyTwoPhases.build(k);
