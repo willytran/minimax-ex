@@ -1,6 +1,5 @@
 package io.github.oliviercailloux.minimax;
 
-import static org.junit.Assert.assertTrue;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
 import java.util.HashSet;
@@ -15,10 +14,8 @@ import com.google.common.graph.GraphBuilder;
 import com.google.common.graph.MutableGraph;
 
 import io.github.oliviercailloux.jlp.elements.ComparisonOperator;
-import io.github.oliviercailloux.minimax.Regret;
 import io.github.oliviercailloux.minimax.elicitation.PrefKnowledge;
 import io.github.oliviercailloux.y2018.j_voting.Alternative;
-import io.github.oliviercailloux.y2018.j_voting.Generator;
 import io.github.oliviercailloux.y2018.j_voting.Voter;
 
 public class RegretTest {
@@ -28,7 +25,7 @@ public class RegretTest {
 		Voter v1 = new Voter(1);
 		Voter v2 = new Voter(2);
 		Voter v3 = new Voter(3);
-		Set<Voter> voters = new HashSet<Voter>();
+		Set<Voter> voters = new HashSet<>();
 		voters.add(v1);
 		voters.add(v2);
 		voters.add(v3);
@@ -37,7 +34,7 @@ public class RegretTest {
 		Alternative b = new Alternative(2);
 		Alternative c = new Alternative(3);
 		Alternative d = new Alternative(4);
-		Set<Alternative> alt = new HashSet<Alternative>();
+		Set<Alternative> alt = new HashSet<>();
 		alt.add(a);
 		alt.add(b);
 		alt.add(c);
@@ -69,7 +66,7 @@ public class RegretTest {
 		Voter v1 = new Voter(1);
 		Voter v2 = new Voter(2);
 		Voter v3 = new Voter(3);
-		Set<Voter> voters = new HashSet<Voter>();
+		Set<Voter> voters = new HashSet<>();
 		voters.add(v1);
 		voters.add(v2);
 		voters.add(v3);
@@ -78,7 +75,7 @@ public class RegretTest {
 		Alternative b = new Alternative(2);
 		Alternative c = new Alternative(3);
 		Alternative d = new Alternative(4);
-		Set<Alternative> alt = new HashSet<Alternative>();
+		Set<Alternative> alt = new HashSet<>();
 		alt.add(a);
 		alt.add(b);
 		alt.add(c);
@@ -113,7 +110,7 @@ public class RegretTest {
 		Voter v1 = new Voter(1);
 		Voter v2 = new Voter(2);
 		Voter v3 = new Voter(3);
-		Set<Voter> voters = new HashSet<Voter>();
+		Set<Voter> voters = new HashSet<>();
 		voters.add(v1);
 		voters.add(v2);
 		voters.add(v3);
@@ -122,7 +119,7 @@ public class RegretTest {
 		Alternative b = new Alternative(2);
 		Alternative c = new Alternative(3);
 		Alternative d = new Alternative(4);
-		Set<Alternative> alt = new HashSet<Alternative>();
+		Set<Alternative> alt = new HashSet<>();
 		alt.add(a);
 		alt.add(b);
 		alt.add(c);
@@ -139,7 +136,7 @@ public class RegretTest {
 		Voter v1 = new Voter(1);
 		Voter v2 = new Voter(2);
 		Voter v3 = new Voter(3);
-		Set<Voter> voters = new HashSet<Voter>();
+		Set<Voter> voters = new HashSet<>();
 		voters.add(v1);
 		voters.add(v2);
 		voters.add(v3);
@@ -148,7 +145,7 @@ public class RegretTest {
 		Alternative b = new Alternative(2);
 		Alternative c = new Alternative(3);
 		Alternative d = new Alternative(4);
-		Set<Alternative> alt = new HashSet<Alternative>();
+		Set<Alternative> alt = new HashSet<>();
 		alt.add(a);
 		alt.add(b);
 		alt.add(c);
@@ -181,7 +178,7 @@ public class RegretTest {
 	@Test
 	void testRanksCase1() throws Exception {
 		Voter v1 = new Voter(1);
-		Set<Voter> voters = new HashSet<Voter>();
+		Set<Voter> voters = new HashSet<>();
 		voters.add(v1);
 
 		Alternative x = new Alternative(1);
@@ -199,7 +196,7 @@ public class RegretTest {
 		Alternative d1 = new Alternative(12);
 		Alternative u1 = new Alternative(13);
 
-		Set<Alternative> alt = new HashSet<Alternative>();
+		Set<Alternative> alt = new HashSet<>();
 		alt.add(a);
 		alt.add(b);
 		alt.add(c);
@@ -328,20 +325,18 @@ public class RegretTest {
 	}
 
 	/*
-	 * @Test
-	void testTau() throws Exception {
-		final PrefKnowledge k = PrefKnowledge.given(Generator.getAlternatives(3), Generator.getVoters(3));
-		k.getProfile().get(new Voter(1)).asGraph().putEdge(new Alternative(1), new Alternative(2));
-		k.getProfile().get(new Voter(1)).asGraph().putEdge(new Alternative(2), new Alternative(3));
-		k.getProfile().get(new Voter(2)).asGraph().putEdge(new Alternative(1), new Alternative(2));
-		k.getProfile().get(new Voter(3)).asGraph().putEdge(new Alternative(3), new Alternative(1));
-
-		assertEquals(0.5,Regret.getTau1(k));
-		assertEquals(-2, Regret.getTau2(k));
-		Regret.getMMRAlternatives(k);
-		System.out.println(Regret.getMMR());
-//		assertTrue(Regret.tau1SmallerThanTau2(k));
-	}
-	*/
+	 * @Test void testTau() throws Exception { final PrefKnowledge k =
+	 * PrefKnowledge.given(Generator.getAlternatives(3), Generator.getVoters(3));
+	 * k.getProfile().get(new Voter(1)).asGraph().putEdge(new Alternative(1), new
+	 * Alternative(2)); k.getProfile().get(new Voter(1)).asGraph().putEdge(new
+	 * Alternative(2), new Alternative(3)); k.getProfile().get(new
+	 * Voter(2)).asGraph().putEdge(new Alternative(1), new Alternative(2));
+	 * k.getProfile().get(new Voter(3)).asGraph().putEdge(new Alternative(3), new
+	 * Alternative(1));
+	 * 
+	 * assertEquals(0.5,Regret.getTau1(k)); assertEquals(-2, Regret.getTau2(k));
+	 * Regret.getMMRAlternatives(k); System.out.println(Regret.getMMR()); //
+	 * assertTrue(Regret.tau1SmallerThanTau2(k)); }
+	 */
 
 }

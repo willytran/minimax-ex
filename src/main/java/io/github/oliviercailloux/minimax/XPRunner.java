@@ -110,12 +110,14 @@ public class XPRunner {
 
 		rounder = Rounder.given(RoundingMode.HALF_UP, 6); // if we use less decimal places sometimes is not able
 															// to find a convex sequence
+		@SuppressWarnings("resource")
 		BufferedWriter b = initFile(root + "m" + m + "n" + n + st + "_stats");
 		b.write(st + "\n");
 		b.write(n + " Voters " + m + " Alternatives \n");
 		b.write(maxQuestions + " Questions for " + runs + " runs \n");
 		b.flush();
 
+		@SuppressWarnings("resource")
 		BufferedWriter b1 = initFile(root + "m" + m + "n" + n + st + "_questions");
 		b1.write(st + "\n");
 		b1.write(n + " Voters " + m + " Alternatives \n");
