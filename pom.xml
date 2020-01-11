@@ -10,6 +10,9 @@
 	<artifactId>minimax</artifactId>
 	<version>0.0.1-SNAPSHOT</version>
 	<properties>
+		<maven.compiler.source>11</maven.compiler.source>
+		<maven.compiler.target>11</maven.compiler.target>
+		<maven.compiler.release>11</maven.compiler.release>
 		<jmockit.version>1.23</jmockit.version>
 	</properties>
 	<build>
