@@ -1,29 +1,22 @@
 package io.github.oliviercailloux.minimax;
 
-import static com.google.common.base.Preconditions.checkArgument;
-
 import java.io.BufferedWriter;
 import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
+import java.math.RoundingMode;
 import java.nio.file.Paths;
 import java.text.DecimalFormat;
 import java.text.NumberFormat;
 import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Collections;
-import java.util.HashMap;
 import java.util.HashSet;
 import java.util.LinkedList;
 import java.util.List;
-import java.util.Map;
-import java.util.Random;
 import java.util.Set;
 
 import org.apfloat.Aprational;
 
 import com.google.common.collect.ImmutableMap;
-import com.google.common.collect.Lists;
 import com.google.common.graph.MutableGraph;
 import com.google.common.math.Stats;
 
@@ -31,7 +24,6 @@ import io.github.oliviercailloux.j_voting.VoterStrictPreference;
 import io.github.oliviercailloux.jlp.elements.ComparisonOperator;
 import io.github.oliviercailloux.minimax.elicitation.Answer;
 import io.github.oliviercailloux.minimax.elicitation.Oracle;
-import io.github.oliviercailloux.minimax.elicitation.PSRWeights;
 import io.github.oliviercailloux.minimax.elicitation.PrefKnowledge;
 import io.github.oliviercailloux.minimax.elicitation.Question;
 import io.github.oliviercailloux.minimax.elicitation.QuestionCommittee;
@@ -68,7 +60,7 @@ public class XPRunner {
 
 		run(10, 10, root, StrategyType.TWO_PHASES_TAU);
 //		run(3, 3, root, StrategyType.EXTREME_COMPLETION);
-		
+
 //	    m=6;n=4;
 //	    System.out.println(m+" "+n);
 //	    title = root + "m" + m + "n" + n + "MiniMax_WeightedAvg";
@@ -90,7 +82,7 @@ public class XPRunner {
 
 //		for (m =5; m < 7; m++) {
 //			for (n = 3; n < 7; n++) {
-//				
+//
 ////				title = root + "m" + m + "n" + n + "MiniMax_Min";
 ////				run(m, n, title, StrategyType.MINIMAX_MIN);
 ////				title = root + "m" + m + "n" + n + "MiniMax_Avg";
@@ -116,8 +108,8 @@ public class XPRunner {
 		int nbVotersQuestions = 10;
 		boolean committeeFirst = true;
 
-		rounder = Rounder.given(Rounder.Mode.ROUND_HALF_UP, 6); // if we use less decimal places sometimes is not able
-																// to find a convex sequence
+		rounder = Rounder.given(RoundingMode.HALF_UP, 6); // if we use less decimal places sometimes is not able
+															// to find a convex sequence
 		BufferedWriter b = initFile(root + "m" + m + "n" + n + st + "_stats");
 		b.write(st + "\n");
 		b.write(n + " Voters " + m + " Alternatives \n");

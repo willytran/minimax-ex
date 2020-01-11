@@ -3,15 +3,15 @@ package io.github.oliviercailloux.minimax.utils;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
 
+import java.math.RoundingMode;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
+
 import org.junit.Test;
 
 import io.github.oliviercailloux.j_voting.VoterStrictPreference;
-import io.github.oliviercailloux.minimax.XPRunner;
 import io.github.oliviercailloux.minimax.elicitation.PSRWeights;
-import io.github.oliviercailloux.minimax.utils.Rounder;
 import io.github.oliviercailloux.y2018.j_voting.Alternative;
 import io.github.oliviercailloux.y2018.j_voting.Voter;
 
@@ -25,7 +25,7 @@ public class GeneratorTest {
 	@Test
 	public void testGenWeights() {
 		int m = 9;
-		final PSRWeights weights = Generator.genWeights(m,Rounder.given(Rounder.Mode.ROUND_HALF_UP, 3));
+		final PSRWeights weights = Generator.genWeights(m, Rounder.given(RoundingMode.HALF_UP, 3));
 		assertEquals(m, weights.getWeights().size());
 	}
 

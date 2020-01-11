@@ -31,7 +31,7 @@ public class RegretComputer {
 
 	public RegretComputer(PrefKnowledge knowledge) {
 		this.knowledge = requireNonNull(knowledge);
-		this.rounder = Rounder.given(Rounder.Mode.NULL, 0);
+		this.rounder = Rounder.noRounding();
 	}
 
 	public void setRounder(Rounder r) {

@@ -3,6 +3,7 @@ package io.github.oliviercailloux.minimax.regret;
 import static org.junit.Assert.assertTrue;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
+import java.math.RoundingMode;
 import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
@@ -18,16 +19,14 @@ import com.google.common.graph.MutableGraph;
 
 import io.github.oliviercailloux.minimax.elicitation.PSRWeights;
 import io.github.oliviercailloux.minimax.elicitation.PrefKnowledge;
-import io.github.oliviercailloux.minimax.regret.PairwiseMaxRegret;
-import io.github.oliviercailloux.minimax.regret.RegretComputer;
 import io.github.oliviercailloux.minimax.utils.Rounder;
 import io.github.oliviercailloux.y2018.j_voting.Alternative;
 import io.github.oliviercailloux.y2018.j_voting.Voter;
 
 class RegretComputerTest {
 
-	private Rounder rounder = Rounder.given(Rounder.Mode.ROUND_HALF_UP, 3);
-	
+	private Rounder rounder = Rounder.given(RoundingMode.HALF_UP, 3);
+
 	@Test
 	void testEmptyKSizeOne() {
 		final Alternative a = new Alternative(1);
@@ -100,20 +99,20 @@ class RegretComputerTest {
 
 		final RegretComputer regretComputer = new RegretComputer(knowledge);
 		regretComputer.setRounder(rounder);
-		
+
 		SetMultimap<Alternative, PairwiseMaxRegret> mrs = regretComputer.getMinimalMaxRegrets();
-		assertEquals(1,mrs.keySet().size());
-		
-		Set<Alternative> mmrAlt=new HashSet<>();
+		assertEquals(1, mrs.keySet().size());
+
+		Set<Alternative> mmrAlt = new HashSet<>();
 		mmrAlt.add(a);
-		assertEquals(mmrAlt,mrs.keySet());
-		
+		assertEquals(mmrAlt, mrs.keySet());
+
 		Set<PairwiseMaxRegret> p = mrs.get(a);
 		Iterator<PairwiseMaxRegret> pit = p.iterator();
-		assertEquals(3,p.size());
-		assertTrue(pit.next().getY()==a);
-		assertTrue(pit.next().getY()==c);
-		assertTrue(pit.next().getY()==d);
+		assertEquals(3, p.size());
+		assertTrue(pit.next().getY() == a);
+		assertTrue(pit.next().getY() == c);
+		assertTrue(pit.next().getY() == d);
 	}
 
 	@Test

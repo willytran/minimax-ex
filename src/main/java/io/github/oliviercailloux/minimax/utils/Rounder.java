@@ -1,6 +1,9 @@
 package io.github.oliviercailloux.minimax.utils;
 
+import static com.google.common.base.Preconditions.checkNotNull;
+
 import java.math.BigDecimal;
+import java.math.RoundingMode;
 
 /**
  * The Rounding class provides a method to round a double value, given the
@@ -14,39 +17,27 @@ public class Rounder {
 		ROUND_CEILING, ROUND_DOWN, ROUND_FLOOR, ROUND_HALF_DOWN, ROUND_HALF_EVEN, ROUND_HALF_UP, ROUND_UP, NULL
 	}
 
-	private Mode mode;
+	private RoundingMode mode;
 	private int granularity;
 
-	public static Rounder given(Mode roundingMode, int decimalPlaces) {
-		return new Rounder(roundingMode, decimalPlaces);
+	public static Rounder given(RoundingMode roundingMode, int decimalPlaces) {
+		return new Rounder(checkNotNull(roundingMode), decimalPlaces);
 	}
 
-	private Rounder(Mode roundingMode, int decimalPlaces) {
+	public static Rounder noRounding() {
+		return new Rounder(null, 0);
+	}
+
+	private Rounder(RoundingMode roundingMode, int decimalPlaces) {
 		mode = roundingMode;
 		granularity = decimalPlaces;
 	}
 
 	public double round(double value) {
-		switch (mode) {
-		case ROUND_CEILING:
-			return BigDecimal.valueOf(value).setScale(granularity, BigDecimal.ROUND_CEILING).doubleValue();
-		case ROUND_DOWN:
-			return BigDecimal.valueOf(value).setScale(granularity, BigDecimal.ROUND_DOWN).doubleValue();
-		case ROUND_FLOOR:
-			return BigDecimal.valueOf(value).setScale(granularity, BigDecimal.ROUND_FLOOR).doubleValue();
-		case ROUND_HALF_DOWN:
-			return BigDecimal.valueOf(value).setScale(granularity, BigDecimal.ROUND_HALF_DOWN).doubleValue();
-		case ROUND_HALF_EVEN:
-			return BigDecimal.valueOf(value).setScale(granularity, BigDecimal.ROUND_HALF_EVEN).doubleValue();
-		case ROUND_HALF_UP:
-			return BigDecimal.valueOf(value).setScale(granularity, BigDecimal.ROUND_HALF_UP).doubleValue();
-		case ROUND_UP:
-			return BigDecimal.valueOf(value).setScale(granularity, BigDecimal.ROUND_UP).doubleValue();
-		case NULL:
+		if (mode == null) {
 			return value;
-		default:
-			throw new IllegalStateException();
 		}
+		return BigDecimal.valueOf(value).setScale(granularity, mode).doubleValue();
 	}
 
 }

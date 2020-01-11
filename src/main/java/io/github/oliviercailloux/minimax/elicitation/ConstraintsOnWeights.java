@@ -84,7 +84,7 @@ public class ConstraintsOnWeights {
 		solver = new OrToolsSolver();
 		lastSolution = null;
 		convexityConstraintSet = false;
-		rounder = Rounder.given(Rounder.Mode.NULL, 0);
+		rounder = Rounder.noRounding();
 	}
 
 	public void setRounder(Rounder r) {
