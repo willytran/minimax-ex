@@ -39,14 +39,50 @@ import io.github.oliviercailloux.minimax.utils.Rounder;
  * adding a small epsilon ({@link ConstraintsOnWeights#EPSILON}) to the
  * constraints.
  *
- * Because of this epsilon constraint, the weights that are returned are not
- * permitted to be equal. TODO is this a problem?
+ * <p>
+ * The use of this added epsilon modifies the limits admitted by any “feasible”
+ * set of weights. This modification may become non negligible when the rank is
+ * high. To understand this, consider this example with 6 ranks and minimizing
+ * w2 (thus minimizing w3, …, w6). Setting w5 = 0, the difference between w5 and
+ * w6 is zero. Because the difference between w4 and w5 must be at least epsilon
+ * higher than the difference between w5 and w6, the difference between w4 and
+ * w5 must be at least epsilon. Thus, w4 ≥ epsilon. By the same reasoning, the
+ * difference between w3 and w4 must be at least two epsilon. Thus, w3 ≥ 3
+ * epsilon. Finally, the difference between w2 and w3 must be at least three
+ * epsilon. Thus, w2 ≥ 6 epsilon.
+ * </p>
+ * <p>
+ * In general, the lower bound on w2 is computed as follows. w2 ≥ epsilon + 2
+ * epsilon + 3 epsilon + … + (m − 3) epsilon = (m² − 5m + 6)/2 epsilon.
+ * </p>
+ * <p>
+ * For m = 20, we obtain w2 ≥ 153 epsilon.
+ * </p>
+ * <p>
+ * This will be a problem in the following circumstance. Assume m = 20. It could
+ * be that w2 = 0 is a feasible solution for a given problem in reality, but
+ * this program does not find any feasible solution because w2 = 153 epsilon is
+ * not feasible. This will happen if a constraint 10^4 w2 ≤ w1 is used, for
+ * example, and epsilon = 10^{−6}. Such a constraint would amount to 10^4 153
+ * epsilon ≤ 10^4 w2 ≤ 1, infeasible. As a heuristic to avoid such cases, this
+ * class checks that the coefficients are ≤ (m² − 5m + 6)/2 epsilon × 1/10.
+ * </p>
+ * A similar problem will happen with the constraints 100 w2 ≤ w1 and 100 w3 ≤
+ * w2, hence w3 ≤ 10^{−4}, incompatible with w3 ≥ 136 epsilon and epsilon =
+ * 10^{−6}. However, such problems will also easily happen when not using any
+ * epsilon margin, as the bound will become lower that the tolerance of the
+ * solver. Accordlingly, this class does not try to deal with this problem.
+ * </p>
+ *
  *
  * @author Olivier Cailloux
  *
  */
 public class ConstraintsOnWeights {
-	public static final double EPSILON = 1e-5;
+	/**
+	 * TODO Its value must be larger than the tolerance that the solver admits.
+	 */
+	public static final double EPSILON = 1e-6;
 
 	/**
 	 * @param m at least one: the number of ranks, or equivalently, the number of
