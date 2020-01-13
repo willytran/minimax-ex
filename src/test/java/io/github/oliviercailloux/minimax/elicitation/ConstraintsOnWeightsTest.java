@@ -3,8 +3,6 @@ package io.github.oliviercailloux.minimax.elicitation;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 
-import java.math.RoundingMode;
-
 import org.junit.jupiter.api.Test;
 
 import com.google.common.collect.Range;
@@ -12,7 +10,6 @@ import com.google.common.collect.Range;
 import io.github.oliviercailloux.jlp.elements.ComparisonOperator;
 import io.github.oliviercailloux.jlp.elements.SumTerms;
 import io.github.oliviercailloux.jlp.elements.SumTermsBuilder;
-import io.github.oliviercailloux.minimax.utils.Rounder;
 
 public class ConstraintsOnWeightsTest {
 	@Test
@@ -51,7 +48,6 @@ public class ConstraintsOnWeightsTest {
 	@Test
 	void testMax1() throws Exception {
 		final ConstraintsOnWeights cow = ConstraintsOnWeights.withRankNumber(2);
-		cow.setRounder(Rounder.given(RoundingMode.HALF_UP, 3));
 		assertEquals(2d, cow.maximize(SumTerms.of(cow.getTerm(2d, 1), cow.getTerm(3d, 2))));
 	}
 }

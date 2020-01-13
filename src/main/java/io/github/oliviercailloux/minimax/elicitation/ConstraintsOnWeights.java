@@ -80,9 +80,9 @@ import io.github.oliviercailloux.minimax.utils.Rounder;
  */
 public class ConstraintsOnWeights {
 	/**
-	 * TODO Its value must be larger than the tolerance that the solver admits.
+	 * TODO Its value must be at least the tolerance that the solver admits.
 	 */
-	public static final double EPSILON = 1e-6;
+	public static final double EPSILON = 1e-7;
 
 	/**
 	 * @param m at least one: the number of ranks, or equivalently, the number of
@@ -123,6 +123,11 @@ public class ConstraintsOnWeights {
 		rounder = Rounder.noRounding();
 	}
 
+	/**
+	 * Should be deleted from this class. Consider rounding out of this class
+	 * depending on your needs.
+	 */
+	@Deprecated
 	public void setRounder(Rounder r) {
 		rounder = r;
 	}
