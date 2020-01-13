@@ -61,17 +61,9 @@ import io.github.oliviercailloux.minimax.utils.Rounder;
  * <p>
  * This will be a problem in the following circumstance. Assume m = 20. It could
  * be that w2 = 0 is a feasible solution for a given problem in reality, but
- * this program does not find any feasible solution because w2 = 153 epsilon is
- * not feasible. This will happen if a constraint 10^4 w2 ≤ w1 is used, for
- * example, and epsilon = 10^{−6}. Such a constraint would amount to 10^4 153
- * epsilon ≤ 10^4 w2 ≤ 1, infeasible. As a heuristic to avoid such cases, this
- * class checks that the coefficients are ≤ (m² − 5m + 6)/2 epsilon × 1/10.
- * </p>
- * A similar problem will happen with the constraints 100 w2 ≤ w1 and 100 w3 ≤
- * w2, hence w3 ≤ 10^{−4}, incompatible with w3 ≥ 136 epsilon and epsilon =
- * 10^{−6}. However, such problems will also easily happen when not using any
- * epsilon margin, as the bound will become lower that the tolerance of the
- * solver. Accordlingly, this class does not try to deal with this problem.
+ * this program does not find any feasible solution because w2 < 153 epsilon for
+ * all (really) feasible solutions. However, considering the kind of constraints
+ * accepted by this class, it is difficult to find a problematic example.
  * </p>
  *
  *
@@ -82,7 +74,7 @@ public class ConstraintsOnWeights {
 	/**
 	 * TODO Its value must be at least the tolerance that the solver admits.
 	 */
-	public static final double EPSILON = 1e-7;
+	public static final double EPSILON = 1e-6;
 
 	/**
 	 * @param m at least one: the number of ranks, or equivalently, the number of
