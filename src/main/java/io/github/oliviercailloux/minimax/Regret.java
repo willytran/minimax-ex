@@ -89,7 +89,7 @@ public class Regret {
 		return cow.maximize(objective);
 	}
 
-	static int[] getWorstRanks(Alternative x, Alternative y, VoterPartialPreference voterPartialPreference) {
+	public static int[] getWorstRanks(Alternative x, Alternative y, VoterPartialPreference voterPartialPreference) {
 		int rankx = 0;
 		int ranky = 0;
 		Graph<Alternative> trans = voterPartialPreference.asTransitiveGraph();

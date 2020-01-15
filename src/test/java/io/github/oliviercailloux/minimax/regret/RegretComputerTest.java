@@ -25,8 +25,10 @@ import io.github.oliviercailloux.y2018.j_voting.Voter;
 
 class RegretComputerTest {
 
-	private Rounder rounder = Rounder.given(RoundingMode.HALF_UP, 3);
+//	private Rounder rounder = Rounder.given(RoundingMode.HALF_UP, 3);
 
+	private Rounder rounder = Rounder.noRounding();
+			
 	@Test
 	void testEmptyKSizeOne() {
 		final Alternative a = new Alternative(1);
@@ -109,10 +111,14 @@ class RegretComputerTest {
 
 		Set<PairwiseMaxRegret> p = mrs.get(a);
 		Iterator<PairwiseMaxRegret> pit = p.iterator();
-		assertEquals(3, p.size());
-		assertTrue(pit.next().getY() == a);
-		assertTrue(pit.next().getY() == c);
-		assertTrue(pit.next().getY() == d);
+		Set<Alternative> py = new HashSet<>();
+		while(pit.hasNext()) {
+			py.add(pit.next().getY());
+		}
+		assertEquals(3, py.size());
+		assertTrue(py.contains(a));
+		assertTrue(py.contains(c));
+		assertTrue(py.contains(d));
 	}
 
 	@Test

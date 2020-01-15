@@ -5,11 +5,11 @@ import com.google.common.graph.MutableGraph;
 import io.github.oliviercailloux.minimax.utils.ForwardingMutableGraph;
 import io.github.oliviercailloux.y2018.j_voting.Alternative;
 
-class PrefGraph extends ForwardingMutableGraph<Alternative> implements MutableGraph<Alternative> {
+public class PrefGraph extends ForwardingMutableGraph<Alternative> implements MutableGraph<Alternative> {
 
 	private VoterPartialPreference v;
 
-	PrefGraph(MutableGraph<Alternative> delegate) {
+	public PrefGraph(MutableGraph<Alternative> delegate) {
 		super(delegate);
 	}
 

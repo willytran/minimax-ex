@@ -1,6 +1,7 @@
 package io.github.oliviercailloux.minimax;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.util.HashSet;
 import java.util.Set;
@@ -13,6 +14,7 @@ import com.google.common.collect.ImmutableList;
 import com.google.common.graph.GraphBuilder;
 import com.google.common.graph.MutableGraph;
 
+import io.github.oliviercailloux.j_voting.*;
 import io.github.oliviercailloux.jlp.elements.ComparisonOperator;
 import io.github.oliviercailloux.minimax.elicitation.PrefKnowledge;
 import io.github.oliviercailloux.y2018.j_voting.Alternative;
@@ -99,9 +101,9 @@ public class RegretTest {
 		pref3.putEdge(b, d);
 
 		/** changed the visibility of the method in class Regret **/
-//		assertEquals(-1d,Regret.getPMR(a, b, knowledge));
-//		assertEquals(0d,Regret.getPMR(a, c, knowledge));
-//		assertEquals(0d,Regret.getPMR(a, d, knowledge));
+		assertEquals(-1d,Regret.getPMR(a, b, knowledge));
+		assertEquals(0d,Regret.getPMR(a, c, knowledge));
+		assertEquals(0d,Regret.getPMR(a, d, knowledge));
 	}
 
 	@Test
@@ -168,11 +170,11 @@ public class RegretTest {
 		pref3.putEdge(c, b);
 
 		/** changed the visibility of the method in class Regret **/
-//		double PMR = Regret.getPMR(a, b, knowledge);
-//		double w2= PMR/3;
-//		System.out.println(PMR + "  "+ w2);
-//		assertTrue(w2<=0.55);
-//		assertTrue(w2>=0.45);
+		double PMR = Regret.getPMR(a, b, knowledge);
+		double w2= PMR/3;
+		System.out.println(PMR + "  "+ w2);
+		assertTrue(w2<=0.55);
+		assertTrue(w2>=0.45);
 	}
 
 	@Test
@@ -235,7 +237,7 @@ public class RegretTest {
 	}
 
 	@Test
-	void testRanksCase2() throws Exception {
+	void testRanksCase2() throws Exception { 
 		final MutableGraph<Alternative> pref = GraphBuilder.directed().build();
 		Alternative x = new Alternative(1);
 		Alternative y = new Alternative(2);
@@ -255,9 +257,11 @@ public class RegretTest {
 		pref.putEdge(x, f);
 		pref.addNode(u);
 
+		final PrefGraph pref1 = new PrefGraph(pref);
+		VoterPartialPreference vp= new VoterPartialPreference(new Voter(1),pref1);
 		/** changed the visibility of the method in class Regret **/
-		// assertEquals(7,Regret.getWorstRanks(x, y, pref)[0]);
-		// assertEquals(2,Regret.getWorstRanks(x, y, pref)[1]);
+		 assertEquals(7,Regret.getWorstRanks(x, y, vp)[0]);
+		 assertEquals(2,Regret.getWorstRanks(x, y, vp)[1]);
 	}
 
 	@Test
@@ -292,9 +296,11 @@ public class RegretTest {
 		pref.putEdge(b, b1);
 		pref.putEdge(a1, u1);
 
+		final PrefGraph pref1 = new PrefGraph(pref);
+		VoterPartialPreference vp= new VoterPartialPreference(new Voter(1),pref1);
 		/** changed the visibility of the method in class Regret **/
-		// assertEquals(11,Regret.getWorstRanks(x, y, pref)[0]);
-		// assertEquals(3,Regret.getWorstRanks(x, y, pref)[1]);
+		 assertEquals(11,Regret.getWorstRanks(x, y, vp)[0]);
+		 assertEquals(3,Regret.getWorstRanks(x, y, vp)[1]);
 	}
 
 	@Test
@@ -319,9 +325,11 @@ public class RegretTest {
 		pref.addNode(f);
 		pref.addNode(b);
 
+		final PrefGraph pref1 = new PrefGraph(pref);
+		VoterPartialPreference vp= new VoterPartialPreference(new Voter(1),pref1);
 		/** changed the visibility of the method in class Regret **/
-		// assertEquals(8,Regret.getWorstRanks(x, y, pref)[0]);
-		// assertEquals(1,Regret.getWorstRanks(x, y, pref)[1]);
+		assertEquals(8,Regret.getWorstRanks(x, y, vp)[0]);
+		assertEquals(1,Regret.getWorstRanks(x, y, vp)[1]);
 	}
 
 	/*

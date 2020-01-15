@@ -50,7 +50,7 @@ public class XPRunner {
 	static double regret;
 	static List<Double> avglosses;
 	static List<Double> regrets;
-	static Rounder rounder;
+//	static Rounder rounder;
 
 	@SuppressWarnings("unused")
 	public static void main(String[] args) throws IOException {
@@ -58,7 +58,7 @@ public class XPRunner {
 		String title;
 		String root = Paths.get("").toAbsolutePath() + "/experiments/";
 
-		run(10, 10, root, StrategyType.TWO_PHASES_TAU);
+		run(20, 100, root, StrategyType.TWO_PHASES_TAU);
 //		run(3, 3, root, StrategyType.EXTREME_COMPLETION);
 
 //	    m=6;n=4;
@@ -100,7 +100,7 @@ public class XPRunner {
 
 	private static void run(int m, int n, String root, StrategyType st) throws IOException {
 		final long startTime = System.currentTimeMillis();
-		int maxQuestions = 50;
+		int maxQuestions = 20;
 		int runs = 1;
 
 		// for strategyTwoPhasesTau
@@ -108,7 +108,7 @@ public class XPRunner {
 		int nbVotersQuestions = 10;
 		boolean committeeFirst = true;
 
-		rounder = Rounder.given(RoundingMode.HALF_UP, 6); // if we use less decimal places sometimes is not able
+//		rounder = Rounder.given(RoundingMode.HALF_UP, 6); // if we use less decimal places sometimes is not able
 															// to find a convex sequence
 		@SuppressWarnings("resource")
 		BufferedWriter b = initFile(root + "m" + m + "n" + n + st + "_stats");
@@ -148,9 +148,9 @@ public class XPRunner {
 					voters.add(new Voter(i));
 				}
 				context = Oracle.build(ImmutableMap.copyOf(Generator.genProfile(n, m)),
-						Generator.genWeights(m, rounder));
+						Generator.genWeights(m));
 				knowledge = PrefKnowledge.given(alternatives, voters);
-				knowledge.setRounder(rounder);
+//				knowledge.setRounder(rounder);
 				Strategy strategy = null;
 				switch (st) {
 				case MINIMAX_MIN:

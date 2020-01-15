@@ -36,7 +36,7 @@ public class VoterPartialPreference {
 	private final PrefGraph pref;
 	private ImmutableGraph<Alternative> transitiveEquivalent;
 
-	private VoterPartialPreference(Voter voter, PrefGraph pref) {
+	public VoterPartialPreference(Voter voter, PrefGraph pref) {
 		this.voter = voter;
 		this.pref = pref;
 		transitiveEquivalent = null;

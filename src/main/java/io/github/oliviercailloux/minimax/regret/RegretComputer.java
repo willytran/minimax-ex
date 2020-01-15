@@ -4,6 +4,8 @@ import static java.util.Objects.requireNonNull;
 
 import java.util.Collection;
 import java.util.HashSet;
+import java.util.Iterator;
+import java.util.LinkedList;
 import java.util.Map;
 import java.util.Set;
 import java.util.SortedMap;
@@ -28,6 +30,12 @@ import io.github.oliviercailloux.y2018.j_voting.Voter;
 public class RegretComputer {
 	private final PrefKnowledge knowledge;
 	private Rounder rounder;
+
+	/**
+	 * TODO Its value must be at least the tolerance that the solver admits. Link it
+	 * with the one in CoW
+	 */
+	public static final double EPSILON = 1e-4;
 
 	public RegretComputer(PrefKnowledge knowledge) {
 		this.knowledge = requireNonNull(knowledge);
@@ -55,7 +63,18 @@ public class RegretComputer {
 		assert !sortedPmrs.isEmpty();
 		final double highestRegret = sortedPmrs.lastKey();
 		assert highestRegret >= 0;
-		return ImmutableSet.copyOf(pmrs.get(highestRegret));
+
+		Set<PairwiseMaxRegret> setPMR = new HashSet<>();
+		Set<Double> keys = pmrs.keySet();
+		Iterator<Double> i = keys.iterator();
+		while (i.hasNext()) {
+			double k = i.next();
+			if (Math.abs(highestRegret - k) < EPSILON) {
+				setPMR.addAll(pmrs.get(k));
+			}
+		}
+
+		return ImmutableSet.copyOf(setPMR);
 	}
 
 	/**
@@ -80,9 +99,10 @@ public class RegretComputer {
 		final double minMaxPmrValue = sortedByPmrValues.firstKey();
 		final Collection<Alternative> alternativesWithMinPmrValue = sortedByPmrValues.get(minMaxPmrValue);
 		pmrValues.asMap().keySet().retainAll(alternativesWithMinPmrValue);
-		/** We check that each of these collections of PMRs have the same value. */
-		assert pmrValues.asMap().entrySet().stream()
-				.allMatch((e) -> (e.getValue().stream().map(PairwiseMaxRegret::getPmrValue).distinct().count() == 1));
+		/** We check that each of these collections of PMRs have the same value. 
+		 * ATTENTION: with the current modification is no longer true */
+//		assert pmrValues.asMap().entrySet().stream()
+//				.allMatch((e) -> (e.getValue().stream().map(PairwiseMaxRegret::getPmrValue).distinct().count() == 1));
 		return pmrValues;
 	}
 

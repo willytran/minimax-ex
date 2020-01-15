@@ -19,6 +19,32 @@ import io.github.oliviercailloux.y2018.j_voting.Voter;
 
 public class Generator {
 
+	public static PSRWeights genWeights(int nbAlternatives) {
+		List<Double> weights = new LinkedList<>();
+		weights.add(1d);
+		double previous = 1d;
+		Random r = new Random();
+		double[] differences = new double[nbAlternatives - 1];
+		double sum = 0;
+		for (int i = 0; i < nbAlternatives - 1; i++) {
+			differences[i] = r.nextDouble();
+			sum += differences[i];
+		}
+		for (int i = 0; i < nbAlternatives - 1; i++) {
+			differences[i] = differences[i] / sum;
+		}
+		Arrays.sort(differences);
+		for (int i = nbAlternatives - 2; i > 0; i--) {
+			double curr = (previous - differences[i]);
+			weights.add(curr);
+			previous = curr;
+		}
+		weights.add(0d);
+		return PSRWeights.given(weights);
+	}
+	
+	/** TODO: to remove*/
+	@Deprecated
 	public static PSRWeights genWeights(int nbAlternatives, Rounder rounder) {
 		List<Double> weights = new LinkedList<>();
 		weights.add(1d);
