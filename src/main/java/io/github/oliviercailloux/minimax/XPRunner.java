@@ -205,13 +205,13 @@ public class XPRunner {
 	}
 
 	private static void createFiles(StrategyType st, int m, int n, int maxQuestions, int runs) throws IOException {
-		bwStats = initFile(root + "m" + m + "n" + n + st + "_stats");
+		bwStats = initFile(root + "m" + m + "n" + n + st + "_stats.txt");
 		bwStats.write(st + "\n");
 		bwStats.write(n + " Voters " + m + " Alternatives \n");
 		bwStats.write(maxQuestions + " Questions for " + runs + " runs \n");
 		bwStats.flush();
 
-		bwQst = initFile(root + "m" + m + "n" + n + st + "_questions");
+		bwQst = initFile(root + "m" + m + "n" + n + st + "_questions.txt");
 		bwQst.write(st + "\n");
 		bwQst.write(n + " Voters " + m + " Alternatives \n");
 		bwQst.flush();

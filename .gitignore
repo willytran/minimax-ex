@@ -3,4 +3,5 @@
 .settings/
 target/
 out.log
+.txt
 
