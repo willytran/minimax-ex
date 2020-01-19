@@ -62,7 +62,7 @@ public class XPRunner {
 
 		int minQuestions = 30;
 		int maxQuestions = 30;
-		int runs = 3;
+		int runs = 1;
 
 		// for on m and n
 		n = 5;
@@ -283,6 +283,8 @@ public class XPRunner {
 			Question q;
 			try {
 				q = strategy.nextQuestion();
+				System.out.println(knowledge);
+				System.out.println(trueWinners.get(trueWinScore));
 				bwQst.write(q.toString() + "\n");
 				if (q.getType() == QuestionType.COMMITTEE_QUESTION) {
 					qstCom++;

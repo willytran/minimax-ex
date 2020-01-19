@@ -94,25 +94,29 @@ public class StrategyPessimisticHeuristic implements Strategy {
 
 		questions = selectQuestions();
 		checkArgument(!questions.isEmpty(), "No question to ask about weights or voters.");
-
+		
 		Question nextQ = questions.iterator().next();
 		double minScore = getScore(nextQ);
-		nextQuestions= new LinkedList<>();
+		nextQuestions = new LinkedList<>();
 		nextQuestions.add(nextQ);
 		
 		for (Question q : questions) {
 			double score = getScore(q);
+			System.out.print(q+ ": "+score+"   ");
 			if (score < minScore) {
 				nextQ = q;
 				minScore = score;
 				nextQuestions.clear();
 				nextQuestions.add(nextQ);
-			}
-			if (score == minScore) {
-				nextQuestions.add(q);
+			}else {
+				if(Math.abs(score-minScore)<=0.3 && !nextQuestions.contains(q)) {
+					nextQuestions.add(q);
+				}
 			}
 		}
-		int randomPos = (int)(nextQuestions.size() * Math.random());
+		System.out.println("\n"+nextQuestions);
+		int randomPos = (int) (nextQuestions.size() * Math.random());
+		System.out.println(nextQuestions.get(randomPos)+ "\n\n");
 		return nextQuestions.get(randomPos);
 	}
 
@@ -161,8 +165,12 @@ public class StrategyPessimisticHeuristic implements Strategy {
 					U.add(a);
 				}
 			}
-
-			if (vpref.hasEdgeConnecting(xStar, yBar) || xStar.equals(yBar)) { // questionable = D U C
+			if (xStar.equals(yBar)) {
+				questionable = new HashSet<>(vpref.nodes());
+				questionable.remove(xStar);
+				questionable.removeAll(vpref.adjacentNodes(xStar));
+			}
+			if (vpref.hasEdgeConnecting(xStar, yBar)) { // questionable = D U C
 				questionable = new HashSet<>(vpref.nodes());
 				questionable.remove(xStar);
 				questionable.remove(yBar);
@@ -192,6 +200,8 @@ public class StrategyPessimisticHeuristic implements Strategy {
 				questionable = new HashSet<>();
 				questionable.addAll(U);
 			}
+			// if it is still empty it means we know everything about this voter so we don't
+			// ask him anything
 			if (!questionable.isEmpty()) {
 				Alternative questAlt = questionable.iterator().next();
 				if (questAlt.equals(yBar)) {

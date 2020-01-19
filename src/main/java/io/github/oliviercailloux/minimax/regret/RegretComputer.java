@@ -47,13 +47,10 @@ public class RegretComputer {
 		final ImmutableSortedMultiset<Integer> multiSetOfRanksOfX = ImmutableSortedMultiset.copyOf(ranksOfX.values());
 
 		final SetMultimap<Double, PairwiseMaxRegret> pmrs = MultimapBuilder.treeKeys().linkedHashSetValues().build();
-		HashSet<Alternative> adv = new HashSet<>(knowledge.getAlternatives());
-		adv.remove(x);
-		for (Alternative y : adv) {
+		for (Alternative y : knowledge.getAlternatives()) {
 			final PairwiseMaxRegret pmrY = getPmr(x, y, ranksOfX, multiSetOfRanksOfX);
 			pmrs.put(pmrY.getPmrValue(), pmrY);
 		}
-
 		final SortedMap<Double, Collection<PairwiseMaxRegret>> sortedPmrs = (SortedMap<Double, Collection<PairwiseMaxRegret>>) pmrs
 				.asMap();
 		assert !sortedPmrs.isEmpty();
@@ -95,17 +92,20 @@ public class RegretComputer {
 		final double minMaxPmrValue = sortedByPmrValues.firstKey();
 		final Collection<Alternative> alternativesWithMinPmrValue = sortedByPmrValues.get(minMaxPmrValue);
 		pmrValues.asMap().keySet().retainAll(alternativesWithMinPmrValue);
-		/** We check that each of these collections of PMRs have the same value. 
-		 * ATTENTION: with the current modification is no longer true */
+		/**
+		 * We check that each of these collections of PMRs have the same value.
+		 * ATTENTION: with the current modification is no longer true
+		 */
 //		assert pmrValues.asMap().entrySet().stream()
 //				.allMatch((e) -> (e.getValue().stream().map(PairwiseMaxRegret::getPmrValue).distinct().count() == 1));
 		return pmrValues;
 	}
 
 	/**
-	 * @return For each alternative x the set of all its highest pairwise max regrets 
+	 * @return For each alternative x the set of all its highest pairwise max
+	 *         regrets
 	 */
-	public SetMultimap<Alternative, PairwiseMaxRegret> getHPmrValues(){
+	public SetMultimap<Alternative, PairwiseMaxRegret> getHPmrValues() {
 		final ImmutableSet<Alternative> alternatives = knowledge.getAlternatives();
 		final SetMultimap<Alternative, PairwiseMaxRegret> pmrValues = MultimapBuilder.hashKeys().linkedHashSetValues()
 				.build();
@@ -114,10 +114,10 @@ public class RegretComputer {
 			pmrValues.putAll(x, highestPairwiseMaxRegrets);
 		}
 		assert pmrValues.keySet().size() == alternatives.size();
-		
+
 		return pmrValues;
 	}
-	
+
 	private PairwiseMaxRegret getPmr(Alternative x, Alternative y, Map<Voter, Integer> ranksOfX,
 			SortedMultiset<Integer> multiSetOfRanksOfX) {
 		final int m = knowledge.getAlternatives().size();
@@ -136,8 +136,14 @@ public class RegretComputer {
 		}
 		final double pmr = knowledge.getConstraintsOnWeights().maximize(builder.build());
 //		assert (Math.pow(10, -1 * EPSILON_EXPONENT) > ConstraintsOnWeights.EPSILON);
-		final PairwiseMaxRegret pmrY = PairwiseMaxRegret.given(x, y, ranksOfX, ranksOfY,
-				knowledge.getConstraintsOnWeights().getLastSolution(), pmr);
+		PairwiseMaxRegret pmrY;
+		if (x.equals(y)) {
+			pmrY = PairwiseMaxRegret.given(x, y, ranksOfX, ranksOfX,
+					knowledge.getConstraintsOnWeights().getLastSolution(), 0);
+		} else {
+			pmrY = PairwiseMaxRegret.given(x, y, ranksOfX, ranksOfY,
+					knowledge.getConstraintsOnWeights().getLastSolution(), pmr);
+		}
 		return pmrY;
 	}
 

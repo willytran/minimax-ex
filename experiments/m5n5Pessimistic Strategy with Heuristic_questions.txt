@@ -1,104 +1,36 @@
 Pessimistic Strategy with Heuristic
 5 Voters 5 Alternatives 
 Run 0: 30 questions:
-Question{QuestionCommittee{λ=3, rank=1}}
-Question{QuestionVoter{voter=Voter{3}, a=1, b=5}}
-Question{QuestionCommittee{λ=2, rank=1}}
-Question{QuestionVoter{voter=Voter{3}, a=1, b=3}}
-Question{QuestionVoter{voter=Voter{3}, a=1, b=3}}
-Question{QuestionVoter{voter=Voter{3}, a=1, b=3}}
-Question{QuestionVoter{voter=Voter{3}, a=1, b=3}}
-Question{QuestionVoter{voter=Voter{3}, a=1, b=3}}
-Question{QuestionVoter{voter=Voter{3}, a=1, b=3}}
-Question{QuestionVoter{voter=Voter{3}, a=1, b=3}}
-Question{QuestionVoter{voter=Voter{3}, a=1, b=3}}
-Question{QuestionVoter{voter=Voter{3}, a=1, b=3}}
-Question{QuestionVoter{voter=Voter{3}, a=1, b=3}}
-Question{QuestionVoter{voter=Voter{3}, a=1, b=3}}
-Question{QuestionVoter{voter=Voter{3}, a=1, b=3}}
-Question{QuestionVoter{voter=Voter{3}, a=1, b=3}}
-Question{QuestionVoter{voter=Voter{3}, a=1, b=3}}
-Question{QuestionVoter{voter=Voter{3}, a=1, b=3}}
-Question{QuestionVoter{voter=Voter{3}, a=1, b=3}}
-Question{QuestionVoter{voter=Voter{3}, a=1, b=3}}
-Question{QuestionVoter{voter=Voter{3}, a=1, b=3}}
-Question{QuestionVoter{voter=Voter{3}, a=1, b=3}}
-Question{QuestionVoter{voter=Voter{3}, a=1, b=3}}
-Question{QuestionVoter{voter=Voter{3}, a=1, b=3}}
-Question{QuestionVoter{voter=Voter{3}, a=1, b=3}}
-Question{QuestionVoter{voter=Voter{3}, a=1, b=3}}
-Question{QuestionVoter{voter=Voter{3}, a=1, b=3}}
-Question{QuestionVoter{voter=Voter{3}, a=1, b=3}}
-Question{QuestionVoter{voter=Voter{3}, a=1, b=3}}
-Question{QuestionVoter{voter=Voter{3}, a=1, b=3}}
-Questions to the voters: 28.0 Question to the committee: 2.0
-Duration 5.49900 seconds 
-
-Run 1: 30 questions:
-Question{QuestionVoter{voter=Voter{1}, a=1, b=3}}
-Question{QuestionVoter{voter=Voter{5}, a=1, b=3}}
+Question{QuestionVoter{voter=Voter{4}, a=1, b=3}}
+Question{QuestionVoter{voter=Voter{5}, a=1, b=5}}
 Question{QuestionVoter{voter=Voter{5}, a=1, b=2}}
 Question{QuestionVoter{voter=Voter{5}, a=1, b=4}}
-Question{QuestionVoter{voter=Voter{5}, a=5, b=1}}
+Question{QuestionVoter{voter=Voter{5}, a=1, b=3}}
 Question{QuestionCommittee{λ=3, rank=1}}
-Question{QuestionVoter{voter=Voter{1}, a=5, b=1}}
-Question{QuestionVoter{voter=Voter{1}, a=5, b=4}}
-Question{QuestionVoter{voter=Voter{1}, a=5, b=2}}
-Question{QuestionVoter{voter=Voter{1}, a=5, b=3}}
-Question{QuestionCommittee{λ=2, rank=1}}
-Question{QuestionCommittee{λ=3, rank=2}}
-Question{QuestionVoter{voter=Voter{3}, a=5, b=3}}
-Question{QuestionCommittee{λ=2, rank=2}}
-Question{QuestionVoter{voter=Voter{4}, a=5, b=1}}
-Question{QuestionVoter{voter=Voter{4}, a=5, b=2}}
-Question{QuestionVoter{voter=Voter{4}, a=5, b=2}}
-Question{QuestionVoter{voter=Voter{4}, a=5, b=2}}
-Question{QuestionVoter{voter=Voter{4}, a=5, b=2}}
-Question{QuestionVoter{voter=Voter{4}, a=5, b=2}}
-Question{QuestionVoter{voter=Voter{4}, a=5, b=2}}
-Question{QuestionVoter{voter=Voter{4}, a=5, b=2}}
-Question{QuestionVoter{voter=Voter{4}, a=5, b=2}}
-Question{QuestionVoter{voter=Voter{4}, a=5, b=2}}
-Question{QuestionVoter{voter=Voter{4}, a=5, b=2}}
-Question{QuestionVoter{voter=Voter{4}, a=5, b=2}}
-Question{QuestionVoter{voter=Voter{4}, a=5, b=2}}
-Question{QuestionVoter{voter=Voter{4}, a=5, b=2}}
-Question{QuestionVoter{voter=Voter{4}, a=5, b=2}}
-Question{QuestionVoter{voter=Voter{4}, a=5, b=2}}
-Questions to the voters: 26.0 Question to the committee: 4.0
-Duration 3.11000 seconds 
-
-Run 2: 30 questions:
-Question{QuestionVoter{voter=Voter{1}, a=1, b=3}}
+Question{QuestionVoter{voter=Voter{4}, a=1, b=2}}
 Question{QuestionVoter{voter=Voter{1}, a=1, b=2}}
-Question{QuestionVoter{voter=Voter{1}, a=1, b=4}}
 Question{QuestionVoter{voter=Voter{1}, a=1, b=5}}
-Question{QuestionCommittee{λ=3, rank=1}}
-Question{QuestionCommittee{λ=2, rank=1}}
-Question{QuestionCommittee{λ=3, rank=2}}
-Question{QuestionCommittee{λ=2, rank=2}}
-Question{QuestionVoter{voter=Voter{2}, a=1, b=5}}
+Question{QuestionVoter{voter=Voter{5}, a=2, b=5}}
 Question{QuestionVoter{voter=Voter{2}, a=1, b=4}}
-Question{QuestionVoter{voter=Voter{2}, a=1, b=3}}
-Question{QuestionVoter{voter=Voter{2}, a=1, b=2}}
+Question{QuestionVoter{voter=Voter{3}, a=1, b=4}}
 Question{QuestionVoter{voter=Voter{4}, a=1, b=4}}
 Question{QuestionVoter{voter=Voter{4}, a=1, b=5}}
-Question{QuestionVoter{voter=Voter{4}, a=1, b=5}}
-Question{QuestionVoter{voter=Voter{4}, a=1, b=5}}
-Question{QuestionVoter{voter=Voter{4}, a=1, b=5}}
-Question{QuestionVoter{voter=Voter{4}, a=1, b=5}}
-Question{QuestionVoter{voter=Voter{4}, a=1, b=5}}
-Question{QuestionVoter{voter=Voter{4}, a=1, b=5}}
-Question{QuestionVoter{voter=Voter{4}, a=1, b=5}}
-Question{QuestionVoter{voter=Voter{4}, a=1, b=5}}
-Question{QuestionVoter{voter=Voter{4}, a=1, b=5}}
-Question{QuestionVoter{voter=Voter{4}, a=1, b=5}}
-Question{QuestionVoter{voter=Voter{4}, a=1, b=5}}
-Question{QuestionVoter{voter=Voter{4}, a=1, b=5}}
-Question{QuestionVoter{voter=Voter{4}, a=1, b=5}}
-Question{QuestionVoter{voter=Voter{4}, a=1, b=5}}
-Question{QuestionVoter{voter=Voter{4}, a=1, b=5}}
-Question{QuestionVoter{voter=Voter{4}, a=1, b=5}}
-Questions to the voters: 26.0 Question to the committee: 4.0
-Duration 2.89400 seconds 
+Question{QuestionCommittee{λ=4, rank=1}}
+Question{QuestionVoter{voter=Voter{5}, a=2, b=4}}
+Question{QuestionVoter{voter=Voter{5}, a=2, b=3}}
+Question{QuestionVoter{voter=Voter{3}, a=1, b=3}}
+Question{QuestionVoter{voter=Voter{1}, a=1, b=3}}
+Question{QuestionVoter{voter=Voter{1}, a=1, b=3}}
+Question{QuestionVoter{voter=Voter{3}, a=1, b=3}}
+Question{QuestionCommittee{λ=9/2, rank=1}}
+Question{QuestionVoter{voter=Voter{2}, a=1, b=3}}
+Question{QuestionCommittee{λ=19/4, rank=1}}
+Question{QuestionCommittee{λ=3, rank=2}}
+Question{QuestionVoter{voter=Voter{1}, a=1, b=3}}
+Question{QuestionVoter{voter=Voter{1}, a=1, b=3}}
+Question{QuestionVoter{voter=Voter{1}, a=1, b=3}}
+Question{QuestionVoter{voter=Voter{1}, a=1, b=3}}
+Question{QuestionVoter{voter=Voter{1}, a=1, b=3}}
+Questions to the voters: 25.0 Question to the committee: 5.0
+Duration 5.47500 seconds 
 
