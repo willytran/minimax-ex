@@ -60,14 +60,14 @@ public class XPRunner {
 
 		root = Paths.get("").toAbsolutePath() + "/experiments/";
 
-		int minQuestions = 30;
-		int maxQuestions = 30;
-		int runs = 1;
+		int minQuestions = 10;
+		int maxQuestions = 15;
+		int runs = 10;
 
 		// for on m and n
 		n = 5;
 		m = 5;
-		StrategyType st = StrategyType.PESSIMISTIC_HEURISTIC;
+		StrategyType st = StrategyType.PESSIMISTIC_MAX;
 
 		serialExp(m, n, st, minQuestions, maxQuestions, runs);
 	}
@@ -251,7 +251,7 @@ public class XPRunner {
 					context.getWeights().getWeightAtRank(m - 1) / 2 * n);
 			break;
 		case PESSIMISTIC_HEURISTIC:
-			strategy = StrategyPessimisticHeuristic.build(knowledge, AggOps.AVG);
+			strategy = StrategyPessimisticHeuristic.build(knowledge, AggOps.MAX);
 			break;
 		case RANDOM:
 			strategy = StrategyRandom.build(knowledge);
@@ -283,8 +283,6 @@ public class XPRunner {
 			Question q;
 			try {
 				q = strategy.nextQuestion();
-				System.out.println(knowledge);
-				System.out.println(trueWinners.get(trueWinScore));
 				bwQst.write(q.toString() + "\n");
 				if (q.getType() == QuestionType.COMMITTEE_QUESTION) {
 					qstCom++;

@@ -94,29 +94,26 @@ public class StrategyPessimisticHeuristic implements Strategy {
 
 		questions = selectQuestions();
 		checkArgument(!questions.isEmpty(), "No question to ask about weights or voters.");
-		
+
 		Question nextQ = questions.iterator().next();
 		double minScore = getScore(nextQ);
 		nextQuestions = new LinkedList<>();
 		nextQuestions.add(nextQ);
-		
+
 		for (Question q : questions) {
 			double score = getScore(q);
-			System.out.print(q+ ": "+score+"   ");
 			if (score < minScore) {
 				nextQ = q;
 				minScore = score;
 				nextQuestions.clear();
 				nextQuestions.add(nextQ);
-			}else {
-				if(Math.abs(score-minScore)<=0.3 && !nextQuestions.contains(q)) {
+			} else {
+				if (score == minScore && !nextQuestions.contains(q)) {
 					nextQuestions.add(q);
 				}
 			}
 		}
-		System.out.println("\n"+nextQuestions);
 		int randomPos = (int) (nextQuestions.size() * Math.random());
-		System.out.println(nextQuestions.get(randomPos)+ "\n\n");
 		return nextQuestions.get(randomPos);
 	}
 
@@ -181,7 +178,7 @@ public class StrategyPessimisticHeuristic implements Strategy {
 				B.retainAll(vpref.predecessors(yBar));
 				questionable.removeAll(B);
 			} else {
-				if (vpref.hasEdgeConnecting(xStar, yBar)) {
+				if (vpref.hasEdgeConnecting(yBar, xStar)) {
 					questionable = new HashSet<>(vpref.nodes());
 					questionable.remove(xStar);
 					questionable.remove(yBar);
