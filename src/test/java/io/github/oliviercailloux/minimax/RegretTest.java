@@ -22,6 +22,8 @@ import io.github.oliviercailloux.y2018.j_voting.Voter;
 
 public class RegretTest {
 
+	public static final double EPSILON = 1e-4;
+	
 	@Test
 	void testMMR() throws Exception {
 		Voter v1 = new Voter(1);
@@ -101,9 +103,9 @@ public class RegretTest {
 		pref3.putEdge(b, d);
 
 		/** changed the visibility of the method in class Regret **/
-		assertEquals(-1d,Regret.getPMR(a, b, knowledge));
-		assertEquals(0d,Regret.getPMR(a, c, knowledge));
-		assertEquals(0d,Regret.getPMR(a, d, knowledge));
+		assertEquals(-1d,Regret.getPMR(a, b, knowledge), EPSILON);
+		assertEquals(0d,Regret.getPMR(a, c, knowledge), EPSILON);
+		assertEquals(0d,Regret.getPMR(a, d, knowledge), EPSILON);
 	}
 
 	@Test

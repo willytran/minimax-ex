@@ -33,7 +33,7 @@ import io.github.oliviercailloux.y2018.j_voting.Voter;
 
 /** Uses the Regret to get the next question. **/
 
-public class StrategyMiniMax implements Strategy {
+public class StrategyPessimistic implements Strategy {
 
 	private PrefKnowledge knowledge;
 	public boolean profileCompleted;
@@ -44,38 +44,35 @@ public class StrategyMiniMax implements Strategy {
 	private static List<Question> nextQuestions;
 	private static RegretComputer regretComputer;
 	
-	@SuppressWarnings("unused")
-	private static final Logger LOGGER = LoggerFactory.getLogger(StrategyMiniMax.class);
+	private static final Logger LOGGER = LoggerFactory.getLogger(StrategyPessimistic.class);
 
-	public static StrategyMiniMax build(PrefKnowledge knowledge) {
+	public static StrategyPessimistic build(PrefKnowledge knowledge) {
 		op = AggOps.MAX;
-		return new StrategyMiniMax(knowledge);
+		return new StrategyPessimistic(knowledge);
 	}
 
-	public static StrategyMiniMax build(PrefKnowledge knowledge, AggOps operator) {
+	public static StrategyPessimistic build(PrefKnowledge knowledge, AggOps operator) {
 		checkArgument(!operator.equals(AggOps.WEIGHTED_AVERAGE));
 		op = operator;
-		return new StrategyMiniMax(knowledge);
+		return new StrategyPessimistic(knowledge);
 	}
 
-	public static StrategyMiniMax build(PrefKnowledge knowledge, AggOps operator, double w_1, double w_2) {
+	public static StrategyPessimistic build(PrefKnowledge knowledge, AggOps operator, double w_1, double w_2) {
 		checkArgument(operator.equals(AggOps.WEIGHTED_AVERAGE));
 		checkArgument(w_1 > 0);
 		checkArgument(w_2 > 0);
 		op = operator;
 		w1 = w_1;
 		w2 = w_2;
-		return new StrategyMiniMax(knowledge);
+		return new StrategyPessimistic(knowledge);
 	}
 
-	private StrategyMiniMax(PrefKnowledge knowledge) {
+	private StrategyPessimistic(PrefKnowledge knowledge) {
 		this.knowledge = knowledge;
 		profileCompleted = false;
+		LOGGER.info("");
 	}
 
-	public void setRounder(Rounder r) {
-		regretComputer.setRounder(r);
-	}
 	
 	@Override
 	public Question nextQuestion() {

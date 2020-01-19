@@ -43,7 +43,6 @@ public class StrategyTwoPhasesTau implements Strategy {
 	private static int nbVotQuest;
 	private static int m;
 
-	@SuppressWarnings("unused")
 	private static final Logger LOGGER = LoggerFactory.getLogger(StrategyTwoPhasesTau.class);
 
 	public static StrategyTwoPhasesTau build(PrefKnowledge knowledge, int nbCommitteeQuestions, int nbVotersQuestions) {

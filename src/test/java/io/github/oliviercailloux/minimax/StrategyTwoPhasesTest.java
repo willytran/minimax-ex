@@ -30,12 +30,12 @@ public class StrategyTwoPhasesTest {
 	void testTenAlts() {
 		final PrefKnowledge k = PrefKnowledge.given(Generator.getAlternatives(10), Generator.getVoters(2));
 		final StrategyTwoPhases s = StrategyTwoPhases.build(k);
-		final StrategyMiniMax s2 = StrategyMiniMax.build(k);
+		final StrategyPessimistic s2 = StrategyPessimistic.build(k);
 		for (int i = 0; i < k.getAlternatives().size() - 2; i++) {
 			assertEquals(QuestionType.COMMITTEE_QUESTION, s.nextQuestion().getType());
 		}
 		s2.nextQuestion();
-		List<Question> next = StrategyMiniMax.getNextQuestions();
+		List<Question> next = StrategyPessimistic.getNextQuestions();
 		assertTrue(next.contains(s.nextQuestion()));
 	}
 

@@ -87,6 +87,7 @@ public class ConstraintsOnWeights {
 	public static ConstraintsOnWeights copyOf(ConstraintsOnWeights cw) {
 		ConstraintsOnWeights c = new ConstraintsOnWeights(cw.getM());
 		c.builder = MPBuilder.copyOf(cw.builder);
+		c.setConvexityConstraint();
 		return c;
 	}
 

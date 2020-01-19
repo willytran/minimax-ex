@@ -39,7 +39,6 @@ public class StrategyTwoPhases implements Strategy {
 	private static List<QuestionCommittee> committeeQuestions;
 	private static Iterator<QuestionCommittee> i;
 
-	@SuppressWarnings("unused")
 	private static final Logger LOGGER = LoggerFactory.getLogger(StrategyTwoPhases.class);
 
 	public static StrategyTwoPhases build(PrefKnowledge knowledge) {
@@ -64,6 +63,7 @@ public class StrategyTwoPhases implements Strategy {
 	}
 
 	private StrategyTwoPhases(PrefKnowledge knowledge) {
+		LOGGER.info("");
 		this.knowledge = knowledge;
 		profileCompleted = false;
 		committeeQuestions = new LinkedList<>();

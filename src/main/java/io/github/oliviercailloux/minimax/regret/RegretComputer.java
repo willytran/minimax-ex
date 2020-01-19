@@ -29,7 +29,6 @@ import io.github.oliviercailloux.y2018.j_voting.Voter;
 
 public class RegretComputer {
 	private final PrefKnowledge knowledge;
-	private Rounder rounder;
 
 	/**
 	 * TODO Its value must be at least the tolerance that the solver admits. Link it
@@ -39,11 +38,6 @@ public class RegretComputer {
 
 	public RegretComputer(PrefKnowledge knowledge) {
 		this.knowledge = requireNonNull(knowledge);
-		this.rounder = Rounder.noRounding();
-	}
-
-	public void setRounder(Rounder r) {
-		rounder = r;
 	}
 
 	ImmutableSet<PairwiseMaxRegret> getHighestPairwiseMaxRegrets(Alternative x) {
@@ -53,7 +47,9 @@ public class RegretComputer {
 		final ImmutableSortedMultiset<Integer> multiSetOfRanksOfX = ImmutableSortedMultiset.copyOf(ranksOfX.values());
 
 		final SetMultimap<Double, PairwiseMaxRegret> pmrs = MultimapBuilder.treeKeys().linkedHashSetValues().build();
-		for (Alternative y : knowledge.getAlternatives()) {
+		HashSet<Alternative> adv = new HashSet<>(knowledge.getAlternatives());
+		adv.remove(x);
+		for (Alternative y : adv) {
 			final PairwiseMaxRegret pmrY = getPmr(x, y, ranksOfX, multiSetOfRanksOfX);
 			pmrs.put(pmrY.getPmrValue(), pmrY);
 		}
@@ -106,6 +102,22 @@ public class RegretComputer {
 		return pmrValues;
 	}
 
+	/**
+	 * @return For each alternative x the set of all its highest pairwise max regrets 
+	 */
+	public SetMultimap<Alternative, PairwiseMaxRegret> getHPmrValues(){
+		final ImmutableSet<Alternative> alternatives = knowledge.getAlternatives();
+		final SetMultimap<Alternative, PairwiseMaxRegret> pmrValues = MultimapBuilder.hashKeys().linkedHashSetValues()
+				.build();
+		for (Alternative x : alternatives) {
+			final ImmutableSet<PairwiseMaxRegret> highestPairwiseMaxRegrets = getHighestPairwiseMaxRegrets(x);
+			pmrValues.putAll(x, highestPairwiseMaxRegrets);
+		}
+		assert pmrValues.keySet().size() == alternatives.size();
+		
+		return pmrValues;
+	}
+	
 	private PairwiseMaxRegret getPmr(Alternative x, Alternative y, Map<Voter, Integer> ranksOfX,
 			SortedMultiset<Integer> multiSetOfRanksOfX) {
 		final int m = knowledge.getAlternatives().size();
@@ -124,13 +136,12 @@ public class RegretComputer {
 		}
 		final double pmr = knowledge.getConstraintsOnWeights().maximize(builder.build());
 //		assert (Math.pow(10, -1 * EPSILON_EXPONENT) > ConstraintsOnWeights.EPSILON);
-		final double pmrRounded = rounder.round(pmr);
 		final PairwiseMaxRegret pmrY = PairwiseMaxRegret.given(x, y, ranksOfX, ranksOfY,
-				knowledge.getConstraintsOnWeights().getLastSolution(), pmrRounded);
+				knowledge.getConstraintsOnWeights().getLastSolution(), pmr);
 		return pmrY;
 	}
 
-	private ImmutableMap<Voter, Integer> getWorstRanksOfX(Alternative x) {
+	public ImmutableMap<Voter, Integer> getWorstRanksOfX(Alternative x) {
 		final ImmutableMap<Voter, Integer> ranksOfX;
 		final ImmutableMap.Builder<Voter, Integer> ranksOfXBuilder = ImmutableMap.builder();
 		for (Voter voter : knowledge.getVoters()) {
@@ -153,7 +164,7 @@ public class RegretComputer {
 		return rankX;
 	}
 
-	private ImmutableMap<Voter, Integer> getBestRanksOfY(Alternative x, Alternative y) {
+	public ImmutableMap<Voter, Integer> getBestRanksOfY(Alternative x, Alternative y) {
 		final ImmutableMap<Voter, Integer> ranksOfY;
 		final ImmutableMap.Builder<Voter, Integer> ranksOfYBuilder = ImmutableMap.builder();
 		for (Voter voter : knowledge.getVoters()) {

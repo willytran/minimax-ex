@@ -34,6 +34,9 @@ public class PairwiseMaxRegret {
 		this.pmrValue = pmrValue;
 		checkArgument(Math.abs(pmrValue - (getScore(ranksOfY, weights) - getScore(ranksOfX, weights))) < IMPRECISION_TOLERATED);
 		if (x.equals(y)) {
+			if(!ranksOfX.equals(ranksOfY)) {
+				System.out.println(ranksOfX + "  ranks  "+ ranksOfY);
+			}
 			checkArgument(ranksOfX.equals(ranksOfY));
 			checkArgument(pmrValue == 0d);
 		}

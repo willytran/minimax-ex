@@ -27,20 +27,19 @@ import io.github.oliviercailloux.minimax.elicitation.QuestionCommittee;
 import io.github.oliviercailloux.y2018.j_voting.Alternative;
 import io.github.oliviercailloux.y2018.j_voting.Voter;
 
-public class StrategyExtremeCompletion implements Strategy {
+public class StrategyTaus implements Strategy {
 	private PrefKnowledge knowledge;
 	private static Voter uncertainVoter;
 	private static PSRWeights wMin;
 	private static PSRWeights wBar;
 	
-	@SuppressWarnings("unused")
-	private static final Logger LOGGER = LoggerFactory.getLogger(StrategyExtremeCompletion.class);
+	private static final Logger LOGGER = LoggerFactory.getLogger(StrategyTaus.class);
 
-	public static StrategyExtremeCompletion build(PrefKnowledge knowledge) {
-		return new StrategyExtremeCompletion(knowledge);
+	public static StrategyTaus build(PrefKnowledge knowledge) {
+		return new StrategyTaus(knowledge);
 	}
 
-	private StrategyExtremeCompletion(PrefKnowledge knowledge) {
+	private StrategyTaus(PrefKnowledge knowledge) {
 		this.knowledge = knowledge;
 		LOGGER.info("INFO"+System.currentTimeMillis());
 	}

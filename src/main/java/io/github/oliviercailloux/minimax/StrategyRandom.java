@@ -31,7 +31,6 @@ public class StrategyRandom implements Strategy {
 
 	public boolean profileCompleted;
 
-	@SuppressWarnings("unused")
 	private static final Logger LOGGER = LoggerFactory.getLogger(StrategyRandom.class);
 
 	public static StrategyRandom build(PrefKnowledge knowledge) {
