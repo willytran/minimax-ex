@@ -1,5 +1,7 @@
 package io.github.oliviercailloux.minimax;
 
+import static com.google.common.base.Preconditions.checkArgument;
+
 import java.io.BufferedWriter;
 import java.io.File;
 import java.io.FileWriter;
@@ -9,14 +11,17 @@ import java.nio.file.Paths;
 import java.text.DecimalFormat;
 import java.text.NumberFormat;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.HashSet;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
 
 import org.apfloat.Aprational;
 
 import com.google.common.collect.ImmutableMap;
+import com.google.common.collect.SetMultimap;
 import com.google.common.graph.MutableGraph;
 import com.google.common.math.Stats;
 
@@ -29,219 +34,109 @@ import io.github.oliviercailloux.minimax.elicitation.Question;
 import io.github.oliviercailloux.minimax.elicitation.QuestionCommittee;
 import io.github.oliviercailloux.minimax.elicitation.QuestionType;
 import io.github.oliviercailloux.minimax.elicitation.QuestionVoter;
+import io.github.oliviercailloux.minimax.regret.PairwiseMaxRegret;
+import io.github.oliviercailloux.minimax.regret.RegretComputer;
 import io.github.oliviercailloux.minimax.utils.AggregationOperator.AggOps;
 import io.github.oliviercailloux.minimax.utils.Generator;
 import io.github.oliviercailloux.minimax.utils.Rounder;
+import io.github.oliviercailloux.minimax.utils.Statistic;
 import io.github.oliviercailloux.y2018.j_voting.Alternative;
 import io.github.oliviercailloux.y2018.j_voting.Voter;
 
 public class XPRunner {
 
-	static Set<Alternative> alternatives;
-	static Set<Voter> voters;
-	static Oracle context;
-	static PrefKnowledge knowledge;
-	static double[] sumOfRanks;
-	static int k; // number of questions
-	static List<Alternative> winners;
-	static List<Alternative> trueWinners;
-	static double trueWinScore;
-	static double avgloss;
-	static double regret;
-	static List<Double> avglosses;
-	static List<Double> regrets;
-//	static Rounder rounder;
+	static BufferedWriter bwStats;
+	static BufferedWriter bwQst;
 
-	@SuppressWarnings("unused")
+	static String root;
+
+	// for strategyTwoPhasesTau
+	static int nbCommitteeQuestions = 10;
+	static int nbVotersQuestions = 20;
+	static boolean committeeFirst = true;
+
 	public static void main(String[] args) throws IOException {
-		int n, m;
-		String title;
-		String root = Paths.get("").toAbsolutePath() + "/experiments/";
+		int n = 0, m = 0;
 
-		run(20, 100, root, StrategyType.TWO_PHASES_TAU);
-//		run(3, 3, root, StrategyType.EXTREME_COMPLETION);
+		root = Paths.get("").toAbsolutePath() + "/experiments/";
 
-//	    m=6;n=4;
-//	    System.out.println(m+" "+n);
-//	    title = root + "m" + m + "n" + n + "MiniMax_WeightedAvg";
-//	    run(m, n, title, StrategyType.MINIMAX_WEIGHTED_AVG);
+		int minQuestions = 30;
+		int maxQuestions = 30;
+		int runs = 3;
 
-//		NumberFormat formatter = new DecimalFormat("#0.00");
-//		BufferedWriter b = initFile(root+"TimeRegret");
-//		b.write("Average time of computing the Regret over 100 runs after m+n questions \n");
-//		for (m = 5; m <= 25; m += 5) {
-//			for (n = 5; n <= 25; n += 5) {
-//				b.write("m="+m+" n="+n+" "+ formatter.format(runRegret(m,n))+ " milliseconds \n");
-//				System.out.println("m="+m+" n="+n);
-//				b.flush();
-//			}
-//		}
-//		b.close();
+		// for on m and n
+		n = 5;
+		m = 5;
+		StrategyType st = StrategyType.PESSIMISTIC_HEURISTIC;
 
-//		run(4, 6, "test", StrategyType.CURRENT_SOLUTION);
-
-//		for (m =5; m < 7; m++) {
-//			for (n = 3; n < 7; n++) {
-//
-////				title = root + "m" + m + "n" + n + "MiniMax_Min";
-////				run(m, n, title, StrategyType.MINIMAX_MIN);
-////				title = root + "m" + m + "n" + n + "MiniMax_Avg";
-////				run(m, n, title, StrategyType.MINIMAX_AVG);
-////				title = root + "m" + m + "n" + n + "MiniMax_WeightedAvg";
-////				run(m, n, title, StrategyType.MINIMAX_WEIGHTED_AVG);
-////				title = root + "m" + m + "n" + n + "Random";
-////				run(m, n, title, StrategyType.RANDOM);
-////				System.out.println(m +" "+ n);
-////				title = root + "m" + m + "n" + n + "TwoPhases";
-////				run(m, n, title, StrategyType.TWO_PHASES);
-//			}
-//		}
+		serialExp(m, n, st, minQuestions, maxQuestions, runs);
 	}
 
-	private static void run(int m, int n, String root, StrategyType st) throws IOException {
-		final long startTime = System.currentTimeMillis();
-		int maxQuestions = 20;
-		int runs = 1;
+	/**
+	 * It executes (maxQuestions-minQuestions)*runs experiments: Starting with zero
+	 * knowledge, it asks minQuestions, it saves the final regret and repeat this
+	 * process for a number of times specified by the variable "runs". At the end,
+	 * it computes the avg of the statistics and increases the number of questions
+	 * that can be asked until maxQuestions.
+	 * 
+	 * A run with a fixed number of questions can be performed by using
+	 * minQuestions=maxQuestions 
+	 * 
+	 * A single run can be performed by using runs=1
+	 */
+	private static void serialExp(int m, int n, StrategyType st, int minQuestions, int maxQuestions, int runs)
+			throws IOException {
+		checkArgument(minQuestions <= maxQuestions);
+		NumberFormat formatter = new DecimalFormat("#0.00000");
+		NumberFormat formatterPerc = new DecimalFormat("#0.0%");
 
-		// for strategyTwoPhasesTau
-		int nbCommitteeQuestions = 40;
-		int nbVotersQuestions = 10;
-		boolean committeeFirst = true;
+		createFiles(st, m, n, maxQuestions, runs);
 
-//		rounder = Rounder.given(RoundingMode.HALF_UP, 6); // if we use less decimal places sometimes is not able
-															// to find a convex sequence
-		@SuppressWarnings("resource")
-		BufferedWriter b = initFile(root + "m" + m + "n" + n + st + "_stats");
-		b.write(st + "\n");
-		b.write(n + " Voters " + m + " Alternatives \n");
-		b.write(maxQuestions + " Questions for " + runs + " runs \n");
-		b.flush();
-
-		@SuppressWarnings("resource")
-		BufferedWriter b1 = initFile(root + "m" + m + "n" + n + st + "_questions");
-		b1.write(st + "\n");
-		b1.write(n + " Voters " + m + " Alternatives \n");
-		b1.flush();
-
-		int qstVot = 0;
-		int qstCom = 0;
+		ArrayList<Double> questionSeriesMean = new ArrayList<>();
 		ArrayList<Double> regretSeriesMean = new ArrayList<>();
 		ArrayList<Double> avgLossSeriesMean = new ArrayList<>();
 		ArrayList<Double> regretSeriesSD = new ArrayList<>();
 		ArrayList<Double> avgLossSeriesSD = new ArrayList<>();
 		int regret2 = -1, regret4 = -1, regret8 = -1;
 		int avgLoss2 = -1, avgLoss4 = -1, avgLoss8 = -1;
-		double initialRegret = 1;
+
+		double initialRegret = n; // with 0 information the initial max regret is when s(y)=1*n and s(x)=0*n
 		double initialAvgLoss = 1;
-		for (int nbquest = 1; nbquest <= maxQuestions; nbquest++) {
-			b1.write(nbquest + " questions: \n");
 
-			avglosses = new LinkedList<>();
-			regrets = new LinkedList<>();
-			for (int j = 0; j < runs; j++) {
-				alternatives = new HashSet<>();
-				for (int i = 1; i <= m; i++) {
-					alternatives.add(new Alternative(i));
-				}
-				voters = new HashSet<>();
-				for (int i = 1; i <= n; i++) {
-					voters.add(new Voter(i));
-				}
-				context = Oracle.build(ImmutableMap.copyOf(Generator.genProfile(n, m)),
-						Generator.genWeights(m));
-				knowledge = PrefKnowledge.given(alternatives, voters);
-//				knowledge.setRounder(rounder);
-				Strategy strategy = null;
-				switch (st) {
-				case MINIMAX_MIN:
-					strategy = StrategyMiniMax.build(knowledge, AggOps.MIN);
-					break;
-				case MINIMAX_AVG:
-					strategy = StrategyMiniMax.build(knowledge, AggOps.AVG);
-					break;
-				case MINIMAX_WEIGHTED_AVG:
-					strategy = StrategyMiniMax.build(knowledge, AggOps.WEIGHTED_AVERAGE, 1d,
-							context.getWeights().getWeightAtRank(m - 1) / 2 * n);
-					break;
-				case RANDOM:
-					strategy = StrategyRandom.build(knowledge);
-					break;
-				case TWO_PHASES:
-					strategy = StrategyTwoPhases.build(knowledge, AggOps.WEIGHTED_AVERAGE, 1d,
-							context.getWeights().getWeightAtRank(m - 1) / 2 * n);
-					break;
-				case TWO_PHASES_TAU:
-					strategy = StrategyTwoPhasesTau.build(knowledge, nbCommitteeQuestions, nbVotersQuestions,
-							committeeFirst);
-					break;
-				case TWO_PHASES_RANDOM:
-					strategy = StrategyTwoPhasesRandom.build(knowledge, nbCommitteeQuestions, nbVotersQuestions,
-							committeeFirst);
-					break;
-				case EXTREME_COMPLETION:
-					strategy = StrategyExtremeCompletion.build(knowledge);
-					break;
-				default:
-					throw new IllegalStateException();
-				}
-				sumOfRanks = new double[m];
-				trueWinners = computeTrueWinners();
-				double qCom = 0, qVt = 0;
-				for (k = 1; k <= nbquest; k++) {
-					Question q;
-					try {
-						q = strategy.nextQuestion();
-						b1.write(q.toString() + "\n");
-						if (q.getType() == QuestionType.COMMITTEE_QUESTION) {
-							qstCom++;
-							qCom++;
-						} else {
-							qstVot++;
-							qVt++;
-						}
-						Answer a = context.getAnswer(q);
-						updateKnowledge(q, a);
-					} catch (Exception e) {
-						e.printStackTrace();
-						System.out.println(knowledge.toString());
-						break;
-					}
-				}
-				b1.write("Questions to the voters: " + qVt + " Question to the committee: " + qCom + "\n\n");
-				b1.flush();
-
-				winners = Regret.getMMRAlternatives(knowledge);
-				regret = Regret.getMMR();
-				regrets.add(regret);
-				List<Double> losses = new LinkedList<>();
-				for (Alternative alt : winners) {
-					double approxTrueScore = 0;
-					for (VoterStrictPreference vsp : context.getProfile().values()) {
-						int rank = vsp.asStrictPreference().getAlternativeRank(alt);
-						approxTrueScore += context.getWeights().getWeightAtRank(rank);
-					}
-					losses.add(trueWinScore - approxTrueScore);
-				}
-				avgloss = 0;
-				for (double loss : losses) {
-					avgloss += loss;
-				}
-				avgloss = avgloss / losses.size();
-				avglosses.add(avgloss);
+		for (int nbquest = minQuestions; nbquest <= maxQuestions; nbquest++) {
+			List<Double> avglosses = new LinkedList<>();
+			List<Double> regrets = new LinkedList<>();
+			List<Double> percVotQuest = new LinkedList<>();
+			Statistic stat;
+			for (int run = 0; run < runs; run++) {
+				bwQst.write("Run " + run + ": ");
+				bwQst.flush();
+				stat = run(m, n, st, nbquest);
+				regrets.add(stat.getRegret());
+				avglosses.add(stat.getAvgLoss());
+				percVotQuest.add(stat.getPercentageQstVoters());
+				bwQst.write("Duration " + formatter.format(stat.getTime() / 1000d) + " seconds \n\n");
+				bwQst.flush();
 			}
+			Stats percQuest = Stats.of(percVotQuest);
+			double percQstMean = percQuest.mean();
+
 			Stats regretStats = Stats.of(regrets);
 			double regretMean = regretStats.mean();
 			double regretSD = regretStats.populationStandardDeviation();
+
 			Stats lossStats = Stats.of(avglosses);
 			double lossMean = lossStats.mean();
 			double lossSD = lossStats.populationStandardDeviation();
+
+			questionSeriesMean.add(percQstMean);
 			regretSeriesMean.add(regretMean);
 			avgLossSeriesMean.add(lossMean);
 			regretSeriesSD.add(regretSD);
 			avgLossSeriesSD.add(lossSD);
 
 			if (nbquest == 1) {
-				initialRegret = regretMean;
+				assert initialRegret == regretMean;
 				initialAvgLoss = lossMean;
 			}
 			if (regretMean <= (initialRegret / 2) && regret2 < 0) {
@@ -263,45 +158,175 @@ public class XPRunner {
 				avgLoss8 = nbquest;
 			}
 		}
-		b.write("Mean of Regret reduced by half in " + regret2 + " questions \n");
-		b.write("Mean of Regret reduced by four in " + regret4 + " questions \n");
-		b.write("Mean of Regret reduced by eight in " + regret8 + " questions \n");
-		b.write("Mean of Average Loss reduced by half in " + avgLoss2 + " questions \n");
-		b.write("Mean of Average Loss reduced by four in " + avgLoss4 + " questions \n");
-		b.write("Mean of Average Loss reduced by eight in " + avgLoss8 + " questions \n");
-		b.flush();
+		bwStats.write("Mean of Regret reduced by half in " + regret2 + " questions \n");
+		bwStats.write("Mean of Regret reduced by four in " + regret4 + " questions \n");
+		bwStats.write("Mean of Regret reduced by eight in " + regret8 + " questions \n");
+		bwStats.write("Mean of Average Loss reduced by half in " + avgLoss2 + " questions \n");
+		bwStats.write("Mean of Average Loss reduced by four in " + avgLoss4 + " questions \n");
+		bwStats.write("Mean of Average Loss reduced by eight in " + avgLoss8 + " questions \n");
+		bwStats.flush();
 
-		b.write("k \t Mean of Regrets \n");
-		b.write("0 \t" + initialRegret + "\n");
-		for (int i = 1; i <= maxQuestions; i++) {
-			b.write(i + "\t" + regretSeriesMean.get(i - 1) + "\n");
+		bwStats.write("k \t Mean of Regrets \n");
+		bwStats.write("0 \t" + initialRegret + "\n");
+		for (int i = 0; i <= maxQuestions - minQuestions; i++) {
+			bwStats.write((minQuestions + i) + "\t" + regretSeriesMean.get(i) + "\n");
 		}
-		b.flush();
+		bwStats.flush();
 
-		b.write("k \t Mean of Average Losses \n");
-		b.write("0 \t" + initialAvgLoss + "\n");
-		for (int i = 1; i <= maxQuestions; i++) {
-			b.write(i + "\t" + avgLossSeriesMean.get(i - 1) + "\n");
+		bwStats.write("k \t Mean of Average Losses \n");
+		bwStats.write("0 \t" + initialAvgLoss + "\n");
+		for (int i = 0; i <= maxQuestions - minQuestions; i++) {
+			bwStats.write((minQuestions + i) + "\t" + avgLossSeriesMean.get(i) + "\n");
 		}
-		b.flush();
+		bwStats.flush();
 
-		b.write("k \t Standard Deviations of Regrets \n");
-		for (int i = 1; i <= maxQuestions; i++) {
-			b.write(i + "\t" + regretSeriesSD.get(i - 1) + "\n");
+		bwStats.write("k \t Standard Deviations of Regrets \n");
+		for (int i = 0; i <= maxQuestions - minQuestions; i++) {
+			bwStats.write((minQuestions + i) + "\t" + regretSeriesSD.get(i) + "\n");
 		}
-		b.flush();
+		bwStats.flush();
 
-		b.write("k \t Standard Deviations of Average Losses \n");
-		for (int i = 1; i <= maxQuestions; i++) {
-			b.write(i + "\t" + regretSeriesSD.get(i - 1) + "\n");
+		bwStats.write("k \t Standard Deviations of Average Losses \n");
+		for (int i = 0; i <= maxQuestions - minQuestions; i++) {
+			bwStats.write((minQuestions + i) + "\t" + regretSeriesSD.get(i) + "\n");
 		}
-		NumberFormat formatter = new DecimalFormat("#0.00000");
-		b.write("Duration " + formatter.format((System.currentTimeMillis() - startTime) / 1000d) + " seconds \n");
-		b.write("Questions to the voters: " + qstVot + " Question to the committee: " + qstCom);
-		b.flush();
-		b.close();
-		b1.flush();
-		b1.close();
+
+		bwStats.write("k \t Percentage of Questions to the Voters \n");
+		for (int i = 0; i <= maxQuestions - minQuestions; i++) {
+			bwStats.write((minQuestions + i) + "\t" + formatterPerc.format(questionSeriesMean.get(i)) + "\n");
+		}
+
+		bwStats.flush();
+		bwStats.close();
+
+		bwQst.flush();
+		bwQst.close();
+
+	}
+
+	private static void createFiles(StrategyType st, int m, int n, int maxQuestions, int runs) throws IOException {
+		bwStats = initFile(root + "m" + m + "n" + n + st + "_stats");
+		bwStats.write(st + "\n");
+		bwStats.write(n + " Voters " + m + " Alternatives \n");
+		bwStats.write(maxQuestions + " Questions for " + runs + " runs \n");
+		bwStats.flush();
+
+		bwQst = initFile(root + "m" + m + "n" + n + st + "_questions");
+		bwQst.write(st + "\n");
+		bwQst.write(n + " Voters " + m + " Alternatives \n");
+		bwQst.flush();
+	}
+
+	private static Statistic run(int m, int n, StrategyType st, int nbquest) throws IOException {
+		bwQst.write(nbquest + " questions:" + "\n");
+		final long startTime = System.currentTimeMillis();
+
+		Set<Alternative> alternatives = new HashSet<>();
+		for (int i = 1; i <= m; i++) {
+			alternatives.add(new Alternative(i));
+		}
+		Set<Voter> voters = new HashSet<>();
+		for (int i = 1; i <= n; i++) {
+			voters.add(new Voter(i));
+		}
+		Oracle context = Oracle.build(ImmutableMap.copyOf(Generator.genProfile(n, m)), Generator.genWeights(m));
+		Map<Double, List<Alternative>> trueWinners = computeTrueWinners(context);
+		double trueWinScore = trueWinners.keySet().iterator().next();
+
+		PrefKnowledge knowledge = PrefKnowledge.given(alternatives, voters);
+
+		Strategy strategy = null;
+		switch (st) {
+		case PESSIMISTIC_MAX:
+			strategy = StrategyPessimistic.build(knowledge, AggOps.MAX);
+			break;
+		case PESSIMISTIC_MIN:
+			strategy = StrategyPessimistic.build(knowledge, AggOps.MIN);
+			break;
+		case PESSIMISTIC_AVG:
+			strategy = StrategyPessimistic.build(knowledge, AggOps.AVG);
+			break;
+		case PESSIMISTIC_WEIGHTED_AVG:
+			strategy = StrategyPessimistic.build(knowledge, AggOps.WEIGHTED_AVERAGE, 1d,
+					context.getWeights().getWeightAtRank(m - 1) / 2 * n);
+			break;
+		case PESSIMISTIC_HEURISTIC:
+			strategy = StrategyPessimisticHeuristic.build(knowledge, AggOps.AVG);
+			break;
+		case RANDOM:
+			strategy = StrategyRandom.build(knowledge);
+			break;
+		case TWO_PHASES:
+			strategy = StrategyTwoPhases.build(knowledge, AggOps.WEIGHTED_AVERAGE, 1d,
+					context.getWeights().getWeightAtRank(m - 1) / 2 * n);
+			break;
+		case TWO_PHASES_TAU:
+			strategy = StrategyTwoPhasesTau.build(knowledge, nbCommitteeQuestions, nbVotersQuestions, committeeFirst);
+			break;
+		case TWO_PHASES_RANDOM:
+			strategy = StrategyTwoPhasesRandom.build(knowledge, nbCommitteeQuestions, nbVotersQuestions,
+					committeeFirst);
+			break;
+		case TAU:
+			strategy = StrategyTaus.build(knowledge);
+			break;
+//		case MINIMAX_MIN_INC:
+//			strategy = StrategyMiniMaxIncr.build(knowledge);
+//			break;
+		default:
+			throw new IllegalStateException();
+		}
+
+		double qstVot = 0, qstCom = 0;
+
+		for (int k = 1; k <= nbquest; k++) {
+			Question q;
+			try {
+				q = strategy.nextQuestion();
+				bwQst.write(q.toString() + "\n");
+				if (q.getType() == QuestionType.COMMITTEE_QUESTION) {
+					qstCom++;
+				} else {
+					qstVot++;
+				}
+				Answer a = context.getAnswer(q);
+				knowledge = updateKnowledge(knowledge, q, a);
+			} catch (Exception e) {
+				e.printStackTrace();
+				System.out.println("ERROR " + knowledge.toString());
+				break;
+			}
+		}
+		bwQst.write("Questions to the voters: " + qstVot + " Question to the committee: " + qstCom + "\n");
+		bwQst.flush();
+
+		// compute the regret after nbquest questions
+		RegretComputer rc = new RegretComputer(knowledge);
+		SetMultimap<Alternative, PairwiseMaxRegret> mmrs = rc.getMinimalMaxRegrets();
+		Set<Alternative> winners = mmrs.keySet();
+		double regret = mmrs.get(mmrs.keySet().iterator().next()).iterator().next().getPmrValue();
+
+		// compute the avgloss of the winners
+		List<Double> losses = new LinkedList<>();
+		for (Alternative alt : winners) {
+			double approxTrueScore = 0;
+			for (VoterStrictPreference vsp : context.getProfile().values()) {
+				int rank = vsp.asStrictPreference().getAlternativeRank(alt);
+				approxTrueScore += context.getWeights().getWeightAtRank(rank);
+			}
+			losses.add(trueWinScore - approxTrueScore);
+		}
+		double avgloss = 0;
+		for (double loss : losses) {
+			avgloss += loss;
+		}
+		avgloss = avgloss / losses.size();
+		// compute the percentage of question to voters
+		double perc = qstVot / (qstVot + qstCom);
+
+		final long endTime = System.currentTimeMillis();
+
+		return Statistic.build(endTime - startTime, regret, avgloss, perc);
 	}
 
 	private static BufferedWriter initFile(String tfile) {
@@ -319,7 +344,7 @@ public class XPRunner {
 		return b;
 	}
 
-	private static void updateKnowledge(Question qt, Answer answ) {
+	private static PrefKnowledge updateKnowledge(PrefKnowledge knowledge, Question qt, Answer answ) {
 		switch (qt.getType()) {
 		case VOTER_QUESTION:
 			QuestionVoter qv = qt.getQuestionVoter();
@@ -361,20 +386,22 @@ public class XPRunner {
 		default:
 			throw new IllegalStateException();
 		}
+		return knowledge;
 	}
 
-	private static List<Alternative> computeTrueWinners() {
+	private static Map<Double, List<Alternative>> computeTrueWinners(Oracle context) {
+		int m = context.getAlternatives().size();
+		double[] sumOfRanks = new double[m];
 		List<Alternative> trueWin = new LinkedList<>();
-		for (int i = 0; i < alternatives.size(); i++) {
+		for (int i = 0; i < m; i++) {
 			Alternative a = new Alternative(i + 1);
 			double sum = 0;
-			for (Voter v : voters) {
+			for (Voter v : context.getProfile().keySet()) {
 				int rank = context.getProfile().get(v).asStrictPreference().getAlternativeRank(a);
 				sum += context.getWeights().getWeightAtRank(rank);
 			}
 			sumOfRanks[i] = sum;
 		}
-
 		double max = sumOfRanks[0];
 		trueWin.add(new Alternative(1));
 		for (int i = 1; i < sumOfRanks.length; i++) {
@@ -387,8 +414,9 @@ public class XPRunner {
 				trueWin.add(new Alternative(i + 1));
 			}
 		}
-		trueWinScore = max;
-		return trueWin;
+		Map<Double, List<Alternative>> tw = new HashMap<>();
+		tw.put(max, trueWin);
+		return tw;
 	}
 
 }
