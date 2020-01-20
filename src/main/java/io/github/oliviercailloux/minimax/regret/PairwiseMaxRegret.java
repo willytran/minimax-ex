@@ -48,8 +48,12 @@ public class PairwiseMaxRegret {
 	}
 
 	public static final Comparator<PairwiseMaxRegret> COMPARING_BY_VALUE = Comparator
-	.comparingDouble(PairwiseMaxRegret::getPmrValue);
-	private static final double IMPRECISION_TOLERATED = 1e-1;
+			.comparingDouble(PairwiseMaxRegret::getPmrValue);
+	/**
+	 * Useful when the pmr has been optained by computing, for example, (3 − 2) w1 +
+	 * (4 − 1) w2, and this differs slightly from (3 w1 + 4 w2) − (2 w1 + 1 w2).
+	 */
+	private static final double IMPRECISION_TOLERATED = 1e-8;
 	private Alternative x;
 
 	private Alternative y;
