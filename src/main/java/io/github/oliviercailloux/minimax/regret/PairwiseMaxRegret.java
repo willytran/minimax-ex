@@ -22,7 +22,42 @@ import io.github.oliviercailloux.y2018.j_voting.Voter;
  *
  */
 public class PairwiseMaxRegret {
+	public static double getScore(Map<Voter, Integer> ranks, PSRWeights weights) {
+		return ranks.values().stream().mapToDouble(weights::getWeightAtRank).sum();
+	}
+
+	public static double getScore(Alternative alternative, VoterStrictPreference v, PSRWeights weights) {
+		final int rank = v.getAlternativeRank(alternative);
+		return weights.getWeightAtRank(rank);
+	}
+
+	public static double getScore(Alternative alternative, Map<Voter, VoterStrictPreference> profile,
+			PSRWeights weights) {
+		return profile.values().stream().mapToDouble((v) -> getScore(alternative, v, weights)).sum();
+	}
+
+	public static PairwiseMaxRegret given(Alternative x, Alternative y, Map<Voter, Integer> ranksOfX,
+			Map<Voter, Integer> ranksOfY, PSRWeights weights) {
+		return new PairwiseMaxRegret(x, y, ranksOfX, ranksOfY, weights,
+				getScore(ranksOfY, weights) - getScore(ranksOfX, weights));
+	}
+
+	public static PairwiseMaxRegret given(Alternative x, Alternative y, Map<Voter, Integer> ranksOfX,
+			Map<Voter, Integer> ranksOfY, PSRWeights weights, double pmrValue) {
+		return new PairwiseMaxRegret(x, y, ranksOfX, ranksOfY, weights, pmrValue);
+	}
+
+	public static final Comparator<PairwiseMaxRegret> COMPARING_BY_VALUE = Comparator
+	.comparingDouble(PairwiseMaxRegret::getPmrValue);
+	private static final double IMPRECISION_TOLERATED = 1e-1;
 	private Alternative x;
+
+	private Alternative y;
+
+	private ImmutableMap<Voter, Integer> ranksOfX;
+	private ImmutableMap<Voter, Integer> ranksOfY;
+	private PSRWeights weights;
+	private double pmrValue;
 
 	private PairwiseMaxRegret(Alternative x, Alternative y, Map<Voter, Integer> ranksOfX, Map<Voter, Integer> ranksOfY,
 			PSRWeights weights, double pmrValue) {
@@ -38,15 +73,6 @@ public class PairwiseMaxRegret {
 			checkArgument(ranksOfX.equals(ranksOfY), ranksOfX + "  ranks  " + ranksOfY);
 			checkArgument(pmrValue == 0d);
 		}
-	}
-
-	public static double getScore(Map<Voter, Integer> ranks, PSRWeights weights) {
-		return ranks.values().stream().mapToDouble(weights::getWeightAtRank).sum();
-	}
-
-	public static double getScore(Alternative alternative, Map<Voter, VoterStrictPreference> profile,
-			PSRWeights weights) {
-		return profile.values().stream().mapToDouble((v) -> getScore(alternative, v, weights)).sum();
 	}
 
 	public Alternative getX() {
@@ -73,25 +99,6 @@ public class PairwiseMaxRegret {
 		return pmrValue;
 	}
 
-	public static double getScore(Alternative alternative, VoterStrictPreference v, PSRWeights weights) {
-		final int rank = v.getAlternativeRank(alternative);
-		return weights.getWeightAtRank(rank);
-	}
-
-	public static PairwiseMaxRegret given(Alternative x, Alternative y, Map<Voter, Integer> ranksOfX,
-			Map<Voter, Integer> ranksOfY, PSRWeights weights, double pmrValue) {
-		return new PairwiseMaxRegret(x, y, ranksOfX, ranksOfY, weights, pmrValue);
-	}
-
-	private Alternative y;
-	private ImmutableMap<Voter, Integer> ranksOfX;
-	private ImmutableMap<Voter, Integer> ranksOfY;
-	private PSRWeights weights;
-	private double pmrValue;
-	public static final Comparator<PairwiseMaxRegret> COMPARING_BY_VALUE = Comparator
-			.comparingDouble(PairwiseMaxRegret::getPmrValue);
-	private static final double IMPRECISION_TOLERATED = 1e-1;
-
 	@Override
 	public boolean equals(Object o2) {
 		if (!(o2 instanceof PairwiseMaxRegret)) {
@@ -111,11 +118,5 @@ public class PairwiseMaxRegret {
 	public String toString() {
 		return MoreObjects.toStringHelper(this).add("x", x).add("y", y).add("ranks x", ranksOfX)
 				.add("ranks y", ranksOfY).add("weights", weights).add("value", pmrValue).toString();
-	}
-
-	public static PairwiseMaxRegret given(Alternative x, Alternative y, Map<Voter, Integer> ranksOfX,
-			Map<Voter, Integer> ranksOfY, PSRWeights weights) {
-		return new PairwiseMaxRegret(x, y, ranksOfX, ranksOfY, weights,
-				getScore(ranksOfY, weights) - getScore(ranksOfX, weights));
 	}
 }
