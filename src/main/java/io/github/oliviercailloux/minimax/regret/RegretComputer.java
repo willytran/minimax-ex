@@ -1,11 +1,10 @@
 package io.github.oliviercailloux.minimax.regret;
 
+import static com.google.common.base.Preconditions.checkArgument;
 import static java.util.Objects.requireNonNull;
 
 import java.util.Collection;
 import java.util.HashSet;
-import java.util.Iterator;
-import java.util.LinkedList;
 import java.util.Map;
 import java.util.Set;
 import java.util.SortedMap;
@@ -23,18 +22,11 @@ import io.github.oliviercailloux.jlp.elements.SumTerms;
 import io.github.oliviercailloux.jlp.elements.SumTermsBuilder;
 import io.github.oliviercailloux.jlp.elements.Term;
 import io.github.oliviercailloux.minimax.elicitation.PrefKnowledge;
-import io.github.oliviercailloux.minimax.utils.Rounder;
 import io.github.oliviercailloux.y2018.j_voting.Alternative;
 import io.github.oliviercailloux.y2018.j_voting.Voter;
 
 public class RegretComputer {
 	private final PrefKnowledge knowledge;
-
-	/**
-	 * TODO Its value must be at least the tolerance that the solver admits. Link it
-	 * with the one in CoW
-	 */
-	public static final double EPSILON = 1e-4;
 
 	public RegretComputer(PrefKnowledge knowledge) {
 		this.knowledge = requireNonNull(knowledge);
@@ -57,17 +49,7 @@ public class RegretComputer {
 		final double highestRegret = sortedPmrs.lastKey();
 		assert highestRegret >= 0;
 
-		Set<PairwiseMaxRegret> setPMR = new HashSet<>();
-		Set<Double> keys = pmrs.keySet();
-		Iterator<Double> i = keys.iterator();
-		while (i.hasNext()) {
-			double k = i.next();
-			if (Math.abs(highestRegret - k) < EPSILON) {
-				setPMR.addAll(pmrs.get(k));
-			}
-		}
-
-		return ImmutableSet.copyOf(setPMR);
+		return ImmutableSet.copyOf(pmrs.get(highestRegret));
 	}
 
 	/**
@@ -76,16 +58,27 @@ public class RegretComputer {
 	 *         for which PMR(x,y)=M
 	 */
 	public SetMultimap<Alternative, PairwiseMaxRegret> getMinimalMaxRegrets() {
+		return getMinimalMaxRegrets(0d);
+	}
+
+	private SetMultimap<Alternative, PairwiseMaxRegret> getMinimalMaxRegrets(double epsilon) {
+		// To implement: use epsilon.
+		checkArgument(epsilon == 0d);
 		final ImmutableSet<Alternative> alternatives = knowledge.getAlternatives();
 		final SetMultimap<Double, Alternative> byPmrValues = MultimapBuilder.treeKeys().linkedHashSetValues().build();
 		final SetMultimap<Alternative, PairwiseMaxRegret> pmrValues = MultimapBuilder.hashKeys().linkedHashSetValues()
 				.build();
+//		final ImmutableSetMultimap.Builder<Alternative, PairwiseMaxRegret> pmrValuesBuilder = ImmutableSetMultimap
+//				.builder();
 		for (Alternative x : alternatives) {
 			final ImmutableSet<PairwiseMaxRegret> highestPairwiseMaxRegrets = getHighestPairwiseMaxRegrets(x);
-			byPmrValues.put(highestPairwiseMaxRegrets.iterator().next().getPmrValue(), x);
 			pmrValues.putAll(x, highestPairwiseMaxRegrets);
 		}
 		assert pmrValues.keySet().size() == alternatives.size();
+
+		for (Alternative x : alternatives) {
+			byPmrValues.put(pmrValues.get(x).iterator().next().getPmrValue(), x);
+		}
 
 		final SortedMap<Double, Collection<Alternative>> sortedByPmrValues = (SortedMap<Double, Collection<Alternative>>) byPmrValues
 				.asMap();
@@ -94,10 +87,9 @@ public class RegretComputer {
 		pmrValues.asMap().keySet().retainAll(alternativesWithMinPmrValue);
 		/**
 		 * We check that each of these collections of PMRs have the same value.
-		 * ATTENTION: with the current modification is no longer true
 		 */
-//		assert pmrValues.asMap().entrySet().stream()
-//				.allMatch((e) -> (e.getValue().stream().map(PairwiseMaxRegret::getPmrValue).distinct().count() == 1));
+		assert pmrValues.asMap().values().stream()
+				.allMatch((v) -> (v.stream().map(PairwiseMaxRegret::getPmrValue).distinct().count() == 1));
 		return pmrValues;
 	}
 
