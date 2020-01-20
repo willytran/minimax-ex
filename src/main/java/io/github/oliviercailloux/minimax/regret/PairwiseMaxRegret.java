@@ -32,12 +32,10 @@ public class PairwiseMaxRegret {
 		this.ranksOfY = ImmutableMap.copyOf(requireNonNull(ranksOfY));
 		this.weights = requireNonNull(weights);
 		this.pmrValue = pmrValue;
-		checkArgument(Math.abs(pmrValue - (getScore(ranksOfY, weights) - getScore(ranksOfX, weights))) < IMPRECISION_TOLERATED);
+		checkArgument(Math
+				.abs(pmrValue - (getScore(ranksOfY, weights) - getScore(ranksOfX, weights))) < IMPRECISION_TOLERATED);
 		if (x.equals(y)) {
-			if(!ranksOfX.equals(ranksOfY)) {
-				System.out.println(ranksOfX + "  ranks  "+ ranksOfY);
-			}
-			checkArgument(ranksOfX.equals(ranksOfY));
+			checkArgument(ranksOfX.equals(ranksOfY), ranksOfX + "  ranks  " + ranksOfY);
 			checkArgument(pmrValue == 0d);
 		}
 	}
