@@ -27,7 +27,6 @@ import io.github.oliviercailloux.jlp.or_tools.OrToolsSolver;
 import io.github.oliviercailloux.jlp.result.Result;
 import io.github.oliviercailloux.jlp.result.ResultStatus;
 import io.github.oliviercailloux.jlp.result.Solution;
-import io.github.oliviercailloux.minimax.utils.Rounder;
 
 /**
  *
@@ -103,7 +102,6 @@ public class ConstraintsOnWeights {
 	private final OrToolsSolver solver;
 	private Solution lastSolution;
 	private boolean convexityConstraintSet;
-	private Rounder rounder;
 
 	private ConstraintsOnWeights(int m) {
 		checkArgument(m >= 1);
@@ -121,16 +119,6 @@ public class ConstraintsOnWeights {
 		solver = new OrToolsSolver();
 		lastSolution = null;
 		convexityConstraintSet = false;
-		rounder = Rounder.noRounding();
-	}
-
-	/**
-	 * Should be deleted from this class. Consider rounding out of this class
-	 * depending on your needs.
-	 */
-	@Deprecated
-	public void setRounder(Rounder r) {
-		rounder = r;
 	}
 
 	/**
@@ -204,7 +192,7 @@ public class ConstraintsOnWeights {
 		checkState(convexityConstraintSet);
 		final List<Double> weights = new LinkedList<>();
 		for (int r = 1; r <= getM(); ++r) {
-			final double value = rounder.round(lastSolution.getValue(getVariable(r)));
+			final double value = lastSolution.getValue(getVariable(r));
 			weights.add(value);
 		}
 		return PSRWeights.given(weights);

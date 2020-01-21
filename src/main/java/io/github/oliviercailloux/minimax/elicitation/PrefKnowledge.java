@@ -81,10 +81,6 @@ public class PrefKnowledge {
 		}
 	}
 	
-	public void setRounder(Rounder r) {
-		cow.setRounder(r);
-	}
-
 	/**
 	 * @return a non empty set.
 	 */

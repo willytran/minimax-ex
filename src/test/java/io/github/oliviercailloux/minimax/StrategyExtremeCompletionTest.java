@@ -8,6 +8,7 @@ import org.apfloat.Aprational;
 import io.github.oliviercailloux.jlp.elements.ComparisonOperator;
 import io.github.oliviercailloux.minimax.elicitation.PrefKnowledge;
 import io.github.oliviercailloux.minimax.elicitation.QuestionType;
+import io.github.oliviercailloux.minimax.old_strategies.StrategyTaus;
 import io.github.oliviercailloux.y2018.j_voting.Alternative;
 import io.github.oliviercailloux.y2018.j_voting.Generator;
 import io.github.oliviercailloux.y2018.j_voting.Voter;

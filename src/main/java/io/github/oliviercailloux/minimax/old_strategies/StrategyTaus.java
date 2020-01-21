@@ -1,4 +1,4 @@
-package io.github.oliviercailloux.minimax;
+package io.github.oliviercailloux.minimax.old_strategies;
 
 import static com.google.common.base.Preconditions.checkArgument;
 
@@ -19,6 +19,7 @@ import com.google.common.graph.Graph;
 
 import io.github.oliviercailloux.jlp.elements.SumTerms;
 import io.github.oliviercailloux.jlp.elements.SumTermsBuilder;
+import io.github.oliviercailloux.minimax.Strategy;
 import io.github.oliviercailloux.minimax.elicitation.ConstraintsOnWeights;
 import io.github.oliviercailloux.minimax.elicitation.PSRWeights;
 import io.github.oliviercailloux.minimax.elicitation.PrefKnowledge;
