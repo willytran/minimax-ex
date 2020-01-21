@@ -46,43 +46,52 @@ import io.github.oliviercailloux.y2018.j_voting.Voter;
 
 /** Uses the Regret to get the next question. **/
 
-public class StrategyPessimisticHeuristic implements Strategy {
+public class StrategyTwoPhasesHeuristic implements Strategy {
 
 	private PrefKnowledge knowledge;
 	public boolean profileCompleted;
 	private static AggOps op;
 	private static double w1;
 	private static double w2;
-
-	private static Set<Question> questions;
-	private static List<Question> nextQuestions;
+	private int questionsToVoters;
+	private int questionsToCommittee;
+	private boolean committeeFirst;
+	
+	private static Set<Question> questionsV;
+	private static List<Question> nextQuestionsV;
 	private static RegretComputer rc;
 
-	private static final Logger LOGGER = LoggerFactory.getLogger(StrategyPessimisticHeuristic.class);
+	private static final Logger LOGGER = LoggerFactory.getLogger(StrategyTwoPhasesHeuristic.class);
 
-	public static StrategyPessimisticHeuristic build(PrefKnowledge knowledge) {
+	public static StrategyTwoPhasesHeuristic build(PrefKnowledge knowledge, int questionsToVoters,
+			int questionsToCommittee, boolean committeeFirst) {
 		op = AggOps.MAX;
-		return new StrategyPessimisticHeuristic(knowledge);
+		return new StrategyTwoPhasesHeuristic(knowledge, questionsToVoters, questionsToCommittee,committeeFirst);
 	}
 
-	public static StrategyPessimisticHeuristic build(PrefKnowledge knowledge, AggOps operator) {
+	public static StrategyTwoPhasesHeuristic build(PrefKnowledge knowledge, AggOps operator, int questionsToVoters,
+			int questionsToCommittee, boolean committeeFirst) {
 		checkArgument(!operator.equals(AggOps.WEIGHTED_AVERAGE));
 		op = operator;
-		return new StrategyPessimisticHeuristic(knowledge);
+		return new StrategyTwoPhasesHeuristic(knowledge, questionsToVoters, questionsToCommittee,committeeFirst);
 	}
 
-	public static StrategyPessimisticHeuristic build(PrefKnowledge knowledge, AggOps operator, double w_1, double w_2) {
+	public static StrategyTwoPhasesHeuristic build(PrefKnowledge knowledge, AggOps operator, double w_1, double w_2,
+			int questionsToVoters, int questionsToCommittee, boolean committeeFirst) {
 		checkArgument(operator.equals(AggOps.WEIGHTED_AVERAGE));
 		checkArgument(w_1 > 0);
 		checkArgument(w_2 > 0);
 		op = operator;
 		w1 = w_1;
 		w2 = w_2;
-		return new StrategyPessimisticHeuristic(knowledge);
+		return new StrategyTwoPhasesHeuristic(knowledge, questionsToVoters, questionsToCommittee,committeeFirst);
 	}
 
-	private StrategyPessimisticHeuristic(PrefKnowledge knowledge) {
-		this.knowledge = knowledge;
+	private StrategyTwoPhasesHeuristic(PrefKnowledge know, int qToVoters, int qToCommittee,boolean cFirst) {
+		knowledge = know;
+		questionsToVoters = qToVoters;
+		questionsToCommittee = qToCommittee;
+		committeeFirst= cFirst;
 		profileCompleted = false;
 		LOGGER.info("");
 	}
@@ -91,46 +100,38 @@ public class StrategyPessimisticHeuristic implements Strategy {
 	public Question nextQuestion() {
 		final int m = knowledge.getAlternatives().size();
 		checkArgument(m >= 2, "Questions can be asked only if there are at least two alternatives.");
-
-		questions = selectQuestions();
-		checkArgument(!questions.isEmpty(), "No question to ask about weights or voters.");
-
-		Question nextQ = questions.iterator().next();
-		double minScore = getScore(nextQ);
-		nextQuestions = new LinkedList<>();
-		nextQuestions.add(nextQ);
-
-		for (Question q : questions) {
-			double score = getScore(q);
-			if (score < minScore) {
-				nextQ = q;
-				minScore = score;
-				nextQuestions.clear();
-				nextQuestions.add(nextQ);
-			} else {
-				if (score == minScore && !nextQuestions.contains(q)) {
-					nextQuestions.add(q);
-				}
-			}
-		}
-		int randomPos = (int) (nextQuestions.size() * Math.random());
-		return nextQuestions.get(randomPos);
-	}
-
-	private Set<Question> selectQuestions() {
+		checkArgument(questionsToVoters!=0 || questionsToCommittee!=0, "No more questions allowed");
+		Question q;
+		
 		rc = new RegretComputer(knowledge);
 		SetMultimap<Alternative, PairwiseMaxRegret> mmr = rc.getMinimalMaxRegrets();
 		Alternative xStar = mmr.keySet().iterator().next();
 		PairwiseMaxRegret currentSolution = mmr.get(xStar).iterator().next();
 		Alternative yBar = currentSolution.getY();
 		PSRWeights wBar = currentSolution.getWeights();
-		Set<Question> quests = new HashSet<>();
-		quests.addAll(selectQuestionsVoters(xStar, yBar));
-		quests.add(selectQuestionCommittee(wBar, xStar, yBar));
-		return quests;
+		
+		if(committeeFirst) {
+			if(questionsToCommittee>0) {
+				q=selectQuestionToCommittee(wBar, xStar, yBar);
+				questionsToCommittee--;
+			}else {
+				q=selectQuestionToVoters(xStar,yBar);
+				questionsToVoters--;
+			}
+		}else {
+			if(questionsToVoters>0) {
+				q=selectQuestionToVoters(xStar,yBar);
+				questionsToVoters--;
+			}else {
+				q=selectQuestionToCommittee(wBar, xStar, yBar);
+				questionsToCommittee--;
+			}
+		}
+		return q;
 	}
 
-	private Question selectQuestionCommittee(PSRWeights wBar, Alternative xStar, Alternative yBar) {
+
+	private Question selectQuestionToCommittee(PSRWeights wBar, Alternative xStar, Alternative yBar) {
 		PSRWeights wMin = getMinTauW(xStar, yBar);
 
 		int maxRank = 2;
@@ -150,6 +151,34 @@ public class StrategyPessimisticHeuristic implements Strategy {
 		return Question.toCommittee(QuestionCommittee.given(avg, maxRank - 1));
 	}
 
+	private Question selectQuestionToVoters(Alternative xStar, Alternative yBar) {
+		questionsV = selectQuestionsVoters(xStar, yBar);
+		
+		checkArgument(!questionsV.isEmpty(), "No question to ask about voters.");	//we could handle it by asking question to committee instead
+
+		Question nextQ = questionsV.iterator().next();
+		double minScore = getScore(nextQ);
+		nextQuestionsV = new LinkedList<>();
+		nextQuestionsV.add(nextQ);
+
+		for (Question q : questionsV) {
+			double score = getScore(q);
+			if (score < minScore) {
+				nextQ = q;
+				minScore = score;
+				nextQuestionsV.clear();
+				nextQuestionsV.add(nextQ);
+			} else {
+				if (score == minScore && !nextQuestionsV.contains(q)) {
+					nextQuestionsV.add(q);
+				}
+			}
+		}
+		int randomPos = (int) (nextQuestionsV.size() * Math.random());
+		return nextQuestionsV.get(randomPos);
+	}
+	
+	
 	private Set<Question> selectQuestionsVoters(Alternative xStar, Alternative yBar) {
 		HashSet<Question> questv = new HashSet<>();
 		for (Voter v : knowledge.getVoters()) {
@@ -292,7 +321,7 @@ public class StrategyPessimisticHeuristic implements Strategy {
 
 	/** only for testing purposes */
 	public static Set<Question> getQuestions() {
-		return questions;
+		return questionsV;
 	}
 
 }

@@ -3,7 +3,7 @@ package io.github.oliviercailloux.minimax;
 public enum StrategyType {
 
 	PESSIMISTIC_MAX, PESSIMISTIC_MIN, PESSIMISTIC_AVG, PESSIMISTIC_WEIGHTED_AVG, RANDOM, TWO_PHASES, TAU,
-	TWO_PHASES_TAU, TWO_PHASES_RANDOM, PESSIMISTIC_HEURISTIC;
+	TWO_PHASES_TAU, TWO_PHASES_RANDOM, PESSIMISTIC_HEURISTIC, TWO_PHASES_HEURISTIC, MINIMAX_MIN_INC;
 
 	@Override
 	public String toString() {
@@ -28,8 +28,10 @@ public enum StrategyType {
 			return "Two Phases Tau Strategy";
 		case TWO_PHASES_RANDOM:
 			return "Two Phases Random Strategy";
-//		case MINIMAX_MIN_INC:
-//			return "New Strategy";
+		case TWO_PHASES_HEURISTIC:
+			return "Two Phases Heuristic Strategy";
+		case MINIMAX_MIN_INC:
+			return "New Strategy";
 		default:
 			throw new IllegalStateException();
 		}
