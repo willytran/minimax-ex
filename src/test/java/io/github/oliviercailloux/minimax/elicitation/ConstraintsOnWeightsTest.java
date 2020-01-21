@@ -39,7 +39,6 @@ public class ConstraintsOnWeightsTest {
 		 * off by about 6 epsilons.
 		 */
 		assertEquals(1d, cow.maximize(objective), 1E-4);
-		System.out.println(cow.getLastSolution());
 		assertEquals(1d, cow.getLastSolution().getWeightAtRank(1), 1E-4);
 		assertEquals(0d, cow.getLastSolution().getWeightAtRank(3), 1E-4);
 		assertEquals(0d, cow.getLastSolution().getWeightAtRank(5));

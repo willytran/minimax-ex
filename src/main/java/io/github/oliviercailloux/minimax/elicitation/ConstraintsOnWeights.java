@@ -63,7 +63,15 @@ import io.github.oliviercailloux.minimax.utils.Rounder;
  * be that w2 = 0 is a feasible solution for a given problem in reality, but
  * this program does not find any feasible solution because w2 < 153 epsilon for
  * all (really) feasible solutions. However, considering the kind of constraints
- * accepted by this class, it is difficult to find a problematic example.
+ * accepted by this class, it is difficult to find a problematic example of that
+ * kind.
+ * </p>
+ * <p>
+ * Another problem may happen when the coefficients (representing typically the
+ * number of voters) are high. Consider the objective w1 − 10^4 w2, to be
+ * maximized. Setting w2 to zero would lead to a value of 1d, but because w2 ≥
+ * 153 epsilon (if m = 20), with epsilon = 10^−6, we obtain a maximal value of
+ * −0.5.
  * </p>
  *
  *
