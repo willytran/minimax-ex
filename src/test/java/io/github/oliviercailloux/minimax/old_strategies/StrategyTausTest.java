@@ -1,4 +1,4 @@
-package io.github.oliviercailloux.minimax;
+package io.github.oliviercailloux.minimax.old_strategies;
 
 import static org.junit.Assert.assertTrue;
 
@@ -13,7 +13,7 @@ import io.github.oliviercailloux.y2018.j_voting.Alternative;
 import io.github.oliviercailloux.y2018.j_voting.Generator;
 import io.github.oliviercailloux.y2018.j_voting.Voter;
 
-public class StrategyExtremeCompletionTest {
+public class StrategyTausTest {
 
 //	@Test
 	/**
