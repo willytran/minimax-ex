@@ -4,7 +4,6 @@ import static org.junit.Assert.assertTrue;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
 import java.util.HashSet;
-import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
@@ -40,7 +39,7 @@ class RegretComputerTest {
 		final PairwiseMaxRegret pmrBVsA = PairwiseMaxRegret.given(b, a, allSecond, allFirst,
 				PSRWeights.given(ImmutableList.of(1d, 0d)));
 
-		SetMultimap<Alternative, PairwiseMaxRegret> pmrValues = regretComputer.getHPmrValues();
+		SetMultimap<Alternative, PairwiseMaxRegret> pmrValues = regretComputer.getMinimalMaxRegrets();
 
 		assertTrue(pmrValues.keySet().size() == 2);
 		assertTrue(pmrValues.get(a).size() == 1);
@@ -59,7 +58,7 @@ class RegretComputerTest {
 		final PairwiseMaxRegret pmrAVsA = PairwiseMaxRegret.given(a, a, allFirst, allFirst,
 				PSRWeights.given(ImmutableList.of(1d)));
 
-		assertEquals(ImmutableSet.of(pmrAVsA), regretComputer.getHighestPairwiseMaxRegrets(a));
+		assertEquals(ImmutableSet.of(pmrAVsA), regretComputer.getMinimalMaxRegrets().get(a));
 	}
 
 	@Test
@@ -77,8 +76,8 @@ class RegretComputerTest {
 		final PairwiseMaxRegret pmrBVsA = PairwiseMaxRegret.given(b, a, allSecond, allFirst,
 				PSRWeights.given(ImmutableList.of(1d, 0d)));
 
-		assertEquals(ImmutableSet.of(pmrAVsB), regretComputer.getHighestPairwiseMaxRegrets(a));
-		assertEquals(ImmutableSet.of(pmrBVsA), regretComputer.getHighestPairwiseMaxRegrets(b));
+		assertEquals(ImmutableSet.of(pmrAVsB), regretComputer.getMinimalMaxRegrets().get(a));
+		assertEquals(ImmutableSet.of(pmrBVsA), regretComputer.getMinimalMaxRegrets().get(b));
 	}
 
 	@Test
@@ -120,12 +119,10 @@ class RegretComputerTest {
 		pref3.putEdge(b, d);
 
 		final RegretComputer regretComputer = new RegretComputer(knowledge);
-		ImmutableSet<PairwiseMaxRegret> pmra = regretComputer.getHighestPairwiseMaxRegrets(a);
 
 		SetMultimap<Alternative, PairwiseMaxRegret> mrs = regretComputer.getMinimalMaxRegrets();
 		assertEquals(ImmutableSet.of(a), mrs.keySet());
 		Set<PairwiseMaxRegret> pmrs = mrs.get(a);
-		assertEquals(pmra, pmrs);
 
 		final ImmutableSet<Alternative> ys = pmrs.stream().map((p) -> p.getY()).collect(ImmutableSet.toImmutableSet());
 		assertTrue(ys.contains(a));

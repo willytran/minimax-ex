@@ -1,19 +1,18 @@
 package io.github.oliviercailloux.minimax.regret;
 
 import static com.google.common.base.Preconditions.checkArgument;
+import static com.google.common.base.Verify.verify;
 import static java.util.Objects.requireNonNull;
 
-import java.util.Collection;
 import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
-import java.util.SortedMap;
+import java.util.function.Function;
 
 import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.ImmutableSet;
+import com.google.common.collect.ImmutableSetMultimap;
 import com.google.common.collect.ImmutableSortedMultiset;
-import com.google.common.collect.MultimapBuilder;
-import com.google.common.collect.SetMultimap;
 import com.google.common.collect.SortedMultiset;
 import com.google.common.graph.ImmutableGraph;
 
@@ -32,82 +31,27 @@ public class RegretComputer {
 		this.knowledge = requireNonNull(knowledge);
 	}
 
-	ImmutableSet<PairwiseMaxRegret> getHighestPairwiseMaxRegrets(Alternative x) {
-		assert knowledge.getAlternatives().contains(x);
+	public ImmutableSetMultimap<Alternative, PairwiseMaxRegret> getMinimalMaxRegrets() {
+		return getAllMaxRegrets().getMinimalMaxRegrets();
+	}
+
+	ImmutableSet<PairwiseMaxRegret> getPairwiseMaxRegrets(Alternative x) {
+		checkArgument(knowledge.getAlternatives().contains(x));
 
 		final ImmutableMap<Voter, Integer> ranksOfX = getWorstRanksOfX(x);
 		final ImmutableSortedMultiset<Integer> multiSetOfRanksOfX = ImmutableSortedMultiset.copyOf(ranksOfX.values());
 
-		final SetMultimap<Double, PairwiseMaxRegret> pmrs = MultimapBuilder.treeKeys().linkedHashSetValues().build();
-		for (Alternative y : knowledge.getAlternatives()) {
-			final PairwiseMaxRegret pmrY = getPmr(x, y, ranksOfX, multiSetOfRanksOfX);
-			pmrs.put(pmrY.getPmrValue(), pmrY);
-		}
-		final SortedMap<Double, Collection<PairwiseMaxRegret>> sortedPmrs = (SortedMap<Double, Collection<PairwiseMaxRegret>>) pmrs
-				.asMap();
-		assert !sortedPmrs.isEmpty();
-		final double highestRegret = sortedPmrs.lastKey();
-		assert highestRegret >= 0;
+		final ImmutableSet<PairwiseMaxRegret> pmrs = knowledge.getAlternatives().stream()
+				.map((y) -> getPmr(x, y, ranksOfX, multiSetOfRanksOfX)).collect(ImmutableSet.toImmutableSet());
+		verify(!pmrs.isEmpty());
 
-		return ImmutableSet.copyOf(pmrs.get(highestRegret));
+		return pmrs;
 	}
 
-	/**
-	 * @return The alternative x associated to the minimal max regret M together
-	 *         with the set of all pairwise max regrets of x and any alternative y
-	 *         for which PMR(x,y)=M
-	 */
-	public SetMultimap<Alternative, PairwiseMaxRegret> getMinimalMaxRegrets() {
-		return getMinimalMaxRegrets(0d);
-	}
-
-	private SetMultimap<Alternative, PairwiseMaxRegret> getMinimalMaxRegrets(double epsilon) {
-		// To implement: use epsilon.
-		checkArgument(epsilon == 0d);
-		final ImmutableSet<Alternative> alternatives = knowledge.getAlternatives();
-		final SetMultimap<Double, Alternative> byPmrValues = MultimapBuilder.treeKeys().linkedHashSetValues().build();
-		final SetMultimap<Alternative, PairwiseMaxRegret> pmrValues = MultimapBuilder.hashKeys().linkedHashSetValues()
-				.build();
-//		final ImmutableSetMultimap.Builder<Alternative, PairwiseMaxRegret> pmrValuesBuilder = ImmutableSetMultimap
-//				.builder();
-		for (Alternative x : alternatives) {
-			final ImmutableSet<PairwiseMaxRegret> highestPairwiseMaxRegrets = getHighestPairwiseMaxRegrets(x);
-			pmrValues.putAll(x, highestPairwiseMaxRegrets);
-		}
-		assert pmrValues.keySet().size() == alternatives.size();
-
-		for (Alternative x : alternatives) {
-			byPmrValues.put(pmrValues.get(x).iterator().next().getPmrValue(), x);
-		}
-
-		final SortedMap<Double, Collection<Alternative>> sortedByPmrValues = (SortedMap<Double, Collection<Alternative>>) byPmrValues
-				.asMap();
-		final double minMaxPmrValue = sortedByPmrValues.firstKey();
-		final Collection<Alternative> alternativesWithMinPmrValue = sortedByPmrValues.get(minMaxPmrValue);
-		pmrValues.asMap().keySet().retainAll(alternativesWithMinPmrValue);
-		/**
-		 * We check that each of these collections of PMRs have the same value.
-		 */
-		assert pmrValues.asMap().values().stream()
-				.allMatch((v) -> (v.stream().map(PairwiseMaxRegret::getPmrValue).distinct().count() == 1));
-		return pmrValues;
-	}
-
-	/**
-	 * @return For each alternative x the set of all its highest pairwise max
-	 *         regrets
-	 */
-	public SetMultimap<Alternative, PairwiseMaxRegret> getHPmrValues() {
-		final ImmutableSet<Alternative> alternatives = knowledge.getAlternatives();
-		final SetMultimap<Alternative, PairwiseMaxRegret> pmrValues = MultimapBuilder.hashKeys().linkedHashSetValues()
-				.build();
-		for (Alternative x : alternatives) {
-			final ImmutableSet<PairwiseMaxRegret> highestPairwiseMaxRegrets = getHighestPairwiseMaxRegrets(x);
-			pmrValues.putAll(x, highestPairwiseMaxRegrets);
-		}
-		assert pmrValues.keySet().size() == alternatives.size();
-
-		return pmrValues;
+	public Regrets getAllMaxRegrets() {
+		final ImmutableMap<Alternative, ImmutableSet<PairwiseMaxRegret>> allPmrs = knowledge.getAlternatives().stream()
+				.collect(ImmutableMap.toImmutableMap(Function.identity(), this::getPairwiseMaxRegrets));
+		return Regrets.given(allPmrs);
 	}
 
 	private PairwiseMaxRegret getPmr(Alternative x, Alternative y, Map<Voter, Integer> ranksOfX,
