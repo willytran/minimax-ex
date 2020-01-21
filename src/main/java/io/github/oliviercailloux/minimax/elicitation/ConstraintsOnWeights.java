@@ -27,7 +27,7 @@ import io.github.oliviercailloux.jlp.or_tools.OrToolsSolver;
 import io.github.oliviercailloux.jlp.result.Result;
 import io.github.oliviercailloux.jlp.result.ResultStatus;
 import io.github.oliviercailloux.jlp.result.Solution;
-import io.github.oliviercailloux.minimax.utils.Rounder;
+import io.github.oliviercailloux.jlp.solve.Solver;
 
 /**
  *
@@ -93,17 +93,14 @@ public class ConstraintsOnWeights {
 	}
 
 	public static ConstraintsOnWeights copyOf(ConstraintsOnWeights cw) {
-		ConstraintsOnWeights c = new ConstraintsOnWeights(cw.getM());
-		c.builder = MPBuilder.copyOf(cw.builder);
-		c.setConvexityConstraint();
+		ConstraintsOnWeights c = new ConstraintsOnWeights(cw.builder, cw.convexityConstraintSet);
 		return c;
 	}
 
 	private MPBuilder builder;
-	private final OrToolsSolver solver;
+	private final Solver solver;
 	private Solution lastSolution;
 	private boolean convexityConstraintSet;
-	private Rounder rounder;
 
 	private ConstraintsOnWeights(int m) {
 		checkArgument(m >= 1);
@@ -121,16 +118,22 @@ public class ConstraintsOnWeights {
 		solver = new OrToolsSolver();
 		lastSolution = null;
 		convexityConstraintSet = false;
-		rounder = Rounder.noRounding();
 	}
 
 	/**
-	 * Should be deleted from this class. Consider rounding out of this class
-	 * depending on your needs.
+	 * Copy constructor.
+	 * 
+	 * @param mp                     should come from another COW instance (to
+	 *                               guarantee that the structure conforms to
+	 *                               expectations).
+	 * @param convexityConstraintSet should come from the same instance (to
+	 *                               guarantee coherence).
 	 */
-	@Deprecated
-	public void setRounder(Rounder r) {
-		rounder = r;
+	private ConstraintsOnWeights(MPBuilder mp, boolean convexityConstraintSet) {
+		builder = MPBuilder.copyOf(mp);
+		solver = new OrToolsSolver();
+		lastSolution = null;
+		this.convexityConstraintSet = convexityConstraintSet;
 	}
 
 	/**
@@ -204,7 +207,7 @@ public class ConstraintsOnWeights {
 		checkState(convexityConstraintSet);
 		final List<Double> weights = new LinkedList<>();
 		for (int r = 1; r <= getM(); ++r) {
-			final double value = rounder.round(lastSolution.getValue(getVariable(r)));
+			final double value = lastSolution.getValue(getVariable(r));
 			weights.add(value);
 		}
 		return PSRWeights.given(weights);

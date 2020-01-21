@@ -1,4 +1,4 @@
-package io.github.oliviercailloux.minimax;
+package io.github.oliviercailloux.minimax.old_strategies;
 
 import java.util.HashMap;
 import java.util.HashSet;
