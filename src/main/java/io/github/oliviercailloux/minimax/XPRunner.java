@@ -51,25 +51,31 @@ public class XPRunner {
 	static String root;
 
 	// for strategyTwoPhasesTau
-	static int nbCommitteeQuestions = 10;
-	static int nbVotersQuestions = 20;
+	static int nbCommitteeQuestions = 30;
+	static int nbVotersQuestions = 90;
 	static boolean committeeFirst = true;
 
 	public static void main(String[] args) throws IOException {
 		int n = 0, m = 0;
-
+		StrategyType st;
 		root = Paths.get("").toAbsolutePath() + "/experiments/";
 
-		int minQuestions = 10;
-		int maxQuestions = 15;
-		int runs = 10;
+		int minQuestions = 0;
+		int maxQuestions = 50;
+		int runs = 1;
 
 		// for on m and n
 		n = 5;
 		m = 5;
-		StrategyType st = StrategyType.PESSIMISTIC_MAX;
+		
+	//	st = StrategyType.MINIMAX_MIN_INC;
+		
+		st = StrategyType.PESSIMISTIC_HEURISTIC;
 
-		serialExp(m, n, st, minQuestions, maxQuestions, runs);
+		serialExp(m, n, st, minQuestions, maxQuestions,10, runs);
+		
+	//	st = StrategyType.TWO_PHASES_HEURISTIC;
+	//	serialExp(m, n, st, minQuestions, maxQuestions, runs);
 	}
 
 	/**
@@ -84,7 +90,7 @@ public class XPRunner {
 	 * 
 	 * A single run can be performed by using runs=1
 	 */
-	private static void serialExp(int m, int n, StrategyType st, int minQuestions, int maxQuestions, int runs)
+	private static void serialExp(int m, int n, StrategyType st, int minQuestions, int maxQuestions, int step, int runs)
 			throws IOException {
 		checkArgument(minQuestions <= maxQuestions);
 		NumberFormat formatter = new DecimalFormat("#0.00000");
@@ -103,7 +109,7 @@ public class XPRunner {
 		double initialRegret = n; // with 0 information the initial max regret is when s(y)=1*n and s(x)=0*n
 		double initialAvgLoss = 1;
 
-		for (int nbquest = minQuestions; nbquest <= maxQuestions; nbquest++) {
+		for (int nbquest = minQuestions; nbquest <= maxQuestions; nbquest=nbquest+step ) {
 			List<Double> avglosses = new LinkedList<>();
 			List<Double> regrets = new LinkedList<>();
 			List<Double> percVotQuest = new LinkedList<>();
@@ -135,7 +141,7 @@ public class XPRunner {
 			regretSeriesSD.add(regretSD);
 			avgLossSeriesSD.add(lossSD);
 
-			if (nbquest == 1) {
+			if (nbquest == 0) {
 				assert initialRegret == regretMean;
 				initialAvgLoss = lossMean;
 			}
@@ -157,6 +163,7 @@ public class XPRunner {
 			if (lossMean <= (initialAvgLoss / 8) && avgLoss8 < 0) {
 				avgLoss8 = nbquest;
 			}
+			
 		}
 		bwStats.write("Mean of Regret reduced by half in " + regret2 + " questions \n");
 		bwStats.write("Mean of Regret reduced by four in " + regret4 + " questions \n");
@@ -167,33 +174,31 @@ public class XPRunner {
 		bwStats.flush();
 
 		bwStats.write("k \t Mean of Regrets \n");
-		bwStats.write("0 \t" + initialRegret + "\n");
-		for (int i = 0; i <= maxQuestions - minQuestions; i++) {
-			bwStats.write((minQuestions + i) + "\t" + regretSeriesMean.get(i) + "\n");
+		for (int i = 0; i <= (maxQuestions - minQuestions)/step; i++) {
+			bwStats.write((minQuestions + i*step) + "\t" + regretSeriesMean.get(i) + "\n");
 		}
 		bwStats.flush();
 
 		bwStats.write("k \t Mean of Average Losses \n");
-		bwStats.write("0 \t" + initialAvgLoss + "\n");
-		for (int i = 0; i <= maxQuestions - minQuestions; i++) {
-			bwStats.write((minQuestions + i) + "\t" + avgLossSeriesMean.get(i) + "\n");
+		for (int i = 0; i <= (maxQuestions - minQuestions)/step; i++) {
+			bwStats.write((minQuestions + i*step) + "\t" + avgLossSeriesMean.get(i) + "\n");
 		}
 		bwStats.flush();
 
 		bwStats.write("k \t Standard Deviations of Regrets \n");
-		for (int i = 0; i <= maxQuestions - minQuestions; i++) {
-			bwStats.write((minQuestions + i) + "\t" + regretSeriesSD.get(i) + "\n");
+		for (int i = 0; i <= (maxQuestions - minQuestions)/step; i++) {
+			bwStats.write((minQuestions + i*step) + "\t" + regretSeriesSD.get(i) + "\n");
 		}
 		bwStats.flush();
 
 		bwStats.write("k \t Standard Deviations of Average Losses \n");
-		for (int i = 0; i <= maxQuestions - minQuestions; i++) {
-			bwStats.write((minQuestions + i) + "\t" + regretSeriesSD.get(i) + "\n");
+		for (int i = 0; i <= (maxQuestions - minQuestions)/step; i++) {
+			bwStats.write((minQuestions + i*step) + "\t" + regretSeriesSD.get(i) + "\n");
 		}
 
 		bwStats.write("k \t Percentage of Questions to the Voters \n");
-		for (int i = 0; i <= maxQuestions - minQuestions; i++) {
-			bwStats.write((minQuestions + i) + "\t" + formatterPerc.format(questionSeriesMean.get(i)) + "\n");
+		for (int i = 0; i <= (maxQuestions - minQuestions)/step; i++) {
+			bwStats.write((minQuestions + i*step) + "\t" + formatterPerc.format(questionSeriesMean.get(i)) + "\n");
 		}
 
 		bwStats.flush();
@@ -205,13 +210,14 @@ public class XPRunner {
 	}
 
 	private static void createFiles(StrategyType st, int m, int n, int maxQuestions, int runs) throws IOException {
-		bwStats = initFile(root + "m" + m + "n" + n + st + "_stats.txt");
+		String title = root + "m" + m + "n" + n + st+ "_"+maxQuestions+"quests";
+		bwStats = initFile( title + "_stats.txt");
 		bwStats.write(st + "\n");
 		bwStats.write(n + " Voters " + m + " Alternatives \n");
 		bwStats.write(maxQuestions + " Questions for " + runs + " runs \n");
 		bwStats.flush();
 
-		bwQst = initFile(root + "m" + m + "n" + n + st + "_questions.txt");
+		bwQst = initFile(title + "_questions.txt");
 		bwQst.write(st + "\n");
 		bwQst.write(n + " Voters " + m + " Alternatives \n");
 		bwQst.flush();
@@ -267,12 +273,17 @@ public class XPRunner {
 			strategy = StrategyTwoPhasesRandom.build(knowledge, nbCommitteeQuestions, nbVotersQuestions,
 					committeeFirst);
 			break;
+		case TWO_PHASES_HEURISTIC:
+			strategy = StrategyTwoPhasesHeuristic.build(knowledge, nbVotersQuestions, nbCommitteeQuestions,
+					committeeFirst);
+			break;
 		case TAU:
 			strategy = StrategyTaus.build(knowledge);
 			break;
-//		case MINIMAX_MIN_INC:
-//			strategy = StrategyMiniMaxIncr.build(knowledge);
-//			break;
+		case MINIMAX_MIN_INC:
+			strategy = StrategyMiniMaxIncr.build(knowledge, nbVotersQuestions, nbCommitteeQuestions,
+					committeeFirst);
+			break;
 		default:
 			throw new IllegalStateException();
 		}
