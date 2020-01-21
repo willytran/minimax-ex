@@ -1,4 +1,4 @@
-package io.github.oliviercailloux.minimax;
+package io.github.oliviercailloux.minimax.old_strategies;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;

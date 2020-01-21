@@ -1,4 +1,4 @@
-package io.github.oliviercailloux.minimax;
+package io.github.oliviercailloux.minimax.old_strategies;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
@@ -26,9 +26,10 @@ public class StrategyTwoPhasesTest {
 	}
 
 	/**
-	 * @Test should be run occasionally, ’cause it’s too slow
+	 * should be run occasionally, ’cause it’s too slow
 	 *
 	 */
+//	@Test
 	void testTenAlts() {
 		final PrefKnowledge k = PrefKnowledge.given(Generator.getAlternatives(10), Generator.getVoters(2));
 		final StrategyTwoPhases s = StrategyTwoPhases.build(k);
