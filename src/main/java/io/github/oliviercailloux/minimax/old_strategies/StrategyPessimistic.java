@@ -42,8 +42,6 @@ public class StrategyPessimistic implements Strategy {
 	private static double w2;
 	private static HashMap<Question, Double> questions;
 	private static List<Question> nextQuestions;
-	private static RegretComputer regretComputer;
-
 	private static final Logger LOGGER = LoggerFactory.getLogger(StrategyPessimistic.class);
 
 	public static StrategyPessimistic build(PrefKnowledge knowledge) {

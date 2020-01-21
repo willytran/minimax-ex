@@ -393,7 +393,8 @@ class RegretComputerTest {
 	/**
 	 * TODO complete or delete this test.
 	 */
-	@Test
+	@SuppressWarnings("unused")
+//	@Test
 	void TestRanks() throws Exception {
 		/** case 2: y>x put as much alts as possible in between **/
 		Voter v1 = new Voter(1);
