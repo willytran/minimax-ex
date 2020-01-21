@@ -2,7 +2,6 @@ package io.github.oliviercailloux.minimax.elicitation;
 
 import static com.google.common.base.Preconditions.checkArgument;
 
-import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.Map;
 import java.util.Set;
@@ -24,19 +23,9 @@ public class PrefKnowledge {
 		return new PrefKnowledge(alternatives, voters);
 	}
 
-	/**
-	 * TODO May be incorrect. Consider removing?
-	 */
 	public static PrefKnowledge copyOf(PrefKnowledge knowledge) {
-		PrefKnowledge pref = new PrefKnowledge(knowledge.getAlternatives(), knowledge.getVoters());
-		Map<Voter, VoterPartialPreference> profile = new HashMap<>();
-		for (Voter v : knowledge.getVoters()) {
-			VoterPartialPreference vp = VoterPartialPreference.copyOf(knowledge.getProfile().get(v));
-			profile.put(v, vp);
-		}
-		pref.partialProfile = ImmutableMap.copyOf(profile);
-		pref.cow = ConstraintsOnWeights.copyOf(knowledge.getConstraintsOnWeights());
-		return pref;
+		return new PrefKnowledge(knowledge.alternatives, knowledge.partialProfile, knowledge.cow,
+				knowledge.lambdaRanges);
 	}
 
 	private ImmutableSet<Alternative> alternatives;
@@ -78,6 +67,23 @@ public class PrefKnowledge {
 				lambdaRanges.put(rank, Range.closed(new Apint(1), new Apint(n)));
 			}
 		}
+	}
+
+	/**
+	 * Copy constructor. The parameters should come from an existing instance, to
+	 * ensure coherence.
+	 */
+	private PrefKnowledge(Set<Alternative> alternatives, Map<Voter, VoterPartialPreference> profile,
+			ConstraintsOnWeights cow, Map<Integer, Range<Aprational>> lambdaRanges) {
+		this.alternatives = ImmutableSet.copyOf(alternatives);
+		final ImmutableMap.Builder<Voter, VoterPartialPreference> builder = ImmutableMap.builder();
+		for (Voter v : profile.keySet()) {
+			VoterPartialPreference vp = VoterPartialPreference.copyOf(profile.get(v));
+			builder.put(v, vp);
+		}
+		partialProfile = builder.build();
+		this.cow = ConstraintsOnWeights.copyOf(cow);
+		this.lambdaRanges = new LinkedHashMap<>(lambdaRanges);
 	}
 
 	/**
