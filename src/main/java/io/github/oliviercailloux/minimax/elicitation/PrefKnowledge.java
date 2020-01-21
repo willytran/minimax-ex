@@ -4,6 +4,7 @@ import static com.google.common.base.Preconditions.checkArgument;
 
 import java.util.LinkedHashMap;
 import java.util.Map;
+import java.util.Map.Entry;
 import java.util.Set;
 
 import org.apfloat.Apint;
@@ -76,12 +77,8 @@ public class PrefKnowledge {
 	private PrefKnowledge(Set<Alternative> alternatives, Map<Voter, VoterPartialPreference> profile,
 			ConstraintsOnWeights cow, Map<Integer, Range<Aprational>> lambdaRanges) {
 		this.alternatives = ImmutableSet.copyOf(alternatives);
-		final ImmutableMap.Builder<Voter, VoterPartialPreference> builder = ImmutableMap.builder();
-		for (Voter v : profile.keySet()) {
-			VoterPartialPreference vp = VoterPartialPreference.copyOf(profile.get(v));
-			builder.put(v, vp);
-		}
-		partialProfile = builder.build();
+		partialProfile = profile.entrySet().stream().collect(
+				ImmutableMap.toImmutableMap(Entry::getKey, (e) -> VoterPartialPreference.copyOf(e.getValue())));
 		this.cow = ConstraintsOnWeights.copyOf(cow);
 		this.lambdaRanges = new LinkedHashMap<>(lambdaRanges);
 	}

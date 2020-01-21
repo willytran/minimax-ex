@@ -26,7 +26,7 @@ import io.github.oliviercailloux.y2018.j_voting.Voter;
  */
 public class Oracle {
 
-	public static Oracle build(ImmutableMap<Voter, VoterStrictPreference> profile, PSRWeights weights) {
+	public static Oracle build(Map<Voter, VoterStrictPreference> profile, PSRWeights weights) {
 		return new Oracle(profile, weights);
 	}
 
