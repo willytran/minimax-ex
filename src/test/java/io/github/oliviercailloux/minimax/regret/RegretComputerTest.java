@@ -125,8 +125,8 @@ class RegretComputerTest {
 
 		final ImmutableSet<Alternative> ys = pmrs.stream().map((p) -> p.getY()).collect(ImmutableSet.toImmutableSet());
 		assertTrue(ys.contains(a));
-		/** TODO check that the whole set, when using an epsilon, is the following. */
-//		assertEquals(ImmutableSet.of(a, c, d), ys);
+		assertEquals(ImmutableSet.of(a, c, d), regretComputer.getAllPairwiseMaxRegrets().getMinimalMaxRegrets(1E-4)
+				.get(a).stream().map((p) -> p.getY()).collect(ImmutableSet.toImmutableSet()));
 	}
 
 	@Test
