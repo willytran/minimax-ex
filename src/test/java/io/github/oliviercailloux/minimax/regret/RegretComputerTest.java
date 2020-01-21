@@ -390,6 +390,9 @@ class RegretComputerTest {
 		assertEquals(8, regretComputer.getBestRankOfY(x, x, knowledge.getPartialPreference(v1)));
 	}
 
+	/**
+	 * TODO complete or delete this test.
+	 */
 	@Test
 	void TestRanks() throws Exception {
 		/** case 2: y>x put as much alts as possible in between **/
