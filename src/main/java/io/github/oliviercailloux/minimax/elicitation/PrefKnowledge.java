@@ -16,7 +16,6 @@ import com.google.common.collect.Range;
 
 import io.github.oliviercailloux.j_voting.VoterPartialPreference;
 import io.github.oliviercailloux.jlp.elements.ComparisonOperator;
-import io.github.oliviercailloux.minimax.utils.Rounder;
 import io.github.oliviercailloux.y2018.j_voting.Alternative;
 import io.github.oliviercailloux.y2018.j_voting.Voter;
 
@@ -80,7 +79,7 @@ public class PrefKnowledge {
 			}
 		}
 	}
-	
+
 	/**
 	 * @return a non empty set.
 	 */
@@ -147,14 +146,14 @@ public class PrefKnowledge {
 		checkArgument(rank <= alternatives.size() - 2);
 		return lambdaRanges.get(rank);
 	}
-	
+
 	@Override
 	public String toString() {
 		StringBuilder sb = new StringBuilder();
-		sb.append("Constraints on weights: \n"+ cow.rangesAsString()+"\n");
+		sb.append("Constraints on weights: \n" + cow.rangesAsString() + "\n");
 		sb.append("Preference profile \n");
-		for(int i=1;i<=partialProfile.size();i++) {
-			sb.append("Voter "+i+" "+partialProfile.get(new Voter(i))+"\n");
+		for (int i = 1; i <= partialProfile.size(); i++) {
+			sb.append("Voter " + i + " " + partialProfile.get(new Voter(i)) + "\n");
 		}
 		return sb.toString();
 	}

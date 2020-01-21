@@ -2,17 +2,11 @@ package io.github.oliviercailloux.minimax;
 
 import static com.google.common.base.Preconditions.checkArgument;
 
-import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.HashSet;
-import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
-import java.util.Random;
 import java.util.Set;
-import java.util.stream.Collectors;
-import java.util.stream.IntStream;
 
 import org.apfloat.Apint;
 import org.apfloat.Aprational;
@@ -20,11 +14,9 @@ import org.apfloat.AprationalMath;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.Range;
 import com.google.common.collect.SetMultimap;
 import com.google.common.graph.Graph;
-import com.google.common.graph.ImmutableGraph;
 
 import io.github.oliviercailloux.jlp.elements.ComparisonOperator;
 import io.github.oliviercailloux.jlp.elements.SumTerms;
@@ -39,7 +31,6 @@ import io.github.oliviercailloux.minimax.elicitation.QuestionVoter;
 import io.github.oliviercailloux.minimax.regret.PairwiseMaxRegret;
 import io.github.oliviercailloux.minimax.regret.RegretComputer;
 import io.github.oliviercailloux.minimax.utils.AggregationOperator;
-import io.github.oliviercailloux.minimax.utils.Rounder;
 import io.github.oliviercailloux.minimax.utils.AggregationOperator.AggOps;
 import io.github.oliviercailloux.y2018.j_voting.Alternative;
 import io.github.oliviercailloux.y2018.j_voting.Voter;
@@ -162,7 +153,7 @@ public class StrategyPessimisticHeuristic implements Strategy {
 					U.add(a);
 				}
 			}
-			if (xStar.equals(yBar)) {	//we ask something we don't know
+			if (xStar.equals(yBar)) { // we ask something we don't know
 				questionable = new HashSet<>(vpref.nodes());
 				questionable.remove(xStar);
 				questionable.removeAll(vpref.adjacentNodes(xStar));
@@ -188,7 +179,7 @@ public class StrategyPessimisticHeuristic implements Strategy {
 						HashSet<Alternative> B = new HashSet<>(vpref.successors(yBar));
 						B.retainAll(vpref.predecessors(xStar));
 						questionable.removeAll(B);
-					} else {								//x and y are not comparable
+					} else { // x and y are not comparable
 						questionable = new HashSet<>();
 						questionable.remove(xStar);
 						questionable.add(yBar);

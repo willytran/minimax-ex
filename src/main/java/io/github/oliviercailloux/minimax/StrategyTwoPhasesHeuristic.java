@@ -2,17 +2,11 @@ package io.github.oliviercailloux.minimax;
 
 import static com.google.common.base.Preconditions.checkArgument;
 
-import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.HashSet;
-import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
-import java.util.Random;
 import java.util.Set;
-import java.util.stream.Collectors;
-import java.util.stream.IntStream;
 
 import org.apfloat.Apint;
 import org.apfloat.Aprational;
@@ -20,11 +14,9 @@ import org.apfloat.AprationalMath;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.Range;
 import com.google.common.collect.SetMultimap;
 import com.google.common.graph.Graph;
-import com.google.common.graph.ImmutableGraph;
 
 import io.github.oliviercailloux.jlp.elements.ComparisonOperator;
 import io.github.oliviercailloux.jlp.elements.SumTerms;
@@ -39,7 +31,6 @@ import io.github.oliviercailloux.minimax.elicitation.QuestionVoter;
 import io.github.oliviercailloux.minimax.regret.PairwiseMaxRegret;
 import io.github.oliviercailloux.minimax.regret.RegretComputer;
 import io.github.oliviercailloux.minimax.utils.AggregationOperator;
-import io.github.oliviercailloux.minimax.utils.Rounder;
 import io.github.oliviercailloux.minimax.utils.AggregationOperator.AggOps;
 import io.github.oliviercailloux.y2018.j_voting.Alternative;
 import io.github.oliviercailloux.y2018.j_voting.Voter;
@@ -56,7 +47,7 @@ public class StrategyTwoPhasesHeuristic implements Strategy {
 	private int questionsToVoters;
 	private int questionsToCommittee;
 	private boolean committeeFirst;
-	
+
 	private static Set<Question> questionsV;
 	private static List<Question> nextQuestionsV;
 	private static RegretComputer rc;
@@ -66,14 +57,14 @@ public class StrategyTwoPhasesHeuristic implements Strategy {
 	public static StrategyTwoPhasesHeuristic build(PrefKnowledge knowledge, int questionsToVoters,
 			int questionsToCommittee, boolean committeeFirst) {
 		op = AggOps.MAX;
-		return new StrategyTwoPhasesHeuristic(knowledge, questionsToVoters, questionsToCommittee,committeeFirst);
+		return new StrategyTwoPhasesHeuristic(knowledge, questionsToVoters, questionsToCommittee, committeeFirst);
 	}
 
 	public static StrategyTwoPhasesHeuristic build(PrefKnowledge knowledge, AggOps operator, int questionsToVoters,
 			int questionsToCommittee, boolean committeeFirst) {
 		checkArgument(!operator.equals(AggOps.WEIGHTED_AVERAGE));
 		op = operator;
-		return new StrategyTwoPhasesHeuristic(knowledge, questionsToVoters, questionsToCommittee,committeeFirst);
+		return new StrategyTwoPhasesHeuristic(knowledge, questionsToVoters, questionsToCommittee, committeeFirst);
 	}
 
 	public static StrategyTwoPhasesHeuristic build(PrefKnowledge knowledge, AggOps operator, double w_1, double w_2,
@@ -84,14 +75,14 @@ public class StrategyTwoPhasesHeuristic implements Strategy {
 		op = operator;
 		w1 = w_1;
 		w2 = w_2;
-		return new StrategyTwoPhasesHeuristic(knowledge, questionsToVoters, questionsToCommittee,committeeFirst);
+		return new StrategyTwoPhasesHeuristic(knowledge, questionsToVoters, questionsToCommittee, committeeFirst);
 	}
 
-	private StrategyTwoPhasesHeuristic(PrefKnowledge know, int qToVoters, int qToCommittee,boolean cFirst) {
+	private StrategyTwoPhasesHeuristic(PrefKnowledge know, int qToVoters, int qToCommittee, boolean cFirst) {
 		knowledge = know;
 		questionsToVoters = qToVoters;
 		questionsToCommittee = qToCommittee;
-		committeeFirst= cFirst;
+		committeeFirst = cFirst;
 		profileCompleted = false;
 		LOGGER.info("");
 	}
@@ -100,36 +91,35 @@ public class StrategyTwoPhasesHeuristic implements Strategy {
 	public Question nextQuestion() {
 		final int m = knowledge.getAlternatives().size();
 		checkArgument(m >= 2, "Questions can be asked only if there are at least two alternatives.");
-		checkArgument(questionsToVoters!=0 || questionsToCommittee!=0, "No more questions allowed");
+		checkArgument(questionsToVoters != 0 || questionsToCommittee != 0, "No more questions allowed");
 		Question q;
-		
+
 		rc = new RegretComputer(knowledge);
 		SetMultimap<Alternative, PairwiseMaxRegret> mmr = rc.getMinimalMaxRegrets();
 		Alternative xStar = mmr.keySet().iterator().next();
 		PairwiseMaxRegret currentSolution = mmr.get(xStar).iterator().next();
 		Alternative yBar = currentSolution.getY();
 		PSRWeights wBar = currentSolution.getWeights();
-		
-		if(committeeFirst) {
-			if(questionsToCommittee>0) {
-				q=selectQuestionToCommittee(wBar, xStar, yBar);
+
+		if (committeeFirst) {
+			if (questionsToCommittee > 0) {
+				q = selectQuestionToCommittee(wBar, xStar, yBar);
 				questionsToCommittee--;
-			}else {
-				q=selectQuestionToVoters(xStar,yBar);
+			} else {
+				q = selectQuestionToVoters(xStar, yBar);
 				questionsToVoters--;
 			}
-		}else {
-			if(questionsToVoters>0) {
-				q=selectQuestionToVoters(xStar,yBar);
+		} else {
+			if (questionsToVoters > 0) {
+				q = selectQuestionToVoters(xStar, yBar);
 				questionsToVoters--;
-			}else {
-				q=selectQuestionToCommittee(wBar, xStar, yBar);
+			} else {
+				q = selectQuestionToCommittee(wBar, xStar, yBar);
 				questionsToCommittee--;
 			}
 		}
 		return q;
 	}
-
 
 	private Question selectQuestionToCommittee(PSRWeights wBar, Alternative xStar, Alternative yBar) {
 		PSRWeights wMin = getMinTauW(xStar, yBar);
@@ -153,8 +143,9 @@ public class StrategyTwoPhasesHeuristic implements Strategy {
 
 	private Question selectQuestionToVoters(Alternative xStar, Alternative yBar) {
 		questionsV = selectQuestionsVoters(xStar, yBar);
-		
-		checkArgument(!questionsV.isEmpty(), "No question to ask about voters.");	//we could handle it by asking question to committee instead
+
+		checkArgument(!questionsV.isEmpty(), "No question to ask about voters."); // we could handle it by asking
+																					// question to committee instead
 
 		Question nextQ = questionsV.iterator().next();
 		double minScore = getScore(nextQ);
@@ -177,8 +168,7 @@ public class StrategyTwoPhasesHeuristic implements Strategy {
 		int randomPos = (int) (nextQuestionsV.size() * Math.random());
 		return nextQuestionsV.get(randomPos);
 	}
-	
-	
+
 	private Set<Question> selectQuestionsVoters(Alternative xStar, Alternative yBar) {
 		HashSet<Question> questv = new HashSet<>();
 		for (Voter v : knowledge.getVoters()) {
@@ -191,7 +181,7 @@ public class StrategyTwoPhasesHeuristic implements Strategy {
 					U.add(a);
 				}
 			}
-			if (xStar.equals(yBar)) {	//we ask something we don't know
+			if (xStar.equals(yBar)) { // we ask something we don't know
 				questionable = new HashSet<>(vpref.nodes());
 				questionable.remove(xStar);
 				questionable.removeAll(vpref.adjacentNodes(xStar));
@@ -217,7 +207,7 @@ public class StrategyTwoPhasesHeuristic implements Strategy {
 						HashSet<Alternative> B = new HashSet<>(vpref.successors(yBar));
 						B.retainAll(vpref.predecessors(xStar));
 						questionable.removeAll(B);
-					} else {								//x and y are not comparable
+					} else { // x and y are not comparable
 						questionable = new HashSet<>();
 						questionable.remove(xStar);
 						questionable.add(yBar);
