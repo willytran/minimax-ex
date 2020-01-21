@@ -1,28 +1,16 @@
 package io.github.oliviercailloux.minimax.utils;
 
 import static org.junit.Assert.assertTrue;
-import static org.junit.jupiter.api.Assertions.assertEquals;
 
-import java.math.RoundingMode;
 import java.util.HashSet;
-import java.util.Iterator;
-import java.util.List;
 import java.util.Set;
 
 import org.junit.jupiter.api.Test;
 
-import com.google.common.collect.ImmutableList;
-import com.google.common.collect.ImmutableMap;
-import com.google.common.collect.ImmutableSet;
-import com.google.common.collect.SetMultimap;
 import com.google.common.graph.Graph;
-import com.google.common.graph.ImmutableGraph;
 import com.google.common.graph.MutableGraph;
 
-import io.github.oliviercailloux.minimax.elicitation.PSRWeights;
 import io.github.oliviercailloux.minimax.elicitation.PrefKnowledge;
-import io.github.oliviercailloux.minimax.regret.RegretComputer;
-import io.github.oliviercailloux.minimax.utils.Rounder;
 import io.github.oliviercailloux.y2018.j_voting.Alternative;
 import io.github.oliviercailloux.y2018.j_voting.Voter;
 
@@ -89,7 +77,7 @@ class SetOperationsTest {
 				U.add(al);
 			}
 		}
-		
+
 		HashSet<Alternative> DC = new HashSet<>(vpref.nodes());
 		DC.remove(x);
 		DC.remove(y);
@@ -101,12 +89,17 @@ class SetOperationsTest {
 		DC.removeAll(B);
 
 		Set<Alternative> trueU = new HashSet<>();
-		trueU.add(u);trueU.add(u1);
+		trueU.add(u);
+		trueU.add(u1);
 		Set<Alternative> trueB = new HashSet<>();
-		trueB.add(b);trueB.add(b1);
+		trueB.add(b);
+		trueB.add(b1);
 		Set<Alternative> trueDC = new HashSet<>();
-		trueDC.add(d);trueDC.add(d1);trueDC.add(c);trueDC.add(c1);	
-		
+		trueDC.add(d);
+		trueDC.add(d1);
+		trueDC.add(c);
+		trueDC.add(c1);
+
 		assertTrue(DC.containsAll(trueDC));
 		assertTrue(B.containsAll(B));
 		assertTrue(U.containsAll(U));
@@ -166,7 +159,6 @@ class SetOperationsTest {
 		pref.putEdge(b1, x);
 		pref.putEdge(b, b1);
 		pref.putEdge(a1, u1);
-
 
 	}
 

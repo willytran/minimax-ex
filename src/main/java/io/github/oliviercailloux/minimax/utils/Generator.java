@@ -43,32 +43,6 @@ public class Generator {
 		return PSRWeights.given(weights);
 	}
 	
-	/** TODO: to remove*/
-	@Deprecated
-	public static PSRWeights genWeights(int nbAlternatives, Rounder rounder) {
-		List<Double> weights = new LinkedList<>();
-		weights.add(1d);
-		double previous = 1d;
-		Random r = new Random();
-		double[] differences = new double[nbAlternatives - 1];
-		double sum = 0;
-		for (int i = 0; i < nbAlternatives - 1; i++) {
-			differences[i] = r.nextDouble();
-			sum += differences[i];
-		}
-		for (int i = 0; i < nbAlternatives - 1; i++) {
-			differences[i] = differences[i] / sum;
-		}
-		Arrays.sort(differences);
-		for (int i = nbAlternatives - 2; i > 0; i--) {
-			double curr = rounder.round(previous - differences[i]);
-			weights.add(curr);
-			previous = curr;
-		}
-		weights.add(0d);
-		return PSRWeights.given(weights);
-	}
-
 	public static Map<Voter, VoterStrictPreference> genProfile(int nbVoters, int nbAlternatives) {
 		checkArgument(nbVoters >= 1);
 		checkArgument(nbAlternatives >= 1);

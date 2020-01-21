@@ -1,4 +1,4 @@
-package io.github.oliviercailloux.minimax;
+package io.github.oliviercailloux.minimax.old_strategies;
 
 import static com.google.common.base.Preconditions.checkArgument;
 
@@ -19,6 +19,7 @@ import org.slf4j.LoggerFactory;
 import com.google.common.collect.Range;
 import com.google.common.graph.Graph;
 
+import io.github.oliviercailloux.minimax.Strategy;
 import io.github.oliviercailloux.minimax.elicitation.PrefKnowledge;
 import io.github.oliviercailloux.minimax.elicitation.Question;
 import io.github.oliviercailloux.minimax.elicitation.QuestionCommittee;

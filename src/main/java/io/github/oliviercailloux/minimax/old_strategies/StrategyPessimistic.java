@@ -1,4 +1,4 @@
-package io.github.oliviercailloux.minimax;
+package io.github.oliviercailloux.minimax.old_strategies;
 
 import static com.google.common.base.Preconditions.checkArgument;
 
@@ -19,6 +19,7 @@ import com.google.common.collect.Range;
 import com.google.common.graph.Graph;
 
 import io.github.oliviercailloux.jlp.elements.ComparisonOperator;
+import io.github.oliviercailloux.minimax.Strategy;
 import io.github.oliviercailloux.minimax.elicitation.PrefKnowledge;
 import io.github.oliviercailloux.minimax.elicitation.Question;
 import io.github.oliviercailloux.minimax.elicitation.QuestionCommittee;
@@ -26,7 +27,6 @@ import io.github.oliviercailloux.minimax.elicitation.QuestionType;
 import io.github.oliviercailloux.minimax.elicitation.QuestionVoter;
 import io.github.oliviercailloux.minimax.regret.RegretComputer;
 import io.github.oliviercailloux.minimax.utils.AggregationOperator;
-import io.github.oliviercailloux.minimax.utils.Rounder;
 import io.github.oliviercailloux.minimax.utils.AggregationOperator.AggOps;
 import io.github.oliviercailloux.y2018.j_voting.Alternative;
 import io.github.oliviercailloux.y2018.j_voting.Voter;
@@ -42,8 +42,6 @@ public class StrategyPessimistic implements Strategy {
 	private static double w2;
 	private static HashMap<Question, Double> questions;
 	private static List<Question> nextQuestions;
-	private static RegretComputer regretComputer;
-	
 	private static final Logger LOGGER = LoggerFactory.getLogger(StrategyPessimistic.class);
 
 	public static StrategyPessimistic build(PrefKnowledge knowledge) {
@@ -73,7 +71,6 @@ public class StrategyPessimistic implements Strategy {
 		LOGGER.info("");
 	}
 
-	
 	@Override
 	public Question nextQuestion() {
 		final int m = knowledge.getAlternatives().size();
@@ -116,9 +113,9 @@ public class StrategyPessimistic implements Strategy {
 
 		Question nextQ = questions.keySet().iterator().next();
 		double minScore = questions.get(nextQ);
-		nextQuestions= new LinkedList<>();
+		nextQuestions = new LinkedList<>();
 		nextQuestions.add(nextQ);
-		
+
 		for (Question q : questions.keySet()) {
 			double score = questions.get(q);
 			if (score < minScore) {
@@ -185,7 +182,7 @@ public class StrategyPessimistic implements Strategy {
 	public static HashMap<Question, Double> getQuestions() {
 		return questions;
 	}
-	
+
 	/** only for testing purposes */
 	public static List<Question> getNextQuestions() {
 		return nextQuestions;

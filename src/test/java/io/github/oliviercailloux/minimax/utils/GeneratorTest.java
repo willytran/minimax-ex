@@ -3,7 +3,6 @@ package io.github.oliviercailloux.minimax.utils;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
 
-import java.math.RoundingMode;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
@@ -18,14 +17,9 @@ import io.github.oliviercailloux.y2018.j_voting.Voter;
 public class GeneratorTest {
 
 	@Test
-	public void testOracle() {
-		// final Oracle oracle = XPRunner.genContext();
-	}
-
-	@Test
 	public void testGenWeights() {
 		int m = 9;
-		final PSRWeights weights = Generator.genWeights(m, Rounder.given(RoundingMode.HALF_UP, 3));
+		final PSRWeights weights = Generator.genWeights(m);
 		assertEquals(m, weights.getWeights().size());
 	}
 
