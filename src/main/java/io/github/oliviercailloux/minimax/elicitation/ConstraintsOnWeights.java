@@ -27,6 +27,7 @@ import io.github.oliviercailloux.jlp.or_tools.OrToolsSolver;
 import io.github.oliviercailloux.jlp.result.Result;
 import io.github.oliviercailloux.jlp.result.ResultStatus;
 import io.github.oliviercailloux.jlp.result.Solution;
+import io.github.oliviercailloux.jlp.solve.Solver;
 
 /**
  *
@@ -92,14 +93,12 @@ public class ConstraintsOnWeights {
 	}
 
 	public static ConstraintsOnWeights copyOf(ConstraintsOnWeights cw) {
-		ConstraintsOnWeights c = new ConstraintsOnWeights(cw.getM());
-		c.builder = MPBuilder.copyOf(cw.builder);
-		c.setConvexityConstraint();
+		ConstraintsOnWeights c = new ConstraintsOnWeights(cw.builder, cw.convexityConstraintSet);
 		return c;
 	}
 
 	private MPBuilder builder;
-	private final OrToolsSolver solver;
+	private final Solver solver;
 	private Solution lastSolution;
 	private boolean convexityConstraintSet;
 
@@ -119,6 +118,22 @@ public class ConstraintsOnWeights {
 		solver = new OrToolsSolver();
 		lastSolution = null;
 		convexityConstraintSet = false;
+	}
+
+	/**
+	 * Copy constructor.
+	 * 
+	 * @param mp                     should come from another COW instance (to
+	 *                               guarantee that the structure conforms to
+	 *                               expectations).
+	 * @param convexityConstraintSet should come from the same instance (to
+	 *                               guarantee coherence).
+	 */
+	private ConstraintsOnWeights(MPBuilder mp, boolean convexityConstraintSet) {
+		builder = MPBuilder.copyOf(mp);
+		solver = new OrToolsSolver();
+		lastSolution = null;
+		this.convexityConstraintSet = convexityConstraintSet;
 	}
 
 	/**
