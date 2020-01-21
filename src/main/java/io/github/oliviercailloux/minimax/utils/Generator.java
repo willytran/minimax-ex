@@ -13,6 +13,7 @@ import java.util.Random;
 import com.google.common.collect.Lists;
 
 import io.github.oliviercailloux.j_voting.VoterStrictPreference;
+import io.github.oliviercailloux.minimax.elicitation.Oracle;
 import io.github.oliviercailloux.minimax.elicitation.PSRWeights;
 import io.github.oliviercailloux.y2018.j_voting.Alternative;
 import io.github.oliviercailloux.y2018.j_voting.Voter;
@@ -42,8 +43,8 @@ public class Generator {
 		weights.add(0d);
 		return PSRWeights.given(weights);
 	}
-	
-	public static Map<Voter, VoterStrictPreference> genProfile(int nbVoters, int nbAlternatives) {
+
+	public static Map<Voter, VoterStrictPreference> genProfile(int nbAlternatives, int nbVoters) {
 		checkArgument(nbVoters >= 1);
 		checkArgument(nbAlternatives >= 1);
 		Map<Voter, VoterStrictPreference> profile = new HashMap<>();
@@ -62,5 +63,9 @@ public class Generator {
 		}
 
 		return profile;
+	}
+
+	public static Oracle generateOracle(int nbAlternatives, int nbVoters) {
+		return Oracle.build(genProfile(nbAlternatives, nbVoters), genWeights(nbAlternatives));
 	}
 }

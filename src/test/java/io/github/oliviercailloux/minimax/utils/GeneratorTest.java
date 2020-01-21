@@ -27,7 +27,7 @@ public class GeneratorTest {
 	public void testGenProfile() {
 		int m = 3;
 		int n = 2;
-		final Map<Voter, VoterStrictPreference> rv = Generator.genProfile(n, m);
+		final Map<Voter, VoterStrictPreference> rv = Generator.genProfile(m, n);
 
 		final List<Alternative> alt = new LinkedList<>();
 		for (int i = 1; i <= m; i++) {

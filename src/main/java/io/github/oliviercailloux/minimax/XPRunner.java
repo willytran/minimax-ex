@@ -11,7 +11,6 @@ import java.text.DecimalFormat;
 import java.text.NumberFormat;
 import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.HashSet;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
@@ -229,19 +228,11 @@ public class XPRunner {
 		bwQst.write(nbquest + " questions:" + "\n");
 		final long startTime = System.currentTimeMillis();
 
-		Set<Alternative> alternatives = new HashSet<>();
-		for (int i = 1; i <= m; i++) {
-			alternatives.add(new Alternative(i));
-		}
-		Set<Voter> voters = new HashSet<>();
-		for (int i = 1; i <= n; i++) {
-			voters.add(new Voter(i));
-		}
-		Oracle context = Oracle.build(ImmutableMap.copyOf(Generator.genProfile(n, m)), Generator.genWeights(m));
+		Oracle context = Oracle.build(ImmutableMap.copyOf(Generator.genProfile(m, n)), Generator.genWeights(m));
 		Map<Double, List<Alternative>> trueWinners = computeTrueWinners(context);
 		double trueWinScore = trueWinners.keySet().iterator().next();
 
-		PrefKnowledge knowledge = PrefKnowledge.given(alternatives, voters);
+		PrefKnowledge knowledge = PrefKnowledge.given(context.getAlternatives(), context.getProfile().keySet());
 
 		Strategy strategy = null;
 		switch (st) {
@@ -288,7 +279,6 @@ public class XPRunner {
 		default:
 			throw new IllegalStateException();
 		}
-
 		double qstVot = 0, qstCom = 0;
 
 		for (int k = 1; k <= nbquest; k++) {
