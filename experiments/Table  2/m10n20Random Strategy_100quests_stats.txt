@@ -1,0 +1,44 @@
+Random Strategy
+20 Voters 10 Alternatives 
+100 Questions for 10 runs 
+Mean of Regret reduced by half in -1 questions 
+Mean of Regret reduced by four in -1 questions 
+Mean of Regret reduced by eight in -1 questions 
+Mean of Average Loss reduced by half in -1 questions 
+Mean of Average Loss reduced by four in -1 questions 
+Mean of Average Loss reduced by eight in -1 questions 
+k 	 Mean of Regrets 
+0	20.0
+20	19.98569789183941
+40	19.9032842283573
+60	19.764076943768245
+80	19.40376700715135
+100	18.947679056298146
+k 	 Mean of Average Losses 
+0	2.6107788535953675
+20	2.251226517951998
+40	2.153281022573044
+60	1.3413561000680665
+80	1.8699567309044123
+100	2.072664814358254
+k 	 Standard Deviations of Regrets 
+0	0.0
+20	0.04290265782855182
+40	0.08078878884542173
+60	0.1595763917176662
+80	0.22134988842021872
+100	0.3835964907144353
+k 	 Standard Deviations of Average Losses 
+0	0.0
+20	0.04290265782855182
+40	0.08078878884542173
+60	0.1595763917176662
+80	0.22134988842021872
+100	0.3835964907144353
+k 	 Percentage of Questions to the Voters 
+0	�
+20	53.5%
+40	50.0%
+60	50.5%
+80	51.6%
+100	51.8%
