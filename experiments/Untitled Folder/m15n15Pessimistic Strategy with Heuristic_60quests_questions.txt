@@ -1,0 +1,66 @@
+Pessimistic Strategy with Heuristic
+15 Voters 15 Alternatives 
+Run 0: 60 questions:
+Question{QuestionVoter{voter=Voter{4}, a=1, b=2}}
+Question{QuestionVoter{voter=Voter{1}, a=1, b=2}}
+Question{QuestionVoter{voter=Voter{1}, a=1, b=3}}
+Question{QuestionVoter{voter=Voter{1}, a=3, b=4}}
+Question{QuestionVoter{voter=Voter{1}, a=3, b=5}}
+Question{QuestionVoter{voter=Voter{1}, a=3, b=6}}
+Question{QuestionVoter{voter=Voter{1}, a=3, b=7}}
+Question{QuestionVoter{voter=Voter{1}, a=3, b=8}}
+Question{QuestionVoter{voter=Voter{1}, a=3, b=9}}
+Question{QuestionVoter{voter=Voter{1}, a=3, b=10}}
+Question{QuestionVoter{voter=Voter{1}, a=10, b=11}}
+Question{QuestionVoter{voter=Voter{1}, a=10, b=12}}
+Question{QuestionVoter{voter=Voter{1}, a=12, b=13}}
+Question{QuestionVoter{voter=Voter{1}, a=12, b=14}}
+Question{QuestionVoter{voter=Voter{1}, a=12, b=15}}
+Question{QuestionVoter{voter=Voter{9}, a=12, b=10}}
+Question{QuestionVoter{voter=Voter{9}, a=12, b=1}}
+Question{QuestionVoter{voter=Voter{13}, a=12, b=10}}
+Question{QuestionVoter{voter=Voter{11}, a=12, b=13}}
+Question{QuestionCommittee{λ=8, rank=1}}
+Question{QuestionVoter{voter=Voter{11}, a=12, b=1}}
+Question{QuestionVoter{voter=Voter{12}, a=12, b=13}}
+Question{QuestionVoter{voter=Voter{1}, a=1, b=13}}
+Question{QuestionVoter{voter=Voter{14}, a=12, b=14}}
+Question{QuestionVoter{voter=Voter{11}, a=12, b=15}}
+Question{QuestionVoter{voter=Voter{12}, a=12, b=15}}
+Question{QuestionVoter{voter=Voter{2}, a=12, b=15}}
+Question{QuestionVoter{voter=Voter{11}, a=13, b=15}}
+Question{QuestionCommittee{λ=8, rank=2}}
+Question{QuestionVoter{voter=Voter{2}, a=12, b=1}}
+Question{QuestionVoter{voter=Voter{9}, a=12, b=15}}
+Question{QuestionVoter{voter=Voter{11}, a=12, b=2}}
+Question{QuestionVoter{voter=Voter{3}, a=12, b=15}}
+Question{QuestionVoter{voter=Voter{1}, a=1, b=15}}
+Question{QuestionVoter{voter=Voter{14}, a=12, b=3}}
+Question{QuestionVoter{voter=Voter{3}, a=12, b=3}}
+Question{QuestionVoter{voter=Voter{10}, a=12, b=3}}
+Question{QuestionVoter{voter=Voter{12}, a=12, b=11}}
+Question{QuestionVoter{voter=Voter{4}, a=12, b=4}}
+Question{QuestionVoter{voter=Voter{2}, a=12, b=5}}
+Question{QuestionVoter{voter=Voter{14}, a=12, b=5}}
+Question{QuestionVoter{voter=Voter{10}, a=12, b=6}}
+Question{QuestionVoter{voter=Voter{8}, a=12, b=6}}
+Question{QuestionVoter{voter=Voter{10}, a=12, b=1}}
+Question{QuestionVoter{voter=Voter{6}, a=12, b=6}}
+Question{QuestionVoter{voter=Voter{12}, a=12, b=6}}
+Question{QuestionVoter{voter=Voter{6}, a=12, b=7}}
+Question{QuestionVoter{voter=Voter{12}, a=12, b=7}}
+Question{QuestionCommittee{λ=9/2, rank=2}}
+Question{QuestionVoter{voter=Voter{5}, a=12, b=8}}
+Question{QuestionVoter{voter=Voter{11}, a=12, b=8}}
+Question{QuestionVoter{voter=Voter{8}, a=12, b=8}}
+Question{QuestionVoter{voter=Voter{3}, a=12, b=8}}
+Question{QuestionVoter{voter=Voter{12}, a=12, b=9}}
+Question{QuestionVoter{voter=Voter{6}, a=12, b=2}}
+Question{QuestionVoter{voter=Voter{3}, a=3, b=15}}
+Question{QuestionVoter{voter=Voter{10}, a=12, b=13}}
+Question{QuestionVoter{voter=Voter{1}, a=2, b=13}}
+Question{QuestionVoter{voter=Voter{13}, a=12, b=13}}
+Question{QuestionVoter{voter=Voter{4}, a=12, b=15}}
+Questions to the voters: 57.0 Question to the committee: 3.0
+Duration 336.43600 seconds 
+

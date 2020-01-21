@@ -1,0 +1,3 @@
+Pessimistic Strategy with Heuristic
+10 Voters 10 Alternatives 
+50 Questions for 1 runs 

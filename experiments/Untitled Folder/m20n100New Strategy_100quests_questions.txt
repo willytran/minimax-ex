@@ -1,0 +1,50 @@
+New Strategy
+100 Voters 20 Alternatives 
+Run 0: 100 questions:
+Question{QuestionCommittee{λ=101/2, rank=1}}
+Question{QuestionCommittee{λ=103/4, rank=1}}
+Question{QuestionCommittee{λ=107/8, rank=1}}
+Question{QuestionCommittee{λ=115/16, rank=1}}
+Question{QuestionCommittee{λ=101/2, rank=2}}
+Question{QuestionCommittee{λ=131/32, rank=1}}
+Question{QuestionCommittee{λ=163/64, rank=1}}
+Question{QuestionCommittee{λ=227/128, rank=1}}
+Question{QuestionCommittee{λ=355/256, rank=1}}
+Question{QuestionCommittee{λ=611/512, rank=1}}
+Question{QuestionCommittee{λ=1123/1024, rank=1}}
+Question{QuestionCommittee{λ=2345/2048, rank=1}}
+Question{QuestionCommittee{λ=4789/4096, rank=1}}
+Question{QuestionCommittee{λ=9479/8192, rank=1}}
+Question{QuestionCommittee{λ=18859/16384, rank=1}}
+Question{QuestionCommittee{λ=37619/32768, rank=1}}
+Question{QuestionCommittee{λ=75337/65536, rank=1}}
+Question{QuestionCommittee{λ=150575/131072, rank=1}}
+Question{QuestionCommittee{λ=301051/262144, rank=1}}
+Question{QuestionCommittee{λ=602201/524288, rank=1}}
+Questions to the voters: 0.0 Question to the committee: 20.0
+Duration 11.01800 seconds 
+
+Run 1: 100 questions:
+Question{QuestionCommittee{λ=101/2, rank=1}}
+Question{QuestionCommittee{λ=103/4, rank=1}}
+Question{QuestionCommittee{λ=107/8, rank=1}}
+Question{QuestionCommittee{λ=115/16, rank=1}}
+Question{QuestionCommittee{λ=101/2, rank=2}}
+Question{QuestionCommittee{λ=131/32, rank=1}}
+Question{QuestionCommittee{λ=163/64, rank=1}}
+Question{QuestionCommittee{λ=227/128, rank=1}}
+Question{QuestionCommittee{λ=355/256, rank=1}}
+Question{QuestionCommittee{λ=611/512, rank=1}}
+Question{QuestionCommittee{λ=1123/1024, rank=1}}
+Question{QuestionCommittee{λ=2147/2048, rank=1}}
+Question{QuestionCommittee{λ=4195/4096, rank=1}}
+Question{QuestionCommittee{λ=8291/8192, rank=1}}
+Question{QuestionCommittee{λ=16483/16384, rank=1}}
+Question{QuestionCommittee{λ=33065/32768, rank=1}}
+Question{QuestionCommittee{λ=66031/65536, rank=1}}
+Question{QuestionCommittee{λ=132161/131072, rank=1}}
+Question{QuestionCommittee{λ=264223/262144, rank=1}}
+Question{QuestionCommittee{λ=528347/524288, rank=1}}
+Questions to the voters: 0.0 Question to the committee: 20.0
+Duration 9.53800 seconds 
+

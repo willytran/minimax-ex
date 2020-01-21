@@ -1,0 +1,56 @@
+New Strategy
+100 Voters 20 Alternatives 
+Run 0: 50 questions:
+Question{QuestionVoter{voter=Voter{61}, a=20, b=7}}
+Question{QuestionVoter{voter=Voter{60}, a=20, b=15}}
+Question{QuestionVoter{voter=Voter{21}, a=20, b=17}}
+Question{QuestionVoter{voter=Voter{82}, a=20, b=19}}
+Question{QuestionVoter{voter=Voter{30}, a=20, b=2}}
+Question{QuestionVoter{voter=Voter{89}, a=20, b=11}}
+Question{QuestionVoter{voter=Voter{66}, a=20, b=8}}
+Question{QuestionVoter{voter=Voter{42}, a=20, b=15}}
+Question{QuestionVoter{voter=Voter{10}, a=20, b=3}}
+Question{QuestionVoter{voter=Voter{33}, a=20, b=3}}
+Question{QuestionVoter{voter=Voter{54}, a=20, b=13}}
+Question{QuestionVoter{voter=Voter{20}, a=20, b=15}}
+Question{QuestionVoter{voter=Voter{52}, a=20, b=15}}
+Question{QuestionVoter{voter=Voter{20}, a=20, b=10}}
+Question{QuestionVoter{voter=Voter{8}, a=20, b=18}}
+Question{QuestionVoter{voter=Voter{51}, a=20, b=18}}
+Question{QuestionVoter{voter=Voter{100}, a=20, b=6}}
+Question{QuestionVoter{voter=Voter{64}, a=20, b=14}}
+Question{QuestionVoter{voter=Voter{71}, a=20, b=15}}
+Question{QuestionVoter{voter=Voter{12}, a=20, b=1}}
+Question{QuestionVoter{voter=Voter{71}, a=20, b=8}}
+Question{QuestionVoter{voter=Voter{80}, a=20, b=15}}
+Question{QuestionVoter{voter=Voter{10}, a=20, b=18}}
+Question{QuestionVoter{voter=Voter{85}, a=20, b=4}}
+Question{QuestionVoter{voter=Voter{80}, a=20, b=8}}
+Question{QuestionVoter{voter=Voter{1}, a=20, b=7}}
+Question{QuestionVoter{voter=Voter{17}, a=20, b=6}}
+Question{QuestionVoter{voter=Voter{72}, a=20, b=8}}
+Question{QuestionVoter{voter=Voter{37}, a=20, b=15}}
+Question{QuestionVoter{voter=Voter{91}, a=20, b=5}}
+Question{QuestionVoter{voter=Voter{36}, a=20, b=12}}
+Question{QuestionVoter{voter=Voter{20}, a=20, b=18}}
+Question{QuestionVoter{voter=Voter{4}, a=20, b=16}}
+Question{QuestionVoter{voter=Voter{92}, a=20, b=6}}
+Question{QuestionVoter{voter=Voter{57}, a=20, b=9}}
+Question{QuestionVoter{voter=Voter{51}, a=20, b=9}}
+Question{QuestionVoter{voter=Voter{46}, a=20, b=18}}
+Question{QuestionVoter{voter=Voter{4}, a=20, b=4}}
+Question{QuestionVoter{voter=Voter{79}, a=20, b=4}}
+Question{QuestionVoter{voter=Voter{92}, a=20, b=4}}
+Question{QuestionVoter{voter=Voter{93}, a=19, b=15}}
+Question{QuestionVoter{voter=Voter{99}, a=17, b=5}}
+Question{QuestionVoter{voter=Voter{54}, a=16, b=13}}
+Question{QuestionVoter{voter=Voter{78}, a=16, b=6}}
+Question{QuestionVoter{voter=Voter{40}, a=14, b=11}}
+Question{QuestionVoter{voter=Voter{3}, a=12, b=7}}
+Question{QuestionVoter{voter=Voter{21}, a=12, b=7}}
+Question{QuestionVoter{voter=Voter{21}, a=11, b=13}}
+Question{QuestionVoter{voter=Voter{95}, a=10, b=17}}
+Question{QuestionVoter{voter=Voter{69}, a=10, b=19}}
+Questions to the voters: 50.0 Question to the committee: 0.0
+Duration 15.58300 seconds 
+

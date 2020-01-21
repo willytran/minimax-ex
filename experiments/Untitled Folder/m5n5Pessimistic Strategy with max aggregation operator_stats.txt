@@ -1,0 +1,46 @@
+Pessimistic Strategy with max aggregation operator
+5 Voters 5 Alternatives 
+15 Questions for 10 runs 
+Mean of Regret reduced by half in -1 questions 
+Mean of Regret reduced by four in -1 questions 
+Mean of Regret reduced by eight in -1 questions 
+Mean of Average Loss reduced by half in 10 questions 
+Mean of Average Loss reduced by four in -1 questions 
+Mean of Average Loss reduced by eight in -1 questions 
+k 	 Mean of Regrets 
+0 	5.0
+10	3.0583311833333333
+11	3.183331433333333
+12	3.12499815
+13	2.983331633333333
+14	2.591665116666667
+15	2.52499805
+k 	 Mean of Average Losses 
+0 	1.0
+10	0.4036182108227956
+11	0.34752076626181116
+12	0.34856411066173776
+13	0.31601094830964593
+14	0.28588753687675766
+15	0.2649769996930506
+k 	 Standard Deviations of Regrets 
+10	0.491667235312137
+11	0.36093998731829974
+12	0.3359274371891319
+13	0.45154086070891625
+14	0.38810536692379793
+15	0.3944930576092848
+k 	 Standard Deviations of Average Losses 
+10	0.491667235312137
+11	0.36093998731829974
+12	0.3359274371891319
+13	0.45154086070891625
+14	0.38810536692379793
+15	0.3944930576092848
+k 	 Percentage of Questions to the Voters 
+10	100.0%
+11	100.0%
+12	100.0%
+13	99.2%
+14	99.3%
+15	100.0%
