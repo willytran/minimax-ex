@@ -32,7 +32,7 @@ public class RegretComputer {
 	}
 
 	public ImmutableSetMultimap<Alternative, PairwiseMaxRegret> getMinimalMaxRegrets() {
-		return getAllMaxRegrets().getMinimalMaxRegrets();
+		return getAllPairwiseMaxRegrets().getMinimalMaxRegrets();
 	}
 
 	ImmutableSet<PairwiseMaxRegret> getPairwiseMaxRegrets(Alternative x) {
@@ -48,7 +48,7 @@ public class RegretComputer {
 		return pmrs;
 	}
 
-	public Regrets getAllMaxRegrets() {
+	public Regrets getAllPairwiseMaxRegrets() {
 		final ImmutableMap<Alternative, ImmutableSet<PairwiseMaxRegret>> allPmrs = knowledge.getAlternatives().stream()
 				.collect(ImmutableMap.toImmutableMap(Function.identity(), this::getPairwiseMaxRegrets));
 		return Regrets.given(allPmrs);

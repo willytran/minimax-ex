@@ -117,6 +117,17 @@ public class Regrets {
 	}
 
 	/**
+	 * @return for each alternative x, the pairwise max regrets concerning x,
+	 *         indexed by the level of the regret, iterating from lowest to highest
+	 *         regret.
+	 *
+	 */
+	public ImmutableMap<Alternative, SortedMap<Double, Set<PairwiseMaxRegret>>> getRegretsSorted() {
+		return regrets.keySet().stream()
+				.collect(ImmutableMap.toImmutableMap(Function.identity(), this::getRegretsSorted));
+	}
+
+	/**
 	 * @return min_x {max {PMR(x, …)}}.
 	 */
 	public double getMinimalMaxRegret() {
