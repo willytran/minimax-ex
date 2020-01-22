@@ -106,7 +106,7 @@ public class StrategyPessimisticHeuristic implements Strategy {
 	}
 
 	private Set<Question> selectQuestions() {
-		SetMultimap<Alternative, PairwiseMaxRegret> mmr = rc.getMinimalMaxRegrets();
+		SetMultimap<Alternative, PairwiseMaxRegret> mmr = rc.getMinimalMaxRegrets().asMultimap();
 		Alternative xStar = mmr.keySet().iterator().next();
 		PairwiseMaxRegret currentSolution = mmr.get(xStar).iterator().next();
 		Alternative yBar = currentSolution.getY();
@@ -254,12 +254,12 @@ public class StrategyPessimisticHeuristic implements Strategy {
 		}
 
 		RegretComputer rcYes = new RegretComputer(yesKnowledge);
-		SetMultimap<Alternative, PairwiseMaxRegret> mmrYes = rcYes.getMinimalMaxRegrets();
+		SetMultimap<Alternative, PairwiseMaxRegret> mmrYes = rcYes.getMinimalMaxRegrets().asMultimap();
 		Alternative xStarYes = mmrYes.keySet().iterator().next();
 		double yesMMR = mmrYes.get(xStarYes).iterator().next().getPmrValue();
 
 		RegretComputer rcNo = new RegretComputer(noKnowledge);
-		SetMultimap<Alternative, PairwiseMaxRegret> mmrNo = rcNo.getMinimalMaxRegrets();
+		SetMultimap<Alternative, PairwiseMaxRegret> mmrNo = rcNo.getMinimalMaxRegrets().asMultimap();
 		Alternative xStarNo = mmrNo.keySet().iterator().next();
 		double noMMR = mmrNo.get(xStarNo).iterator().next().getPmrValue();
 

@@ -38,7 +38,7 @@ class RegretComputerTest {
 		final PairwiseMaxRegret pmrBVsA = PairwiseMaxRegret.given(b, a, allSecond, allFirst,
 				PSRWeights.given(ImmutableList.of(1d, 0d)));
 
-		SetMultimap<Alternative, PairwiseMaxRegret> pmrValues = regretComputer.getMinimalMaxRegrets();
+		SetMultimap<Alternative, PairwiseMaxRegret> pmrValues = regretComputer.getMinimalMaxRegrets().asMultimap();
 
 		assertTrue(pmrValues.keySet().size() == 2);
 		assertTrue(pmrValues.get(a).size() == 1);
@@ -57,7 +57,7 @@ class RegretComputerTest {
 		final PairwiseMaxRegret pmrAVsA = PairwiseMaxRegret.given(a, a, allFirst, allFirst,
 				PSRWeights.given(ImmutableList.of(1d)));
 
-		assertEquals(ImmutableSet.of(pmrAVsA), regretComputer.getMinimalMaxRegrets().get(a));
+		assertEquals(ImmutableSet.of(pmrAVsA), regretComputer.getMinimalMaxRegrets().asMultimap().get(a));
 	}
 
 	@Test
@@ -75,8 +75,8 @@ class RegretComputerTest {
 		final PairwiseMaxRegret pmrBVsA = PairwiseMaxRegret.given(b, a, allSecond, allFirst,
 				PSRWeights.given(ImmutableList.of(1d, 0d)));
 
-		assertEquals(ImmutableSet.of(pmrAVsB), regretComputer.getMinimalMaxRegrets().get(a));
-		assertEquals(ImmutableSet.of(pmrBVsA), regretComputer.getMinimalMaxRegrets().get(b));
+		assertEquals(ImmutableSet.of(pmrAVsB), regretComputer.getMinimalMaxRegrets().asMultimap().get(a));
+		assertEquals(ImmutableSet.of(pmrBVsA), regretComputer.getMinimalMaxRegrets().asMultimap().get(b));
 	}
 
 	@Test
@@ -119,7 +119,7 @@ class RegretComputerTest {
 
 		final RegretComputer regretComputer = new RegretComputer(knowledge);
 
-		SetMultimap<Alternative, PairwiseMaxRegret> mrs = regretComputer.getMinimalMaxRegrets();
+		SetMultimap<Alternative, PairwiseMaxRegret> mrs = regretComputer.getMinimalMaxRegrets().asMultimap();
 		assertEquals(ImmutableSet.of(a), mrs.keySet());
 		Set<PairwiseMaxRegret> pmrs = mrs.get(a);
 
@@ -451,7 +451,7 @@ class RegretComputerTest {
 
 		final RegretComputer regretComputer = new RegretComputer(knowledge);
 
-		SetMultimap<Alternative, PairwiseMaxRegret> mmr = regretComputer.getMinimalMaxRegrets();
+		SetMultimap<Alternative, PairwiseMaxRegret> mmr = regretComputer.getMinimalMaxRegrets().asMultimap();
 		Alternative xStar = mmr.keySet().iterator().next();
 		PairwiseMaxRegret currentSolution = mmr.get(xStar).iterator().next();
 		Alternative yBar = currentSolution.getY();

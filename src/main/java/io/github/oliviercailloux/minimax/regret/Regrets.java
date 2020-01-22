@@ -46,10 +46,10 @@ import io.github.oliviercailloux.y2018.j_voting.Alternative;
  * </p>
  * <p>
  * Example: with x being associated with PMRs having values {12.5, 13, 13.1}, y
- * to {11, 13, 14}, and z to {11, 13}, {@link #getMinimalMaxRegret(double)} with
- * epsilon = 0.2 will return 13.1; and {@link #getMinimalMaxRegrets(double)}
- * will return x associated to the PMRs of value 13 and 13.1 and z associated to
- * the PMR of value 13.
+ * to {11, 13, 14}, and z to {11, 13}, {@link #getMinimalMaxRegretValue(double)}
+ * with epsilon = 0.2 will return 13.1; and
+ * {@link #getMinimalMaxRegrets(double)} will return x associated to the PMRs of
+ * value 13 and 13.1 and z associated to the PMR of value 13.
  * </p>
  *
  * @author Olivier Cailloux
@@ -78,10 +78,6 @@ public class Regrets {
 		checkArgument(!regrets.isEmpty());
 		checkArgument(regrets.entries().stream().allMatch((e) -> e.getValue().getX().equals(e.getKey())));
 		regretsSorted = null;
-	}
-
-	public ImmutableSet<PairwiseMaxRegret> getAllRegrets() {
-		return ImmutableSet.copyOf(regrets.values());
 	}
 
 	public ImmutableSetMultimap<Alternative, PairwiseMaxRegret> asMultimap() {
@@ -130,8 +126,8 @@ public class Regrets {
 	/**
 	 * @return min_x {max {PMR(x, …)}}.
 	 */
-	public double getMinimalMaxRegret() {
-		return getMinimalMaxRegret(0d);
+	public double getMinimalMaxRegretValue() {
+		return getMinimalMaxRegretValue(0d);
 	}
 
 	/**
@@ -139,7 +135,7 @@ public class Regrets {
 	 *
 	 * @return max_x {max {PMR(x, …) | PMR(x, …) ≤ m + epsilon}}.
 	 */
-	public double getMinimalMaxRegret(double epsilon) {
+	public double getMinimalMaxRegretValue(double epsilon) {
 		checkArgument(epsilon >= 0d);
 		checkArgument(Double.isFinite(epsilon));
 		final double m = regrets.keySet().stream().map(this::getMaxRegret).min(Comparator.naturalOrder()).get();
@@ -154,26 +150,26 @@ public class Regrets {
 
 	/**
 	 * @return a non-empty map whose key set contains each alternative whose max
-	 *         regret is ≤ {@link #getMinimalMaxRegret()}, and for each such
+	 *         regret is ≤ {@link #getMinimalMaxRegretValue()}, and for each such
 	 *         alternative x, the non-empty set of PMRs(x, …) whose regret value is
-	 *         {@link #getMinimalMaxRegret()}].
+	 *         {@link #getMinimalMaxRegretValue()}].
 	 */
-	public ImmutableSetMultimap<Alternative, PairwiseMaxRegret> getMinimalMaxRegrets() {
+	public Regrets getMinimalMaxRegrets() {
 		final ImmutableSetMultimap<Alternative, PairwiseMaxRegret> minimalMaxRegrets = getMinimalMaxRegrets(0d);
 		verify(minimalMaxRegrets.values().stream().map(PairwiseMaxRegret::getPmrValue).distinct().count() == 1);
-		return minimalMaxRegrets;
+		return Regrets.given(minimalMaxRegrets);
 	}
 
 	/**
 	 * @param epsilon ≥ 0d.
 	 * @return a non-empty map whose key set contains each alternative whose max
-	 *         regret is ≤ {@link #getMinimalMaxRegret(epsilon)}, and for each such
-	 *         alternative x, the non-empty set of PMRs(x, …) whose regret value is
-	 *         in [{@link #getMinimalMaxRegret(epsilon)} - epsilon,
-	 *         {@link #getMinimalMaxRegret(epsilon)}].
+	 *         regret is ≤ {@link #getMinimalMaxRegretValue(epsilon)}, and for each
+	 *         such alternative x, the non-empty set of PMRs(x, …) whose regret
+	 *         value is in [{@link #getMinimalMaxRegretValue(epsilon)} - epsilon,
+	 *         {@link #getMinimalMaxRegretValue(epsilon)}].
 	 */
 	public ImmutableSetMultimap<Alternative, PairwiseMaxRegret> getMinimalMaxRegrets(double epsilon) {
-		final double value = getMinimalMaxRegret(epsilon);
+		final double value = getMinimalMaxRegretValue(epsilon);
 		return regrets.keySet().stream().filter((x) -> getMaxRegret(x) <= value)
 				.collect(ImmutableSetMultimap.flatteningToImmutableSetMultimap(Function.identity(),
 						(x) -> getRegretsSorted(x).tailMap(value - epsilon).values().stream().flatMap(Set::stream)));

@@ -11,7 +11,6 @@ import java.util.function.Function;
 
 import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.ImmutableSet;
-import com.google.common.collect.ImmutableSetMultimap;
 import com.google.common.collect.ImmutableSortedMultiset;
 import com.google.common.collect.SortedMultiset;
 import com.google.common.graph.ImmutableGraph;
@@ -31,7 +30,7 @@ public class RegretComputer {
 		this.knowledge = requireNonNull(knowledge);
 	}
 
-	public ImmutableSetMultimap<Alternative, PairwiseMaxRegret> getMinimalMaxRegrets() {
+	public Regrets getMinimalMaxRegrets() {
 		return getAllPairwiseMaxRegrets().getMinimalMaxRegrets();
 	}
 

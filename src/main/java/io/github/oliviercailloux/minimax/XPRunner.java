@@ -305,7 +305,7 @@ public class XPRunner {
 
 		// compute the regret after nbquest questions
 		RegretComputer rc = new RegretComputer(knowledge);
-		SetMultimap<Alternative, PairwiseMaxRegret> mmrs = rc.getMinimalMaxRegrets();
+		SetMultimap<Alternative, PairwiseMaxRegret> mmrs = rc.getMinimalMaxRegrets().asMultimap();
 		Set<Alternative> winners = mmrs.keySet();
 		double regret = mmrs.get(mmrs.keySet().iterator().next()).iterator().next().getPmrValue();
 

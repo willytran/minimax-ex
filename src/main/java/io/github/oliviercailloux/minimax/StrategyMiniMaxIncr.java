@@ -69,7 +69,7 @@ public class StrategyMiniMaxIncr implements Strategy {
 		checkArgument(questionsToVoters != 0 || questionsToCommittee != 0, "No more questions allowed");
 		Question q;
 
-		SetMultimap<Alternative, PairwiseMaxRegret> mmr = regretComputer.getMinimalMaxRegrets();
+		SetMultimap<Alternative, PairwiseMaxRegret> mmr = regretComputer.getMinimalMaxRegrets().asMultimap();
 		Alternative xStar = mmr.keySet().iterator().next();
 		PairwiseMaxRegret currentSolution = mmr.get(xStar).iterator().next();
 		Alternative yBar = currentSolution.getY();
