@@ -225,16 +225,7 @@ public class XPRunner {
 	}
 
 	private static Statistic run(int m, int n, StrategyType st, int nbquest) throws IOException {
-		bwQst.write(nbquest + " questions:" + "\n");
-		final long startTime = System.currentTimeMillis();
-
-		Oracle context = Oracle.build(ImmutableMap.copyOf(Generator.genProfile(m, n)), Generator.genWeights(m));
-		Map<Double, List<Alternative>> trueWinners = computeTrueWinners(context);
-		double trueWinScore = trueWinners.keySet().iterator().next();
-
-		PrefKnowledge knowledge = PrefKnowledge.given(context.getAlternatives(), context.getProfile().keySet());
-
-		Strategy strategy = null;
+		final Strategy strategy;
 		switch (st) {
 		case PESSIMISTIC_MAX:
 			strategy = StrategyPessimistic.build(AggOps.MAX);
@@ -246,8 +237,11 @@ public class XPRunner {
 			strategy = StrategyPessimistic.build(AggOps.AVG);
 			break;
 		case PESSIMISTIC_WEIGHTED_AVG:
-			strategy = StrategyPessimistic.build(AggOps.WEIGHTED_AVERAGE, 1d,
-					context.getWeights().getWeightAtRank(m - 1) / 2 * n);
+			/**
+			 * TODO the second weight was: context.getWeights().getWeightAtRank(m - 1) / 2 *
+			 * n. This is not permitted, as it makes the strategy depend on the oracle.
+			 */
+			strategy = StrategyPessimistic.build(AggOps.WEIGHTED_AVERAGE, 1d, 0.5d);
 			break;
 		case PESSIMISTIC_HEURISTIC:
 			strategy = StrategyPessimisticHeuristic.build(AggOps.MAX);
@@ -256,8 +250,8 @@ public class XPRunner {
 			strategy = StrategyRandom.build();
 			break;
 		case TWO_PHASES:
-			strategy = StrategyTwoPhases.build(AggOps.WEIGHTED_AVERAGE, 1d,
-					context.getWeights().getWeightAtRank(m - 1) / 2 * n);
+			/** See above about the second weight. */
+			strategy = StrategyTwoPhases.build(AggOps.WEIGHTED_AVERAGE, 1d, 0.5d);
 			break;
 		case TWO_PHASES_TAU:
 			strategy = StrategyTwoPhasesTau.build(nbCommitteeQuestions, nbVotersQuestions, committeeFirst);
@@ -277,6 +271,19 @@ public class XPRunner {
 		default:
 			throw new IllegalStateException();
 		}
+		return run(strategy, m, n, nbquest);
+	}
+
+	private static Statistic run(Strategy strategy, int m, int n, int nbquest) throws IOException {
+		bwQst.write(nbquest + " questions:" + "\n");
+		final long startTime = System.currentTimeMillis();
+
+		Oracle context = Oracle.build(ImmutableMap.copyOf(Generator.genProfile(m, n)), Generator.genWeights(m));
+		Map<Double, List<Alternative>> trueWinners = computeTrueWinners(context);
+		double trueWinScore = trueWinners.keySet().iterator().next();
+
+		PrefKnowledge knowledge = PrefKnowledge.given(context.getAlternatives(), context.getProfile().keySet());
+
 		strategy.setKnowledge(knowledge);
 
 		double qstVot = 0, qstCom = 0;
