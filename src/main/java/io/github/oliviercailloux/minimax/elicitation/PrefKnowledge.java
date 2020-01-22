@@ -150,6 +150,51 @@ public class PrefKnowledge {
 		return lambdaRanges.get(rank);
 	}
 
+	public void update(Question question, Answer answer) {
+		switch (question.getType()) {
+		case VOTER_QUESTION:
+			final QuestionVoter qv = question.getQuestionVoter();
+			final Alternative a = qv.getFirstAlternative();
+			final Alternative b = qv.getSecondAlternative();
+			final VoterPartialPreference voterPartialPreference = getProfile().get(qv.getVoter());
+			switch (answer) {
+			case GREATER:
+				voterPartialPreference.asGraph().putEdge(a, b);
+				break;
+			case LOWER:
+				voterPartialPreference.asGraph().putEdge(b, a);
+				break;
+			case EQUAL:
+			default:
+				throw new IllegalStateException();
+			}
+			voterPartialPreference.setGraphChanged();
+			break;
+		case COMMITTEE_QUESTION:
+			final QuestionCommittee qc = question.getQuestionCommittee();
+			final Aprational lambda = qc.getLambda();
+			final int rank = qc.getRank();
+			final ComparisonOperator op;
+			switch (answer) {
+			case EQUAL:
+				op = ComparisonOperator.EQ;
+				break;
+			case GREATER:
+				op = ComparisonOperator.GE;
+				break;
+			case LOWER:
+				op = ComparisonOperator.LE;
+				break;
+			default:
+				throw new IllegalStateException();
+			}
+			addConstraint(rank, op, lambda);
+			break;
+		default:
+			throw new IllegalStateException();
+		}
+	}
+
 	@Override
 	public String toString() {
 		StringBuilder sb = new StringBuilder();

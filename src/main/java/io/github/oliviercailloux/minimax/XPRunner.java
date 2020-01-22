@@ -16,22 +16,16 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
-import org.apfloat.Aprational;
-
 import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.SetMultimap;
-import com.google.common.graph.MutableGraph;
 import com.google.common.math.Stats;
 
 import io.github.oliviercailloux.j_voting.VoterStrictPreference;
-import io.github.oliviercailloux.jlp.elements.ComparisonOperator;
 import io.github.oliviercailloux.minimax.elicitation.Answer;
 import io.github.oliviercailloux.minimax.elicitation.Oracle;
 import io.github.oliviercailloux.minimax.elicitation.PrefKnowledge;
 import io.github.oliviercailloux.minimax.elicitation.Question;
-import io.github.oliviercailloux.minimax.elicitation.QuestionCommittee;
 import io.github.oliviercailloux.minimax.elicitation.QuestionType;
-import io.github.oliviercailloux.minimax.elicitation.QuestionVoter;
 import io.github.oliviercailloux.minimax.old_strategies.StrategyPessimistic;
 import io.github.oliviercailloux.minimax.old_strategies.StrategyTaus;
 import io.github.oliviercailloux.minimax.old_strategies.StrategyTwoPhases;
@@ -299,7 +293,7 @@ public class XPRunner {
 					qstVot++;
 				}
 				Answer a = context.getAnswer(q);
-				knowledge = updateKnowledge(knowledge, q, a);
+				knowledge.update(q, a);
 			} catch (Exception e) {
 				e.printStackTrace();
 				System.out.println("ERROR " + knowledge.toString());
@@ -351,51 +345,6 @@ public class XPRunner {
 			e.printStackTrace();
 		}
 		return b;
-	}
-
-	private static PrefKnowledge updateKnowledge(PrefKnowledge knowledge, Question qt, Answer answ) {
-		switch (qt.getType()) {
-		case VOTER_QUESTION:
-			QuestionVoter qv = qt.getQuestionVoter();
-			Alternative a = qv.getFirstAlternative();
-			Alternative b = qv.getSecondAlternative();
-			MutableGraph<Alternative> graph = knowledge.getProfile().get(qv.getVoter()).asGraph();
-			switch (answ) {
-			case GREATER:
-				graph.putEdge(a, b);
-				knowledge.getProfile().get(qv.getVoter()).setGraphChanged();
-				break;
-			case LOWER:
-				graph.putEdge(b, a);
-				knowledge.getProfile().get(qv.getVoter()).setGraphChanged();
-				break;
-			// $CASES-OMITTED$
-			default:
-				throw new IllegalStateException();
-			}
-			break;
-		case COMMITTEE_QUESTION:
-			QuestionCommittee qc = qt.getQuestionCommittee();
-			Aprational lambda = qc.getLambda();
-			int rank = qc.getRank();
-			switch (answ) {
-			case EQUAL:
-				knowledge.addConstraint(rank, ComparisonOperator.EQ, lambda);
-				break;
-			case GREATER:
-				knowledge.addConstraint(rank, ComparisonOperator.GE, lambda);
-				break;
-			case LOWER:
-				knowledge.addConstraint(rank, ComparisonOperator.LE, lambda);
-				break;
-			default:
-				throw new IllegalStateException();
-			}
-			break;
-		default:
-			throw new IllegalStateException();
-		}
-		return knowledge;
 	}
 
 	private static Map<Double, List<Alternative>> computeTrueWinners(Oracle context) {
