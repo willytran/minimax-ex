@@ -40,7 +40,6 @@ import io.github.oliviercailloux.y2018.j_voting.Voter;
 public class StrategyPessimisticHeuristic implements Strategy {
 
 	private PrefKnowledge knowledge;
-	public boolean profileCompleted;
 	private static AggOps op;
 	private static double w1;
 	private static double w2;
@@ -51,30 +50,28 @@ public class StrategyPessimisticHeuristic implements Strategy {
 
 	private static final Logger LOGGER = LoggerFactory.getLogger(StrategyPessimisticHeuristic.class);
 
-	public static StrategyPessimisticHeuristic build(PrefKnowledge knowledge) {
+	public static StrategyPessimisticHeuristic build() {
 		op = AggOps.MAX;
-		return new StrategyPessimisticHeuristic(knowledge);
+		return new StrategyPessimisticHeuristic();
 	}
 
-	public static StrategyPessimisticHeuristic build(PrefKnowledge knowledge, AggOps operator) {
+	public static StrategyPessimisticHeuristic build(AggOps operator) {
 		checkArgument(!operator.equals(AggOps.WEIGHTED_AVERAGE));
 		op = operator;
-		return new StrategyPessimisticHeuristic(knowledge);
+		return new StrategyPessimisticHeuristic();
 	}
 
-	public static StrategyPessimisticHeuristic build(PrefKnowledge knowledge, AggOps operator, double w_1, double w_2) {
+	public static StrategyPessimisticHeuristic build(AggOps operator, double w_1, double w_2) {
 		checkArgument(operator.equals(AggOps.WEIGHTED_AVERAGE));
 		checkArgument(w_1 > 0);
 		checkArgument(w_2 > 0);
 		op = operator;
 		w1 = w_1;
 		w2 = w_2;
-		return new StrategyPessimisticHeuristic(knowledge);
+		return new StrategyPessimisticHeuristic();
 	}
 
-	private StrategyPessimisticHeuristic(PrefKnowledge knowledge) {
-		setKnowledge(knowledge);
-		profileCompleted = false;
+	private StrategyPessimisticHeuristic() {
 		LOGGER.info("");
 	}
 

@@ -39,27 +39,25 @@ public class StrategyTwoPhasesRandom implements Strategy {
 
 	private static final Logger LOGGER = LoggerFactory.getLogger(StrategyTwoPhasesRandom.class);
 
-	public static StrategyTwoPhasesRandom build(PrefKnowledge knowledge, int nbCommitteeQuestions,
-			int nbVotersQuestions, boolean committeeFirst) {
+	public static StrategyTwoPhasesRandom build(int nbCommitteeQuestions, int nbVotersQuestions,
+			boolean committeeFirst) {
 		nbComQuest = nbCommitteeQuestions;
 		nbVotQuest = nbVotersQuestions;
 		weightsFirst = committeeFirst;
-		return new StrategyTwoPhasesRandom(knowledge);
+		return new StrategyTwoPhasesRandom();
 	}
 
-	public static StrategyTwoPhasesRandom build(PrefKnowledge knowledge, int nbCommitteeQuestions,
-			int nbVotersQuestions) {
+	public static StrategyTwoPhasesRandom build(int nbCommitteeQuestions, int nbVotersQuestions) {
 		nbComQuest = nbCommitteeQuestions;
 		nbVotQuest = nbVotersQuestions;
 		weightsFirst = true;
-		return new StrategyTwoPhasesRandom(knowledge);
+		return new StrategyTwoPhasesRandom();
 	}
 
-	private StrategyTwoPhasesRandom(PrefKnowledge knowledge) {
+	private StrategyTwoPhasesRandom() {
 		final long seed = ThreadLocalRandom.current().nextLong();
 		LOGGER.info("Using seed: {}.", seed);
 		random = new Random(seed);
-		setKnowledge(knowledge);
 		profileCompleted = false;
 	}
 

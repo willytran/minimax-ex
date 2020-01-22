@@ -41,30 +41,29 @@ public class StrategyTwoPhases implements Strategy {
 
 	private static final Logger LOGGER = LoggerFactory.getLogger(StrategyTwoPhases.class);
 
-	public static StrategyTwoPhases build(PrefKnowledge knowledge) {
+	public static StrategyTwoPhases build() {
 		op = AggOps.MAX;
-		return new StrategyTwoPhases(knowledge);
+		return new StrategyTwoPhases();
 	}
 
-	public static StrategyTwoPhases build(PrefKnowledge knowledge, AggOps operator) {
+	public static StrategyTwoPhases build(AggOps operator) {
 		checkArgument(!operator.equals(AggOps.WEIGHTED_AVERAGE));
 		op = operator;
-		return new StrategyTwoPhases(knowledge);
+		return new StrategyTwoPhases();
 	}
 
-	public static StrategyTwoPhases build(PrefKnowledge knowledge, AggOps operator, double w_1, double w_2) {
+	public static StrategyTwoPhases build(AggOps operator, double w_1, double w_2) {
 		checkArgument(operator.equals(AggOps.WEIGHTED_AVERAGE));
 		checkArgument(w_1 > 0);
 		checkArgument(w_2 > 0);
 		op = operator;
 		w1 = w_1;
 		w2 = w_2;
-		return new StrategyTwoPhases(knowledge);
+		return new StrategyTwoPhases();
 	}
 
-	private StrategyTwoPhases(PrefKnowledge knowledge) {
+	private StrategyTwoPhases() {
 		LOGGER.info("");
-		setKnowledge(knowledge);
 	}
 
 	@Override

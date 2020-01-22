@@ -35,12 +35,11 @@ public class StrategyTaus implements Strategy {
 
 	private static final Logger LOGGER = LoggerFactory.getLogger(StrategyTaus.class);
 
-	public static StrategyTaus build(PrefKnowledge knowledge) {
-		return new StrategyTaus(knowledge);
+	public static StrategyTaus build() {
+		return new StrategyTaus();
 	}
 
-	private StrategyTaus(PrefKnowledge knowledge) {
-		setKnowledge(knowledge);
+	private StrategyTaus() {
 		LOGGER.info("INFO" + System.currentTimeMillis());
 	}
 

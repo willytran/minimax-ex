@@ -8,7 +8,6 @@ import org.apfloat.Aprational;
 import io.github.oliviercailloux.jlp.elements.ComparisonOperator;
 import io.github.oliviercailloux.minimax.elicitation.PrefKnowledge;
 import io.github.oliviercailloux.minimax.elicitation.QuestionType;
-import io.github.oliviercailloux.minimax.old_strategies.StrategyTaus;
 import io.github.oliviercailloux.y2018.j_voting.Alternative;
 import io.github.oliviercailloux.y2018.j_voting.Generator;
 import io.github.oliviercailloux.y2018.j_voting.Voter;
@@ -21,7 +20,8 @@ public class StrategyTausTest {
 	 */
 	void testTau() throws Exception {
 		final PrefKnowledge k = PrefKnowledge.given(Generator.getAlternatives(3), Generator.getVoters(3));
-		final StrategyTaus s = StrategyTaus.build(k);
+		final StrategyTaus s = StrategyTaus.build();
+		s.setKnowledge(k);
 		k.getProfile().get(new Voter(1)).asGraph().putEdge(new Alternative(1), new Alternative(2));
 		k.getProfile().get(new Voter(1)).asGraph().putEdge(new Alternative(2), new Alternative(3));
 		k.getProfile().get(new Voter(2)).asGraph().putEdge(new Alternative(1), new Alternative(2));

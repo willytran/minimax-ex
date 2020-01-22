@@ -14,7 +14,6 @@ import org.slf4j.LoggerFactory;
 import com.google.common.graph.MutableGraph;
 
 import io.github.oliviercailloux.jlp.elements.ComparisonOperator;
-import io.github.oliviercailloux.minimax.StrategyRandom;
 import io.github.oliviercailloux.minimax.elicitation.PrefKnowledge;
 import io.github.oliviercailloux.minimax.elicitation.Question;
 import io.github.oliviercailloux.y2018.j_voting.Alternative;
@@ -29,7 +28,8 @@ class StrategyRandomTest {
 	@Test
 	void testOneAlt() {
 		final PrefKnowledge k = PrefKnowledge.given(Generator.getAlternatives(1), Generator.getVoters(1));
-		final StrategyRandom s = StrategyRandom.build(k);
+		final StrategyRandom s = StrategyRandom.build();
+		s.setKnowledge(k);
 		final Random notRandom = new Random(0);
 		s.setRandom(notRandom);
 		assertThrows(IllegalArgumentException.class, () -> s.nextQuestion());
@@ -38,7 +38,8 @@ class StrategyRandomTest {
 	@Test
 	void testTwoAltsOneVKnown() {
 		final PrefKnowledge k = PrefKnowledge.given(Generator.getAlternatives(2), Generator.getVoters(1));
-		final StrategyRandom s = StrategyRandom.build(k);
+		final StrategyRandom s = StrategyRandom.build();
+		s.setKnowledge(k);
 		final Random notRandom = new Random(0);
 		s.setRandom(notRandom);
 		k.getProfile().get(new Voter(1)).asGraph().putEdge(new Alternative(1), new Alternative(2));
@@ -48,7 +49,8 @@ class StrategyRandomTest {
 	@Test
 	void testTwoAltsOneV() {
 		final PrefKnowledge k = PrefKnowledge.given(Generator.getAlternatives(2), Generator.getVoters(1));
-		final StrategyRandom s = StrategyRandom.build(k);
+		final StrategyRandom s = StrategyRandom.build();
+		s.setKnowledge(k);
 		final Random notRandom = new Random(0);
 		s.setRandom(notRandom);
 		assertEquals(Question.toVoter(new Voter(1), new Alternative(1), new Alternative(2)), s.nextQuestion());
@@ -57,7 +59,8 @@ class StrategyRandomTest {
 	@Test
 	void testTwoAltsTwoVsOneKnown() {
 		final PrefKnowledge k = PrefKnowledge.given(Generator.getAlternatives(2), Generator.getVoters(2));
-		final StrategyRandom s = StrategyRandom.build(k);
+		final StrategyRandom s = StrategyRandom.build();
+		s.setKnowledge(k);
 		final Random notRandom = new Random(0);
 		s.setRandom(notRandom);
 		k.getProfile().get(new Voter(1)).asGraph().putEdge(new Alternative(1), new Alternative(2));
@@ -67,28 +70,30 @@ class StrategyRandomTest {
 	@Test
 	void testFourAltsTwoVKnown() {
 		final PrefKnowledge k = PrefKnowledge.given(Generator.getAlternatives(4), Generator.getVoters(2));
-		
-		final StrategyRandom s = StrategyRandom.build(k);
+
+		final StrategyRandom s = StrategyRandom.build();
+		s.setKnowledge(k);
 		final Random notRandom = new Random(0);
 		s.setRandom(notRandom);
-		
+
 		final MutableGraph<Alternative> g1 = k.getProfile().get(new Voter(1)).asGraph();
 		g1.putEdge(new Alternative(1), new Alternative(2));
 		g1.putEdge(new Alternative(2), new Alternative(3));
 		g1.putEdge(new Alternative(3), new Alternative(4));
-		
+
 		final MutableGraph<Alternative> g2 = k.getProfile().get(new Voter(2)).asGraph();
 		g2.putEdge(new Alternative(1), new Alternative(2));
 		g2.putEdge(new Alternative(2), new Alternative(3));
 		g2.putEdge(new Alternative(3), new Alternative(4));
-		
+
 		assertEquals(Question.toCommittee(new Aprational(new Apint(3), new Apint(2)), 2), s.nextQuestion());
 	}
 
 	@Test
 	void testThreeAltsTwoVKnown() {
 		final PrefKnowledge k = PrefKnowledge.given(Generator.getAlternatives(3), Generator.getVoters(2));
-		final StrategyRandom s = StrategyRandom.build(k);
+		final StrategyRandom s = StrategyRandom.build();
+		s.setKnowledge(k);
 		final Random notRandom = new Random(0);
 		s.setRandom(notRandom);
 		final MutableGraph<Alternative> g1 = k.getProfile().get(new Voter(1)).asGraph();
@@ -103,7 +108,8 @@ class StrategyRandomTest {
 	@Test
 	void testThreeAltsTwoVAllKnown() {
 		final PrefKnowledge k = PrefKnowledge.given(Generator.getAlternatives(3), Generator.getVoters(2));
-		final StrategyRandom s = StrategyRandom.build(k);
+		final StrategyRandom s = StrategyRandom.build();
+		s.setKnowledge(k);
 		final Random notRandom = new Random(0);
 		s.setRandom(notRandom);
 		final MutableGraph<Alternative> g1 = k.getProfile().get(new Voter(1)).asGraph();
@@ -119,7 +125,8 @@ class StrategyRandomTest {
 	@Test
 	void testThreeAltsOneVKnown() {
 		final PrefKnowledge k = PrefKnowledge.given(Generator.getAlternatives(3), Generator.getVoters(1));
-		final StrategyRandom s = StrategyRandom.build(k);
+		final StrategyRandom s = StrategyRandom.build();
+		s.setKnowledge(k);
 		final Random notRandom = new Random(0);
 		s.setRandom(notRandom);
 		final MutableGraph<Alternative> g = k.getProfile().get(new Voter(1)).asGraph();

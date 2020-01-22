@@ -54,32 +54,31 @@ public class StrategyTwoPhasesHeuristic implements Strategy {
 
 	private static final Logger LOGGER = LoggerFactory.getLogger(StrategyTwoPhasesHeuristic.class);
 
-	public static StrategyTwoPhasesHeuristic build(PrefKnowledge knowledge, int questionsToVoters,
-			int questionsToCommittee, boolean committeeFirst) {
+	public static StrategyTwoPhasesHeuristic build(int questionsToVoters, int questionsToCommittee,
+			boolean committeeFirst) {
 		op = AggOps.MAX;
-		return new StrategyTwoPhasesHeuristic(knowledge, questionsToVoters, questionsToCommittee, committeeFirst);
+		return new StrategyTwoPhasesHeuristic(questionsToVoters, questionsToCommittee, committeeFirst);
 	}
 
-	public static StrategyTwoPhasesHeuristic build(PrefKnowledge knowledge, AggOps operator, int questionsToVoters,
-			int questionsToCommittee, boolean committeeFirst) {
+	public static StrategyTwoPhasesHeuristic build(AggOps operator, int questionsToVoters, int questionsToCommittee,
+			boolean committeeFirst) {
 		checkArgument(!operator.equals(AggOps.WEIGHTED_AVERAGE));
 		op = operator;
-		return new StrategyTwoPhasesHeuristic(knowledge, questionsToVoters, questionsToCommittee, committeeFirst);
+		return new StrategyTwoPhasesHeuristic(questionsToVoters, questionsToCommittee, committeeFirst);
 	}
 
-	public static StrategyTwoPhasesHeuristic build(PrefKnowledge knowledge, AggOps operator, double w_1, double w_2,
-			int questionsToVoters, int questionsToCommittee, boolean committeeFirst) {
+	public static StrategyTwoPhasesHeuristic build(AggOps operator, double w_1, double w_2, int questionsToVoters,
+			int questionsToCommittee, boolean committeeFirst) {
 		checkArgument(operator.equals(AggOps.WEIGHTED_AVERAGE));
 		checkArgument(w_1 > 0);
 		checkArgument(w_2 > 0);
 		op = operator;
 		w1 = w_1;
 		w2 = w_2;
-		return new StrategyTwoPhasesHeuristic(knowledge, questionsToVoters, questionsToCommittee, committeeFirst);
+		return new StrategyTwoPhasesHeuristic(questionsToVoters, questionsToCommittee, committeeFirst);
 	}
 
-	private StrategyTwoPhasesHeuristic(PrefKnowledge knowledge, int qToVoters, int qToCommittee, boolean cFirst) {
-		setKnowledge(knowledge);
+	private StrategyTwoPhasesHeuristic(int qToVoters, int qToCommittee, boolean cFirst) {
 		questionsToVoters = qToVoters;
 		questionsToCommittee = qToCommittee;
 		committeeFirst = cFirst;

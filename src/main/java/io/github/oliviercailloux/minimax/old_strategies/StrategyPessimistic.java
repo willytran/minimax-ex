@@ -42,29 +42,28 @@ public class StrategyPessimistic implements Strategy {
 	private static List<Question> nextQuestions;
 	private static final Logger LOGGER = LoggerFactory.getLogger(StrategyPessimistic.class);
 
-	public static StrategyPessimistic build(PrefKnowledge knowledge) {
+	public static StrategyPessimistic build() {
 		op = AggOps.MAX;
-		return new StrategyPessimistic(knowledge);
+		return new StrategyPessimistic();
 	}
 
-	public static StrategyPessimistic build(PrefKnowledge knowledge, AggOps operator) {
+	public static StrategyPessimistic build(AggOps operator) {
 		checkArgument(!operator.equals(AggOps.WEIGHTED_AVERAGE));
 		op = operator;
-		return new StrategyPessimistic(knowledge);
+		return new StrategyPessimistic();
 	}
 
-	public static StrategyPessimistic build(PrefKnowledge knowledge, AggOps operator, double w_1, double w_2) {
+	public static StrategyPessimistic build(AggOps operator, double w_1, double w_2) {
 		checkArgument(operator.equals(AggOps.WEIGHTED_AVERAGE));
 		checkArgument(w_1 > 0);
 		checkArgument(w_2 > 0);
 		op = operator;
 		w1 = w_1;
 		w2 = w_2;
-		return new StrategyPessimistic(knowledge);
+		return new StrategyPessimistic();
 	}
 
-	private StrategyPessimistic(PrefKnowledge knowledge) {
-		setKnowledge(knowledge);
+	private StrategyPessimistic() {
 		LOGGER.info("");
 	}
 

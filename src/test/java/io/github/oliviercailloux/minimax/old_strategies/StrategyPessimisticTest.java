@@ -10,12 +10,9 @@ import org.apfloat.Apint;
 import org.apfloat.Aprational;
 import org.junit.jupiter.api.Test;
 
-import io.github.oliviercailloux.jlp.elements.ComparisonOperator;
 import io.github.oliviercailloux.minimax.elicitation.PrefKnowledge;
 import io.github.oliviercailloux.minimax.elicitation.Question;
 import io.github.oliviercailloux.minimax.elicitation.QuestionType;
-import io.github.oliviercailloux.minimax.old_strategies.Regret;
-import io.github.oliviercailloux.minimax.old_strategies.StrategyPessimistic;
 import io.github.oliviercailloux.minimax.utils.AggregationOperator.AggOps;
 import io.github.oliviercailloux.y2018.j_voting.Alternative;
 import io.github.oliviercailloux.y2018.j_voting.Generator;
@@ -26,14 +23,16 @@ public class StrategyPessimisticTest {
 	@Test
 	void testOneAlt() {
 		final PrefKnowledge k = PrefKnowledge.given(Generator.getAlternatives(1), Generator.getVoters(1));
-		final StrategyPessimistic s = StrategyPessimistic.build(k);
+		final StrategyPessimistic s = StrategyPessimistic.build();
+		s.setKnowledge(k);
 		assertThrows(IllegalArgumentException.class, () -> s.nextQuestion());
 	}
 
 	@Test
 	void testTwoAltsOneVKnown() {
 		final PrefKnowledge k = PrefKnowledge.given(Generator.getAlternatives(2), Generator.getVoters(1));
-		final StrategyPessimistic s = StrategyPessimistic.build(k);
+		final StrategyPessimistic s = StrategyPessimistic.build();
+		s.setKnowledge(k);
 		k.getProfile().get(new Voter(1)).asGraph().putEdge(new Alternative(1), new Alternative(2));
 		assertThrows(IllegalArgumentException.class, () -> s.nextQuestion());
 	}
@@ -41,7 +40,8 @@ public class StrategyPessimisticTest {
 	@Test
 	void testTwoAltsOneV() {
 		final PrefKnowledge k = PrefKnowledge.given(Generator.getAlternatives(2), Generator.getVoters(1));
-		final StrategyPessimistic s = StrategyPessimistic.build(k);
+		final StrategyPessimistic s = StrategyPessimistic.build();
+		s.setKnowledge(k);
 		final Question q1 = Question.toVoter(new Voter(1), new Alternative(1), new Alternative(2));
 		final Question q2 = Question.toVoter(new Voter(1), new Alternative(2), new Alternative(1));
 		final Set<Question> q = new HashSet<>();
@@ -54,7 +54,8 @@ public class StrategyPessimisticTest {
 	@Test
 	void testTwoAltsTwoVsOneKnown() {
 		final PrefKnowledge k = PrefKnowledge.given(Generator.getAlternatives(2), Generator.getVoters(2));
-		final StrategyPessimistic s = StrategyPessimistic.build(k);
+		final StrategyPessimistic s = StrategyPessimistic.build();
+		s.setKnowledge(k);
 		k.getProfile().get(new Voter(1)).asGraph().putEdge(new Alternative(1), new Alternative(2));
 		s.nextQuestion();
 		final Question q1 = Question.toVoter(new Voter(2), new Alternative(1), new Alternative(2));
@@ -68,7 +69,8 @@ public class StrategyPessimisticTest {
 	@Test
 	void testTwoAltsTwoVs() {
 		final PrefKnowledge k = PrefKnowledge.given(Generator.getAlternatives(2), Generator.getVoters(2));
-		final StrategyPessimistic s = StrategyPessimistic.build(k);
+		final StrategyPessimistic s = StrategyPessimistic.build();
+		s.setKnowledge(k);
 		s.nextQuestion();
 		final Question q1 = Question.toVoter(new Voter(1), new Alternative(1), new Alternative(2));
 		final Question q2 = Question.toVoter(new Voter(1), new Alternative(2), new Alternative(1));
@@ -81,7 +83,7 @@ public class StrategyPessimisticTest {
 		q.add(q4);
 		assertEquals(q, StrategyPessimistic.getQuestions().keySet());
 		for (Double d : StrategyPessimistic.getQuestions().values()) {
-			assertEquals(0d,d,0.0001);
+			assertEquals(0d, d, 0.0001);
 		}
 	}
 
@@ -92,7 +94,8 @@ public class StrategyPessimisticTest {
 		k.getProfile().get(new Voter(1)).asGraph().putEdge(new Alternative(2), new Alternative(3));
 		k.getProfile().get(new Voter(2)).asGraph().putEdge(new Alternative(1), new Alternative(2));
 		k.getProfile().get(new Voter(1)).setGraphChanged();
-		StrategyPessimistic s = StrategyPessimistic.build(k, AggOps.MAX);
+		StrategyPessimistic s = StrategyPessimistic.build(AggOps.MAX);
+		s.setKnowledge(k);
 		s.nextQuestion();
 		final Question q1 = Question.toVoter(new Voter(2), new Alternative(3), new Alternative(2));
 		final Question q2 = Question.toVoter(new Voter(2), new Alternative(2), new Alternative(3));
@@ -115,7 +118,8 @@ public class StrategyPessimisticTest {
 		k.getProfile().get(new Voter(1)).asGraph().putEdge(new Alternative(1), new Alternative(2));
 		k.getProfile().get(new Voter(1)).asGraph().putEdge(new Alternative(2), new Alternative(3));
 		k.getProfile().get(new Voter(2)).asGraph().putEdge(new Alternative(1), new Alternative(2));
-		StrategyPessimistic s = StrategyPessimistic.build(k, AggOps.MAX);
+		StrategyPessimistic s = StrategyPessimistic.build(AggOps.MAX);
+		s.setKnowledge(k);
 		s.nextQuestion();
 
 		for (Question qq : StrategyPessimistic.getQuestions().keySet()) {

@@ -237,48 +237,48 @@ public class XPRunner {
 		Strategy strategy = null;
 		switch (st) {
 		case PESSIMISTIC_MAX:
-			strategy = StrategyPessimistic.build(knowledge, AggOps.MAX);
+			strategy = StrategyPessimistic.build(AggOps.MAX);
 			break;
 		case PESSIMISTIC_MIN:
-			strategy = StrategyPessimistic.build(knowledge, AggOps.MIN);
+			strategy = StrategyPessimistic.build(AggOps.MIN);
 			break;
 		case PESSIMISTIC_AVG:
-			strategy = StrategyPessimistic.build(knowledge, AggOps.AVG);
+			strategy = StrategyPessimistic.build(AggOps.AVG);
 			break;
 		case PESSIMISTIC_WEIGHTED_AVG:
-			strategy = StrategyPessimistic.build(knowledge, AggOps.WEIGHTED_AVERAGE, 1d,
+			strategy = StrategyPessimistic.build(AggOps.WEIGHTED_AVERAGE, 1d,
 					context.getWeights().getWeightAtRank(m - 1) / 2 * n);
 			break;
 		case PESSIMISTIC_HEURISTIC:
-			strategy = StrategyPessimisticHeuristic.build(knowledge, AggOps.MAX);
+			strategy = StrategyPessimisticHeuristic.build(AggOps.MAX);
 			break;
 		case RANDOM:
-			strategy = StrategyRandom.build(knowledge);
+			strategy = StrategyRandom.build();
 			break;
 		case TWO_PHASES:
-			strategy = StrategyTwoPhases.build(knowledge, AggOps.WEIGHTED_AVERAGE, 1d,
+			strategy = StrategyTwoPhases.build(AggOps.WEIGHTED_AVERAGE, 1d,
 					context.getWeights().getWeightAtRank(m - 1) / 2 * n);
 			break;
 		case TWO_PHASES_TAU:
-			strategy = StrategyTwoPhasesTau.build(knowledge, nbCommitteeQuestions, nbVotersQuestions, committeeFirst);
+			strategy = StrategyTwoPhasesTau.build(nbCommitteeQuestions, nbVotersQuestions, committeeFirst);
 			break;
 		case TWO_PHASES_RANDOM:
-			strategy = StrategyTwoPhasesRandom.build(knowledge, nbCommitteeQuestions, nbVotersQuestions,
-					committeeFirst);
+			strategy = StrategyTwoPhasesRandom.build(nbCommitteeQuestions, nbVotersQuestions, committeeFirst);
 			break;
 		case TWO_PHASES_HEURISTIC:
-			strategy = StrategyTwoPhasesHeuristic.build(knowledge, nbVotersQuestions, nbCommitteeQuestions,
-					committeeFirst);
+			strategy = StrategyTwoPhasesHeuristic.build(nbVotersQuestions, nbCommitteeQuestions, committeeFirst);
 			break;
 		case TAU:
-			strategy = StrategyTaus.build(knowledge);
+			strategy = StrategyTaus.build();
 			break;
 		case MINIMAX_MIN_INC:
-			strategy = StrategyMiniMaxIncr.build(knowledge, nbVotersQuestions, nbCommitteeQuestions, committeeFirst);
+			strategy = StrategyMiniMaxIncr.build(nbVotersQuestions, nbCommitteeQuestions, committeeFirst);
 			break;
 		default:
 			throw new IllegalStateException();
 		}
+		strategy.setKnowledge(knowledge);
+
 		double qstVot = 0, qstCom = 0;
 
 		for (int k = 1; k <= nbquest; k++) {

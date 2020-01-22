@@ -33,19 +33,18 @@ public class StrategyRandom implements Strategy {
 
 	private static final Logger LOGGER = LoggerFactory.getLogger(StrategyRandom.class);
 
-	public static StrategyRandom build(PrefKnowledge knowledge) {
-		return new StrategyRandom(knowledge);
+	public static StrategyRandom build() {
+		return new StrategyRandom();
 	}
 
 	private PrefKnowledge knowledge;
 
 	private Random random;
 
-	private StrategyRandom(PrefKnowledge knowledge) {
+	private StrategyRandom() {
 		final long seed = ThreadLocalRandom.current().nextLong();
 		LOGGER.info("Using seed: {}.", seed);
 		random = new Random(seed);
-		setKnowledge(knowledge);
 		profileCompleted = false;
 	}
 

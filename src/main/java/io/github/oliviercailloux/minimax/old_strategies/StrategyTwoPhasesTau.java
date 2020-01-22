@@ -39,23 +39,21 @@ public class StrategyTwoPhasesTau implements Strategy {
 
 	private static final Logger LOGGER = LoggerFactory.getLogger(StrategyTwoPhasesTau.class);
 
-	public static StrategyTwoPhasesTau build(PrefKnowledge knowledge, int nbCommitteeQuestions, int nbVotersQuestions) {
+	public static StrategyTwoPhasesTau build(int nbCommitteeQuestions, int nbVotersQuestions) {
 		nbComQuest = nbCommitteeQuestions;
 		nbVotQuest = nbVotersQuestions;
 		weightsFirst = true;
-		return new StrategyTwoPhasesTau(knowledge);
+		return new StrategyTwoPhasesTau();
 	}
 
-	public static StrategyTwoPhasesTau build(PrefKnowledge knowledge, int nbCommitteeQuestions, int nbVotersQuestions,
-			boolean committeeFirst) {
+	public static StrategyTwoPhasesTau build(int nbCommitteeQuestions, int nbVotersQuestions, boolean committeeFirst) {
 		nbComQuest = nbCommitteeQuestions;
 		nbVotQuest = nbVotersQuestions;
 		weightsFirst = committeeFirst;
-		return new StrategyTwoPhasesTau(knowledge);
+		return new StrategyTwoPhasesTau();
 	}
 
-	private StrategyTwoPhasesTau(PrefKnowledge knowledge) {
-		setKnowledge(knowledge);
+	private StrategyTwoPhasesTau() {
 		profileCompleted = false;
 		final long seed = ThreadLocalRandom.current().nextLong();
 		LOGGER.info("Using seed: {}.", seed);

@@ -50,13 +50,11 @@ public class StrategyMiniMaxIncr implements Strategy {
 
 	private static final Logger LOGGER = LoggerFactory.getLogger(StrategyMiniMaxIncr.class);
 
-	public static StrategyMiniMaxIncr build(PrefKnowledge knowledge, int questionsToVoters, int questionsToCommittee,
-			boolean committeeFirst) {
-		return new StrategyMiniMaxIncr(knowledge, questionsToVoters, questionsToCommittee, committeeFirst);
+	public static StrategyMiniMaxIncr build(int questionsToVoters, int questionsToCommittee, boolean committeeFirst) {
+		return new StrategyMiniMaxIncr(questionsToVoters, questionsToCommittee, committeeFirst);
 	}
 
-	private StrategyMiniMaxIncr(PrefKnowledge know, int qToVoters, int qToCommittee, boolean cFirst) {
-		setKnowledge(know);
+	private StrategyMiniMaxIncr(int qToVoters, int qToCommittee, boolean cFirst) {
 		questionsToVoters = qToVoters;
 		questionsToCommittee = qToCommittee;
 		committeeFirst = cFirst;
