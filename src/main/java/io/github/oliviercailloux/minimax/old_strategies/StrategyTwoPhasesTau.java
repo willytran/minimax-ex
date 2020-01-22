@@ -4,10 +4,6 @@ import static com.google.common.base.Preconditions.checkArgument;
 
 import java.util.ArrayList;
 import java.util.Collections;
-import java.util.HashMap;
-import java.util.Iterator;
-import java.util.LinkedList;
-import java.util.List;
 import java.util.Optional;
 import java.util.Random;
 import java.util.concurrent.ThreadLocalRandom;
@@ -28,9 +24,6 @@ import io.github.oliviercailloux.minimax.elicitation.PSRWeights;
 import io.github.oliviercailloux.minimax.elicitation.PrefKnowledge;
 import io.github.oliviercailloux.minimax.elicitation.Question;
 import io.github.oliviercailloux.minimax.elicitation.QuestionCommittee;
-import io.github.oliviercailloux.minimax.elicitation.QuestionVoter;
-import io.github.oliviercailloux.minimax.utils.AggregationOperator;
-import io.github.oliviercailloux.minimax.utils.AggregationOperator.AggOps;
 import io.github.oliviercailloux.y2018.j_voting.Alternative;
 import io.github.oliviercailloux.y2018.j_voting.Voter;
 
@@ -62,9 +55,8 @@ public class StrategyTwoPhasesTau implements Strategy {
 	}
 
 	private StrategyTwoPhasesTau(PrefKnowledge knowledge) {
-		this.knowledge = knowledge;
+		setKnowledge(knowledge);
 		profileCompleted = false;
-		m = knowledge.getAlternatives().size();
 		final long seed = ThreadLocalRandom.current().nextLong();
 		LOGGER.info("Using seed: {}.", seed);
 		random = new Random(seed);
@@ -83,8 +75,9 @@ public class StrategyTwoPhasesTau implements Strategy {
 			} else if (nbVotQuest > 0) {
 				nextQ = questionToVot();
 				nbVotQuest--;
-			} else
+			} else {
 				throw new IllegalStateException("No more questions allowed");
+			}
 		} else {
 			if (nbVotQuest > 0) {
 				nextQ = questionToVot();
@@ -92,8 +85,9 @@ public class StrategyTwoPhasesTau implements Strategy {
 			} else if (nbComQuest > 0) {
 				nextQ = questionToCom();
 				nbComQuest--;
-			} else
+			} else {
 				throw new IllegalStateException("No more questions allowed");
+			}
 		}
 		return nextQ;
 	}
@@ -152,9 +146,9 @@ public class StrategyTwoPhasesTau implements Strategy {
 				tauVmin = tauVi;
 				uncertainVoter = v;
 			}
-			System.out.print("v"+v.getId() + " "+tauVi+ " ");
+			System.out.print("v" + v.getId() + " " + tauVi + " ");
 		}
-		System.out.print("uncertainVoter"+uncertainVoter.getId() + " "+tauVmin+ " ");
+		System.out.print("uncertainVoter" + uncertainVoter.getId() + " " + tauVmin + " ");
 		return uncertainVoter;
 	}
 
@@ -179,6 +173,12 @@ public class StrategyTwoPhasesTau implements Strategy {
 			regret += (yrank[i] - xrank[i]) * wBar.getWeightAtRank(i);
 		}
 		return regret;
+	}
+
+	@Override
+	public void setKnowledge(PrefKnowledge knowledge) {
+		this.knowledge = knowledge;
+		m = knowledge.getAlternatives().size();
 	}
 
 }

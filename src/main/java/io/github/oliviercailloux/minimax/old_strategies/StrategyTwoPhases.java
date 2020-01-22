@@ -32,7 +32,6 @@ import io.github.oliviercailloux.y2018.j_voting.Voter;
 public class StrategyTwoPhases implements Strategy {
 
 	private PrefKnowledge knowledge;
-	public boolean profileCompleted;
 	private static AggOps op;
 	private static double w1;
 	private static double w2;
@@ -65,22 +64,7 @@ public class StrategyTwoPhases implements Strategy {
 
 	private StrategyTwoPhases(PrefKnowledge knowledge) {
 		LOGGER.info("");
-		this.knowledge = knowledge;
-		profileCompleted = false;
-		committeeQuestions = new LinkedList<>();
-		final ArrayList<Integer> candidateRanks = IntStream.rangeClosed(1, knowledge.getAlternatives().size() - 2)
-				.boxed().collect(Collectors.toCollection(ArrayList::new));
-		for (int rank : candidateRanks) {
-			final Range<Aprational> lambdaRange = knowledge.getLambdaRange(rank);
-			double diff = (lambdaRange.upperEndpoint().subtract(lambdaRange.lowerEndpoint())).doubleValue();
-			if (diff > 0.1) {
-				final Aprational avg = AprationalMath.sum(lambdaRange.lowerEndpoint(), lambdaRange.upperEndpoint())
-						.divide(new Apint(2));
-				QuestionCommittee q = QuestionCommittee.given(avg, rank);
-				committeeQuestions.add(q);
-			}
-		}
-		i = committeeQuestions.iterator();
+		setKnowledge(knowledge);
 	}
 
 	@Override
@@ -154,6 +138,25 @@ public class StrategyTwoPhases implements Strategy {
 		default:
 			throw new IllegalStateException();
 		}
+	}
+
+	@Override
+	public void setKnowledge(PrefKnowledge knowledge) {
+		this.knowledge = knowledge;
+		committeeQuestions = new LinkedList<>();
+		final ArrayList<Integer> candidateRanks = IntStream.rangeClosed(1, knowledge.getAlternatives().size() - 2)
+				.boxed().collect(Collectors.toCollection(ArrayList::new));
+		for (int rank : candidateRanks) {
+			final Range<Aprational> lambdaRange = knowledge.getLambdaRange(rank);
+			double diff = (lambdaRange.upperEndpoint().subtract(lambdaRange.lowerEndpoint())).doubleValue();
+			if (diff > 0.1) {
+				final Aprational avg = AprationalMath.sum(lambdaRange.lowerEndpoint(), lambdaRange.upperEndpoint())
+						.divide(new Apint(2));
+				QuestionCommittee q = QuestionCommittee.given(avg, rank);
+				committeeQuestions.add(q);
+			}
+		}
+		i = committeeQuestions.iterator();
 	}
 
 	/** only for testing purposes */

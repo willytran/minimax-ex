@@ -78,8 +78,8 @@ public class StrategyTwoPhasesHeuristic implements Strategy {
 		return new StrategyTwoPhasesHeuristic(knowledge, questionsToVoters, questionsToCommittee, committeeFirst);
 	}
 
-	private StrategyTwoPhasesHeuristic(PrefKnowledge know, int qToVoters, int qToCommittee, boolean cFirst) {
-		knowledge = know;
+	private StrategyTwoPhasesHeuristic(PrefKnowledge knowledge, int qToVoters, int qToCommittee, boolean cFirst) {
+		setKnowledge(knowledge);
 		questionsToVoters = qToVoters;
 		questionsToCommittee = qToCommittee;
 		committeeFirst = cFirst;
@@ -94,7 +94,6 @@ public class StrategyTwoPhasesHeuristic implements Strategy {
 		checkArgument(questionsToVoters != 0 || questionsToCommittee != 0, "No more questions allowed");
 		Question q;
 
-		rc = new RegretComputer(knowledge);
 		SetMultimap<Alternative, PairwiseMaxRegret> mmr = rc.getMinimalMaxRegrets();
 		Alternative xStar = mmr.keySet().iterator().next();
 		PairwiseMaxRegret currentSolution = mmr.get(xStar).iterator().next();
@@ -307,6 +306,12 @@ public class StrategyTwoPhasesHeuristic implements Strategy {
 		default:
 			throw new IllegalStateException();
 		}
+	}
+
+	@Override
+	public void setKnowledge(PrefKnowledge knowledge) {
+		this.knowledge = knowledge;
+		rc = new RegretComputer(knowledge);
 	}
 
 	/** only for testing purposes */

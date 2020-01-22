@@ -21,7 +21,6 @@ import com.google.common.collect.ImmutableSet;
 import com.google.common.collect.Range;
 import com.google.common.graph.Graph;
 
-import io.github.oliviercailloux.minimax.elicitation.PSRWeights;
 import io.github.oliviercailloux.minimax.elicitation.PrefKnowledge;
 import io.github.oliviercailloux.minimax.elicitation.Question;
 import io.github.oliviercailloux.minimax.elicitation.QuestionCommittee;
@@ -60,8 +59,7 @@ public class StrategyTwoPhasesRandom implements Strategy {
 		final long seed = ThreadLocalRandom.current().nextLong();
 		LOGGER.info("Using seed: {}.", seed);
 		random = new Random(seed);
-		this.knowledge = knowledge;
-		m = knowledge.getAlternatives().size();
+		setKnowledge(knowledge);
 		profileCompleted = false;
 	}
 
@@ -81,8 +79,9 @@ public class StrategyTwoPhasesRandom implements Strategy {
 			} else if (nbVotQuest > 0) {
 				nextQ = questionToVot();
 				nbVotQuest--;
-			} else
+			} else {
 				throw new IllegalStateException("No more questions allowed");
+			}
 		} else {
 			if (nbVotQuest > 0) {
 				nextQ = questionToVot();
@@ -90,8 +89,9 @@ public class StrategyTwoPhasesRandom implements Strategy {
 			} else if (nbComQuest > 0) {
 				nextQ = questionToCom();
 				nbComQuest--;
-			} else
+			} else {
 				throw new IllegalStateException("No more questions allowed");
+			}
 		}
 		return nextQ;
 	}
@@ -150,6 +150,12 @@ public class StrategyTwoPhasesRandom implements Strategy {
 		checkArgument(existsQuestionWeight, "No question to ask about weights.");
 
 		return Question.toCommittee(qc);
+	}
+
+	@Override
+	public void setKnowledge(PrefKnowledge knowledge) {
+		this.knowledge = knowledge;
+		m = knowledge.getAlternatives().size();
 	}
 
 }

@@ -6,7 +6,6 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Optional;
 import java.util.Random;
-import java.util.concurrent.ThreadLocalRandom;
 
 import org.apfloat.Apint;
 import org.apfloat.Aprational;
@@ -33,7 +32,7 @@ public class StrategyTaus implements Strategy {
 	private static Voter uncertainVoter;
 	private static PSRWeights wMin;
 	private static PSRWeights wBar;
-	
+
 	private static final Logger LOGGER = LoggerFactory.getLogger(StrategyTaus.class);
 
 	public static StrategyTaus build(PrefKnowledge knowledge) {
@@ -41,8 +40,8 @@ public class StrategyTaus implements Strategy {
 	}
 
 	private StrategyTaus(PrefKnowledge knowledge) {
-		this.knowledge = knowledge;
-		LOGGER.info("INFO"+System.currentTimeMillis());
+		setKnowledge(knowledge);
+		LOGGER.info("INFO" + System.currentTimeMillis());
 	}
 
 	@Override
@@ -56,7 +55,7 @@ public class StrategyTaus implements Strategy {
 			/** Ask a question to the committee about the most valuable rank */
 			int maxRank = 2;
 			double maxDiff = Math.abs(wBar.getWeightAtRank(maxRank) - wMin.getWeightAtRank(maxRank));
-			
+
 			for (int i = maxRank; i <= m; i++) {
 				double diff = Math.abs(wBar.getWeightAtRank(i) - wMin.getWeightAtRank(i));
 				if (diff > maxDiff) {
@@ -91,17 +90,22 @@ public class StrategyTaus implements Strategy {
 		return nextQ;
 	}
 
-	public static boolean tauWSmallerThanTauV(PrefKnowledge knowledge) {		
+	@Override
+	public void setKnowledge(PrefKnowledge knowledge) {
+		this.knowledge = knowledge;
+	}
+
+	public static boolean tauWSmallerThanTauV(PrefKnowledge knowledge) {
 		Regret.getMMRAlternatives(knowledge);
 		Alternative yAdv = Regret.getyAdv();
 		Alternative xOpt = Regret.getxOpt();
-		
+
 		Regret.getPMR(xOpt, yAdv, knowledge);
 		wBar = knowledge.getConstraintsOnWeights().getLastSolution();
 
 		double tauW = getTauW(knowledge, xOpt, yAdv);
-		wMin= knowledge.getConstraintsOnWeights().getLastSolution();
-		
+		wMin = knowledge.getConstraintsOnWeights().getLastSolution();
+
 		uncertainVoter = knowledge.getProfile().keySet().asList().get(0);
 		double tauVmin = getTauVi(knowledge, uncertainVoter, xOpt, yAdv);
 		double tauVi;

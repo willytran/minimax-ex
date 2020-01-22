@@ -25,7 +25,6 @@ import io.github.oliviercailloux.minimax.elicitation.Question;
 import io.github.oliviercailloux.minimax.elicitation.QuestionCommittee;
 import io.github.oliviercailloux.minimax.elicitation.QuestionType;
 import io.github.oliviercailloux.minimax.elicitation.QuestionVoter;
-import io.github.oliviercailloux.minimax.regret.RegretComputer;
 import io.github.oliviercailloux.minimax.utils.AggregationOperator;
 import io.github.oliviercailloux.minimax.utils.AggregationOperator.AggOps;
 import io.github.oliviercailloux.y2018.j_voting.Alternative;
@@ -36,7 +35,6 @@ import io.github.oliviercailloux.y2018.j_voting.Voter;
 public class StrategyPessimistic implements Strategy {
 
 	private PrefKnowledge knowledge;
-	public boolean profileCompleted;
 	private static AggOps op;
 	private static double w1;
 	private static double w2;
@@ -66,8 +64,7 @@ public class StrategyPessimistic implements Strategy {
 	}
 
 	private StrategyPessimistic(PrefKnowledge knowledge) {
-		this.knowledge = knowledge;
-		profileCompleted = false;
+		setKnowledge(knowledge);
 		LOGGER.info("");
 	}
 
@@ -176,6 +173,11 @@ public class StrategyPessimistic implements Strategy {
 		default:
 			throw new IllegalStateException();
 		}
+	}
+
+	@Override
+	public void setKnowledge(PrefKnowledge knowledge) {
+		this.knowledge = knowledge;
 	}
 
 	/** only for testing purposes */

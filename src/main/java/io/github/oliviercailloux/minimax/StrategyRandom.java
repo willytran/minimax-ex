@@ -45,7 +45,7 @@ public class StrategyRandom implements Strategy {
 		final long seed = ThreadLocalRandom.current().nextLong();
 		LOGGER.info("Using seed: {}.", seed);
 		random = new Random(seed);
-		this.knowledge = knowledge;
+		setKnowledge(knowledge);
 		profileCompleted = false;
 	}
 
@@ -74,7 +74,7 @@ public class StrategyRandom implements Strategy {
 		QuestionCommittee qc = null;
 		for (int rank : candidateRanks) {
 			final Range<Aprational> lambdaRange = knowledge.getLambdaRange(rank);
-			//LOGGER.info("Range: {}.", lambdaRange);
+			// LOGGER.info("Range: {}.", lambdaRange);
 			if (!lambdaRange.lowerEndpoint().equals(lambdaRange.upperEndpoint())) {
 				final Aprational avg = AprationalMath.sum(lambdaRange.lowerEndpoint(), lambdaRange.upperEndpoint())
 						.divide(new Apint(2));
@@ -124,5 +124,10 @@ public class StrategyRandom implements Strategy {
 		}
 
 		return q;
+	}
+
+	@Override
+	public void setKnowledge(PrefKnowledge knowledge) {
+		this.knowledge = knowledge;
 	}
 }

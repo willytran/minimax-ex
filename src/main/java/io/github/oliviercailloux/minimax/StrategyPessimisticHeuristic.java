@@ -73,7 +73,7 @@ public class StrategyPessimisticHeuristic implements Strategy {
 	}
 
 	private StrategyPessimisticHeuristic(PrefKnowledge knowledge) {
-		this.knowledge = knowledge;
+		setKnowledge(knowledge);
 		profileCompleted = false;
 		LOGGER.info("");
 	}
@@ -109,7 +109,6 @@ public class StrategyPessimisticHeuristic implements Strategy {
 	}
 
 	private Set<Question> selectQuestions() {
-		rc = new RegretComputer(knowledge);
 		SetMultimap<Alternative, PairwiseMaxRegret> mmr = rc.getMinimalMaxRegrets();
 		Alternative xStar = mmr.keySet().iterator().next();
 		PairwiseMaxRegret currentSolution = mmr.get(xStar).iterator().next();
@@ -279,6 +278,12 @@ public class StrategyPessimisticHeuristic implements Strategy {
 		default:
 			throw new IllegalStateException();
 		}
+	}
+
+	@Override
+	public void setKnowledge(PrefKnowledge knowledge) {
+		this.knowledge = knowledge;
+		rc = new RegretComputer(knowledge);
 	}
 
 	/** only for testing purposes */

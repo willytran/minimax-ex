@@ -2,7 +2,6 @@ package io.github.oliviercailloux.minimax;
 
 import static com.google.common.base.Preconditions.checkArgument;
 
-import java.util.Comparator;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.LinkedList;
@@ -10,7 +9,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import java.util.SortedMap;
-import java.util.Map.Entry;
 
 import org.apfloat.Apint;
 import org.apfloat.Aprational;
@@ -20,8 +18,6 @@ import org.slf4j.LoggerFactory;
 
 import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.ImmutableSet;
-import com.google.common.collect.ImmutableSortedMap;
-import com.google.common.collect.Multimaps;
 import com.google.common.collect.Range;
 import com.google.common.collect.SetMultimap;
 import com.google.common.graph.Graph;
@@ -46,7 +42,7 @@ public class StrategyMiniMaxIncr implements Strategy {
 	private PrefKnowledge knowledge;
 	public boolean profileCompleted;
 
-	private static RegretComputer regretComputer;
+	private RegretComputer regretComputer;
 
 	private int questionsToVoters;
 	private int questionsToCommittee;
@@ -60,7 +56,7 @@ public class StrategyMiniMaxIncr implements Strategy {
 	}
 
 	private StrategyMiniMaxIncr(PrefKnowledge know, int qToVoters, int qToCommittee, boolean cFirst) {
-		knowledge = know;
+		setKnowledge(know);
 		questionsToVoters = qToVoters;
 		questionsToCommittee = qToCommittee;
 		committeeFirst = cFirst;
@@ -75,7 +71,6 @@ public class StrategyMiniMaxIncr implements Strategy {
 		checkArgument(questionsToVoters != 0 || questionsToCommittee != 0, "No more questions allowed");
 		Question q;
 
-		regretComputer = new RegretComputer(knowledge);
 		SetMultimap<Alternative, PairwiseMaxRegret> mmr = regretComputer.getMinimalMaxRegrets();
 		Alternative xStar = mmr.keySet().iterator().next();
 		PairwiseMaxRegret currentSolution = mmr.get(xStar).iterator().next();
@@ -181,7 +176,6 @@ public class StrategyMiniMaxIncr implements Strategy {
 
 		checkArgument(existsQuestionVoters, "No question to ask about voters.");
 		List<Question> questionsV = new LinkedList<>();
-		regretComputer = new RegretComputer(knowledge);
 
 		Regrets r = regretComputer.getAllPairwiseMaxRegrets();
 		ImmutableMap<Alternative, SortedMap<Double, Set<PairwiseMaxRegret>>> rsort = r.getRegretsSorted();
@@ -233,6 +227,12 @@ public class StrategyMiniMaxIncr implements Strategy {
 		return p;
 	}
 
+	@Override
+	public void setKnowledge(PrefKnowledge knowledge) {
+		this.knowledge = knowledge;
+		regretComputer = new RegretComputer(knowledge);
+	}
+
 //		for (Voter v : knowledge.getVoters()) {
 //			for(PairwiseMaxRegret pmr : maxPMRS) {
 //				Alternative x = pmr.getX();
@@ -259,7 +259,7 @@ public class StrategyMiniMaxIncr implements Strategy {
 	/**
 	 * TODO I suspect this whole bunch of code (now commented-out) simply does the
 	 * following.
-	 * 
+	 *
 	 * final PairwiseMaxRegret pmrs =
 	 * regretComputer.getMinimalMaxRegrets().values().iterator().next(); Alternative
 	 * x = pmrs.getX(); Alternative y = pmrs.getY(); for (Voter v :
