@@ -47,6 +47,10 @@ public class Run {
 		return oracle;
 	}
 
+	public int getK() {
+		return questions.size();
+	}
+
 	/**
 	 * @return a list of size k.
 	 */
