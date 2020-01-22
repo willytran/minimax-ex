@@ -45,7 +45,7 @@ public class Oracle {
 		this.alternatives = ImmutableSortedSet.copyOf(comparingIds, alternativesList);
 
 		checkArgument(profile.values().stream().map(VoterStrictPreference::getAlternatives)
-				.allMatch((l) -> l.equals(alternatives.asList())));
+				.allMatch((l) -> ImmutableSet.copyOf(l).equals(alternatives)));
 		final int nbAlts = alternatives.size();
 		checkArgument(weights.size() == nbAlts);
 	}
