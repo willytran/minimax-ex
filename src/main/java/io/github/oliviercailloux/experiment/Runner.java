@@ -5,13 +5,13 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.stream.Stream;
 
-import org.junit.jupiter.params.shadow.com.univocity.parsers.csv.CsvWriter;
-import org.junit.jupiter.params.shadow.com.univocity.parsers.csv.CsvWriterSettings;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.ImmutableMap;
+import com.univocity.parsers.csv.CsvWriter;
+import com.univocity.parsers.csv.CsvWriterSettings;
 
 import io.github.oliviercailloux.minimax.Strategy;
 import io.github.oliviercailloux.minimax.StrategyTwoPhasesHeuristic;
