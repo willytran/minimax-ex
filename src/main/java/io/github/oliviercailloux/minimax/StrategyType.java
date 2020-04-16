@@ -9,7 +9,7 @@ public enum StrategyType {
 	public String toString() {
 		switch (this) {
 		case PESSIMISTIC_MAX:
-			return "Pessimistic Strategy with max aggregation operator";
+			return "PessimisticMax";
 		case PESSIMISTIC_MIN:
 			return "Pessimistic Strategy with min aggregation operator";
 		case PESSIMISTIC_AVG:
@@ -17,9 +17,9 @@ public enum StrategyType {
 		case PESSIMISTIC_WEIGHTED_AVG:
 			return "Pessimistic Strategy with weighted average aggregation operator";
 		case PESSIMISTIC_HEURISTIC:
-			return "Pessimistic Strategy with Heuristic";
+			return "LimitedPess";
 		case RANDOM:
-			return "Random Strategy";
+			return "Random";
 		case TWO_PHASES:
 			return "Two Phases Strategy";
 		case TAU:
@@ -27,9 +27,9 @@ public enum StrategyType {
 		case TWO_PHASES_TAU:
 			return "Two Phases Tau Strategy";
 		case TWO_PHASES_RANDOM:
-			return "Two Phases Random Strategy";
+			return "TwoPhasesRandom";
 		case TWO_PHASES_HEURISTIC:
-			return "Two Phases Heuristic Strategy";
+			return "TwoPhases";
 		case MINIMAX_MIN_INC:
 			return "New Strategy";
 		default:
