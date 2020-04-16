@@ -41,5 +41,13 @@ public class Runs {
 		}
 		return average.build();
 	}
-
+	
+	public int nbRuns() {
+		return runs.size();
+	}
+	
+	public Run getRun(int i) {
+		checkArgument(i < runs.size());
+		return runs.get(i);
+	}
 }
