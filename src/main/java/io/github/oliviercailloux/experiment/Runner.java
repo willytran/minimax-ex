@@ -17,6 +17,7 @@ import com.univocity.parsers.csv.CsvWriterSettings;
 
 import io.github.oliviercailloux.minimax.Strategy;
 import io.github.oliviercailloux.minimax.StrategyMiniMaxIncr;
+import io.github.oliviercailloux.minimax.StrategyPessimistic;
 import io.github.oliviercailloux.minimax.StrategyPessimisticHeuristic;
 import io.github.oliviercailloux.minimax.StrategyRandom;
 import io.github.oliviercailloux.minimax.StrategyTwoPhasesHeuristic;
@@ -27,7 +28,6 @@ import io.github.oliviercailloux.minimax.elicitation.Oracle;
 import io.github.oliviercailloux.minimax.elicitation.PrefKnowledge;
 import io.github.oliviercailloux.minimax.elicitation.Question;
 import io.github.oliviercailloux.minimax.elicitation.QuestionType;
-import io.github.oliviercailloux.minimax.old_strategies.StrategyPessimistic;
 import io.github.oliviercailloux.minimax.old_strategies.StrategyTaus;
 import io.github.oliviercailloux.minimax.old_strategies.StrategyTwoPhases;
 import io.github.oliviercailloux.minimax.old_strategies.StrategyTwoPhasesTau;
@@ -42,13 +42,21 @@ public class Runner {
 
 	public static void main(String[] args) throws IOException {
 		final boolean committeeFirst = true;
-		final int k = 20; // nbQuestions
-		final int nbRuns = 1;
+		final int k = 50; // nbQuestions
+		final int nbRuns = 2;
 		final int m = 5; // alternatives
 		final int n = 5; // agents
-		final StrategyType st = StrategyType.PESSIMISTIC_HEURISTIC;
+		StrategyType st;
 
+//		st = StrategyType.RANDOM;
+//		runXP(committeeFirst, k, nbRuns, m, n, st);
+		
+//		st = StrategyType.PESSIMISTIC_HEURISTIC;
+//		runXP(committeeFirst, k, nbRuns, m, n, st);
+		
+		st = StrategyType.TWO_PHASES_HEURISTIC;
 		runXP(committeeFirst, k, nbRuns, m, n, st);
+		
 	}
 
 	private static void runXP(boolean committeeFirst, int k, int nbRuns, int m, int n, StrategyType st)
@@ -67,9 +75,13 @@ public class Runner {
 			final Runs runs = runRepeatedly(strategy, k, m, n, nbRuns, title);
 			final ImmutableList<Double> regrets = runs.getAverageMinimalMaxRegrets();
 			if (st.equals(StrategyType.TWO_PHASES_HEURISTIC) || st.equals(StrategyType.TWO_PHASES)
-					|| st.equals(StrategyType.TWO_PHASES_RANDOM))
-				sb.append("qV = " + i + " then qC = " + (k - i));
-			else
+					|| st.equals(StrategyType.TWO_PHASES_RANDOM)) {
+				if(committeeFirst) {
+					sb.append("qC = " + (k - i) + " then qV = " + i);
+				}else {
+					sb.append("qV = " + i + " then qC = " + (k - i));
+				}
+			} else
 				sb.append("nbQst = " + k);
 			builder.put(sb.toString(), regrets);
 		}
@@ -97,6 +109,7 @@ public class Runner {
 		writer.close();
 	}
 
+	
 	private static Strategy buildStrategy(StrategyType st, int nbVotersQuestions, int nbCommitteeQuestions,
 			boolean committeeFirst) {
 		final Strategy strategy;
@@ -214,14 +227,12 @@ public class Runner {
 //				LOGGER.info("Asked {}.", q);
 				final Answer a = oracle.getAnswer(q);
 				knowledge.update(q, a);
-				tBuilder.add(startTime);
 				qBuilder.add(q);
 			} catch (Exception e) {
 				e.printStackTrace();
 				System.out.println("ERROR " + knowledge.toString());
-				break;
 			}
-
+			tBuilder.add(startTime);
 		}
 
 		final long endTime = System.currentTimeMillis();
