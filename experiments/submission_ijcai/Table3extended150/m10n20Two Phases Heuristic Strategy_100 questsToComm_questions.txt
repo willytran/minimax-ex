@@ -1,0 +1,156 @@
+Two Phases Heuristic Strategy
+20 Voters 10 Alternatives 
+Run 0: 150 questions:
+Question{QuestionCommittee{λ=21/2, rank=1}}
+Question{QuestionCommittee{λ=23/4, rank=1}}
+Question{QuestionCommittee{λ=27/8, rank=1}}
+Question{QuestionCommittee{λ=35/16, rank=1}}
+Question{QuestionCommittee{λ=51/32, rank=1}}
+Question{QuestionCommittee{λ=83/64, rank=1}}
+Question{QuestionCommittee{λ=147/128, rank=1}}
+Question{QuestionCommittee{λ=275/256, rank=1}}
+Question{QuestionCommittee{λ=531/512, rank=1}}
+Question{QuestionCommittee{λ=1043/1024, rank=1}}
+Question{QuestionCommittee{λ=2105/2048, rank=1}}
+Question{QuestionCommittee{λ=4229/4096, rank=1}}
+Question{QuestionCommittee{λ=8439/8192, rank=1}}
+Question{QuestionCommittee{λ=16897/16384, rank=1}}
+Question{QuestionCommittee{λ=33813/32768, rank=1}}
+Question{QuestionCommittee{λ=67645/65536, rank=1}}
+Question{QuestionCommittee{λ=135309/131072, rank=1}}
+Question{QuestionCommittee{λ=270599/262144, rank=1}}
+Question{QuestionCommittee{λ=541179/524288, rank=1}}
+Question{QuestionCommittee{λ=1082377/1048576, rank=1}}
+Question{QuestionCommittee{λ=2164773/2097152, rank=1}}
+Question{QuestionCommittee{λ=4329565/4194304, rank=1}}
+Question{QuestionCommittee{λ=8659149/8388608, rank=1}}
+Question{QuestionCommittee{λ=17318317/16777216, rank=1}}
+Question{QuestionCommittee{λ=34636653/33554432, rank=1}}
+Question{QuestionCommittee{λ=69273325/67108864, rank=1}}
+Question{QuestionCommittee{λ=138546669/134217728, rank=1}}
+Question{QuestionCommittee{λ=277093319/268435456, rank=1}}
+Question{QuestionCommittee{λ=554186657/536870912, rank=1}}
+Question{QuestionCommittee{λ=1108373295/1073741824, rank=1}}
+Question{QuestionCommittee{λ=2216746571/2147483648, rank=1}}
+Question{QuestionCommittee{λ=4433493161/4294967296, rank=1}}
+Question{QuestionCommittee{λ=8866986341/8589934592, rank=1}}
+Question{QuestionCommittee{λ=17733972701/17179869184, rank=1}}
+Question{QuestionCommittee{λ=35467945421/34359738368, rank=1}}
+Question{QuestionCommittee{λ=70935890861/68719476736, rank=1}}
+Question{QuestionCommittee{λ=141871781741/137438953472, rank=1}}
+Question{QuestionCommittee{λ=283743563501/274877906944, rank=1}}
+Question{QuestionCommittee{λ=567487127021/549755813888, rank=1}}
+Question{QuestionCommittee{λ=1134974254061/1099511627776, rank=1}}
+Question{QuestionCommittee{λ=2269948508141/2199023255552, rank=1}}
+Question{QuestionCommittee{λ=4539897016301/4398046511104, rank=1}}
+Question{QuestionCommittee{λ=9079794032621/8796093022208, rank=1}}
+Question{QuestionCommittee{λ=18159588065261/17592186044416, rank=1}}
+Question{QuestionCommittee{λ=36319176130541/35184372088832, rank=1}}
+Question{QuestionCommittee{λ=72638352261101/70368744177664, rank=1}}
+Question{QuestionCommittee{λ=145276704522221/140737488355328, rank=1}}
+Question{QuestionCommittee{λ=290553409044461/281474976710656, rank=1}}
+Question{QuestionCommittee{λ=581106818088941/562949953421312, rank=1}}
+Question{QuestionCommittee{λ=1162213636177901/1125899906842624, rank=1}}
+Question{QuestionCommittee{λ=2324427272355821/2251799813685248, rank=1}}
+Question{QuestionCommittee{λ=4648854544711661/4503599627370496, rank=1}}
+Question{QuestionCommittee{λ=9297709089423341/9007199254740992, rank=1}}
+Question{QuestionCommittee{λ=18595418178846701/18014398509481984, rank=1}}
+Question{QuestionCommittee{λ=37190836357693421/36028797018963968, rank=1}}
+Question{QuestionCommittee{λ=74381672715386861/72057594037927936, rank=1}}
+Question{QuestionCommittee{λ=148763345430773741/144115188075855872, rank=1}}
+Question{QuestionCommittee{λ=297526690861547501/288230376151711744, rank=1}}
+Question{QuestionCommittee{λ=595053381723095021/576460752303423488, rank=1}}
+Question{QuestionCommittee{λ=1190106763446190061/1152921504606846976, rank=1}}
+Question{QuestionCommittee{λ=2380213526892380141/2305843009213693952, rank=1}}
+Question{QuestionCommittee{λ=4760427053784760301/4611686018427387904, rank=1}}
+Question{QuestionCommittee{λ=9520854107569520621/9223372036854775808, rank=1}}
+Question{QuestionCommittee{λ=19041708215139041261/18446744073709551616, rank=1}}
+Question{QuestionCommittee{λ=38083416430278082541/36893488147419103232, rank=1}}
+Question{QuestionCommittee{λ=76166832860556165101/73786976294838206464, rank=1}}
+Question{QuestionCommittee{λ=152333665721112330221/147573952589676412928, rank=1}}
+Question{QuestionCommittee{λ=304667331442224660461/295147905179352825856, rank=1}}
+Question{QuestionCommittee{λ=609334662884449320941/590295810358705651712, rank=1}}
+Question{QuestionCommittee{λ=1218669325768898641901/1180591620717411303424, rank=1}}
+Question{QuestionCommittee{λ=2437338651537797283821/2361183241434822606848, rank=1}}
+Question{QuestionCommittee{λ=4874677303075594567661/4722366482869645213696, rank=1}}
+Question{QuestionCommittee{λ=9749354606151189135341/9444732965739290427392, rank=1}}
+Question{QuestionCommittee{λ=19498709212302378270701/18889465931478580854784, rank=1}}
+Question{QuestionCommittee{λ=38997418424604756541421/37778931862957161709568, rank=1}}
+Question{QuestionCommittee{λ=77994836849209513082861/75557863725914323419136, rank=1}}
+Question{QuestionCommittee{λ=155989673698419026165741/151115727451828646838272, rank=1}}
+Question{QuestionCommittee{λ=311979347396838052331501/302231454903657293676544, rank=1}}
+Question{QuestionCommittee{λ=623958694793676104663021/604462909807314587353088, rank=1}}
+Question{QuestionCommittee{λ=1247917389587352209326061/1208925819614629174706176, rank=1}}
+Question{QuestionCommittee{λ=2495834779174704418652141/2417851639229258349412352, rank=1}}
+Question{QuestionCommittee{λ=4991669558349408837304301/4835703278458516698824704, rank=1}}
+Question{QuestionCommittee{λ=9983339116698817674608621/9671406556917033397649408, rank=1}}
+Question{QuestionCommittee{λ=19966678233397635349217261/19342813113834066795298816, rank=1}}
+Question{QuestionCommittee{λ=39933356466795270698434541/38685626227668133590597632, rank=1}}
+Question{QuestionCommittee{λ=79866712933590541396869101/77371252455336267181195264, rank=1}}
+Question{QuestionCommittee{λ=159733425867181082793738221/154742504910672534362390528, rank=1}}
+Question{QuestionCommittee{λ=319466851734362165587476461/309485009821345068724781056, rank=1}}
+Question{QuestionCommittee{λ=638933703468724331174952941/618970019642690137449562112, rank=1}}
+Question{QuestionCommittee{λ=1277867406937448662349905901/1237940039285380274899124224, rank=1}}
+Question{QuestionCommittee{λ=2555734813874897324699811821/2475880078570760549798248448, rank=1}}
+Question{QuestionCommittee{λ=5111469627749794649399623661/4951760157141521099596496896, rank=1}}
+Question{QuestionCommittee{λ=10222939255499589298799247341/9903520314283042199192993792, rank=1}}
+Question{QuestionCommittee{λ=20445878510999178597598494701/19807040628566084398385987584, rank=1}}
+Question{QuestionCommittee{λ=40891757021998357195196989421/39614081257132168796771975168, rank=1}}
+Question{QuestionCommittee{λ=81783514043996714390393978861/79228162514264337593543950336, rank=1}}
+Question{QuestionCommittee{λ=163567028087993428780787957741/158456325028528675187087900672, rank=1}}
+Question{QuestionCommittee{λ=327134056175986857561575915501/316912650057057350374175801344, rank=1}}
+Question{QuestionCommittee{λ=654268112351973715123151831021/633825300114114700748351602688, rank=1}}
+Question{QuestionCommittee{λ=1308536224703947430246303662061/1267650600228229401496703205376, rank=1}}
+Question{QuestionVoter{voter=Voter{12}, a=1, b=2}}
+Question{QuestionVoter{voter=Voter{17}, a=1, b=2}}
+Question{QuestionVoter{voter=Voter{17}, a=1, b=3}}
+Question{QuestionVoter{voter=Voter{17}, a=1, b=4}}
+Question{QuestionVoter{voter=Voter{17}, a=1, b=5}}
+Question{QuestionVoter{voter=Voter{17}, a=1, b=6}}
+Question{QuestionVoter{voter=Voter{17}, a=6, b=7}}
+Question{QuestionVoter{voter=Voter{17}, a=6, b=8}}
+Question{QuestionVoter{voter=Voter{17}, a=6, b=9}}
+Question{QuestionVoter{voter=Voter{17}, a=6, b=10}}
+Question{QuestionVoter{voter=Voter{5}, a=6, b=7}}
+Question{QuestionVoter{voter=Voter{1}, a=6, b=8}}
+Question{QuestionVoter{voter=Voter{20}, a=6, b=9}}
+Question{QuestionVoter{voter=Voter{13}, a=6, b=9}}
+Question{QuestionVoter{voter=Voter{6}, a=6, b=9}}
+Question{QuestionVoter{voter=Voter{4}, a=6, b=10}}
+Question{QuestionVoter{voter=Voter{16}, a=6, b=2}}
+Question{QuestionVoter{voter=Voter{3}, a=6, b=3}}
+Question{QuestionVoter{voter=Voter{3}, a=6, b=4}}
+Question{QuestionVoter{voter=Voter{2}, a=6, b=4}}
+Question{QuestionVoter{voter=Voter{19}, a=6, b=4}}
+Question{QuestionVoter{voter=Voter{5}, a=6, b=4}}
+Question{QuestionVoter{voter=Voter{9}, a=6, b=5}}
+Question{QuestionVoter{voter=Voter{19}, a=6, b=5}}
+Question{QuestionVoter{voter=Voter{5}, a=6, b=5}}
+Question{QuestionVoter{voter=Voter{4}, a=6, b=5}}
+Question{QuestionVoter{voter=Voter{8}, a=6, b=1}}
+Question{QuestionVoter{voter=Voter{18}, a=6, b=1}}
+Question{QuestionVoter{voter=Voter{6}, a=6, b=1}}
+Question{QuestionVoter{voter=Voter{17}, a=1, b=7}}
+Question{QuestionVoter{voter=Voter{20}, a=6, b=8}}
+Question{QuestionVoter{voter=Voter{12}, a=6, b=8}}
+Question{QuestionVoter{voter=Voter{10}, a=6, b=8}}
+Question{QuestionVoter{voter=Voter{1}, a=6, b=1}}
+Question{QuestionVoter{voter=Voter{7}, a=6, b=8}}
+Question{QuestionVoter{voter=Voter{9}, a=6, b=9}}
+Question{QuestionVoter{voter=Voter{18}, a=6, b=10}}
+Question{QuestionVoter{voter=Voter{3}, a=6, b=10}}
+Question{QuestionVoter{voter=Voter{4}, a=5, b=10}}
+Question{QuestionVoter{voter=Voter{14}, a=6, b=10}}
+Question{QuestionVoter{voter=Voter{11}, a=6, b=2}}
+Question{QuestionVoter{voter=Voter{5}, a=6, b=2}}
+Question{QuestionVoter{voter=Voter{20}, a=6, b=4}}
+Question{QuestionVoter{voter=Voter{11}, a=6, b=4}}
+Question{QuestionVoter{voter=Voter{4}, a=6, b=7}}
+Question{QuestionVoter{voter=Voter{15}, a=6, b=5}}
+Question{QuestionVoter{voter=Voter{6}, a=6, b=5}}
+Question{QuestionVoter{voter=Voter{14}, a=6, b=3}}
+Question{QuestionVoter{voter=Voter{11}, a=6, b=1}}
+Question{QuestionVoter{voter=Voter{7}, a=6, b=1}}
+Questions to the voters: 50.0 Question to the committee: 100.0
+Duration 239,09700 seconds 
+

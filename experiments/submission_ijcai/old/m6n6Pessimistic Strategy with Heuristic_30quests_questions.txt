@@ -1,0 +1,1332 @@
+Pessimistic Strategy with Heuristic
+6 Voters 6 Alternatives 
+Run 0: 0 questions:
+Questions to the voters: 0.0 Question to the committee: 0.0
+Duration 0.36000 seconds 
+
+Run 1: 0 questions:
+Questions to the voters: 0.0 Question to the committee: 0.0
+Duration 0.04000 seconds 
+
+Run 2: 0 questions:
+Questions to the voters: 0.0 Question to the committee: 0.0
+Duration 0.05100 seconds 
+
+Run 3: 0 questions:
+Questions to the voters: 0.0 Question to the committee: 0.0
+Duration 0.04000 seconds 
+
+Run 4: 0 questions:
+Questions to the voters: 0.0 Question to the committee: 0.0
+Duration 0.03500 seconds 
+
+Run 5: 0 questions:
+Questions to the voters: 0.0 Question to the committee: 0.0
+Duration 0.03200 seconds 
+
+Run 6: 0 questions:
+Questions to the voters: 0.0 Question to the committee: 0.0
+Duration 0.03500 seconds 
+
+Run 7: 0 questions:
+Questions to the voters: 0.0 Question to the committee: 0.0
+Duration 0.05400 seconds 
+
+Run 8: 0 questions:
+Questions to the voters: 0.0 Question to the committee: 0.0
+Duration 0.06900 seconds 
+
+Run 9: 0 questions:
+Questions to the voters: 0.0 Question to the committee: 0.0
+Duration 0.05300 seconds 
+
+Run 0: 5 questions:
+Question{QuestionVoter{voter=Voter{6}, a=1, b=2}}
+Question{QuestionVoter{voter=Voter{1}, a=1, b=2}}
+Question{QuestionCommittee{λ=7/2, rank=1}}
+Question{QuestionVoter{voter=Voter{5}, a=1, b=2}}
+Question{QuestionVoter{voter=Voter{4}, a=1, b=2}}
+Questions to the voters: 4.0 Question to the committee: 1.0
+Duration 1.45800 seconds 
+
+Run 1: 5 questions:
+Question{QuestionVoter{voter=Voter{2}, a=1, b=2}}
+Question{QuestionVoter{voter=Voter{1}, a=1, b=2}}
+Question{QuestionVoter{voter=Voter{1}, a=1, b=3}}
+Question{QuestionVoter{voter=Voter{1}, a=3, b=4}}
+Question{QuestionVoter{voter=Voter{1}, a=3, b=5}}
+Questions to the voters: 5.0 Question to the committee: 0.0
+Duration 1.10200 seconds 
+
+Run 2: 5 questions:
+Question{QuestionVoter{voter=Voter{2}, a=1, b=2}}
+Question{QuestionVoter{voter=Voter{6}, a=1, b=2}}
+Question{QuestionVoter{voter=Voter{6}, a=1, b=3}}
+Question{QuestionVoter{voter=Voter{6}, a=1, b=4}}
+Question{QuestionVoter{voter=Voter{6}, a=1, b=5}}
+Questions to the voters: 5.0 Question to the committee: 0.0
+Duration 1.10200 seconds 
+
+Run 3: 5 questions:
+Question{QuestionVoter{voter=Voter{1}, a=1, b=2}}
+Question{QuestionVoter{voter=Voter{1}, a=1, b=3}}
+Question{QuestionVoter{voter=Voter{1}, a=3, b=4}}
+Question{QuestionVoter{voter=Voter{1}, a=3, b=5}}
+Question{QuestionVoter{voter=Voter{1}, a=3, b=6}}
+Questions to the voters: 5.0 Question to the committee: 0.0
+Duration 0.79300 seconds 
+
+Run 4: 5 questions:
+Question{QuestionVoter{voter=Voter{2}, a=1, b=2}}
+Question{QuestionVoter{voter=Voter{4}, a=1, b=2}}
+Question{QuestionVoter{voter=Voter{6}, a=1, b=2}}
+Question{QuestionVoter{voter=Voter{6}, a=1, b=3}}
+Question{QuestionVoter{voter=Voter{6}, a=3, b=2}}
+Questions to the voters: 5.0 Question to the committee: 0.0
+Duration 0.99500 seconds 
+
+Run 5: 5 questions:
+Question{QuestionVoter{voter=Voter{6}, a=1, b=2}}
+Question{QuestionVoter{voter=Voter{5}, a=1, b=2}}
+Question{QuestionVoter{voter=Voter{5}, a=1, b=3}}
+Question{QuestionVoter{voter=Voter{5}, a=1, b=4}}
+Question{QuestionVoter{voter=Voter{5}, a=4, b=5}}
+Questions to the voters: 5.0 Question to the committee: 0.0
+Duration 0.78800 seconds 
+
+Run 6: 5 questions:
+Question{QuestionVoter{voter=Voter{1}, a=1, b=2}}
+Question{QuestionVoter{voter=Voter{1}, a=1, b=3}}
+Question{QuestionVoter{voter=Voter{1}, a=1, b=4}}
+Question{QuestionVoter{voter=Voter{1}, a=4, b=5}}
+Question{QuestionVoter{voter=Voter{1}, a=4, b=6}}
+Questions to the voters: 5.0 Question to the committee: 0.0
+Duration 0.87700 seconds 
+
+Run 7: 5 questions:
+Question{QuestionVoter{voter=Voter{2}, a=1, b=2}}
+Question{QuestionVoter{voter=Voter{4}, a=1, b=2}}
+Question{QuestionVoter{voter=Voter{4}, a=1, b=3}}
+Question{QuestionVoter{voter=Voter{4}, a=3, b=4}}
+Question{QuestionVoter{voter=Voter{4}, a=3, b=5}}
+Questions to the voters: 5.0 Question to the committee: 0.0
+Duration 0.65100 seconds 
+
+Run 8: 5 questions:
+Question{QuestionCommittee{λ=7/2, rank=1}}
+Question{QuestionVoter{voter=Voter{4}, a=1, b=2}}
+Question{QuestionVoter{voter=Voter{4}, a=1, b=3}}
+Question{QuestionVoter{voter=Voter{4}, a=1, b=4}}
+Question{QuestionVoter{voter=Voter{4}, a=1, b=5}}
+Questions to the voters: 4.0 Question to the committee: 1.0
+Duration 1.15300 seconds 
+
+Run 9: 5 questions:
+Question{QuestionVoter{voter=Voter{3}, a=1, b=2}}
+Question{QuestionVoter{voter=Voter{3}, a=1, b=3}}
+Question{QuestionVoter{voter=Voter{3}, a=3, b=4}}
+Question{QuestionVoter{voter=Voter{3}, a=3, b=5}}
+Question{QuestionVoter{voter=Voter{3}, a=3, b=6}}
+Questions to the voters: 5.0 Question to the committee: 0.0
+Duration 0.69900 seconds 
+
+Run 0: 10 questions:
+Question{QuestionCommittee{λ=7/2, rank=1}}
+Question{QuestionVoter{voter=Voter{2}, a=1, b=2}}
+Question{QuestionVoter{voter=Voter{2}, a=1, b=3}}
+Question{QuestionVoter{voter=Voter{2}, a=2, b=4}}
+Question{QuestionVoter{voter=Voter{2}, a=4, b=5}}
+Question{QuestionVoter{voter=Voter{2}, a=4, b=6}}
+Question{QuestionCommittee{λ=7/2, rank=2}}
+Question{QuestionVoter{voter=Voter{3}, a=6, b=4}}
+Question{QuestionVoter{voter=Voter{6}, a=6, b=4}}
+Question{QuestionVoter{voter=Voter{3}, a=6, b=1}}
+Questions to the voters: 8.0 Question to the committee: 2.0
+Duration 1.61500 seconds 
+
+Run 1: 10 questions:
+Question{QuestionVoter{voter=Voter{1}, a=1, b=2}}
+Question{QuestionVoter{voter=Voter{1}, a=1, b=3}}
+Question{QuestionVoter{voter=Voter{1}, a=1, b=4}}
+Question{QuestionVoter{voter=Voter{1}, a=1, b=5}}
+Question{QuestionVoter{voter=Voter{1}, a=5, b=6}}
+Question{QuestionVoter{voter=Voter{6}, a=5, b=1}}
+Question{QuestionVoter{voter=Voter{4}, a=5, b=1}}
+Question{QuestionVoter{voter=Voter{5}, a=5, b=1}}
+Question{QuestionCommittee{λ=7/2, rank=1}}
+Question{QuestionCommittee{λ=7/2, rank=2}}
+Questions to the voters: 8.0 Question to the committee: 2.0
+Duration 1.58100 seconds 
+
+Run 2: 10 questions:
+Question{QuestionVoter{voter=Voter{2}, a=1, b=2}}
+Question{QuestionVoter{voter=Voter{2}, a=1, b=3}}
+Question{QuestionVoter{voter=Voter{2}, a=3, b=4}}
+Question{QuestionVoter{voter=Voter{2}, a=3, b=5}}
+Question{QuestionVoter{voter=Voter{2}, a=3, b=6}}
+Question{QuestionVoter{voter=Voter{6}, a=3, b=1}}
+Question{QuestionCommittee{λ=7/2, rank=1}}
+Question{QuestionVoter{voter=Voter{1}, a=3, b=4}}
+Question{QuestionVoter{voter=Voter{6}, a=3, b=4}}
+Question{QuestionVoter{voter=Voter{1}, a=3, b=5}}
+Questions to the voters: 9.0 Question to the committee: 1.0
+Duration 1.51600 seconds 
+
+Run 3: 10 questions:
+Question{QuestionVoter{voter=Voter{6}, a=1, b=2}}
+Question{QuestionVoter{voter=Voter{6}, a=1, b=3}}
+Question{QuestionVoter{voter=Voter{6}, a=3, b=2}}
+Question{QuestionVoter{voter=Voter{6}, a=3, b=4}}
+Question{QuestionVoter{voter=Voter{6}, a=3, b=5}}
+Question{QuestionVoter{voter=Voter{6}, a=3, b=6}}
+Question{QuestionVoter{voter=Voter{6}, a=4, b=2}}
+Question{QuestionVoter{voter=Voter{3}, a=3, b=2}}
+Question{QuestionVoter{voter=Voter{4}, a=3, b=5}}
+Question{QuestionVoter{voter=Voter{3}, a=3, b=5}}
+Questions to the voters: 10.0 Question to the committee: 0.0
+Duration 1.25500 seconds 
+
+Run 4: 10 questions:
+Question{QuestionVoter{voter=Voter{4}, a=1, b=2}}
+Question{QuestionCommittee{λ=7/2, rank=1}}
+Question{QuestionVoter{voter=Voter{2}, a=1, b=2}}
+Question{QuestionVoter{voter=Voter{6}, a=1, b=2}}
+Question{QuestionVoter{voter=Voter{6}, a=1, b=3}}
+Question{QuestionVoter{voter=Voter{6}, a=1, b=4}}
+Question{QuestionVoter{voter=Voter{6}, a=1, b=5}}
+Question{QuestionVoter{voter=Voter{6}, a=5, b=6}}
+Question{QuestionCommittee{λ=7/2, rank=2}}
+Question{QuestionVoter{voter=Voter{2}, a=5, b=6}}
+Questions to the voters: 8.0 Question to the committee: 2.0
+Duration 1.65400 seconds 
+
+Run 5: 10 questions:
+Question{QuestionVoter{voter=Voter{6}, a=1, b=2}}
+Question{QuestionVoter{voter=Voter{6}, a=1, b=3}}
+Question{QuestionVoter{voter=Voter{6}, a=1, b=4}}
+Question{QuestionVoter{voter=Voter{6}, a=1, b=5}}
+Question{QuestionVoter{voter=Voter{6}, a=5, b=6}}
+Question{QuestionCommittee{λ=7/2, rank=1}}
+Question{QuestionVoter{voter=Voter{2}, a=5, b=1}}
+Question{QuestionVoter{voter=Voter{6}, a=6, b=1}}
+Question{QuestionVoter{voter=Voter{5}, a=5, b=1}}
+Question{QuestionVoter{voter=Voter{1}, a=5, b=2}}
+Questions to the voters: 9.0 Question to the committee: 1.0
+Duration 1.55400 seconds 
+
+Run 6: 10 questions:
+Question{QuestionVoter{voter=Voter{6}, a=1, b=2}}
+Question{QuestionVoter{voter=Voter{5}, a=1, b=2}}
+Question{QuestionVoter{voter=Voter{5}, a=1, b=3}}
+Question{QuestionVoter{voter=Voter{5}, a=1, b=4}}
+Question{QuestionVoter{voter=Voter{5}, a=1, b=5}}
+Question{QuestionVoter{voter=Voter{5}, a=6, b=1}}
+Question{QuestionVoter{voter=Voter{1}, a=6, b=2}}
+Question{QuestionCommittee{λ=7/2, rank=1}}
+Question{QuestionVoter{voter=Voter{6}, a=6, b=3}}
+Question{QuestionVoter{voter=Voter{3}, a=6, b=4}}
+Questions to the voters: 9.0 Question to the committee: 1.0
+Duration 1.52200 seconds 
+
+Run 7: 10 questions:
+Question{QuestionVoter{voter=Voter{3}, a=1, b=2}}
+Question{QuestionVoter{voter=Voter{6}, a=1, b=2}}
+Question{QuestionVoter{voter=Voter{2}, a=1, b=2}}
+Question{QuestionVoter{voter=Voter{2}, a=1, b=3}}
+Question{QuestionVoter{voter=Voter{2}, a=1, b=4}}
+Question{QuestionVoter{voter=Voter{2}, a=1, b=5}}
+Question{QuestionVoter{voter=Voter{6}, a=6, b=2}}
+Question{QuestionVoter{voter=Voter{2}, a=1, b=6}}
+Question{QuestionVoter{voter=Voter{3}, a=1, b=3}}
+Question{QuestionVoter{voter=Voter{2}, a=3, b=2}}
+Questions to the voters: 10.0 Question to the committee: 0.0
+Duration 1.47800 seconds 
+
+Run 8: 10 questions:
+Question{QuestionVoter{voter=Voter{1}, a=1, b=2}}
+Question{QuestionVoter{voter=Voter{1}, a=1, b=3}}
+Question{QuestionVoter{voter=Voter{1}, a=3, b=2}}
+Question{QuestionVoter{voter=Voter{1}, a=3, b=4}}
+Question{QuestionVoter{voter=Voter{1}, a=4, b=5}}
+Question{QuestionVoter{voter=Voter{1}, a=4, b=6}}
+Question{QuestionVoter{voter=Voter{5}, a=4, b=3}}
+Question{QuestionVoter{voter=Voter{5}, a=4, b=5}}
+Question{QuestionVoter{voter=Voter{2}, a=4, b=6}}
+Question{QuestionVoter{voter=Voter{1}, a=5, b=2}}
+Questions to the voters: 10.0 Question to the committee: 0.0
+Duration 1.52300 seconds 
+
+Run 9: 10 questions:
+Question{QuestionVoter{voter=Voter{1}, a=1, b=2}}
+Question{QuestionVoter{voter=Voter{1}, a=1, b=3}}
+Question{QuestionVoter{voter=Voter{1}, a=1, b=4}}
+Question{QuestionVoter{voter=Voter{1}, a=4, b=5}}
+Question{QuestionVoter{voter=Voter{1}, a=4, b=6}}
+Question{QuestionCommittee{λ=7/2, rank=1}}
+Question{QuestionCommittee{λ=7/2, rank=2}}
+Question{QuestionCommittee{λ=9/4, rank=2}}
+Question{QuestionVoter{voter=Voter{2}, a=4, b=1}}
+Question{QuestionVoter{voter=Voter{5}, a=4, b=1}}
+Questions to the voters: 7.0 Question to the committee: 3.0
+Duration 1.60300 seconds 
+
+Run 0: 15 questions:
+Question{QuestionVoter{voter=Voter{5}, a=1, b=2}}
+Question{QuestionVoter{voter=Voter{5}, a=1, b=3}}
+Question{QuestionVoter{voter=Voter{5}, a=1, b=4}}
+Question{QuestionVoter{voter=Voter{5}, a=1, b=5}}
+Question{QuestionVoter{voter=Voter{5}, a=5, b=6}}
+Question{QuestionCommittee{λ=7/2, rank=1}}
+Question{QuestionCommittee{λ=7/2, rank=2}}
+Question{QuestionVoter{voter=Voter{6}, a=5, b=1}}
+Question{QuestionCommittee{λ=9/4, rank=2}}
+Question{QuestionCommittee{λ=13/8, rank=2}}
+Question{QuestionCommittee{λ=9/4, rank=1}}
+Question{QuestionVoter{voter=Voter{1}, a=5, b=1}}
+Question{QuestionVoter{voter=Voter{5}, a=1, b=6}}
+Question{QuestionVoter{voter=Voter{1}, a=5, b=6}}
+Question{QuestionVoter{voter=Voter{5}, a=3, b=2}}
+Questions to the voters: 10.0 Question to the committee: 5.0
+Duration 2.55400 seconds 
+
+Run 1: 15 questions:
+Question{QuestionVoter{voter=Voter{2}, a=1, b=2}}
+Question{QuestionVoter{voter=Voter{2}, a=1, b=3}}
+Question{QuestionVoter{voter=Voter{2}, a=1, b=4}}
+Question{QuestionVoter{voter=Voter{2}, a=4, b=5}}
+Question{QuestionVoter{voter=Voter{2}, a=4, b=6}}
+Question{QuestionVoter{voter=Voter{3}, a=4, b=1}}
+Question{QuestionVoter{voter=Voter{3}, a=4, b=5}}
+Question{QuestionVoter{voter=Voter{3}, a=4, b=6}}
+Question{QuestionVoter{voter=Voter{4}, a=4, b=2}}
+Question{QuestionVoter{voter=Voter{4}, a=4, b=3}}
+Question{QuestionVoter{voter=Voter{5}, a=4, b=1}}
+Question{QuestionVoter{voter=Voter{5}, a=4, b=5}}
+Question{QuestionVoter{voter=Voter{3}, a=1, b=6}}
+Question{QuestionVoter{voter=Voter{6}, a=4, b=6}}
+Question{QuestionVoter{voter=Voter{3}, a=4, b=2}}
+Questions to the voters: 15.0 Question to the committee: 0.0
+Duration 2.20500 seconds 
+
+Run 2: 15 questions:
+Question{QuestionVoter{voter=Voter{3}, a=1, b=2}}
+Question{QuestionVoter{voter=Voter{3}, a=1, b=3}}
+Question{QuestionVoter{voter=Voter{3}, a=3, b=2}}
+Question{QuestionVoter{voter=Voter{3}, a=2, b=4}}
+Question{QuestionVoter{voter=Voter{3}, a=4, b=5}}
+Question{QuestionVoter{voter=Voter{3}, a=4, b=6}}
+Question{QuestionCommittee{λ=7/2, rank=1}}
+Question{QuestionCommittee{λ=7/2, rank=2}}
+Question{QuestionVoter{voter=Voter{2}, a=4, b=2}}
+Question{QuestionVoter{voter=Voter{2}, a=4, b=5}}
+Question{QuestionVoter{voter=Voter{6}, a=4, b=6}}
+Question{QuestionCommittee{λ=7/2, rank=3}}
+Question{QuestionVoter{voter=Voter{3}, a=5, b=3}}
+Question{QuestionVoter{voter=Voter{3}, a=6, b=3}}
+Question{QuestionVoter{voter=Voter{1}, a=4, b=3}}
+Questions to the voters: 12.0 Question to the committee: 3.0
+Duration 2.58300 seconds 
+
+Run 3: 15 questions:
+Question{QuestionVoter{voter=Voter{1}, a=1, b=2}}
+Question{QuestionVoter{voter=Voter{2}, a=1, b=2}}
+Question{QuestionVoter{voter=Voter{2}, a=1, b=3}}
+Question{QuestionVoter{voter=Voter{2}, a=1, b=4}}
+Question{QuestionVoter{voter=Voter{2}, a=4, b=5}}
+Question{QuestionVoter{voter=Voter{2}, a=4, b=6}}
+Question{QuestionVoter{voter=Voter{1}, a=4, b=5}}
+Question{QuestionVoter{voter=Voter{6}, a=4, b=5}}
+Question{QuestionVoter{voter=Voter{6}, a=4, b=6}}
+Question{QuestionCommittee{λ=7/2, rank=1}}
+Question{QuestionVoter{voter=Voter{4}, a=4, b=6}}
+Question{QuestionVoter{voter=Voter{5}, a=4, b=2}}
+Question{QuestionVoter{voter=Voter{5}, a=4, b=1}}
+Question{QuestionVoter{voter=Voter{6}, a=4, b=2}}
+Question{QuestionCommittee{λ=9/4, rank=1}}
+Questions to the voters: 13.0 Question to the committee: 2.0
+Duration 2.26100 seconds 
+
+Run 4: 15 questions:
+Question{QuestionCommittee{λ=7/2, rank=1}}
+Question{QuestionVoter{voter=Voter{6}, a=1, b=2}}
+Question{QuestionCommittee{λ=9/4, rank=1}}
+Question{QuestionVoter{voter=Voter{6}, a=1, b=3}}
+Question{QuestionVoter{voter=Voter{6}, a=2, b=4}}
+Question{QuestionVoter{voter=Voter{6}, a=2, b=5}}
+Question{QuestionVoter{voter=Voter{6}, a=2, b=6}}
+Question{QuestionVoter{voter=Voter{4}, a=2, b=1}}
+Question{QuestionVoter{voter=Voter{4}, a=2, b=4}}
+Question{QuestionVoter{voter=Voter{2}, a=2, b=5}}
+Question{QuestionCommittee{λ=7/2, rank=3}}
+Question{QuestionVoter{voter=Voter{1}, a=2, b=6}}
+Question{QuestionVoter{voter=Voter{2}, a=2, b=6}}
+Question{QuestionVoter{voter=Voter{2}, a=2, b=1}}
+Question{QuestionVoter{voter=Voter{3}, a=2, b=6}}
+Questions to the voters: 12.0 Question to the committee: 3.0
+Duration 2.81700 seconds 
+
+Run 5: 15 questions:
+Question{QuestionVoter{voter=Voter{1}, a=1, b=2}}
+Question{QuestionVoter{voter=Voter{3}, a=1, b=2}}
+Question{QuestionVoter{voter=Voter{3}, a=1, b=3}}
+Question{QuestionVoter{voter=Voter{3}, a=1, b=4}}
+Question{QuestionVoter{voter=Voter{3}, a=1, b=5}}
+Question{QuestionVoter{voter=Voter{3}, a=6, b=1}}
+Question{QuestionCommittee{λ=7/2, rank=1}}
+Question{QuestionCommittee{λ=7/2, rank=2}}
+Question{QuestionCommittee{λ=9/4, rank=2}}
+Question{QuestionVoter{voter=Voter{4}, a=1, b=2}}
+Question{QuestionVoter{voter=Voter{1}, a=1, b=3}}
+Question{QuestionVoter{voter=Voter{2}, a=1, b=4}}
+Question{QuestionVoter{voter=Voter{6}, a=1, b=4}}
+Question{QuestionVoter{voter=Voter{1}, a=1, b=5}}
+Question{QuestionVoter{voter=Voter{2}, a=1, b=6}}
+Questions to the voters: 12.0 Question to the committee: 3.0
+Duration 2.47600 seconds 
+
+Run 6: 15 questions:
+Question{QuestionVoter{voter=Voter{3}, a=1, b=2}}
+Question{QuestionVoter{voter=Voter{3}, a=1, b=3}}
+Question{QuestionVoter{voter=Voter{3}, a=1, b=4}}
+Question{QuestionVoter{voter=Voter{3}, a=1, b=5}}
+Question{QuestionVoter{voter=Voter{3}, a=1, b=6}}
+Question{QuestionVoter{voter=Voter{2}, a=1, b=2}}
+Question{QuestionVoter{voter=Voter{1}, a=1, b=3}}
+Question{QuestionVoter{voter=Voter{4}, a=1, b=3}}
+Question{QuestionVoter{voter=Voter{6}, a=1, b=4}}
+Question{QuestionVoter{voter=Voter{5}, a=1, b=4}}
+Question{QuestionVoter{voter=Voter{1}, a=1, b=4}}
+Question{QuestionVoter{voter=Voter{5}, a=1, b=2}}
+Question{QuestionVoter{voter=Voter{6}, a=1, b=2}}
+Question{QuestionVoter{voter=Voter{1}, a=3, b=4}}
+Question{QuestionVoter{voter=Voter{2}, a=1, b=4}}
+Questions to the voters: 15.0 Question to the committee: 0.0
+Duration 2.18200 seconds 
+
+Run 7: 15 questions:
+Question{QuestionVoter{voter=Voter{6}, a=1, b=2}}
+Question{QuestionVoter{voter=Voter{5}, a=1, b=2}}
+Question{QuestionVoter{voter=Voter{3}, a=1, b=2}}
+Question{QuestionVoter{voter=Voter{3}, a=1, b=3}}
+Question{QuestionVoter{voter=Voter{3}, a=1, b=4}}
+Question{QuestionVoter{voter=Voter{3}, a=1, b=5}}
+Question{QuestionVoter{voter=Voter{6}, a=6, b=2}}
+Question{QuestionVoter{voter=Voter{6}, a=6, b=3}}
+Question{QuestionVoter{voter=Voter{6}, a=6, b=4}}
+Question{QuestionVoter{voter=Voter{6}, a=6, b=5}}
+Question{QuestionVoter{voter=Voter{3}, a=6, b=2}}
+Question{QuestionCommittee{λ=7/2, rank=1}}
+Question{QuestionCommittee{λ=7/2, rank=2}}
+Question{QuestionVoter{voter=Voter{3}, a=6, b=3}}
+Question{QuestionVoter{voter=Voter{2}, a=6, b=2}}
+Questions to the voters: 13.0 Question to the committee: 2.0
+Duration 2.47300 seconds 
+
+Run 8: 15 questions:
+Question{QuestionCommittee{λ=7/2, rank=1}}
+Question{QuestionVoter{voter=Voter{4}, a=1, b=2}}
+Question{QuestionCommittee{λ=9/4, rank=1}}
+Question{QuestionVoter{voter=Voter{3}, a=1, b=2}}
+Question{QuestionVoter{voter=Voter{6}, a=1, b=2}}
+Question{QuestionVoter{voter=Voter{6}, a=1, b=3}}
+Question{QuestionVoter{voter=Voter{6}, a=1, b=4}}
+Question{QuestionVoter{voter=Voter{6}, a=4, b=5}}
+Question{QuestionVoter{voter=Voter{6}, a=4, b=6}}
+Question{QuestionVoter{voter=Voter{2}, a=4, b=5}}
+Question{QuestionCommittee{λ=7/2, rank=2}}
+Question{QuestionVoter{voter=Voter{3}, a=4, b=6}}
+Question{QuestionVoter{voter=Voter{2}, a=4, b=2}}
+Question{QuestionVoter{voter=Voter{6}, a=3, b=2}}
+Question{QuestionVoter{voter=Voter{6}, a=5, b=3}}
+Questions to the voters: 12.0 Question to the committee: 3.0
+Duration 2.61900 seconds 
+
+Run 9: 15 questions:
+Question{QuestionVoter{voter=Voter{3}, a=1, b=2}}
+Question{QuestionVoter{voter=Voter{1}, a=1, b=2}}
+Question{QuestionVoter{voter=Voter{6}, a=1, b=2}}
+Question{QuestionVoter{voter=Voter{6}, a=1, b=3}}
+Question{QuestionVoter{voter=Voter{6}, a=3, b=2}}
+Question{QuestionVoter{voter=Voter{6}, a=3, b=4}}
+Question{QuestionVoter{voter=Voter{6}, a=3, b=5}}
+Question{QuestionVoter{voter=Voter{6}, a=5, b=6}}
+Question{QuestionCommittee{λ=7/2, rank=1}}
+Question{QuestionCommittee{λ=7/2, rank=2}}
+Question{QuestionVoter{voter=Voter{2}, a=6, b=5}}
+Question{QuestionVoter{voter=Voter{4}, a=6, b=5}}
+Question{QuestionVoter{voter=Voter{1}, a=6, b=3}}
+Question{QuestionVoter{voter=Voter{3}, a=6, b=3}}
+Question{QuestionVoter{voter=Voter{2}, a=6, b=3}}
+Questions to the voters: 13.0 Question to the committee: 2.0
+Duration 2.26300 seconds 
+
+Run 0: 20 questions:
+Question{QuestionVoter{voter=Voter{5}, a=1, b=2}}
+Question{QuestionVoter{voter=Voter{1}, a=1, b=2}}
+Question{QuestionVoter{voter=Voter{1}, a=1, b=3}}
+Question{QuestionVoter{voter=Voter{1}, a=3, b=4}}
+Question{QuestionVoter{voter=Voter{1}, a=4, b=5}}
+Question{QuestionVoter{voter=Voter{1}, a=4, b=6}}
+Question{QuestionVoter{voter=Voter{4}, a=4, b=3}}
+Question{QuestionVoter{voter=Voter{5}, a=4, b=3}}
+Question{QuestionVoter{voter=Voter{6}, a=4, b=3}}
+Question{QuestionVoter{voter=Voter{5}, a=4, b=5}}
+Question{QuestionVoter{voter=Voter{5}, a=4, b=6}}
+Question{QuestionVoter{voter=Voter{3}, a=4, b=2}}
+Question{QuestionVoter{voter=Voter{5}, a=4, b=2}}
+Question{QuestionCommittee{λ=7/2, rank=1}}
+Question{QuestionCommittee{λ=7/2, rank=2}}
+Question{QuestionVoter{voter=Voter{4}, a=4, b=2}}
+Question{QuestionVoter{voter=Voter{4}, a=3, b=2}}
+Question{QuestionVoter{voter=Voter{6}, a=4, b=1}}
+Question{QuestionVoter{voter=Voter{6}, a=4, b=2}}
+Question{QuestionVoter{voter=Voter{1}, a=5, b=1}}
+Questions to the voters: 18.0 Question to the committee: 2.0
+Duration 3.40800 seconds 
+
+Run 1: 20 questions:
+Question{QuestionVoter{voter=Voter{6}, a=1, b=2}}
+Question{QuestionVoter{voter=Voter{1}, a=1, b=2}}
+Question{QuestionVoter{voter=Voter{1}, a=1, b=3}}
+Question{QuestionVoter{voter=Voter{1}, a=1, b=4}}
+Question{QuestionVoter{voter=Voter{1}, a=1, b=5}}
+Question{QuestionVoter{voter=Voter{1}, a=6, b=1}}
+Question{QuestionCommittee{λ=7/2, rank=1}}
+Question{QuestionCommittee{λ=7/2, rank=2}}
+Question{QuestionVoter{voter=Voter{6}, a=1, b=3}}
+Question{QuestionCommittee{λ=9/4, rank=2}}
+Question{QuestionVoter{voter=Voter{4}, a=1, b=2}}
+Question{QuestionCommittee{λ=13/8, rank=2}}
+Question{QuestionVoter{voter=Voter{6}, a=3, b=2}}
+Question{QuestionVoter{voter=Voter{6}, a=1, b=4}}
+Question{QuestionVoter{voter=Voter{3}, a=1, b=3}}
+Question{QuestionVoter{voter=Voter{6}, a=2, b=4}}
+Question{QuestionVoter{voter=Voter{2}, a=1, b=4}}
+Question{QuestionVoter{voter=Voter{6}, a=3, b=4}}
+Question{QuestionVoter{voter=Voter{3}, a=1, b=4}}
+Question{QuestionVoter{voter=Voter{1}, a=2, b=5}}
+Questions to the voters: 16.0 Question to the committee: 4.0
+Duration 3.64100 seconds 
+
+Run 2: 20 questions:
+Question{QuestionVoter{voter=Voter{2}, a=1, b=2}}
+Question{QuestionCommittee{λ=7/2, rank=1}}
+Question{QuestionVoter{voter=Voter{5}, a=1, b=2}}
+Question{QuestionVoter{voter=Voter{1}, a=1, b=2}}
+Question{QuestionVoter{voter=Voter{3}, a=1, b=2}}
+Question{QuestionVoter{voter=Voter{3}, a=1, b=3}}
+Question{QuestionVoter{voter=Voter{3}, a=3, b=4}}
+Question{QuestionVoter{voter=Voter{3}, a=4, b=5}}
+Question{QuestionVoter{voter=Voter{3}, a=4, b=6}}
+Question{QuestionCommittee{λ=7/2, rank=2}}
+Question{QuestionVoter{voter=Voter{6}, a=4, b=3}}
+Question{QuestionVoter{voter=Voter{6}, a=4, b=1}}
+Question{QuestionVoter{voter=Voter{2}, a=4, b=3}}
+Question{QuestionVoter{voter=Voter{4}, a=4, b=5}}
+Question{QuestionVoter{voter=Voter{5}, a=4, b=6}}
+Question{QuestionVoter{voter=Voter{3}, a=1, b=6}}
+Question{QuestionCommittee{λ=7/2, rank=4}}
+Question{QuestionVoter{voter=Voter{4}, a=4, b=2}}
+Question{QuestionVoter{voter=Voter{4}, a=4, b=1}}
+Question{QuestionVoter{voter=Voter{1}, a=4, b=2}}
+Questions to the voters: 17.0 Question to the committee: 3.0
+Duration 3.52400 seconds 
+
+Run 3: 20 questions:
+Question{QuestionVoter{voter=Voter{1}, a=1, b=2}}
+Question{QuestionVoter{voter=Voter{1}, a=1, b=3}}
+Question{QuestionVoter{voter=Voter{1}, a=1, b=4}}
+Question{QuestionVoter{voter=Voter{1}, a=1, b=5}}
+Question{QuestionVoter{voter=Voter{1}, a=1, b=6}}
+Question{QuestionVoter{voter=Voter{2}, a=1, b=2}}
+Question{QuestionCommittee{λ=7/2, rank=1}}
+Question{QuestionVoter{voter=Voter{1}, a=2, b=3}}
+Question{QuestionCommittee{λ=9/4, rank=1}}
+Question{QuestionVoter{voter=Voter{2}, a=1, b=4}}
+Question{QuestionVoter{voter=Voter{5}, a=1, b=5}}
+Question{QuestionCommittee{λ=7/2, rank=3}}
+Question{QuestionVoter{voter=Voter{2}, a=1, b=6}}
+Question{QuestionVoter{voter=Voter{6}, a=1, b=6}}
+Question{QuestionVoter{voter=Voter{2}, a=1, b=3}}
+Question{QuestionVoter{voter=Voter{5}, a=1, b=6}}
+Question{QuestionVoter{voter=Voter{6}, a=1, b=2}}
+Question{QuestionVoter{voter=Voter{4}, a=1, b=2}}
+Question{QuestionVoter{voter=Voter{4}, a=1, b=4}}
+Question{QuestionVoter{voter=Voter{4}, a=1, b=5}}
+Questions to the voters: 17.0 Question to the committee: 3.0
+Duration 3.56500 seconds 
+
+Run 4: 20 questions:
+Question{QuestionCommittee{λ=7/2, rank=1}}
+Question{QuestionCommittee{λ=9/4, rank=1}}
+Question{QuestionVoter{voter=Voter{5}, a=1, b=2}}
+Question{QuestionVoter{voter=Voter{5}, a=1, b=3}}
+Question{QuestionVoter{voter=Voter{5}, a=1, b=4}}
+Question{QuestionVoter{voter=Voter{5}, a=4, b=5}}
+Question{QuestionVoter{voter=Voter{5}, a=5, b=6}}
+Question{QuestionVoter{voter=Voter{3}, a=5, b=4}}
+Question{QuestionVoter{voter=Voter{3}, a=5, b=6}}
+Question{QuestionVoter{voter=Voter{2}, a=5, b=6}}
+Question{QuestionVoter{voter=Voter{5}, a=6, b=1}}
+Question{QuestionCommittee{λ=7/2, rank=4}}
+Question{QuestionVoter{voter=Voter{1}, a=5, b=1}}
+Question{QuestionVoter{voter=Voter{6}, a=5, b=1}}
+Question{QuestionVoter{voter=Voter{1}, a=5, b=2}}
+Question{QuestionVoter{voter=Voter{2}, a=5, b=3}}
+Question{QuestionVoter{voter=Voter{6}, a=5, b=6}}
+Question{QuestionVoter{voter=Voter{2}, a=5, b=4}}
+Question{QuestionVoter{voter=Voter{2}, a=5, b=1}}
+Question{QuestionVoter{voter=Voter{2}, a=1, b=3}}
+Questions to the voters: 17.0 Question to the committee: 3.0
+Duration 3.67500 seconds 
+
+Run 5: 20 questions:
+Question{QuestionVoter{voter=Voter{4}, a=1, b=2}}
+Question{QuestionVoter{voter=Voter{6}, a=1, b=2}}
+Question{QuestionVoter{voter=Voter{6}, a=1, b=3}}
+Question{QuestionVoter{voter=Voter{6}, a=1, b=4}}
+Question{QuestionVoter{voter=Voter{6}, a=4, b=5}}
+Question{QuestionVoter{voter=Voter{6}, a=5, b=6}}
+Question{QuestionCommittee{λ=7/2, rank=1}}
+Question{QuestionCommittee{λ=7/2, rank=2}}
+Question{QuestionVoter{voter=Voter{3}, a=6, b=5}}
+Question{QuestionVoter{voter=Voter{1}, a=6, b=4}}
+Question{QuestionVoter{voter=Voter{4}, a=6, b=2}}
+Question{QuestionVoter{voter=Voter{1}, a=6, b=2}}
+Question{QuestionVoter{voter=Voter{4}, a=6, b=1}}
+Question{QuestionVoter{voter=Voter{4}, a=6, b=3}}
+Question{QuestionVoter{voter=Voter{2}, a=6, b=2}}
+Question{QuestionVoter{voter=Voter{3}, a=6, b=1}}
+Question{QuestionVoter{voter=Voter{5}, a=6, b=5}}
+Question{QuestionCommittee{λ=7/2, rank=3}}
+Question{QuestionVoter{voter=Voter{3}, a=1, b=5}}
+Question{QuestionVoter{voter=Voter{3}, a=6, b=2}}
+Questions to the voters: 17.0 Question to the committee: 3.0
+Duration 3.35100 seconds 
+
+Run 6: 20 questions:
+Question{QuestionVoter{voter=Voter{2}, a=1, b=2}}
+Question{QuestionVoter{voter=Voter{3}, a=1, b=2}}
+Question{QuestionVoter{voter=Voter{3}, a=1, b=3}}
+Question{QuestionVoter{voter=Voter{3}, a=1, b=4}}
+Question{QuestionVoter{voter=Voter{3}, a=1, b=5}}
+Question{QuestionVoter{voter=Voter{3}, a=5, b=6}}
+Question{QuestionCommittee{λ=7/2, rank=1}}
+Question{QuestionCommittee{λ=7/2, rank=2}}
+Question{QuestionVoter{voter=Voter{6}, a=5, b=6}}
+Question{QuestionVoter{voter=Voter{3}, a=1, b=6}}
+Question{QuestionVoter{voter=Voter{3}, a=3, b=2}}
+Question{QuestionVoter{voter=Voter{1}, a=5, b=2}}
+Question{QuestionVoter{voter=Voter{4}, a=5, b=4}}
+Question{QuestionVoter{voter=Voter{4}, a=5, b=1}}
+Question{QuestionVoter{voter=Voter{2}, a=5, b=4}}
+Question{QuestionCommittee{λ=9/4, rank=1}}
+Question{QuestionVoter{voter=Voter{6}, a=5, b=1}}
+Question{QuestionVoter{voter=Voter{3}, a=2, b=6}}
+Question{QuestionCommittee{λ=7/2, rank=4}}
+Question{QuestionVoter{voter=Voter{1}, a=5, b=3}}
+Questions to the voters: 16.0 Question to the committee: 4.0
+Duration 3.52700 seconds 
+
+Run 7: 20 questions:
+Question{QuestionVoter{voter=Voter{3}, a=1, b=2}}
+Question{QuestionVoter{voter=Voter{5}, a=1, b=2}}
+Question{QuestionVoter{voter=Voter{5}, a=1, b=3}}
+Question{QuestionVoter{voter=Voter{5}, a=1, b=4}}
+Question{QuestionVoter{voter=Voter{5}, a=1, b=5}}
+Question{QuestionVoter{voter=Voter{5}, a=6, b=1}}
+Question{QuestionVoter{voter=Voter{5}, a=3, b=2}}
+Question{QuestionVoter{voter=Voter{1}, a=1, b=2}}
+Question{QuestionVoter{voter=Voter{6}, a=1, b=2}}
+Question{QuestionVoter{voter=Voter{5}, a=2, b=4}}
+Question{QuestionVoter{voter=Voter{3}, a=1, b=5}}
+Question{QuestionVoter{voter=Voter{4}, a=1, b=5}}
+Question{QuestionCommittee{λ=7/2, rank=1}}
+Question{QuestionVoter{voter=Voter{5}, a=2, b=6}}
+Question{QuestionVoter{voter=Voter{2}, a=1, b=3}}
+Question{QuestionVoter{voter=Voter{5}, a=3, b=4}}
+Question{QuestionVoter{voter=Voter{3}, a=1, b=6}}
+Question{QuestionVoter{voter=Voter{5}, a=3, b=6}}
+Question{QuestionVoter{voter=Voter{1}, a=1, b=6}}
+Question{QuestionCommittee{λ=9/4, rank=1}}
+Questions to the voters: 18.0 Question to the committee: 2.0
+Duration 3.19900 seconds 
+
+Run 8: 20 questions:
+Question{QuestionVoter{voter=Voter{2}, a=1, b=2}}
+Question{QuestionVoter{voter=Voter{2}, a=1, b=3}}
+Question{QuestionVoter{voter=Voter{2}, a=3, b=4}}
+Question{QuestionVoter{voter=Voter{2}, a=3, b=5}}
+Question{QuestionVoter{voter=Voter{2}, a=3, b=6}}
+Question{QuestionVoter{voter=Voter{6}, a=6, b=3}}
+Question{QuestionVoter{voter=Voter{1}, a=6, b=1}}
+Question{QuestionVoter{voter=Voter{6}, a=6, b=1}}
+Question{QuestionVoter{voter=Voter{6}, a=6, b=4}}
+Question{QuestionVoter{voter=Voter{1}, a=6, b=5}}
+Question{QuestionVoter{voter=Voter{1}, a=1, b=5}}
+Question{QuestionVoter{voter=Voter{4}, a=6, b=2}}
+Question{QuestionVoter{voter=Voter{3}, a=6, b=5}}
+Question{QuestionCommittee{λ=7/2, rank=1}}
+Question{QuestionVoter{voter=Voter{1}, a=6, b=2}}
+Question{QuestionVoter{voter=Voter{1}, a=6, b=3}}
+Question{QuestionVoter{voter=Voter{4}, a=6, b=5}}
+Question{QuestionCommittee{λ=7/2, rank=2}}
+Question{QuestionVoter{voter=Voter{4}, a=6, b=3}}
+Question{QuestionVoter{voter=Voter{3}, a=6, b=1}}
+Questions to the voters: 18.0 Question to the committee: 2.0
+Duration 3.00400 seconds 
+
+Run 9: 20 questions:
+Question{QuestionVoter{voter=Voter{6}, a=1, b=2}}
+Question{QuestionVoter{voter=Voter{6}, a=1, b=3}}
+Question{QuestionVoter{voter=Voter{6}, a=1, b=4}}
+Question{QuestionVoter{voter=Voter{6}, a=1, b=5}}
+Question{QuestionVoter{voter=Voter{6}, a=1, b=6}}
+Question{QuestionVoter{voter=Voter{4}, a=1, b=2}}
+Question{QuestionVoter{voter=Voter{1}, a=1, b=2}}
+Question{QuestionVoter{voter=Voter{2}, a=1, b=3}}
+Question{QuestionVoter{voter=Voter{2}, a=1, b=4}}
+Question{QuestionVoter{voter=Voter{1}, a=1, b=5}}
+Question{QuestionVoter{voter=Voter{6}, a=2, b=5}}
+Question{QuestionVoter{voter=Voter{1}, a=1, b=3}}
+Question{QuestionVoter{voter=Voter{2}, a=1, b=5}}
+Question{QuestionVoter{voter=Voter{3}, a=1, b=5}}
+Question{QuestionVoter{voter=Voter{1}, a=1, b=6}}
+Question{QuestionVoter{voter=Voter{3}, a=1, b=3}}
+Question{QuestionVoter{voter=Voter{5}, a=1, b=3}}
+Question{QuestionVoter{voter=Voter{4}, a=1, b=3}}
+Question{QuestionCommittee{λ=7/2, rank=1}}
+Question{QuestionCommittee{λ=7/2, rank=3}}
+Questions to the voters: 18.0 Question to the committee: 2.0
+Duration 3.09800 seconds 
+
+Run 0: 25 questions:
+Question{QuestionVoter{voter=Voter{4}, a=1, b=2}}
+Question{QuestionVoter{voter=Voter{2}, a=1, b=2}}
+Question{QuestionVoter{voter=Voter{5}, a=1, b=2}}
+Question{QuestionVoter{voter=Voter{5}, a=1, b=3}}
+Question{QuestionVoter{voter=Voter{5}, a=3, b=4}}
+Question{QuestionVoter{voter=Voter{5}, a=3, b=5}}
+Question{QuestionVoter{voter=Voter{5}, a=3, b=6}}
+Question{QuestionVoter{voter=Voter{4}, a=6, b=3}}
+Question{QuestionVoter{voter=Voter{6}, a=6, b=3}}
+Question{QuestionVoter{voter=Voter{3}, a=6, b=4}}
+Question{QuestionVoter{voter=Voter{3}, a=6, b=1}}
+Question{QuestionVoter{voter=Voter{4}, a=6, b=4}}
+Question{QuestionVoter{voter=Voter{6}, a=6, b=4}}
+Question{QuestionVoter{voter=Voter{2}, a=6, b=4}}
+Question{QuestionVoter{voter=Voter{5}, a=1, b=4}}
+Question{QuestionVoter{voter=Voter{1}, a=6, b=4}}
+Question{QuestionVoter{voter=Voter{5}, a=1, b=5}}
+Question{QuestionVoter{voter=Voter{1}, a=6, b=2}}
+Question{QuestionCommittee{λ=7/2, rank=1}}
+Question{QuestionVoter{voter=Voter{2}, a=6, b=2}}
+Question{QuestionCommittee{λ=7/2, rank=2}}
+Question{QuestionVoter{voter=Voter{2}, a=6, b=5}}
+Question{QuestionVoter{voter=Voter{4}, a=6, b=1}}
+Question{QuestionVoter{voter=Voter{3}, a=6, b=3}}
+Question{QuestionVoter{voter=Voter{1}, a=6, b=1}}
+Questions to the voters: 23.0 Question to the committee: 2.0
+Duration 3.85800 seconds 
+
+Run 1: 25 questions:
+Question{QuestionVoter{voter=Voter{3}, a=1, b=2}}
+Question{QuestionVoter{voter=Voter{6}, a=1, b=2}}
+Question{QuestionVoter{voter=Voter{6}, a=1, b=3}}
+Question{QuestionVoter{voter=Voter{6}, a=1, b=4}}
+Question{QuestionVoter{voter=Voter{6}, a=1, b=5}}
+Question{QuestionVoter{voter=Voter{6}, a=6, b=1}}
+Question{QuestionVoter{voter=Voter{3}, a=1, b=3}}
+Question{QuestionCommittee{λ=7/2, rank=1}}
+Question{QuestionCommittee{λ=9/4, rank=1}}
+Question{QuestionVoter{voter=Voter{2}, a=1, b=2}}
+Question{QuestionVoter{voter=Voter{5}, a=1, b=4}}
+Question{QuestionVoter{voter=Voter{4}, a=1, b=4}}
+Question{QuestionVoter{voter=Voter{4}, a=1, b=2}}
+Question{QuestionVoter{voter=Voter{4}, a=1, b=3}}
+Question{QuestionVoter{voter=Voter{2}, a=1, b=4}}
+Question{QuestionCommittee{λ=7/2, rank=3}}
+Question{QuestionVoter{voter=Voter{2}, a=1, b=5}}
+Question{QuestionVoter{voter=Voter{3}, a=1, b=5}}
+Question{QuestionCommittee{λ=9/4, rank=3}}
+Question{QuestionVoter{voter=Voter{5}, a=1, b=5}}
+Question{QuestionVoter{voter=Voter{1}, a=1, b=5}}
+Question{QuestionVoter{voter=Voter{4}, a=1, b=6}}
+Question{QuestionCommittee{λ=13/8, rank=3}}
+Question{QuestionVoter{voter=Voter{5}, a=1, b=6}}
+Question{QuestionVoter{voter=Voter{5}, a=1, b=3}}
+Questions to the voters: 20.0 Question to the committee: 5.0
+Duration 4.59600 seconds 
+
+Run 2: 25 questions:
+Question{QuestionVoter{voter=Voter{5}, a=1, b=2}}
+Question{QuestionVoter{voter=Voter{4}, a=1, b=2}}
+Question{QuestionVoter{voter=Voter{4}, a=1, b=3}}
+Question{QuestionVoter{voter=Voter{4}, a=1, b=4}}
+Question{QuestionVoter{voter=Voter{4}, a=1, b=5}}
+Question{QuestionVoter{voter=Voter{4}, a=6, b=1}}
+Question{QuestionVoter{voter=Voter{1}, a=1, b=2}}
+Question{QuestionVoter{voter=Voter{1}, a=1, b=3}}
+Question{QuestionVoter{voter=Voter{2}, a=1, b=2}}
+Question{QuestionVoter{voter=Voter{2}, a=1, b=3}}
+Question{QuestionVoter{voter=Voter{5}, a=1, b=3}}
+Question{QuestionVoter{voter=Voter{6}, a=1, b=3}}
+Question{QuestionVoter{voter=Voter{3}, a=1, b=4}}
+Question{QuestionVoter{voter=Voter{5}, a=1, b=5}}
+Question{QuestionVoter{voter=Voter{2}, a=1, b=5}}
+Question{QuestionVoter{voter=Voter{6}, a=1, b=6}}
+Question{QuestionVoter{voter=Voter{1}, a=3, b=2}}
+Question{QuestionVoter{voter=Voter{1}, a=1, b=4}}
+Question{QuestionVoter{voter=Voter{6}, a=1, b=2}}
+Question{QuestionVoter{voter=Voter{6}, a=2, b=6}}
+Question{QuestionVoter{voter=Voter{6}, a=1, b=4}}
+Question{QuestionVoter{voter=Voter{3}, a=1, b=6}}
+Question{QuestionVoter{voter=Voter{6}, a=1, b=5}}
+Question{QuestionVoter{voter=Voter{6}, a=2, b=3}}
+Question{QuestionVoter{voter=Voter{4}, a=2, b=3}}
+Questions to the voters: 25.0 Question to the committee: 0.0
+Duration 3.78700 seconds 
+
+Run 3: 25 questions:
+Question{QuestionVoter{voter=Voter{3}, a=1, b=2}}
+Question{QuestionVoter{voter=Voter{3}, a=1, b=3}}
+Question{QuestionVoter{voter=Voter{3}, a=1, b=4}}
+Question{QuestionVoter{voter=Voter{3}, a=4, b=5}}
+Question{QuestionVoter{voter=Voter{3}, a=4, b=6}}
+Question{QuestionCommittee{λ=7/2, rank=1}}
+Question{QuestionCommittee{λ=7/2, rank=2}}
+Question{QuestionVoter{voter=Voter{6}, a=6, b=4}}
+Question{QuestionVoter{voter=Voter{2}, a=6, b=4}}
+Question{QuestionVoter{voter=Voter{5}, a=6, b=4}}
+Question{QuestionVoter{voter=Voter{5}, a=6, b=1}}
+Question{QuestionVoter{voter=Voter{2}, a=6, b=1}}
+Question{QuestionVoter{voter=Voter{5}, a=6, b=5}}
+Question{QuestionVoter{voter=Voter{2}, a=6, b=5}}
+Question{QuestionCommittee{λ=7/2, rank=4}}
+Question{QuestionCommittee{λ=7/2, rank=3}}
+Question{QuestionVoter{voter=Voter{3}, a=3, b=2}}
+Question{QuestionVoter{voter=Voter{4}, a=6, b=3}}
+Question{QuestionVoter{voter=Voter{3}, a=5, b=3}}
+Question{QuestionVoter{voter=Voter{4}, a=6, b=1}}
+Question{QuestionVoter{voter=Voter{5}, a=6, b=3}}
+Question{QuestionVoter{voter=Voter{6}, a=6, b=3}}
+Question{QuestionCommittee{λ=9/4, rank=2}}
+Question{QuestionCommittee{λ=9/4, rank=1}}
+Question{QuestionVoter{voter=Voter{6}, a=4, b=3}}
+Questions to the voters: 19.0 Question to the committee: 6.0
+Duration 4.50800 seconds 
+
+Run 4: 25 questions:
+Question{QuestionCommittee{λ=7/2, rank=1}}
+Question{QuestionVoter{voter=Voter{3}, a=1, b=2}}
+Question{QuestionVoter{voter=Voter{3}, a=1, b=3}}
+Question{QuestionVoter{voter=Voter{3}, a=1, b=4}}
+Question{QuestionVoter{voter=Voter{3}, a=1, b=5}}
+Question{QuestionVoter{voter=Voter{3}, a=1, b=6}}
+Question{QuestionCommittee{λ=7/2, rank=2}}
+Question{QuestionVoter{voter=Voter{6}, a=6, b=1}}
+Question{QuestionVoter{voter=Voter{6}, a=6, b=2}}
+Question{QuestionCommittee{λ=9/4, rank=2}}
+Question{QuestionCommittee{λ=13/8, rank=2}}
+Question{QuestionVoter{voter=Voter{6}, a=2, b=1}}
+Question{QuestionCommittee{λ=9/4, rank=1}}
+Question{QuestionVoter{voter=Voter{6}, a=1, b=3}}
+Question{QuestionVoter{voter=Voter{2}, a=1, b=4}}
+Question{QuestionVoter{voter=Voter{1}, a=1, b=5}}
+Question{QuestionVoter{voter=Voter{1}, a=1, b=6}}
+Question{QuestionVoter{voter=Voter{1}, a=6, b=2}}
+Question{QuestionVoter{voter=Voter{6}, a=6, b=3}}
+Question{QuestionVoter{voter=Voter{2}, a=6, b=3}}
+Question{QuestionVoter{voter=Voter{1}, a=6, b=3}}
+Question{QuestionVoter{voter=Voter{2}, a=6, b=1}}
+Question{QuestionVoter{voter=Voter{2}, a=1, b=3}}
+Question{QuestionVoter{voter=Voter{6}, a=1, b=4}}
+Question{QuestionVoter{voter=Voter{4}, a=1, b=5}}
+Questions to the voters: 20.0 Question to the committee: 5.0
+Duration 4.70900 seconds 
+
+Run 5: 25 questions:
+Question{QuestionVoter{voter=Voter{6}, a=1, b=2}}
+Question{QuestionVoter{voter=Voter{6}, a=1, b=3}}
+Question{QuestionVoter{voter=Voter{6}, a=1, b=4}}
+Question{QuestionVoter{voter=Voter{6}, a=1, b=5}}
+Question{QuestionVoter{voter=Voter{6}, a=1, b=6}}
+Question{QuestionVoter{voter=Voter{2}, a=1, b=2}}
+Question{QuestionVoter{voter=Voter{1}, a=1, b=3}}
+Question{QuestionVoter{voter=Voter{4}, a=1, b=4}}
+Question{QuestionVoter{voter=Voter{3}, a=1, b=5}}
+Question{QuestionVoter{voter=Voter{2}, a=1, b=6}}
+Question{QuestionVoter{voter=Voter{4}, a=1, b=2}}
+Question{QuestionVoter{voter=Voter{3}, a=1, b=3}}
+Question{QuestionVoter{voter=Voter{6}, a=2, b=4}}
+Question{QuestionVoter{voter=Voter{3}, a=3, b=5}}
+Question{QuestionCommittee{λ=7/2, rank=3}}
+Question{QuestionCommittee{λ=7/2, rank=2}}
+Question{QuestionVoter{voter=Voter{2}, a=1, b=5}}
+Question{QuestionVoter{voter=Voter{1}, a=1, b=6}}
+Question{QuestionVoter{voter=Voter{4}, a=2, b=4}}
+Question{QuestionVoter{voter=Voter{1}, a=1, b=4}}
+Question{QuestionVoter{voter=Voter{1}, a=1, b=2}}
+Question{QuestionVoter{voter=Voter{2}, a=1, b=4}}
+Question{QuestionVoter{voter=Voter{3}, a=1, b=6}}
+Question{QuestionVoter{voter=Voter{6}, a=2, b=5}}
+Question{QuestionVoter{voter=Voter{2}, a=2, b=5}}
+Questions to the voters: 23.0 Question to the committee: 2.0
+Duration 4.59600 seconds 
+
+Run 6: 25 questions:
+Question{QuestionVoter{voter=Voter{5}, a=1, b=2}}
+Question{QuestionVoter{voter=Voter{1}, a=1, b=2}}
+Question{QuestionVoter{voter=Voter{4}, a=1, b=2}}
+Question{QuestionVoter{voter=Voter{4}, a=1, b=3}}
+Question{QuestionVoter{voter=Voter{4}, a=1, b=4}}
+Question{QuestionVoter{voter=Voter{4}, a=1, b=5}}
+Question{QuestionVoter{voter=Voter{1}, a=6, b=2}}
+Question{QuestionVoter{voter=Voter{1}, a=6, b=3}}
+Question{QuestionVoter{voter=Voter{1}, a=6, b=4}}
+Question{QuestionVoter{voter=Voter{1}, a=6, b=5}}
+Question{QuestionVoter{voter=Voter{1}, a=3, b=2}}
+Question{QuestionVoter{voter=Voter{3}, a=6, b=3}}
+Question{QuestionVoter{voter=Voter{2}, a=6, b=3}}
+Question{QuestionVoter{voter=Voter{3}, a=6, b=4}}
+Question{QuestionVoter{voter=Voter{2}, a=6, b=5}}
+Question{QuestionVoter{voter=Voter{4}, a=6, b=2}}
+Question{QuestionCommittee{λ=7/2, rank=1}}
+Question{QuestionVoter{voter=Voter{5}, a=6, b=2}}
+Question{QuestionCommittee{λ=9/4, rank=1}}
+Question{QuestionVoter{voter=Voter{1}, a=4, b=3}}
+Question{QuestionVoter{voter=Voter{4}, a=6, b=3}}
+Question{QuestionVoter{voter=Voter{4}, a=2, b=3}}
+Question{QuestionVoter{voter=Voter{2}, a=3, b=5}}
+Question{QuestionVoter{voter=Voter{6}, a=6, b=5}}
+Question{QuestionVoter{voter=Voter{2}, a=6, b=1}}
+Questions to the voters: 23.0 Question to the committee: 2.0
+Duration 4.17800 seconds 
+
+Run 7: 25 questions:
+Question{QuestionCommittee{λ=7/2, rank=1}}
+Question{QuestionVoter{voter=Voter{6}, a=1, b=2}}
+Question{QuestionVoter{voter=Voter{6}, a=1, b=3}}
+Question{QuestionVoter{voter=Voter{6}, a=3, b=2}}
+Question{QuestionVoter{voter=Voter{6}, a=2, b=4}}
+Question{QuestionVoter{voter=Voter{6}, a=2, b=5}}
+Question{QuestionVoter{voter=Voter{6}, a=2, b=6}}
+Question{QuestionCommittee{λ=7/2, rank=2}}
+Question{QuestionVoter{voter=Voter{2}, a=2, b=3}}
+Question{QuestionVoter{voter=Voter{3}, a=2, b=3}}
+Question{QuestionVoter{voter=Voter{3}, a=2, b=1}}
+Question{QuestionVoter{voter=Voter{2}, a=2, b=1}}
+Question{QuestionVoter{voter=Voter{2}, a=2, b=4}}
+Question{QuestionVoter{voter=Voter{6}, a=4, b=3}}
+Question{QuestionVoter{voter=Voter{5}, a=2, b=3}}
+Question{QuestionVoter{voter=Voter{3}, a=1, b=3}}
+Question{QuestionVoter{voter=Voter{4}, a=2, b=3}}
+Question{QuestionVoter{voter=Voter{3}, a=2, b=4}}
+Question{QuestionVoter{voter=Voter{5}, a=2, b=1}}
+Question{QuestionVoter{voter=Voter{2}, a=2, b=5}}
+Question{QuestionCommittee{λ=9/4, rank=2}}
+Question{QuestionVoter{voter=Voter{5}, a=2, b=4}}
+Question{QuestionVoter{voter=Voter{4}, a=2, b=1}}
+Question{QuestionVoter{voter=Voter{6}, a=5, b=3}}
+Question{QuestionVoter{voter=Voter{3}, a=4, b=3}}
+Questions to the voters: 22.0 Question to the committee: 3.0
+Duration 4.48200 seconds 
+
+Run 8: 25 questions:
+Question{QuestionCommittee{λ=7/2, rank=1}}
+Question{QuestionVoter{voter=Voter{6}, a=1, b=2}}
+Question{QuestionVoter{voter=Voter{5}, a=1, b=2}}
+Question{QuestionVoter{voter=Voter{3}, a=1, b=2}}
+Question{QuestionVoter{voter=Voter{2}, a=1, b=2}}
+Question{QuestionVoter{voter=Voter{5}, a=1, b=3}}
+Question{QuestionVoter{voter=Voter{5}, a=2, b=4}}
+Question{QuestionVoter{voter=Voter{5}, a=4, b=5}}
+Question{QuestionVoter{voter=Voter{5}, a=4, b=6}}
+Question{QuestionCommittee{λ=7/2, rank=2}}
+Question{QuestionVoter{voter=Voter{3}, a=6, b=4}}
+Question{QuestionVoter{voter=Voter{1}, a=6, b=2}}
+Question{QuestionVoter{voter=Voter{2}, a=6, b=2}}
+Question{QuestionCommittee{λ=7/2, rank=3}}
+Question{QuestionVoter{voter=Voter{5}, a=1, b=5}}
+Question{QuestionVoter{voter=Voter{3}, a=6, b=5}}
+Question{QuestionVoter{voter=Voter{4}, a=6, b=5}}
+Question{QuestionVoter{voter=Voter{6}, a=6, b=5}}
+Question{QuestionVoter{voter=Voter{4}, a=6, b=3}}
+Question{QuestionVoter{voter=Voter{6}, a=6, b=3}}
+Question{QuestionVoter{voter=Voter{6}, a=6, b=4}}
+Question{QuestionCommittee{λ=9/4, rank=3}}
+Question{QuestionCommittee{λ=9/4, rank=2}}
+Question{QuestionVoter{voter=Voter{1}, a=6, b=4}}
+Question{QuestionCommittee{λ=13/8, rank=2}}
+Questions to the voters: 19.0 Question to the committee: 6.0
+Duration 4.52400 seconds 
+
+Run 9: 25 questions:
+Question{QuestionVoter{voter=Voter{4}, a=1, b=2}}
+Question{QuestionVoter{voter=Voter{4}, a=1, b=3}}
+Question{QuestionVoter{voter=Voter{4}, a=3, b=4}}
+Question{QuestionVoter{voter=Voter{4}, a=4, b=5}}
+Question{QuestionVoter{voter=Voter{4}, a=4, b=6}}
+Question{QuestionVoter{voter=Voter{4}, a=5, b=3}}
+Question{QuestionVoter{voter=Voter{4}, a=6, b=3}}
+Question{QuestionVoter{voter=Voter{2}, a=4, b=3}}
+Question{QuestionVoter{voter=Voter{3}, a=4, b=3}}
+Question{QuestionVoter{voter=Voter{6}, a=4, b=1}}
+Question{QuestionVoter{voter=Voter{5}, a=4, b=5}}
+Question{QuestionCommittee{λ=7/2, rank=1}}
+Question{QuestionCommittee{λ=9/4, rank=1}}
+Question{QuestionVoter{voter=Voter{6}, a=4, b=6}}
+Question{QuestionCommittee{λ=7/2, rank=4}}
+Question{QuestionVoter{voter=Voter{1}, a=4, b=2}}
+Question{QuestionVoter{voter=Voter{1}, a=4, b=1}}
+Question{QuestionVoter{voter=Voter{6}, a=4, b=2}}
+Question{QuestionVoter{voter=Voter{2}, a=4, b=1}}
+Question{QuestionVoter{voter=Voter{2}, a=1, b=3}}
+Question{QuestionVoter{voter=Voter{4}, a=5, b=1}}
+Question{QuestionVoter{voter=Voter{3}, a=4, b=1}}
+Question{QuestionVoter{voter=Voter{1}, a=2, b=1}}
+Question{QuestionVoter{voter=Voter{3}, a=4, b=2}}
+Question{QuestionVoter{voter=Voter{2}, a=4, b=2}}
+Questions to the voters: 22.0 Question to the committee: 3.0
+Duration 4.12800 seconds 
+
+Run 0: 30 questions:
+Question{QuestionVoter{voter=Voter{5}, a=1, b=2}}
+Question{QuestionVoter{voter=Voter{5}, a=1, b=3}}
+Question{QuestionVoter{voter=Voter{5}, a=3, b=2}}
+Question{QuestionVoter{voter=Voter{5}, a=3, b=4}}
+Question{QuestionVoter{voter=Voter{5}, a=4, b=5}}
+Question{QuestionVoter{voter=Voter{5}, a=4, b=6}}
+Question{QuestionVoter{voter=Voter{5}, a=5, b=3}}
+Question{QuestionCommittee{λ=7/2, rank=1}}
+Question{QuestionCommittee{λ=7/2, rank=2}}
+Question{QuestionVoter{voter=Voter{1}, a=4, b=3}}
+Question{QuestionVoter{voter=Voter{5}, a=1, b=6}}
+Question{QuestionCommittee{λ=9/4, rank=1}}
+Question{QuestionCommittee{λ=9/4, rank=2}}
+Question{QuestionVoter{voter=Voter{2}, a=4, b=2}}
+Question{QuestionVoter{voter=Voter{2}, a=4, b=5}}
+Question{QuestionVoter{voter=Voter{2}, a=4, b=1}}
+Question{QuestionVoter{voter=Voter{4}, a=4, b=5}}
+Question{QuestionVoter{voter=Voter{3}, a=4, b=5}}
+Question{QuestionCommittee{λ=7/2, rank=4}}
+Question{QuestionVoter{voter=Voter{5}, a=5, b=1}}
+Question{QuestionVoter{voter=Voter{4}, a=4, b=1}}
+Question{QuestionVoter{voter=Voter{4}, a=5, b=1}}
+Question{QuestionVoter{voter=Voter{4}, a=4, b=6}}
+Question{QuestionVoter{voter=Voter{3}, a=4, b=6}}
+Question{QuestionVoter{voter=Voter{6}, a=4, b=6}}
+Question{QuestionVoter{voter=Voter{3}, a=4, b=1}}
+Question{QuestionVoter{voter=Voter{1}, a=4, b=1}}
+Question{QuestionVoter{voter=Voter{6}, a=4, b=1}}
+Question{QuestionVoter{voter=Voter{2}, a=5, b=1}}
+Question{QuestionVoter{voter=Voter{3}, a=6, b=1}}
+Questions to the voters: 25.0 Question to the committee: 5.0
+Duration 5.43800 seconds 
+
+Run 1: 30 questions:
+Question{QuestionVoter{voter=Voter{6}, a=1, b=2}}
+Question{QuestionVoter{voter=Voter{5}, a=1, b=2}}
+Question{QuestionVoter{voter=Voter{5}, a=1, b=3}}
+Question{QuestionVoter{voter=Voter{5}, a=1, b=4}}
+Question{QuestionVoter{voter=Voter{5}, a=1, b=5}}
+Question{QuestionVoter{voter=Voter{5}, a=6, b=1}}
+Question{QuestionVoter{voter=Voter{6}, a=1, b=3}}
+Question{QuestionVoter{voter=Voter{4}, a=1, b=2}}
+Question{QuestionVoter{voter=Voter{1}, a=1, b=3}}
+Question{QuestionVoter{voter=Voter{2}, a=1, b=3}}
+Question{QuestionCommittee{λ=7/2, rank=1}}
+Question{QuestionVoter{voter=Voter{1}, a=1, b=4}}
+Question{QuestionVoter{voter=Voter{4}, a=1, b=5}}
+Question{QuestionVoter{voter=Voter{1}, a=1, b=5}}
+Question{QuestionCommittee{λ=7/2, rank=3}}
+Question{QuestionVoter{voter=Voter{2}, a=1, b=6}}
+Question{QuestionVoter{voter=Voter{6}, a=1, b=6}}
+Question{QuestionVoter{voter=Voter{4}, a=1, b=6}}
+Question{QuestionVoter{voter=Voter{3}, a=1, b=2}}
+Question{QuestionVoter{voter=Voter{5}, a=3, b=2}}
+Question{QuestionVoter{voter=Voter{1}, a=1, b=2}}
+Question{QuestionVoter{voter=Voter{3}, a=1, b=3}}
+Question{QuestionVoter{voter=Voter{5}, a=4, b=3}}
+Question{QuestionVoter{voter=Voter{5}, a=5, b=4}}
+Question{QuestionVoter{voter=Voter{2}, a=1, b=4}}
+Question{QuestionCommittee{λ=7/2, rank=2}}
+Question{QuestionVoter{voter=Voter{2}, a=1, b=2}}
+Question{QuestionVoter{voter=Voter{5}, a=2, b=6}}
+Question{QuestionVoter{voter=Voter{6}, a=2, b=6}}
+Question{QuestionVoter{voter=Voter{5}, a=5, b=3}}
+Questions to the voters: 27.0 Question to the committee: 3.0
+Duration 5.25200 seconds 
+
+Run 2: 30 questions:
+Question{QuestionVoter{voter=Voter{2}, a=1, b=2}}
+Question{QuestionVoter{voter=Voter{2}, a=1, b=3}}
+Question{QuestionVoter{voter=Voter{2}, a=3, b=2}}
+Question{QuestionVoter{voter=Voter{2}, a=3, b=4}}
+Question{QuestionVoter{voter=Voter{2}, a=3, b=5}}
+Question{QuestionVoter{voter=Voter{2}, a=3, b=6}}
+Question{QuestionVoter{voter=Voter{4}, a=3, b=2}}
+Question{QuestionVoter{voter=Voter{2}, a=4, b=2}}
+Question{QuestionVoter{voter=Voter{3}, a=3, b=4}}
+Question{QuestionVoter{voter=Voter{5}, a=3, b=4}}
+Question{QuestionVoter{voter=Voter{1}, a=3, b=5}}
+Question{QuestionVoter{voter=Voter{3}, a=3, b=6}}
+Question{QuestionVoter{voter=Voter{5}, a=3, b=6}}
+Question{QuestionVoter{voter=Voter{6}, a=3, b=6}}
+Question{QuestionVoter{voter=Voter{6}, a=3, b=1}}
+Question{QuestionVoter{voter=Voter{2}, a=1, b=6}}
+Question{QuestionVoter{voter=Voter{4}, a=3, b=1}}
+Question{QuestionVoter{voter=Voter{5}, a=3, b=2}}
+Question{QuestionVoter{voter=Voter{4}, a=2, b=1}}
+Question{QuestionVoter{voter=Voter{6}, a=6, b=1}}
+Question{QuestionVoter{voter=Voter{3}, a=4, b=6}}
+Question{QuestionVoter{voter=Voter{1}, a=3, b=1}}
+Question{QuestionVoter{voter=Voter{3}, a=3, b=1}}
+Question{QuestionVoter{voter=Voter{5}, a=2, b=4}}
+Question{QuestionCommittee{λ=7/2, rank=1}}
+Question{QuestionCommittee{λ=7/2, rank=3}}
+Question{QuestionVoter{voter=Voter{2}, a=5, b=4}}
+Question{QuestionVoter{voter=Voter{3}, a=1, b=4}}
+Question{QuestionCommittee{λ=7/2, rank=2}}
+Question{QuestionVoter{voter=Voter{4}, a=3, b=5}}
+Questions to the voters: 27.0 Question to the committee: 3.0
+Duration 4.81900 seconds 
+
+Run 3: 30 questions:
+Question{QuestionVoter{voter=Voter{2}, a=1, b=2}}
+Question{QuestionVoter{voter=Voter{4}, a=1, b=2}}
+Question{QuestionVoter{voter=Voter{4}, a=1, b=3}}
+Question{QuestionVoter{voter=Voter{4}, a=2, b=4}}
+Question{QuestionVoter{voter=Voter{4}, a=4, b=5}}
+Question{QuestionVoter{voter=Voter{4}, a=4, b=6}}
+Question{QuestionVoter{voter=Voter{2}, a=4, b=2}}
+Question{QuestionVoter{voter=Voter{2}, a=4, b=1}}
+Question{QuestionVoter{voter=Voter{4}, a=5, b=2}}
+Question{QuestionVoter{voter=Voter{6}, a=4, b=5}}
+Question{QuestionVoter{voter=Voter{1}, a=4, b=5}}
+Question{QuestionVoter{voter=Voter{2}, a=4, b=5}}
+Question{QuestionVoter{voter=Voter{2}, a=1, b=5}}
+Question{QuestionVoter{voter=Voter{1}, a=4, b=6}}
+Question{QuestionVoter{voter=Voter{3}, a=4, b=6}}
+Question{QuestionCommittee{λ=7/2, rank=1}}
+Question{QuestionVoter{voter=Voter{4}, a=6, b=2}}
+Question{QuestionVoter{voter=Voter{1}, a=4, b=2}}
+Question{QuestionVoter{voter=Voter{6}, a=4, b=2}}
+Question{QuestionVoter{voter=Voter{1}, a=5, b=2}}
+Question{QuestionVoter{voter=Voter{3}, a=4, b=2}}
+Question{QuestionCommittee{λ=7/2, rank=2}}
+Question{QuestionVoter{voter=Voter{5}, a=4, b=3}}
+Question{QuestionVoter{voter=Voter{2}, a=4, b=3}}
+Question{QuestionVoter{voter=Voter{1}, a=6, b=5}}
+Question{QuestionVoter{voter=Voter{2}, a=2, b=6}}
+Question{QuestionVoter{voter=Voter{2}, a=6, b=1}}
+Question{QuestionVoter{voter=Voter{6}, a=2, b=1}}
+Question{QuestionVoter{voter=Voter{6}, a=2, b=3}}
+Question{QuestionVoter{voter=Voter{6}, a=2, b=5}}
+Questions to the voters: 28.0 Question to the committee: 2.0
+Duration 4.72400 seconds 
+
+Run 4: 30 questions:
+Question{QuestionVoter{voter=Voter{2}, a=1, b=2}}
+Question{QuestionVoter{voter=Voter{1}, a=1, b=2}}
+Question{QuestionVoter{voter=Voter{4}, a=1, b=2}}
+Question{QuestionVoter{voter=Voter{4}, a=1, b=3}}
+Question{QuestionVoter{voter=Voter{4}, a=3, b=2}}
+Question{QuestionVoter{voter=Voter{4}, a=3, b=4}}
+Question{QuestionVoter{voter=Voter{4}, a=4, b=5}}
+Question{QuestionVoter{voter=Voter{4}, a=4, b=6}}
+Question{QuestionVoter{voter=Voter{5}, a=4, b=3}}
+Question{QuestionVoter{voter=Voter{6}, a=4, b=3}}
+Question{QuestionVoter{voter=Voter{4}, a=5, b=3}}
+Question{QuestionVoter{voter=Voter{2}, a=4, b=3}}
+Question{QuestionVoter{voter=Voter{4}, a=6, b=3}}
+Question{QuestionCommittee{λ=7/2, rank=1}}
+Question{QuestionCommittee{λ=7/2, rank=2}}
+Question{QuestionVoter{voter=Voter{5}, a=4, b=1}}
+Question{QuestionVoter{voter=Voter{2}, a=4, b=1}}
+Question{QuestionVoter{voter=Voter{3}, a=4, b=3}}
+Question{QuestionVoter{voter=Voter{3}, a=4, b=2}}
+Question{QuestionCommittee{λ=7/2, rank=3}}
+Question{QuestionVoter{voter=Voter{3}, a=4, b=5}}
+Question{QuestionCommittee{λ=7/2, rank=4}}
+Question{QuestionVoter{voter=Voter{6}, a=4, b=6}}
+Question{QuestionVoter{voter=Voter{3}, a=4, b=6}}
+Question{QuestionVoter{voter=Voter{5}, a=4, b=2}}
+Question{QuestionCommittee{λ=9/4, rank=1}}
+Question{QuestionCommittee{λ=9/4, rank=2}}
+Question{QuestionVoter{voter=Voter{3}, a=2, b=3}}
+Question{QuestionVoter{voter=Voter{1}, a=4, b=3}}
+Question{QuestionVoter{voter=Voter{2}, a=1, b=3}}
+Questions to the voters: 24.0 Question to the committee: 6.0
+Duration 4.87200 seconds 
+
+Run 5: 30 questions:
+Question{QuestionVoter{voter=Voter{1}, a=1, b=2}}
+Question{QuestionVoter{voter=Voter{3}, a=1, b=2}}
+Question{QuestionVoter{voter=Voter{3}, a=1, b=3}}
+Question{QuestionVoter{voter=Voter{3}, a=1, b=4}}
+Question{QuestionVoter{voter=Voter{3}, a=4, b=5}}
+Question{QuestionVoter{voter=Voter{3}, a=5, b=6}}
+Question{QuestionVoter{voter=Voter{2}, a=5, b=4}}
+Question{QuestionVoter{voter=Voter{6}, a=5, b=6}}
+Question{QuestionVoter{voter=Voter{1}, a=5, b=6}}
+Question{QuestionVoter{voter=Voter{6}, a=5, b=2}}
+Question{QuestionVoter{voter=Voter{5}, a=5, b=2}}
+Question{QuestionVoter{voter=Voter{6}, a=5, b=3}}
+Question{QuestionVoter{voter=Voter{2}, a=5, b=1}}
+Question{QuestionVoter{voter=Voter{6}, a=5, b=1}}
+Question{QuestionVoter{voter=Voter{1}, a=5, b=1}}
+Question{QuestionVoter{voter=Voter{5}, a=5, b=4}}
+Question{QuestionVoter{voter=Voter{5}, a=5, b=6}}
+Question{QuestionVoter{voter=Voter{5}, a=5, b=1}}
+Question{QuestionCommittee{λ=7/2, rank=1}}
+Question{QuestionVoter{voter=Voter{3}, a=3, b=2}}
+Question{QuestionVoter{voter=Voter{1}, a=5, b=2}}
+Question{QuestionCommittee{λ=7/2, rank=2}}
+Question{QuestionVoter{voter=Voter{2}, a=5, b=3}}
+Question{QuestionVoter{voter=Voter{3}, a=6, b=3}}
+Question{QuestionCommittee{λ=9/4, rank=2}}
+Question{QuestionVoter{voter=Voter{2}, a=1, b=3}}
+Question{QuestionVoter{voter=Voter{6}, a=5, b=4}}
+Question{QuestionVoter{voter=Voter{4}, a=5, b=3}}
+Question{QuestionVoter{voter=Voter{2}, a=5, b=2}}
+Question{QuestionVoter{voter=Voter{5}, a=5, b=3}}
+Questions to the voters: 27.0 Question to the committee: 3.0
+Duration 4.88300 seconds 
+
+Run 6: 30 questions:
+Question{QuestionVoter{voter=Voter{4}, a=1, b=2}}
+Question{QuestionVoter{voter=Voter{2}, a=1, b=2}}
+Question{QuestionVoter{voter=Voter{3}, a=1, b=2}}
+Question{QuestionVoter{voter=Voter{4}, a=1, b=3}}
+Question{QuestionVoter{voter=Voter{4}, a=2, b=4}}
+Question{QuestionVoter{voter=Voter{4}, a=2, b=5}}
+Question{QuestionVoter{voter=Voter{4}, a=2, b=6}}
+Question{QuestionVoter{voter=Voter{3}, a=6, b=2}}
+Question{QuestionVoter{voter=Voter{6}, a=6, b=4}}
+Question{QuestionVoter{voter=Voter{4}, a=1, b=5}}
+Question{QuestionVoter{voter=Voter{4}, a=4, b=5}}
+Question{QuestionVoter{voter=Voter{2}, a=6, b=5}}
+Question{QuestionVoter{voter=Voter{1}, a=6, b=5}}
+Question{QuestionVoter{voter=Voter{2}, a=6, b=1}}
+Question{QuestionVoter{voter=Voter{3}, a=6, b=5}}
+Question{QuestionVoter{voter=Voter{2}, a=6, b=3}}
+Question{QuestionVoter{voter=Voter{5}, a=6, b=3}}
+Question{QuestionVoter{voter=Voter{1}, a=6, b=3}}
+Question{QuestionVoter{voter=Voter{6}, a=6, b=2}}
+Question{QuestionCommittee{λ=7/2, rank=1}}
+Question{QuestionVoter{voter=Voter{1}, a=6, b=1}}
+Question{QuestionCommittee{λ=7/2, rank=2}}
+Question{QuestionVoter{voter=Voter{3}, a=1, b=5}}
+Question{QuestionVoter{voter=Voter{2}, a=6, b=2}}
+Question{QuestionVoter{voter=Voter{2}, a=2, b=5}}
+Question{QuestionVoter{voter=Voter{6}, a=2, b=4}}
+Question{QuestionVoter{voter=Voter{3}, a=6, b=4}}
+Question{QuestionVoter{voter=Voter{4}, a=1, b=4}}
+Question{QuestionVoter{voter=Voter{5}, a=6, b=1}}
+Question{QuestionVoter{voter=Voter{1}, a=1, b=3}}
+Questions to the voters: 28.0 Question to the committee: 2.0
+Duration 5.04800 seconds 
+
+Run 7: 30 questions:
+Question{QuestionVoter{voter=Voter{5}, a=1, b=2}}
+Question{QuestionVoter{voter=Voter{5}, a=1, b=3}}
+Question{QuestionVoter{voter=Voter{5}, a=1, b=4}}
+Question{QuestionVoter{voter=Voter{5}, a=1, b=5}}
+Question{QuestionVoter{voter=Voter{5}, a=5, b=6}}
+Question{QuestionVoter{voter=Voter{6}, a=6, b=5}}
+Question{QuestionVoter{voter=Voter{3}, a=6, b=5}}
+Question{QuestionVoter{voter=Voter{2}, a=6, b=1}}
+Question{QuestionVoter{voter=Voter{6}, a=6, b=1}}
+Question{QuestionVoter{voter=Voter{4}, a=6, b=2}}
+Question{QuestionCommittee{λ=7/2, rank=1}}
+Question{QuestionVoter{voter=Voter{2}, a=6, b=2}}
+Question{QuestionCommittee{λ=7/2, rank=4}}
+Question{QuestionVoter{voter=Voter{5}, a=2, b=3}}
+Question{QuestionVoter{voter=Voter{6}, a=6, b=3}}
+Question{QuestionVoter{voter=Voter{2}, a=6, b=3}}
+Question{QuestionVoter{voter=Voter{4}, a=6, b=4}}
+Question{QuestionVoter{voter=Voter{4}, a=6, b=5}}
+Question{QuestionVoter{voter=Voter{4}, a=6, b=1}}
+Question{QuestionVoter{voter=Voter{1}, a=6, b=4}}
+Question{QuestionVoter{voter=Voter{5}, a=2, b=4}}
+Question{QuestionVoter{voter=Voter{6}, a=5, b=3}}
+Question{QuestionVoter{voter=Voter{1}, a=6, b=1}}
+Question{QuestionVoter{voter=Voter{4}, a=1, b=4}}
+Question{QuestionVoter{voter=Voter{3}, a=6, b=2}}
+Question{QuestionVoter{voter=Voter{1}, a=6, b=2}}
+Question{QuestionVoter{voter=Voter{2}, a=6, b=4}}
+Question{QuestionVoter{voter=Voter{6}, a=6, b=4}}
+Question{QuestionVoter{voter=Voter{1}, a=6, b=3}}
+Question{QuestionVoter{voter=Voter{1}, a=6, b=5}}
+Questions to the voters: 28.0 Question to the committee: 2.0
+Duration 4.88500 seconds 
+
+Run 8: 30 questions:
+Question{QuestionVoter{voter=Voter{6}, a=1, b=2}}
+Question{QuestionVoter{voter=Voter{6}, a=1, b=3}}
+Question{QuestionVoter{voter=Voter{6}, a=1, b=4}}
+Question{QuestionVoter{voter=Voter{6}, a=1, b=5}}
+Question{QuestionVoter{voter=Voter{6}, a=5, b=6}}
+Question{QuestionVoter{voter=Voter{1}, a=5, b=1}}
+Question{QuestionVoter{voter=Voter{2}, a=5, b=1}}
+Question{QuestionVoter{voter=Voter{2}, a=5, b=6}}
+Question{QuestionVoter{voter=Voter{5}, a=5, b=6}}
+Question{QuestionVoter{voter=Voter{1}, a=5, b=6}}
+Question{QuestionVoter{voter=Voter{4}, a=5, b=6}}
+Question{QuestionVoter{voter=Voter{4}, a=5, b=2}}
+Question{QuestionVoter{voter=Voter{3}, a=5, b=3}}
+Question{QuestionCommittee{λ=7/2, rank=1}}
+Question{QuestionVoter{voter=Voter{6}, a=2, b=3}}
+Question{QuestionVoter{voter=Voter{4}, a=5, b=4}}
+Question{QuestionCommittee{λ=7/2, rank=2}}
+Question{QuestionVoter{voter=Voter{1}, a=5, b=3}}
+Question{QuestionVoter{voter=Voter{1}, a=1, b=3}}
+Question{QuestionCommittee{λ=9/4, rank=1}}
+Question{QuestionVoter{voter=Voter{6}, a=4, b=3}}
+Question{QuestionVoter{voter=Voter{4}, a=5, b=3}}
+Question{QuestionVoter{voter=Voter{6}, a=1, b=6}}
+Question{QuestionVoter{voter=Voter{3}, a=5, b=2}}
+Question{QuestionVoter{voter=Voter{1}, a=5, b=2}}
+Question{QuestionVoter{voter=Voter{5}, a=5, b=2}}
+Question{QuestionCommittee{λ=9/4, rank=2}}
+Question{QuestionVoter{voter=Voter{1}, a=1, b=2}}
+Question{QuestionVoter{voter=Voter{5}, a=2, b=6}}
+Question{QuestionCommittee{λ=13/8, rank=2}}
+Questions to the voters: 25.0 Question to the committee: 5.0
+Duration 5.25500 seconds 
+
+Run 9: 30 questions:
+Question{QuestionVoter{voter=Voter{5}, a=1, b=2}}
+Question{QuestionVoter{voter=Voter{2}, a=1, b=2}}
+Question{QuestionVoter{voter=Voter{2}, a=1, b=3}}
+Question{QuestionVoter{voter=Voter{2}, a=1, b=4}}
+Question{QuestionVoter{voter=Voter{2}, a=1, b=5}}
+Question{QuestionVoter{voter=Voter{2}, a=6, b=1}}
+Question{QuestionCommittee{λ=7/2, rank=1}}
+Question{QuestionVoter{voter=Voter{6}, a=6, b=2}}
+Question{QuestionVoter{voter=Voter{1}, a=6, b=3}}
+Question{QuestionVoter{voter=Voter{5}, a=6, b=4}}
+Question{QuestionVoter{voter=Voter{1}, a=6, b=5}}
+Question{QuestionVoter{voter=Voter{6}, a=6, b=1}}
+Question{QuestionCommittee{λ=7/2, rank=3}}
+Question{QuestionVoter{voter=Voter{2}, a=3, b=2}}
+Question{QuestionVoter{voter=Voter{4}, a=6, b=2}}
+Question{QuestionVoter{voter=Voter{4}, a=6, b=4}}
+Question{QuestionVoter{voter=Voter{1}, a=6, b=4}}
+Question{QuestionVoter{voter=Voter{1}, a=3, b=5}}
+Question{QuestionCommittee{λ=7/2, rank=4}}
+Question{QuestionVoter{voter=Voter{3}, a=6, b=5}}
+Question{QuestionVoter{voter=Voter{3}, a=6, b=1}}
+Question{QuestionVoter{voter=Voter{6}, a=6, b=3}}
+Question{QuestionVoter{voter=Voter{5}, a=6, b=2}}
+Question{QuestionVoter{voter=Voter{4}, a=6, b=1}}
+Question{QuestionVoter{voter=Voter{3}, a=6, b=4}}
+Question{QuestionVoter{voter=Voter{4}, a=6, b=5}}
+Question{QuestionVoter{voter=Voter{2}, a=4, b=3}}
+Question{QuestionVoter{voter=Voter{4}, a=6, b=3}}
+Question{QuestionVoter{voter=Voter{2}, a=5, b=2}}
+Question{QuestionVoter{voter=Voter{3}, a=6, b=2}}
+Questions to the voters: 27.0 Question to the committee: 3.0
+Duration 5.25300 seconds 
+

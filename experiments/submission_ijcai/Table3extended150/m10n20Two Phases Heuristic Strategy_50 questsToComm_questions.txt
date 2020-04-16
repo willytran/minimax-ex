@@ -1,0 +1,156 @@
+Two Phases Heuristic Strategy
+20 Voters 10 Alternatives 
+Run 0: 150 questions:
+Question{QuestionCommittee{λ=21/2, rank=1}}
+Question{QuestionCommittee{λ=23/4, rank=1}}
+Question{QuestionCommittee{λ=27/8, rank=1}}
+Question{QuestionCommittee{λ=35/16, rank=1}}
+Question{QuestionCommittee{λ=51/32, rank=1}}
+Question{QuestionCommittee{λ=83/64, rank=1}}
+Question{QuestionCommittee{λ=147/128, rank=1}}
+Question{QuestionCommittee{λ=313/256, rank=1}}
+Question{QuestionCommittee{λ=645/512, rank=1}}
+Question{QuestionCommittee{λ=1309/1024, rank=1}}
+Question{QuestionCommittee{λ=2599/2048, rank=1}}
+Question{QuestionCommittee{λ=5179/4096, rank=1}}
+Question{QuestionCommittee{λ=10339/8192, rank=1}}
+Question{QuestionCommittee{λ=20659/16384, rank=1}}
+Question{QuestionCommittee{λ=41337/32768, rank=1}}
+Question{QuestionCommittee{λ=82693/65536, rank=1}}
+Question{QuestionCommittee{λ=165405/131072, rank=1}}
+Question{QuestionCommittee{λ=330829/262144, rank=1}}
+Question{QuestionCommittee{λ=661677/524288, rank=1}}
+Question{QuestionCommittee{λ=1323373/1048576, rank=1}}
+Question{QuestionCommittee{λ=2646765/2097152, rank=1}}
+Question{QuestionCommittee{λ=5293549/4194304, rank=1}}
+Question{QuestionCommittee{λ=10587079/8388608, rank=1}}
+Question{QuestionCommittee{λ=21174177/16777216, rank=1}}
+Question{QuestionCommittee{λ=42348335/33554432, rank=1}}
+Question{QuestionCommittee{λ=84696651/67108864, rank=1}}
+Question{QuestionCommittee{λ=169393321/134217728, rank=1}}
+Question{QuestionCommittee{λ=338786623/268435456, rank=1}}
+Question{QuestionCommittee{λ=677573227/536870912, rank=1}}
+Question{QuestionCommittee{λ=1355146435/1073741824, rank=1}}
+Question{QuestionCommittee{λ=2710292851/2147483648, rank=1}}
+Question{QuestionCommittee{λ=5420585721/4294967296, rank=1}}
+Question{QuestionCommittee{λ=10841171461/8589934592, rank=1}}
+Question{QuestionCommittee{λ=21682342941/17179869184, rank=1}}
+Question{QuestionCommittee{λ=43364685901/34359738368, rank=1}}
+Question{QuestionCommittee{λ=86729371821/68719476736, rank=1}}
+Question{QuestionCommittee{λ=173458743661/137438953472, rank=1}}
+Question{QuestionCommittee{λ=346917487341/274877906944, rank=1}}
+Question{QuestionCommittee{λ=693834974701/549755813888, rank=1}}
+Question{QuestionCommittee{λ=1387669949421/1099511627776, rank=1}}
+Question{QuestionCommittee{λ=2775339898861/2199023255552, rank=1}}
+Question{QuestionCommittee{λ=5550679797741/4398046511104, rank=1}}
+Question{QuestionCommittee{λ=11101359595501/8796093022208, rank=1}}
+Question{QuestionCommittee{λ=22202719191021/17592186044416, rank=1}}
+Question{QuestionCommittee{λ=44405438382061/35184372088832, rank=1}}
+Question{QuestionCommittee{λ=88810876764141/70368744177664, rank=1}}
+Question{QuestionCommittee{λ=177621753528301/140737488355328, rank=1}}
+Question{QuestionCommittee{λ=355243507056621/281474976710656, rank=1}}
+Question{QuestionCommittee{λ=710487014113261/562949953421312, rank=1}}
+Question{QuestionCommittee{λ=1420974028226541/1125899906842624, rank=1}}
+Question{QuestionVoter{voter=Voter{10}, a=1, b=2}}
+Question{QuestionVoter{voter=Voter{19}, a=1, b=2}}
+Question{QuestionVoter{voter=Voter{19}, a=1, b=3}}
+Question{QuestionVoter{voter=Voter{19}, a=1, b=4}}
+Question{QuestionVoter{voter=Voter{19}, a=4, b=5}}
+Question{QuestionVoter{voter=Voter{19}, a=5, b=6}}
+Question{QuestionVoter{voter=Voter{19}, a=6, b=7}}
+Question{QuestionVoter{voter=Voter{19}, a=6, b=8}}
+Question{QuestionVoter{voter=Voter{19}, a=6, b=9}}
+Question{QuestionVoter{voter=Voter{19}, a=6, b=10}}
+Question{QuestionVoter{voter=Voter{7}, a=6, b=5}}
+Question{QuestionVoter{voter=Voter{5}, a=6, b=7}}
+Question{QuestionVoter{voter=Voter{19}, a=1, b=7}}
+Question{QuestionVoter{voter=Voter{16}, a=6, b=7}}
+Question{QuestionVoter{voter=Voter{1}, a=6, b=8}}
+Question{QuestionVoter{voter=Voter{20}, a=6, b=9}}
+Question{QuestionVoter{voter=Voter{19}, a=1, b=10}}
+Question{QuestionVoter{voter=Voter{18}, a=6, b=10}}
+Question{QuestionVoter{voter=Voter{11}, a=6, b=10}}
+Question{QuestionVoter{voter=Voter{9}, a=6, b=4}}
+Question{QuestionVoter{voter=Voter{15}, a=6, b=4}}
+Question{QuestionVoter{voter=Voter{4}, a=6, b=4}}
+Question{QuestionVoter{voter=Voter{1}, a=6, b=4}}
+Question{QuestionVoter{voter=Voter{10}, a=6, b=2}}
+Question{QuestionVoter{voter=Voter{1}, a=6, b=3}}
+Question{QuestionVoter{voter=Voter{5}, a=6, b=8}}
+Question{QuestionVoter{voter=Voter{5}, a=7, b=8}}
+Question{QuestionVoter{voter=Voter{10}, a=6, b=5}}
+Question{QuestionVoter{voter=Voter{18}, a=6, b=7}}
+Question{QuestionVoter{voter=Voter{11}, a=6, b=9}}
+Question{QuestionVoter{voter=Voter{6}, a=6, b=10}}
+Question{QuestionVoter{voter=Voter{11}, a=6, b=4}}
+Question{QuestionVoter{voter=Voter{8}, a=6, b=8}}
+Question{QuestionVoter{voter=Voter{14}, a=6, b=8}}
+Question{QuestionVoter{voter=Voter{20}, a=6, b=8}}
+Question{QuestionVoter{voter=Voter{19}, a=1, b=8}}
+Question{QuestionVoter{voter=Voter{17}, a=6, b=8}}
+Question{QuestionVoter{voter=Voter{15}, a=6, b=1}}
+Question{QuestionVoter{voter=Voter{3}, a=6, b=1}}
+Question{QuestionVoter{voter=Voter{10}, a=5, b=1}}
+Question{QuestionVoter{voter=Voter{8}, a=6, b=1}}
+Question{QuestionVoter{voter=Voter{2}, a=6, b=2}}
+Question{QuestionVoter{voter=Voter{7}, a=6, b=2}}
+Question{QuestionVoter{voter=Voter{1}, a=6, b=2}}
+Question{QuestionVoter{voter=Voter{12}, a=6, b=2}}
+Question{QuestionVoter{voter=Voter{17}, a=6, b=2}}
+Question{QuestionVoter{voter=Voter{3}, a=6, b=3}}
+Question{QuestionVoter{voter=Voter{11}, a=6, b=3}}
+Question{QuestionVoter{voter=Voter{1}, a=6, b=9}}
+Question{QuestionVoter{voter=Voter{1}, a=6, b=10}}
+Question{QuestionVoter{voter=Voter{6}, a=6, b=1}}
+Question{QuestionVoter{voter=Voter{10}, a=6, b=10}}
+Question{QuestionVoter{voter=Voter{6}, a=6, b=5}}
+Question{QuestionVoter{voter=Voter{9}, a=6, b=7}}
+Question{QuestionVoter{voter=Voter{1}, a=6, b=7}}
+Question{QuestionVoter{voter=Voter{6}, a=6, b=4}}
+Question{QuestionVoter{voter=Voter{13}, a=6, b=8}}
+Question{QuestionVoter{voter=Voter{6}, a=6, b=3}}
+Question{QuestionVoter{voter=Voter{14}, a=6, b=2}}
+Question{QuestionVoter{voter=Voter{2}, a=6, b=1}}
+Question{QuestionVoter{voter=Voter{14}, a=6, b=1}}
+Question{QuestionVoter{voter=Voter{3}, a=6, b=9}}
+Question{QuestionVoter{voter=Voter{2}, a=6, b=10}}
+Question{QuestionVoter{voter=Voter{14}, a=6, b=10}}
+Question{QuestionVoter{voter=Voter{4}, a=6, b=10}}
+Question{QuestionVoter{voter=Voter{3}, a=6, b=5}}
+Question{QuestionVoter{voter=Voter{10}, a=6, b=7}}
+Question{QuestionVoter{voter=Voter{16}, a=6, b=4}}
+Question{QuestionVoter{voter=Voter{2}, a=6, b=8}}
+Question{QuestionVoter{voter=Voter{1}, a=3, b=8}}
+Question{QuestionVoter{voter=Voter{16}, a=6, b=8}}
+Question{QuestionVoter{voter=Voter{3}, a=1, b=3}}
+Question{QuestionVoter{voter=Voter{11}, a=4, b=3}}
+Question{QuestionVoter{voter=Voter{5}, a=6, b=3}}
+Question{QuestionVoter{voter=Voter{15}, a=6, b=2}}
+Question{QuestionVoter{voter=Voter{6}, a=6, b=2}}
+Question{QuestionVoter{voter=Voter{15}, a=6, b=10}}
+Question{QuestionVoter{voter=Voter{14}, a=8, b=10}}
+Question{QuestionVoter{voter=Voter{10}, a=1, b=7}}
+Question{QuestionVoter{voter=Voter{6}, a=6, b=7}}
+Question{QuestionVoter{voter=Voter{14}, a=6, b=7}}
+Question{QuestionVoter{voter=Voter{13}, a=6, b=7}}
+Question{QuestionVoter{voter=Voter{6}, a=2, b=5}}
+Question{QuestionVoter{voter=Voter{8}, a=6, b=5}}
+Question{QuestionVoter{voter=Voter{2}, a=6, b=9}}
+Question{QuestionVoter{voter=Voter{20}, a=6, b=1}}
+Question{QuestionVoter{voter=Voter{2}, a=1, b=9}}
+Question{QuestionVoter{voter=Voter{2}, a=6, b=4}}
+Question{QuestionVoter{voter=Voter{1}, a=3, b=4}}
+Question{QuestionVoter{voter=Voter{15}, a=1, b=4}}
+Question{QuestionVoter{voter=Voter{9}, a=6, b=10}}
+Question{QuestionVoter{voter=Voter{2}, a=1, b=10}}
+Question{QuestionVoter{voter=Voter{13}, a=6, b=10}}
+Question{QuestionVoter{voter=Voter{11}, a=6, b=8}}
+Question{QuestionVoter{voter=Voter{9}, a=7, b=4}}
+Question{QuestionVoter{voter=Voter{17}, a=6, b=9}}
+Question{QuestionVoter{voter=Voter{17}, a=6, b=1}}
+Question{QuestionVoter{voter=Voter{20}, a=1, b=9}}
+Question{QuestionVoter{voter=Voter{7}, a=6, b=9}}
+Question{QuestionVoter{voter=Voter{5}, a=6, b=9}}
+Questions to the voters: 100.0 Question to the committee: 50.0
+Duration 321,49000 seconds 
+

@@ -1,0 +1,19 @@
+Two Phases Heuristic Strategy
+20 Voters 10 Alternatives 
+200 Questions for 1 runs 
+Mean of Regret reduced by half in -1 questions 
+Mean of Regret reduced by four in -1 questions 
+Mean of Regret reduced by eight in -1 questions 
+Mean of Average Loss reduced by half in -1 questions 
+Mean of Average Loss reduced by four in -1 questions 
+Mean of Average Loss reduced by eight in -1 questions 
+k 	 Mean of Regrets 
+200	14.707561129470797
+k 	 Mean of Average Losses 
+200	1.4396711718968698
+k 	 Standard Deviations of Regrets 
+200	0.0
+k 	 Standard Deviations of Average Losses 
+200	0.0
+k 	 Percentage of Questions to the Voters 
+200	50,0%
