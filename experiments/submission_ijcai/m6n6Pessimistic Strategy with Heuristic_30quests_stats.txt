@@ -1,0 +1,49 @@
+Pessimistic Strategy with Heuristic
+6 Voters 6 Alternatives 
+30 Questions for 10 runs 
+Mean of Regret reduced by half in 30 questions 
+Mean of Regret reduced by four in -1 questions 
+Mean of Regret reduced by eight in -1 questions 
+Mean of Average Loss reduced by half in -1 questions 
+Mean of Average Loss reduced by four in -1 questions 
+Mean of Average Loss reduced by eight in -1 questions 
+k 	 Mean of Regrets 
+0	6.0
+5	5.597774844444445
+10	4.574100923076923
+15	4.207848626328503
+20	3.7346282799299577
+25	3.1760152915670123
+30	2.713535487830412
+k 	 Mean of Average Losses 
+0	1.1140000208352552
+5	1.1391751221016164
+10	0.9749670998173805
+15	0.6672596295835698
+20	1.0253568045994605
+25	0.7403424025441164
+30	0.6519846189604764
+k 	 Standard Deviations of Regrets 
+0	0.0
+5	0.5283510381933545
+10	0.2434387240772451
+15	0.4738827737179856
+20	0.5880518154899528
+25	0.6704613584611647
+30	0.8954266255278057
+k 	 Standard Deviations of Average Losses 
+0	0.0
+5	0.5283510381933545
+10	0.2434387240772451
+15	0.4738827737179856
+20	0.5880518154899528
+25	0.6704613584611647
+30	0.8954266255278057
+k 	 Percentage of Questions to the Voters 
+0	�
+5	96.0%
+10	88.0%
+15	84.7%
+20	86.0%
+25	86.4%
+30	88.7%
