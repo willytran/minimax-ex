@@ -1,4 +1,4 @@
-package io.github.oliviercailloux.minimax.old_strategies;
+package io.github.oliviercailloux.minimax;
 
 import static com.google.common.base.Preconditions.checkArgument;
 
@@ -16,15 +16,17 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import com.google.common.collect.Range;
+import com.google.common.collect.SetMultimap;
 import com.google.common.graph.Graph;
 
 import io.github.oliviercailloux.jlp.elements.ComparisonOperator;
-import io.github.oliviercailloux.minimax.Strategy;
 import io.github.oliviercailloux.minimax.elicitation.PrefKnowledge;
 import io.github.oliviercailloux.minimax.elicitation.Question;
 import io.github.oliviercailloux.minimax.elicitation.QuestionCommittee;
 import io.github.oliviercailloux.minimax.elicitation.QuestionType;
 import io.github.oliviercailloux.minimax.elicitation.QuestionVoter;
+import io.github.oliviercailloux.minimax.regret.PairwiseMaxRegret;
+import io.github.oliviercailloux.minimax.regret.RegretComputer;
 import io.github.oliviercailloux.minimax.utils.AggregationOperator;
 import io.github.oliviercailloux.minimax.utils.AggregationOperator.AggOps;
 import io.github.oliviercailloux.y2018.j_voting.Alternative;
@@ -38,8 +40,11 @@ public class StrategyPessimistic implements Strategy {
 	private static AggOps op;
 	private static double w1;
 	private static double w2;
+	
 	private static HashMap<Question, Double> questions;
 	private static List<Question> nextQuestions;
+	private static RegretComputer rc;
+	
 	private static final Logger LOGGER = LoggerFactory.getLogger(StrategyPessimistic.class);
 
 	public static StrategyPessimistic build() {
@@ -130,35 +135,30 @@ public class StrategyPessimistic implements Strategy {
 	public double getScore(Question q) {
 		PrefKnowledge yesKnowledge = PrefKnowledge.copyOf(knowledge);
 		PrefKnowledge noKnowledge = PrefKnowledge.copyOf(knowledge);
-		double yesMMR = 0;
-		double noMMR = 0;
+
 		if (q.getType().equals(QuestionType.VOTER_QUESTION)) {
 			QuestionVoter qv = q.getQuestionVoter();
 			Alternative a = qv.getFirstAlternative();
 			Alternative b = qv.getSecondAlternative();
-
 			yesKnowledge.getProfile().get(qv.getVoter()).asGraph().putEdge(a, b);
-			Regret.getMMRAlternatives(yesKnowledge);
-			yesMMR = Regret.getMMR();
-
 			noKnowledge.getProfile().get(qv.getVoter()).asGraph().putEdge(b, a);
-			Regret.getMMRAlternatives(noKnowledge);
-			noMMR = Regret.getMMR();
 		} else if (q.getType().equals(QuestionType.COMMITTEE_QUESTION)) {
-
 			QuestionCommittee qc = q.getQuestionCommittee();
 			Aprational lambda = qc.getLambda();
 			int rank = qc.getRank();
-
 			yesKnowledge.addConstraint(rank, ComparisonOperator.GE, lambda);
 			noKnowledge.addConstraint(rank, ComparisonOperator.LE, lambda);
-
-			Regret.getMMRAlternatives(yesKnowledge);
-			yesMMR = Regret.getMMR();
-
-			Regret.getMMRAlternatives(noKnowledge);
-			noMMR = Regret.getMMR();
 		}
+
+		RegretComputer rcYes = new RegretComputer(yesKnowledge);
+		SetMultimap<Alternative, PairwiseMaxRegret> mmrYes = rcYes.getMinimalMaxRegrets().asMultimap();
+		Alternative xStarYes = mmrYes.keySet().iterator().next();
+		double yesMMR = mmrYes.get(xStarYes).iterator().next().getPmrValue();
+
+		RegretComputer rcNo = new RegretComputer(noKnowledge);
+		SetMultimap<Alternative, PairwiseMaxRegret> mmrNo = rcNo.getMinimalMaxRegrets().asMultimap();
+		Alternative xStarNo = mmrNo.keySet().iterator().next();
+		double noMMR = mmrNo.get(xStarNo).iterator().next().getPmrValue();
 
 		switch (op) {
 		case MAX:
@@ -173,7 +173,7 @@ public class StrategyPessimistic implements Strategy {
 			throw new IllegalStateException();
 		}
 	}
-
+	
 	@Override
 	public void setKnowledge(PrefKnowledge knowledge) {
 		this.knowledge = knowledge;
