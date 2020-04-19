@@ -1,12 +1,13 @@
 package io.github.oliviercailloux.minimax.old_strategies;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertTrue;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.util.List;
 
 import org.junit.jupiter.api.Test;
 
+import io.github.oliviercailloux.minimax.StrategyPessimistic;
 import io.github.oliviercailloux.minimax.elicitation.PrefKnowledge;
 import io.github.oliviercailloux.minimax.elicitation.Question;
 import io.github.oliviercailloux.minimax.elicitation.QuestionType;
@@ -23,7 +24,7 @@ public class StrategyTwoPhasesTest {
 		assertEquals(QuestionType.COMMITTEE_QUESTION, s.nextQuestion().getType());
 		assertEquals(QuestionType.VOTER_QUESTION, s.nextQuestion().getType());
 	}
-
+	
 	/**
 	 * should be run occasionally, ’cause it’s too slow
 	 *

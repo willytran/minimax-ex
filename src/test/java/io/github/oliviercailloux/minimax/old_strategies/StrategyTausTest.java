@@ -1,6 +1,6 @@
 package io.github.oliviercailloux.minimax.old_strategies;
 
-import static org.junit.Assert.assertTrue;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import org.apfloat.Apint;
 import org.apfloat.Aprational;

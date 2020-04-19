@@ -26,7 +26,6 @@ import io.github.oliviercailloux.minimax.elicitation.Oracle;
 import io.github.oliviercailloux.minimax.elicitation.PrefKnowledge;
 import io.github.oliviercailloux.minimax.elicitation.Question;
 import io.github.oliviercailloux.minimax.elicitation.QuestionType;
-import io.github.oliviercailloux.minimax.old_strategies.StrategyPessimistic;
 import io.github.oliviercailloux.minimax.old_strategies.StrategyTaus;
 import io.github.oliviercailloux.minimax.old_strategies.StrategyTwoPhases;
 import io.github.oliviercailloux.minimax.old_strategies.StrategyTwoPhasesTau;
