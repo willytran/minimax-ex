@@ -35,16 +35,10 @@ public class Runs {
 		final ImmutableList.Builder<Double> average = ImmutableList.builder();
 		for (int i = 0; i < k + 1; ++i) {
 			final int finali = i;
-//			final ImmutableList<Double> allIthRegrets = runs.stream().map((r) -> r.getMinimalMaxRegrets().get(finali))
-//					.map(Regrets::getMinimalMaxRegretValue).collect(ImmutableList.toImmutableList());
-//			final Stats stats = Stats.of(allIthRegrets);
-//			average.add(stats.mean());
-			Iterator<Run> it = runs.iterator();
-			double sum = 0;
-			while (it.hasNext()) {
-				sum += it.next().getMMRs().get(finali).getMinimalMaxRegretValue();
-			}
-			average.add(sum/runs.size());
+			final ImmutableList<Double> allIthRegrets = runs.stream().map((r) -> r.getMinimalMaxRegrets().get(finali))
+					.map(Regrets::getMinimalMaxRegretValue).collect(ImmutableList.toImmutableList());
+			final Stats stats = Stats.of(allIthRegrets);
+			average.add(stats.mean());
 		}
 		return average.build();
 	}

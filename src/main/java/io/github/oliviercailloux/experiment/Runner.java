@@ -16,7 +16,6 @@ import com.univocity.parsers.csv.CsvWriter;
 import com.univocity.parsers.csv.CsvWriterSettings;
 
 import io.github.oliviercailloux.minimax.Strategy;
-import io.github.oliviercailloux.minimax.StrategyMiniMaxIncr;
 import io.github.oliviercailloux.minimax.StrategyPessimistic;
 import io.github.oliviercailloux.minimax.StrategyPessimisticHeuristic;
 import io.github.oliviercailloux.minimax.StrategyRandom;
@@ -28,6 +27,7 @@ import io.github.oliviercailloux.minimax.elicitation.Oracle;
 import io.github.oliviercailloux.minimax.elicitation.PrefKnowledge;
 import io.github.oliviercailloux.minimax.elicitation.Question;
 import io.github.oliviercailloux.minimax.elicitation.QuestionType;
+import io.github.oliviercailloux.minimax.old_strategies.StrategyMiniMaxIncr;
 import io.github.oliviercailloux.minimax.old_strategies.StrategyTaus;
 import io.github.oliviercailloux.minimax.old_strategies.StrategyTwoPhases;
 import io.github.oliviercailloux.minimax.old_strategies.StrategyTwoPhasesTau;
@@ -44,11 +44,11 @@ public class Runner {
 		final boolean committeeFirst = true;
 		final int k = 500; // nbQuestions
 		final int nbRuns = 25;
-		final int m = 10; // alternatives
-		final int n = 20; // agents
+		final int m = 3; // alternatives
+		final int n = 3; // agents
 		StrategyType st;
 
-		st = StrategyType.TWO_PHASES_HEURISTIC;
+		st = StrategyType.RANDOM;
 		runXP(committeeFirst, k, nbRuns, m, n, st);
 		System.out.println("Random completed");
 
@@ -65,8 +65,7 @@ public class Runner {
 		final ImmutableMap.Builder<String, ImmutableList<Double>> builder = ImmutableMap.builder();
 		String title = root + "m" + m + "n" + n + st + "_" + k;
 		int i;
-		if (st.equals(StrategyType.TWO_PHASES_HEURISTIC) || st.equals(StrategyType.TWO_PHASES)
-				|| st.equals(StrategyType.TWO_PHASES_RANDOM)) {
+		if (st.equals(StrategyType.TWO_PHASES_HEURISTIC) || st.equals(StrategyType.TWO_PHASES_RANDOM)) {
 			i = 0;
 		} else {
 			i = k;
@@ -79,8 +78,7 @@ public class Runner {
 			long s = System.currentTimeMillis();
 			final ImmutableList<Double> regrets = runs.getAverageMinimalMaxRegrets();
 			System.out.println((System.currentTimeMillis() - s) / 1000);
-			if (st.equals(StrategyType.TWO_PHASES_HEURISTIC) || st.equals(StrategyType.TWO_PHASES)
-					|| st.equals(StrategyType.TWO_PHASES_RANDOM)) {
+			if (st.equals(StrategyType.TWO_PHASES_HEURISTIC) || st.equals(StrategyType.TWO_PHASES_RANDOM)) {
 				if (committeeFirst) {
 					sb.append("qC = " + (k - i) + " then qV = " + i);
 				} else {
@@ -143,24 +141,11 @@ public class Runner {
 		case RANDOM:
 			strategy = StrategyRandom.build();
 			break;
-		case TWO_PHASES:
-			/** See above about the second weight. */
-			strategy = StrategyTwoPhases.build(AggOps.WEIGHTED_AVERAGE, 1d, 0.5d);
-			break;
-		case TWO_PHASES_TAU:
-			strategy = StrategyTwoPhasesTau.build(nbCommitteeQuestions, nbVotersQuestions, committeeFirst);
-			break;
 		case TWO_PHASES_RANDOM:
 			strategy = StrategyTwoPhasesRandom.build(nbCommitteeQuestions, nbVotersQuestions, committeeFirst);
 			break;
 		case TWO_PHASES_HEURISTIC:
 			strategy = StrategyTwoPhasesHeuristic.build(nbVotersQuestions, nbCommitteeQuestions, committeeFirst);
-			break;
-		case TAU:
-			strategy = StrategyTaus.build();
-			break;
-		case MINIMAX_MIN_INC:
-			strategy = StrategyMiniMaxIncr.build(nbVotersQuestions, nbCommitteeQuestions, committeeFirst);
 			break;
 		default:
 			throw new IllegalStateException();
@@ -240,7 +225,7 @@ public class Runner {
 				System.out.println(qBuilder.build());
 				System.out.println(tBuilder.build());
 			}
-		} catch (IllegalStateException e) {
+		} catch (IllegalArgumentException e) {
 			/** We want to return the results so far, because there’s no more questions. */
 			e.printStackTrace();
 			System.out.println("ERROR " + knowledge.toString());

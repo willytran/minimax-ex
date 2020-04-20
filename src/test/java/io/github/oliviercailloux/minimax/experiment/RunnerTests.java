@@ -39,7 +39,7 @@ class RunnerTests {
 		 * After first question, the regret is still 1d, with the adversary using
 		 * weights (1d, 0d, 0d).
 		 */
-		assertEquals(ImmutableList.of(1d, 1d, 0d), run1.getMMRs().stream()
+		assertEquals(ImmutableList.of(1d, 1d, 0d), run1.getMinimalMaxRegrets().stream()
 				.map(Regrets::getMinimalMaxRegretValue).collect(ImmutableList.toImmutableList()));
 
 		final Runs runsSingleton = Runs.of(ImmutableList.of(run1));
@@ -47,7 +47,7 @@ class RunnerTests {
 
 		final Run run2 = Run.of(oracle, ImmutableList.of(10l, 11l),
 				ImmutableList.of(Question.toVoter(v1, a1, a2), Question.toCommittee(new Apint(1), 1)), 13l);
-		assertEquals(ImmutableList.of(1d, 1d, 1d), run2.getMMRs().stream()
+		assertEquals(ImmutableList.of(1d, 1d, 1d), run2.getMinimalMaxRegrets().stream()
 				.map(Regrets::getMinimalMaxRegretValue).collect(ImmutableList.toImmutableList()));
 
 		final Runs runsTwo = Runs.of(ImmutableList.of(run1, run2));

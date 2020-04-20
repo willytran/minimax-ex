@@ -102,28 +102,24 @@ public class Run {
 		return endTime - startTimes.get(0);
 	}
 
-	public ImmutableList<Regrets> getMMRs() {
-		if (regrets == null) {
-			regrets = getMinimalMaxRegrets();
-		}
-		return regrets;
-	}
-
 	/**
 	 * @return a list of size k + 1.
 	 */
-	private ImmutableList<Regrets> getMinimalMaxRegrets() {
-		final PrefKnowledge knowledge = PrefKnowledge.given(oracle.getAlternatives(), oracle.getProfile().keySet());
-		final RegretComputer rc = new RegretComputer(knowledge);
+	public ImmutableList<Regrets> getMinimalMaxRegrets() {
+		if (regrets == null) {
+			final PrefKnowledge knowledge = PrefKnowledge.given(oracle.getAlternatives(), oracle.getProfile().keySet());
+			final RegretComputer rc = new RegretComputer(knowledge);
 
-		final ImmutableList.Builder<Regrets> builder = ImmutableList.builderWithExpectedSize(questions.size() + 1);
-		builder.add(rc.getMinimalMaxRegrets());
-
-		for (Question question : questions) {
-			knowledge.update(question, oracle.getAnswer(question));
+			final ImmutableList.Builder<Regrets> builder = ImmutableList.builderWithExpectedSize(questions.size() + 1);
 			builder.add(rc.getMinimalMaxRegrets());
-		}
 
-		return builder.build();
+			for (Question question : questions) {
+				knowledge.update(question, oracle.getAnswer(question));
+				builder.add(rc.getMinimalMaxRegrets());
+			}
+
+			regrets = builder.build();
+		}
+		return regrets;
 	}
 }

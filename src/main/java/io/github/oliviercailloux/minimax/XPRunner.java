@@ -26,6 +26,7 @@ import io.github.oliviercailloux.minimax.elicitation.Oracle;
 import io.github.oliviercailloux.minimax.elicitation.PrefKnowledge;
 import io.github.oliviercailloux.minimax.elicitation.Question;
 import io.github.oliviercailloux.minimax.elicitation.QuestionType;
+import io.github.oliviercailloux.minimax.old_strategies.StrategyMiniMaxIncr;
 import io.github.oliviercailloux.minimax.old_strategies.StrategyTaus;
 import io.github.oliviercailloux.minimax.old_strategies.StrategyTwoPhases;
 import io.github.oliviercailloux.minimax.old_strategies.StrategyTwoPhasesTau;
@@ -242,24 +243,11 @@ public class XPRunner {
 		case RANDOM:
 			strategy = StrategyRandom.build();
 			break;
-		case TWO_PHASES:
-			/** See above about the second weight. */
-			strategy = StrategyTwoPhases.build(AggOps.WEIGHTED_AVERAGE, 1d, 0.5d);
-			break;
-		case TWO_PHASES_TAU:
-			strategy = StrategyTwoPhasesTau.build(nbCommitteeQuestions, nbVotersQuestions, committeeFirst);
-			break;
 		case TWO_PHASES_RANDOM:
 			strategy = StrategyTwoPhasesRandom.build(nbCommitteeQuestions, nbVotersQuestions, committeeFirst);
 			break;
 		case TWO_PHASES_HEURISTIC:
 			strategy = StrategyTwoPhasesHeuristic.build(nbVotersQuestions, nbCommitteeQuestions, committeeFirst);
-			break;
-		case TAU:
-			strategy = StrategyTaus.build();
-			break;
-		case MINIMAX_MIN_INC:
-			strategy = StrategyMiniMaxIncr.build(nbVotersQuestions, nbCommitteeQuestions, committeeFirst);
 			break;
 		default:
 			throw new IllegalStateException();
