@@ -42,21 +42,22 @@ public class Runner {
 
 	public static void main(String[] args) throws IOException {
 		final boolean committeeFirst = true;
-		final int k = 50; // nbQuestions
-		final int nbRuns = 2;
-		final int m = 5; // alternatives
-		final int n = 5; // agents
+		final int k = 500; // nbQuestions
+		final int nbRuns = 25;
+		final int m = 10; // alternatives
+		final int n = 20; // agents
 		StrategyType st;
 
-//		st = StrategyType.RANDOM;
-//		runXP(committeeFirst, k, nbRuns, m, n, st);
-		
-//		st = StrategyType.PESSIMISTIC_HEURISTIC;
-//		runXP(committeeFirst, k, nbRuns, m, n, st);
-		
-		st = StrategyType.TWO_PHASES_HEURISTIC;
+		st = StrategyType.RANDOM;
 		runXP(committeeFirst, k, nbRuns, m, n, st);
+		System.out.println("Random completed");
 		
+		st = StrategyType.PESSIMISTIC_HEURISTIC;
+		runXP(committeeFirst, k, nbRuns, m, n, st);
+		System.out.println("Limited Pessimistic completed");
+		
+		st = StrategyType.PESSIMISTIC_MAX;
+		runXP(committeeFirst, k, nbRuns, m, n, st);
 	}
 
 	private static void runXP(boolean committeeFirst, int k, int nbRuns, int m, int n, StrategyType st)
@@ -73,7 +74,10 @@ public class Runner {
 			final StringBuilder sb = new StringBuilder();
 			final Strategy strategy = buildStrategy(st, i, k - i, committeeFirst);
 			final Runs runs = runRepeatedly(strategy, k, m, n, nbRuns, title);
+			System.out.println("start");
+			long s = System.currentTimeMillis();
 			final ImmutableList<Double> regrets = runs.getAverageMinimalMaxRegrets();
+			System.out.println((System.currentTimeMillis()-s)/1000);
 			if (st.equals(StrategyType.TWO_PHASES_HEURISTIC) || st.equals(StrategyType.TWO_PHASES)
 					|| st.equals(StrategyType.TWO_PHASES_RANDOM)) {
 				if(committeeFirst) {
@@ -85,6 +89,7 @@ public class Runner {
 				sb.append("nbQst = " + k);
 			builder.put(sb.toString(), regrets);
 		}
+		System.out.println("fine");
 		final ImmutableMap<String, ImmutableList<Double>> results = builder.build();
 
 		final CsvWriter writer = new CsvWriter(Files.newOutputStream(Path.of(title + "_out.csv")),
@@ -95,6 +100,7 @@ public class Runner {
 
 		for (int j = 0; j < k + 1; ++j) {
 			writer.addValue(j);
+			System.out.println("Avg regret for "+j+" questions");
 			for (int col = 0; col < results.size(); ++col) {
 				double avg;
 				try {
@@ -167,6 +173,7 @@ public class Runner {
 		for (int i = 0; i < nbRuns; ++i) {
 			final Run run = run(strategy, m, n, nbQuestions);
 			builder.add(run);
+			System.out.println("Run "+(i+1)+" of "+ nbRuns);
 		}
 		final Runs runs = Runs.of(builder.build());
 		printQuestions(runs, title, nbQuestions);
@@ -208,6 +215,7 @@ public class Runner {
 			qstWriter.writeValuesToRow();
 		}
 		qstWriter.close();
+		return;
 	}
 
 	public static Run run(Strategy strategy, int m, int n, int k) {

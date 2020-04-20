@@ -72,7 +72,7 @@ public class StrategyPessimisticHeuristic implements Strategy {
 	}
 
 	private StrategyPessimisticHeuristic() {
-		LOGGER.info("");
+		LOGGER.info("StratLimPess");
 	}
 
 	@Override
