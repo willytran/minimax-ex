@@ -44,7 +44,7 @@ public class Runner {
 		final boolean committeeFirst = true;
 		final int k = 500; // nbQuestions
 		final int nbRuns = 25;
-		final int m = 10; // alternatives
+		final int m = 4; // alternatives
 		final int n = 20; // agents
 		StrategyType st;
 
@@ -199,9 +199,10 @@ public class Runner {
 			qstWriter.addValue(i + 1);
 			for (int col = 0; col < nbRuns; col++) {
 				Question q;
-				try {
-					q = runs.getRun(col).getQuestions().get(i);
-				} catch (Exception e) {
+				final ImmutableList<Question> questions = runs.getRun(col).getQuestions();
+				if (i < questions.size()) {
+					q = questions.get(i);
+				} else {
 					q = null;
 				}
 				if (q == null) {
