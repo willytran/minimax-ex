@@ -2,6 +2,8 @@ package io.github.oliviercailloux.minimax.experiment;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
+import java.util.Iterator;
+
 import org.apfloat.Apint;
 import org.junit.jupiter.api.Test;
 import org.slf4j.Logger;
@@ -39,6 +41,7 @@ class RunnerTests {
 		 * After first question, the regret is still 1d, with the adversary using
 		 * weights (1d, 0d, 0d).
 		 */
+
 		assertEquals(ImmutableList.of(1d, 1d, 0d), run1.getMinimalMaxRegrets().stream()
 				.map(Regrets::getMinimalMaxRegretValue).collect(ImmutableList.toImmutableList()));
 
@@ -54,7 +57,12 @@ class RunnerTests {
 		assertEquals(ImmutableList.of(1d, 1d, 0.5d), runsTwo.getAverageMinimalMaxRegrets());
 
 		final Runs runsThree = Runs.of(ImmutableList.of(run1, run2, run1));
-		assertEquals(ImmutableList.of(1d, 1d, 0.33333333333333337d), runsThree.getAverageMinimalMaxRegrets());
+		final ImmutableList<Double> avg = runsThree.getAverageMinimalMaxRegrets();
+		assertEquals(3, avg.size());
+		final Iterator<Double> iterator = avg.iterator();
+		assertEquals(1d, iterator.next().doubleValue());
+		assertEquals(1d, iterator.next().doubleValue());
+		assertEquals(0.3333d, iterator.next().doubleValue(), 0.0001d);
 	}
 
 }

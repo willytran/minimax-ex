@@ -184,9 +184,10 @@ public class Runner {
 			qstWriter.addValue(i + 1);
 			for (int col = 0; col < nbRuns; col++) {
 				Question q;
-				try {
-					q = runs.getRun(col).getQuestions().get(i);
-				} catch (Exception e) {
+				final ImmutableList<Question> questions = runs.getRun(col).getQuestions();
+				if (i < questions.size()) {
+					q = questions.get(i);
+				} else {
 					q = null;
 				}
 				if (q == null) {
