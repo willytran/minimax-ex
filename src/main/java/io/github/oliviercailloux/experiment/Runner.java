@@ -238,7 +238,7 @@ public class Runner {
 				qBuilder.add(q);
 				tBuilder.add(startTime);
 			}
-		} catch (Exception e) {
+		} catch (IllegalStateException e) {
 			/** We want to return the results so far, because there’s no more questions. */
 			e.printStackTrace();
 			System.out.println("ERROR " + knowledge.toString());
