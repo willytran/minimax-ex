@@ -33,14 +33,16 @@ public class Run {
 	private final ImmutableList<Question> questions;
 	private final long endTime;
 
-	public Run(Oracle oracle, List<Long> startTimes, List<Question> questions, long endTime) {
+	private Run(Oracle oracle, List<Long> startTimes, List<Question> questions, long endTime) {
 		checkArgument(!startTimes.isEmpty());
 		checkArgument(startTimes.size() == questions.size());
+		checkArgument(questions.size() >= 1);
 		checkArgument(endTime >= startTimes.get(startTimes.size() - 1));
 		this.oracle = oracle;
 		this.startTimes = ImmutableList.copyOf(startTimes);
 		this.questions = ImmutableList.copyOf(questions);
 		this.endTime = endTime;
+		verify((getNbQVoters() + getNbQCommittee()) == questions.size());
 	}
 
 	public Oracle getOracle() {

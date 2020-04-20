@@ -19,7 +19,7 @@ public class Runs {
 		return new Runs(runs);
 	}
 
-	public Runs(List<Run> runs) {
+	private Runs(List<Run> runs) {
 		checkArgument(!runs.isEmpty());
 		this.runs = ImmutableList.copyOf(runs);
 		final ImmutableSet<Integer> ks = runs.stream().map(Run::getK).collect(ImmutableSet.toImmutableSet());
@@ -41,11 +41,11 @@ public class Runs {
 		}
 		return average.build();
 	}
-	
+
 	public int nbRuns() {
 		return runs.size();
 	}
-	
+
 	public Run getRun(int i) {
 		checkArgument(i < runs.size());
 		return runs.get(i);
