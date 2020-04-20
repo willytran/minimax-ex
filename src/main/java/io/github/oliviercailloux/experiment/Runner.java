@@ -48,16 +48,16 @@ public class Runner {
 		final int n = 20; // agents
 		StrategyType st;
 
-		st = StrategyType.RANDOM;
+		st = StrategyType.TWO_PHASES_HEURISTIC;
 		runXP(committeeFirst, k, nbRuns, m, n, st);
 		System.out.println("Random completed");
 
-		st = StrategyType.PESSIMISTIC_HEURISTIC;
-		runXP(committeeFirst, k, nbRuns, m, n, st);
-		System.out.println("Limited Pessimistic completed");
-
-		st = StrategyType.PESSIMISTIC_MAX;
-		runXP(committeeFirst, k, nbRuns, m, n, st);
+//		st = StrategyType.PESSIMISTIC_HEURISTIC;
+//		runXP(committeeFirst, k, nbRuns, m, n, st);
+//		System.out.println("Limited Pessimistic completed");
+//
+//		st = StrategyType.PESSIMISTIC_MAX;
+//		runXP(committeeFirst, k, nbRuns, m, n, st);
 	}
 
 	private static void runXP(boolean committeeFirst, int k, int nbRuns, int m, int n, StrategyType st)
@@ -232,16 +232,20 @@ public class Runner {
 				final long startTime = System.currentTimeMillis();
 
 				final Question q = strategy.nextQuestion();
-//				LOGGER.info("Asked {}.", q);
+				LOGGER.info("Asked {}.", q);
 				final Answer a = oracle.getAnswer(q);
 				knowledge.update(q, a);
 				qBuilder.add(q);
 				tBuilder.add(startTime);
+				System.out.println(qBuilder.build());
+				System.out.println(tBuilder.build());
 			}
 		} catch (Exception e) {
 			/** We want to return the results so far, because there’s no more questions. */
 			e.printStackTrace();
 			System.out.println("ERROR " + knowledge.toString());
+			System.out.println(qBuilder.build());
+			System.out.println(tBuilder.build());
 		}
 
 		final long endTime = System.currentTimeMillis();
