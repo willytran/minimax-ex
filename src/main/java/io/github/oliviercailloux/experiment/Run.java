@@ -32,6 +32,7 @@ public class Run {
 	private final ImmutableList<Long> startTimes;
 	private final ImmutableList<Question> questions;
 	private final long endTime;
+	private ImmutableList<Regrets> regrets;
 
 	public Run(Oracle oracle, List<Long> startTimes, List<Question> questions, long endTime) {
 		checkArgument(!startTimes.isEmpty());
@@ -41,6 +42,7 @@ public class Run {
 		this.startTimes = ImmutableList.copyOf(startTimes);
 		this.questions = ImmutableList.copyOf(questions);
 		this.endTime = endTime;
+		this.regrets = null;
 	}
 
 	public Oracle getOracle() {
@@ -98,10 +100,17 @@ public class Run {
 		return endTime - startTimes.get(0);
 	}
 
+	public ImmutableList<Regrets> getMMRs() {
+		if (regrets == null) {
+			regrets=getMinimalMaxRegrets();
+		}
+		return regrets;
+	}
+	
 	/**
 	 * @return a list of size k + 1.
 	 */
-	public ImmutableList<Regrets> getMinimalMaxRegrets() {
+	private ImmutableList<Regrets> getMinimalMaxRegrets() {
 		final PrefKnowledge knowledge = PrefKnowledge.given(oracle.getAlternatives(), oracle.getProfile().keySet());
 		final RegretComputer rc = new RegretComputer(knowledge);
 

@@ -2,6 +2,7 @@ package io.github.oliviercailloux.experiment;
 
 import static com.google.common.base.Preconditions.checkArgument;
 
+import java.util.Iterator;
 import java.util.List;
 
 import com.google.common.collect.ImmutableList;
@@ -34,18 +35,24 @@ public class Runs {
 		final ImmutableList.Builder<Double> average = ImmutableList.builder();
 		for (int i = 0; i < k + 1; ++i) {
 			final int finali = i;
-			final ImmutableList<Double> allIthRegrets = runs.stream().map((r) -> r.getMinimalMaxRegrets().get(finali))
-					.map(Regrets::getMinimalMaxRegretValue).collect(ImmutableList.toImmutableList());
-			final Stats stats = Stats.of(allIthRegrets);
-			average.add(stats.mean());
+//			final ImmutableList<Double> allIthRegrets = runs.stream().map((r) -> r.getMinimalMaxRegrets().get(finali))
+//					.map(Regrets::getMinimalMaxRegretValue).collect(ImmutableList.toImmutableList());
+//			final Stats stats = Stats.of(allIthRegrets);
+//			average.add(stats.mean());
+			Iterator<Run> it = runs.iterator();
+			double sum = 0;
+			while (it.hasNext()) {
+				sum += it.next().getMMRs().get(finali).getMinimalMaxRegretValue();
+			}
+			average.add(sum/runs.size());
 		}
 		return average.build();
 	}
-	
+
 	public int nbRuns() {
 		return runs.size();
 	}
-	
+
 	public Run getRun(int i) {
 		checkArgument(i < runs.size());
 		return runs.get(i);
