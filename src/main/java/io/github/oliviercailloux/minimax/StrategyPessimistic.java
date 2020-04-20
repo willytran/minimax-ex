@@ -43,7 +43,6 @@ public class StrategyPessimistic implements Strategy {
 	
 	private static HashMap<Question, Double> questions;
 	private static List<Question> nextQuestions;
-	private static RegretComputer rc;
 	
 	private static final Logger LOGGER = LoggerFactory.getLogger(StrategyPessimistic.class);
 
@@ -69,7 +68,7 @@ public class StrategyPessimistic implements Strategy {
 	}
 
 	private StrategyPessimistic() {
-		LOGGER.info("");
+		LOGGER.info("StratPess");
 	}
 
 	@Override
