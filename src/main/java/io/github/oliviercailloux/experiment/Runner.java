@@ -31,8 +31,8 @@ import io.github.oliviercailloux.minimax.elicitation.QuestionType;
 import io.github.oliviercailloux.minimax.old_strategies.StrategyTaus;
 import io.github.oliviercailloux.minimax.old_strategies.StrategyTwoPhases;
 import io.github.oliviercailloux.minimax.old_strategies.StrategyTwoPhasesTau;
-import io.github.oliviercailloux.minimax.utils.Generator;
 import io.github.oliviercailloux.minimax.utils.AggregationOperator.AggOps;
+import io.github.oliviercailloux.minimax.utils.Generator;
 
 public class Runner {
 	@SuppressWarnings("unused")
@@ -51,11 +51,11 @@ public class Runner {
 		st = StrategyType.RANDOM;
 		runXP(committeeFirst, k, nbRuns, m, n, st);
 		System.out.println("Random completed");
-		
+
 		st = StrategyType.PESSIMISTIC_HEURISTIC;
 		runXP(committeeFirst, k, nbRuns, m, n, st);
 		System.out.println("Limited Pessimistic completed");
-		
+
 		st = StrategyType.PESSIMISTIC_MAX;
 		runXP(committeeFirst, k, nbRuns, m, n, st);
 	}
@@ -66,10 +66,11 @@ public class Runner {
 		String title = root + "m" + m + "n" + n + st + "_" + k;
 		int i;
 		if (st.equals(StrategyType.TWO_PHASES_HEURISTIC) || st.equals(StrategyType.TWO_PHASES)
-				|| st.equals(StrategyType.TWO_PHASES_RANDOM))
+				|| st.equals(StrategyType.TWO_PHASES_RANDOM)) {
 			i = 0;
-		else
+		} else {
 			i = k;
+		}
 		for (; i <= k; i += 10) {
 			final StringBuilder sb = new StringBuilder();
 			final Strategy strategy = buildStrategy(st, i, k - i, committeeFirst);
@@ -77,16 +78,17 @@ public class Runner {
 			System.out.println("start");
 			long s = System.currentTimeMillis();
 			final ImmutableList<Double> regrets = runs.getAverageMinimalMaxRegrets();
-			System.out.println((System.currentTimeMillis()-s)/1000);
+			System.out.println((System.currentTimeMillis() - s) / 1000);
 			if (st.equals(StrategyType.TWO_PHASES_HEURISTIC) || st.equals(StrategyType.TWO_PHASES)
 					|| st.equals(StrategyType.TWO_PHASES_RANDOM)) {
-				if(committeeFirst) {
+				if (committeeFirst) {
 					sb.append("qC = " + (k - i) + " then qV = " + i);
-				}else {
+				} else {
 					sb.append("qV = " + i + " then qC = " + (k - i));
 				}
-			} else
+			} else {
 				sb.append("nbQst = " + k);
+			}
 			builder.put(sb.toString(), regrets);
 		}
 		System.out.println("fine");
@@ -100,7 +102,7 @@ public class Runner {
 
 		for (int j = 0; j < k + 1; ++j) {
 			writer.addValue(j);
-			System.out.println("Avg regret for "+j+" questions");
+			System.out.println("Avg regret for " + j + " questions");
 			for (int col = 0; col < results.size(); ++col) {
 				double avg;
 				try {
@@ -115,7 +117,6 @@ public class Runner {
 		writer.close();
 	}
 
-	
 	private static Strategy buildStrategy(StrategyType st, int nbVotersQuestions, int nbCommitteeQuestions,
 			boolean committeeFirst) {
 		final Strategy strategy;
@@ -173,7 +174,7 @@ public class Runner {
 		for (int i = 0; i < nbRuns; ++i) {
 			final Run run = run(strategy, m, n, nbQuestions);
 			builder.add(run);
-			System.out.println("Run "+(i+1)+" of "+ nbRuns);
+			System.out.println("Run " + (i + 1) + " of " + nbRuns);
 		}
 		final Runs runs = Runs.of(builder.build());
 		printQuestions(runs, title, nbQuestions);
@@ -226,21 +227,21 @@ public class Runner {
 
 		final ImmutableList.Builder<Question> qBuilder = ImmutableList.builder();
 		final ImmutableList.Builder<Long> tBuilder = ImmutableList.builder();
-		for (int i = 1; i <= k; i++) {
-			final long startTime = System.currentTimeMillis();
+		try {
+			for (int i = 1; i <= k; i++) {
+				final long startTime = System.currentTimeMillis();
 
-			final Question q;
-			try {
-				q = strategy.nextQuestion();
+				final Question q = strategy.nextQuestion();
 //				LOGGER.info("Asked {}.", q);
 				final Answer a = oracle.getAnswer(q);
 				knowledge.update(q, a);
 				qBuilder.add(q);
-			} catch (Exception e) {
-				e.printStackTrace();
-				System.out.println("ERROR " + knowledge.toString());
+				tBuilder.add(startTime);
 			}
-			tBuilder.add(startTime);
+		} catch (Exception e) {
+			/** We want to return the results so far, because there’s no more questions. */
+			e.printStackTrace();
+			System.out.println("ERROR " + knowledge.toString());
 		}
 
 		final long endTime = System.currentTimeMillis();
