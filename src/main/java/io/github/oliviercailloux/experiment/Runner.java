@@ -41,55 +41,50 @@ public class Runner {
 	private static final String root = Paths.get("").toAbsolutePath() + "/experiments/";
 
 	public static void main(String[] args) throws IOException {
-		final boolean committeeFirst = true;
+		boolean committeeFirst = true;
 		final int k = 500; // nbQuestions
 		final int nbRuns = 25;
 		final int m = 3; // alternatives
 		final int n = 3; // agents
-		StrategyType st;
+		String head = "nbQst = " + k;
 
-		st = StrategyType.RANDOM;
-		runXP(committeeFirst, k, nbRuns, m, n, st);
-		System.out.println("Random completed");
+		Strategy stRandom = StrategyRandom.build();
+		runXP(k, nbRuns, m, n, stRandom, head);
 
-//		st = StrategyType.PESSIMISTIC_HEURISTIC;
-//		runXP(committeeFirst, k, nbRuns, m, n, st);
-//		System.out.println("Limited Pessimistic completed");
-//
-//		st = StrategyType.PESSIMISTIC_MAX;
-//		runXP(committeeFirst, k, nbRuns, m, n, st);
+		Strategy stPessimistic = StrategyPessimistic.build(AggOps.MAX);
+		runXP(k, nbRuns, m, n, stPessimistic, head);
+
+		Strategy stLimitedPess = StrategyPessimisticHeuristic.build(AggOps.MAX);
+		runXP(k, nbRuns, m, n, stLimitedPess, head);
+
+		Strategy stTwoPhHeuristic;
+		for (int i = 0; i <= k; i += 50) {
+			stTwoPhHeuristic = StrategyTwoPhasesHeuristic.build(i, (k - i), committeeFirst);
+			head = "qC = " + (k - i) + " then qV = " + i;
+			runXP(k, nbRuns, m, n, stTwoPhHeuristic, head);
+		}
+
+		committeeFirst = false;
+		for (int i = 0; i <= k; i += 50) {
+			stTwoPhHeuristic = StrategyTwoPhasesHeuristic.build(i, (k - i), committeeFirst);
+			head = "qV = " + i + " then qC = " + (k - i);
+			runXP(k, nbRuns, m, n, stTwoPhHeuristic, head);
+		}
+
 	}
 
-	private static void runXP(boolean committeeFirst, int k, int nbRuns, int m, int n, StrategyType st)
-			throws IOException {
+	private static void runXP(int k, int nbRuns, int m, int n, Strategy strategy, String head) throws IOException {
+
+		String title = root + "m" + m + "n" + n + strategy.toString() + "_" + k;
 		final ImmutableMap.Builder<String, ImmutableList<Double>> builder = ImmutableMap.builder();
-		String title = root + "m" + m + "n" + n + st + "_" + k;
-		int i;
-		if (st.equals(StrategyType.TWO_PHASES_HEURISTIC) || st.equals(StrategyType.TWO_PHASES_RANDOM)) {
-			i = 0;
-		} else {
-			i = k;
-		}
-		for (; i <= k; i += 10) {
-			final StringBuilder sb = new StringBuilder();
-			final Strategy strategy = buildStrategy(st, i, k - i, committeeFirst);
-			final Runs runs = runRepeatedly(strategy, k, m, n, nbRuns, title);
-			System.out.println("start");
-			long s = System.currentTimeMillis();
-			final ImmutableList<Double> regrets = runs.getAverageMinimalMaxRegrets();
-			System.out.println((System.currentTimeMillis() - s) / 1000);
-			if (st.equals(StrategyType.TWO_PHASES_HEURISTIC) || st.equals(StrategyType.TWO_PHASES_RANDOM)) {
-				if (committeeFirst) {
-					sb.append("qC = " + (k - i) + " then qV = " + i);
-				} else {
-					sb.append("qV = " + i + " then qC = " + (k - i));
-				}
-			} else {
-				sb.append("nbQst = " + k);
-			}
-			builder.put(sb.toString(), regrets);
-		}
-		System.out.println("fine");
+		final Runs runs = runRepeatedly(strategy, k, m, n, nbRuns, title);
+
+		System.out.println("start stats");
+		long s = System.currentTimeMillis();
+		final ImmutableList<Double> regrets = runs.getAverageMinimalMaxRegrets();
+		System.out.println((System.currentTimeMillis() - s) / 1000);
+
+		builder.put(head, regrets);
 		final ImmutableMap<String, ImmutableList<Double>> results = builder.build();
 
 		final CsvWriter writer = new CsvWriter(Files.newOutputStream(Path.of(title + "_out.csv")),
@@ -103,9 +98,9 @@ public class Runner {
 			System.out.println("Avg regret for " + j + " questions");
 			for (int col = 0; col < results.size(); ++col) {
 				double avg;
-				try {
+				if (j < results.values().asList().get(col).size()) {
 					avg = results.values().asList().get(col).get(j);
-				} catch (Exception e) {
+				} else {
 					avg = -1;
 				}
 				writer.addValue(avg);
@@ -113,44 +108,6 @@ public class Runner {
 			writer.writeValuesToRow();
 		}
 		writer.close();
-	}
-
-	private static Strategy buildStrategy(StrategyType st, int nbVotersQuestions, int nbCommitteeQuestions,
-			boolean committeeFirst) {
-		final Strategy strategy;
-		switch (st) {
-		case PESSIMISTIC_MAX:
-			strategy = StrategyPessimistic.build(AggOps.MAX);
-			break;
-		case PESSIMISTIC_MIN:
-			strategy = StrategyPessimistic.build(AggOps.MIN);
-			break;
-		case PESSIMISTIC_AVG:
-			strategy = StrategyPessimistic.build(AggOps.AVG);
-			break;
-		case PESSIMISTIC_WEIGHTED_AVG:
-			/**
-			 * TODO the second weight was: context.getWeights().getWeightAtRank(m - 1) / 2 *
-			 * n. This is not permitted, as it makes the strategy depend on the oracle.
-			 */
-			strategy = StrategyPessimistic.build(AggOps.WEIGHTED_AVERAGE, 1d, 0.5d);
-			break;
-		case PESSIMISTIC_HEURISTIC:
-			strategy = StrategyPessimisticHeuristic.build(AggOps.MAX);
-			break;
-		case RANDOM:
-			strategy = StrategyRandom.build();
-			break;
-		case TWO_PHASES_RANDOM:
-			strategy = StrategyTwoPhasesRandom.build(nbCommitteeQuestions, nbVotersQuestions, committeeFirst);
-			break;
-		case TWO_PHASES_HEURISTIC:
-			strategy = StrategyTwoPhasesHeuristic.build(nbVotersQuestions, nbCommitteeQuestions, committeeFirst);
-			break;
-		default:
-			throw new IllegalStateException();
-		}
-		return strategy;
 	}
 
 	private static Runs runRepeatedly(Strategy strategy, int nbQuestions, int m, int n, int nbRuns, String title)
@@ -216,22 +173,17 @@ public class Runner {
 		try {
 			for (int i = 1; i <= k; i++) {
 				final long startTime = System.currentTimeMillis();
-
 				final Question q = strategy.nextQuestion();
-				LOGGER.info("Asked {}.", q);
+//				LOGGER.info("Asked {}.", q);
 				final Answer a = oracle.getAnswer(q);
 				knowledge.update(q, a);
 				qBuilder.add(q);
 				tBuilder.add(startTime);
-				System.out.println(qBuilder.build());
-				System.out.println(tBuilder.build());
 			}
 		} catch (IllegalArgumentException e) {
 			/** We want to return the results so far, because there’s no more questions. */
 			e.printStackTrace();
 			System.out.println("ERROR " + knowledge.toString());
-			System.out.println(qBuilder.build());
-			System.out.println(tBuilder.build());
 		}
 
 		final long endTime = System.currentTimeMillis();

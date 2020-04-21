@@ -1,4 +1,4 @@
-package io.github.oliviercailloux.minimax;
+package io.github.oliviercailloux.minimax.old_strategies;
 
 import static com.google.common.base.Preconditions.checkArgument;
 
@@ -21,15 +21,18 @@ import com.google.common.collect.SetMultimap;
 import com.google.common.math.Stats;
 
 import io.github.oliviercailloux.j_voting.VoterStrictPreference;
+import io.github.oliviercailloux.minimax.Strategy;
+import io.github.oliviercailloux.minimax.StrategyPessimistic;
+import io.github.oliviercailloux.minimax.StrategyPessimisticHeuristic;
+import io.github.oliviercailloux.minimax.StrategyRandom;
+import io.github.oliviercailloux.minimax.StrategyTwoPhasesHeuristic;
+import io.github.oliviercailloux.minimax.StrategyTwoPhasesRandom;
+import io.github.oliviercailloux.minimax.StrategyType;
 import io.github.oliviercailloux.minimax.elicitation.Answer;
 import io.github.oliviercailloux.minimax.elicitation.Oracle;
 import io.github.oliviercailloux.minimax.elicitation.PrefKnowledge;
 import io.github.oliviercailloux.minimax.elicitation.Question;
 import io.github.oliviercailloux.minimax.elicitation.QuestionType;
-import io.github.oliviercailloux.minimax.old_strategies.StrategyMiniMaxIncr;
-import io.github.oliviercailloux.minimax.old_strategies.StrategyTaus;
-import io.github.oliviercailloux.minimax.old_strategies.StrategyTwoPhases;
-import io.github.oliviercailloux.minimax.old_strategies.StrategyTwoPhasesTau;
 import io.github.oliviercailloux.minimax.regret.PairwiseMaxRegret;
 import io.github.oliviercailloux.minimax.regret.RegretComputer;
 import io.github.oliviercailloux.minimax.utils.AggregationOperator.AggOps;

@@ -129,4 +129,9 @@ public class StrategyRandom implements Strategy {
 	public void setKnowledge(PrefKnowledge knowledge) {
 		this.knowledge = knowledge;
 	}
+	
+	@Override
+	public String toString() {
+		return "Random";
+	}
 }

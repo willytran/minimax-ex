@@ -155,5 +155,10 @@ public class StrategyTwoPhasesRandom implements Strategy {
 		this.knowledge = knowledge;
 		m = knowledge.getAlternatives().size();
 	}
+	
+	@Override
+	public String toString() {
+		return "TwoPhRandom";
+	}
 
 }

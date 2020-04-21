@@ -287,5 +287,10 @@ public class StrategyPessimisticHeuristic implements Strategy {
 	public static Set<Question> getQuestions() {
 		return questions;
 	}
+	
+	@Override
+	public String toString() {
+		return "LimitedPessimistic";
+	}
 
 }

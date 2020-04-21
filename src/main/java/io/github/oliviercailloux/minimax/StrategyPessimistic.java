@@ -187,5 +187,10 @@ public class StrategyPessimistic implements Strategy {
 	public static List<Question> getNextQuestions() {
 		return nextQuestions;
 	}
+	
+	@Override
+	public String toString() {
+		return "Pessimistic";
+	}
 
 }

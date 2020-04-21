@@ -318,4 +318,8 @@ public class StrategyTwoPhasesHeuristic implements Strategy {
 		return questionsV;
 	}
 
+	@Override
+	public String toString() {
+		return "TwoPhHeuristic";
+	}
 }
