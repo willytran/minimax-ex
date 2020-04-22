@@ -80,8 +80,8 @@ public class StrategyPessimisticHeuristic implements Strategy {
 		final int m = knowledge.getAlternatives().size();
 		checkArgument(m >= 2, "Questions can be asked only if there are at least two alternatives.");
 
-		questions = selectQuestions();
-		checkArgument(!questions.isEmpty(), "No question to ask about weights or voters.");
+		questions = selectQuestions();	
+		assert !questions.isEmpty();
 
 		Question nextQ = questions.iterator().next();
 		double minScore = getScore(nextQ);
@@ -125,7 +125,7 @@ public class StrategyPessimisticHeuristic implements Strategy {
 
 		for (int i = maxRank + 1; i <= knowledge.getAlternatives().size(); i++) {
 			double diff = Math.abs(wBar.getWeightAtRank(i) - wMin.getWeightAtRank(i));
-			if (diff > maxDiff) {
+			if (diff > maxDiff ) {
 				maxDiff = diff;
 				maxRank = i;
 			}

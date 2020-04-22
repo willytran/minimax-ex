@@ -40,10 +40,10 @@ public class StrategyPessimistic implements Strategy {
 	private static AggOps op;
 	private static double w1;
 	private static double w2;
-	
+
 	private static HashMap<Question, Double> questions;
 	private static List<Question> nextQuestions;
-	
+
 	private static final Logger LOGGER = LoggerFactory.getLogger(StrategyPessimistic.class);
 
 	public static StrategyPessimistic build() {
@@ -71,6 +71,13 @@ public class StrategyPessimistic implements Strategy {
 		LOGGER.info("StratPess");
 	}
 
+	/**
+	 * Returns the next question that this strategy thinks is best asking. 
+	 * If the knowledge is complete the strategy refines the scoring vector. 
+	 * 
+	 * @return a question.
+	 * @throws IllegalArgumenteException if there are less than two alternatives.
+	 */
 	@Override
 	public Question nextQuestion() {
 		final int m = knowledge.getAlternatives().size();
@@ -109,7 +116,22 @@ public class StrategyPessimistic implements Strategy {
 			}
 		}
 
-		checkArgument(!questions.isEmpty(), "No question to ask about weights or voters.");
+		if (questions.isEmpty()) {
+			for (int rank : candidateRanks) {
+				final Range<Aprational> lambdaRange = knowledge.getLambdaRange(rank);
+				
+				assert (!lambdaRange.lowerEndpoint().equals(lambdaRange.upperEndpoint())); 
+				
+				final Aprational avg = AprationalMath.sum(lambdaRange.lowerEndpoint(), lambdaRange.upperEndpoint())
+						.divide(new Apint(2));
+				Question q = Question.toCommittee(avg, rank);
+				double score = getScore(q);
+				questions.put(q, score);
+				
+			}
+		}
+
+		assert !questions.isEmpty();
 
 		Question nextQ = questions.keySet().iterator().next();
 		double minScore = questions.get(nextQ);
@@ -172,7 +194,7 @@ public class StrategyPessimistic implements Strategy {
 			throw new IllegalStateException();
 		}
 	}
-	
+
 	@Override
 	public void setKnowledge(PrefKnowledge knowledge) {
 		this.knowledge = knowledge;
@@ -187,7 +209,7 @@ public class StrategyPessimistic implements Strategy {
 	public static List<Question> getNextQuestions() {
 		return nextQuestions;
 	}
-	
+
 	@Override
 	public String toString() {
 		return "Pessimistic";

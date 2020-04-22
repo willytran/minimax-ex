@@ -11,7 +11,7 @@ public interface Strategy {
 	 * Returns the next question that this strategy thinks is best asking.
 	 *
 	 * @return a question.
-	 * @throws IllegalStateException if everything is known.
+	 * @throws IllegalArgumenteException if there are less than two alternatives.
 	 */
 	public Question nextQuestion() throws IllegalStateException;
 }

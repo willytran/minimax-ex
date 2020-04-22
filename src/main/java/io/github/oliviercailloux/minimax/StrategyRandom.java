@@ -73,17 +73,15 @@ public class StrategyRandom implements Strategy {
 		QuestionCommittee qc = null;
 		for (int rank : candidateRanks) {
 			final Range<Aprational> lambdaRange = knowledge.getLambdaRange(rank);
-			// LOGGER.info("Range: {}.", lambdaRange);
-			if (!lambdaRange.lowerEndpoint().equals(lambdaRange.upperEndpoint())) {
-				final Aprational avg = AprationalMath.sum(lambdaRange.lowerEndpoint(), lambdaRange.upperEndpoint())
-						.divide(new Apint(2));
-				qc = QuestionCommittee.given(avg, rank);
-			}
+			final Aprational avg = AprationalMath.sum(lambdaRange.lowerEndpoint(), lambdaRange.upperEndpoint())
+					.divide(new Apint(2));
+			qc = QuestionCommittee.given(avg, rank);
 		}
+
 		final boolean existsQuestionWeight = qc != null;
 		final boolean existsQuestionVoters = !questionableVoters.isEmpty();
 
-		checkArgument(existsQuestionWeight || existsQuestionVoters, "No question to ask about weights or voters.");
+		assert (existsQuestionWeight || existsQuestionVoters);
 
 		final boolean aboutWeight;
 		if (!existsQuestionWeight) {
@@ -129,7 +127,7 @@ public class StrategyRandom implements Strategy {
 	public void setKnowledge(PrefKnowledge knowledge) {
 		this.knowledge = knowledge;
 	}
-	
+
 	@Override
 	public String toString() {
 		return "Random";
