@@ -2,6 +2,7 @@ package io.github.oliviercailloux.minimax.elicitation;
 
 import static com.google.common.base.Preconditions.checkArgument;
 
+import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.Map;
 import java.util.Map.Entry;
@@ -13,6 +14,7 @@ import org.apfloat.Aprational;
 import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.ImmutableSet;
 import com.google.common.collect.Range;
+import com.google.common.graph.Graph;
 
 import io.github.oliviercailloux.j_voting.VoterPartialPreference;
 import io.github.oliviercailloux.jlp.elements.ComparisonOperator;
@@ -150,6 +152,24 @@ public class PrefKnowledge {
 		return lambdaRanges.get(rank);
 	}
 
+	public boolean isProfileComplete() {
+		boolean questionable = false;
+		for (Voter voter : partialProfile.keySet()) {
+			final Graph<Alternative> graph = partialProfile.get(voter).asTransitiveGraph();
+			for (Alternative a1 : alternatives) {
+				if (graph.adjacentNodes(a1).size() != alternatives.size() - 1) {
+					for (Alternative a2 : alternatives) {
+						if (!a1.equals(a2) && !graph.adjacentNodes(a1).contains(a2)) {
+							questionable = true;
+							break;
+						}
+					}
+				}
+			}
+		}	
+		return !questionable;
+	}
+	
 	public void update(Question question, Answer answer) {
 		switch (question.getType()) {
 		case VOTER_QUESTION:
