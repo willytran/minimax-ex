@@ -15,6 +15,8 @@ import org.apfloat.AprationalMath;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import com.google.common.base.Verify;
+import com.google.common.base.VerifyException;
 import com.google.common.collect.Range;
 import com.google.common.collect.SetMultimap;
 import com.google.common.graph.Graph;
@@ -40,9 +42,9 @@ public class StrategyPessimistic implements Strategy {
 	private static AggOps op;
 	private static double w1;
 	private static double w2;
-
 	private static HashMap<Question, Double> questions;
 	private static List<Question> nextQuestions;
+	public boolean profileCompleted;
 
 	private static final Logger LOGGER = LoggerFactory.getLogger(StrategyPessimistic.class);
 
@@ -68,22 +70,23 @@ public class StrategyPessimistic implements Strategy {
 	}
 
 	private StrategyPessimistic() {
-		LOGGER.info("StratPess");
+		profileCompleted = false;
+		LOGGER.info("Pessimistic");
 	}
 
 	/**
-	 * Returns the next question that this strategy thinks is best asking. 
-	 * If the knowledge is complete the strategy refines the scoring vector. 
+	 * Returns the next question that this strategy thinks is best asking. If the
+	 * knowledge is complete the strategy refines the scoring vector.
 	 * 
 	 * @return a question.
-	 * @throws IllegalArgumenteException if there are less than two alternatives.
+	 * @throws VerifyException if there are less than two alternatives or if there
+	 *                         are exactly two alternatives and the profile is
+	 *                         complete.
 	 */
 	@Override
-	public Question nextQuestion() {
+	public Question nextQuestion() throws VerifyException {
 		final int m = knowledge.getAlternatives().size();
-
-		checkArgument(m >= 2, "Questions can be asked only if there are at least two alternatives.");
-
+		Verify.verify(m > 2 || (m == 2 && !profileCompleted));
 		questions = new HashMap<>();
 
 		for (Voter voter : knowledge.getVoters()) {
@@ -100,6 +103,10 @@ public class StrategyPessimistic implements Strategy {
 					}
 				}
 			}
+		}
+
+		if (questions.isEmpty()) {
+			profileCompleted = true;
 		}
 
 		final ArrayList<Integer> candidateRanks = IntStream.rangeClosed(1, m - 2).boxed()
@@ -119,15 +126,15 @@ public class StrategyPessimistic implements Strategy {
 		if (questions.isEmpty()) {
 			for (int rank : candidateRanks) {
 				final Range<Aprational> lambdaRange = knowledge.getLambdaRange(rank);
-				
-				assert (!lambdaRange.lowerEndpoint().equals(lambdaRange.upperEndpoint())); 
-				
+
+				assert (!lambdaRange.lowerEndpoint().equals(lambdaRange.upperEndpoint()));
+
 				final Aprational avg = AprationalMath.sum(lambdaRange.lowerEndpoint(), lambdaRange.upperEndpoint())
 						.divide(new Apint(2));
 				Question q = Question.toCommittee(avg, rank);
 				double score = getScore(q);
 				questions.put(q, score);
-				
+
 			}
 		}
 
@@ -198,6 +205,7 @@ public class StrategyPessimistic implements Strategy {
 	@Override
 	public void setKnowledge(PrefKnowledge knowledge) {
 		this.knowledge = knowledge;
+		profileCompleted = knowledge.isProfileComplete();
 	}
 
 	/** only for testing purposes */

@@ -11,7 +11,9 @@ public interface Strategy {
 	 * Returns the next question that this strategy thinks is best asking.
 	 *
 	 * @return a question.
-	 * @throws IllegalArgumenteException if there are less than two alternatives.
+	 * @throws VerifyException if there are less than two alternatives or if there
+	 *                         are exactly two alternatives and the profile is
+	 *                         complete.
 	 */
 	public Question nextQuestion() throws IllegalStateException;
 }

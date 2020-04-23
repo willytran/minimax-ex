@@ -14,6 +14,7 @@ import org.apfloat.AprationalMath;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import com.google.common.base.Verify;
 import com.google.common.collect.Range;
 import com.google.common.collect.SetMultimap;
 import com.google.common.graph.Graph;
@@ -43,11 +44,11 @@ public class StrategyPessimisticHeuristic implements Strategy {
 	private static AggOps op;
 	private static double w1;
 	private static double w2;
-
 	private static Set<Question> questions;
 	private static List<Question> nextQuestions;
 	private static RegretComputer rc;
-
+	public boolean profileCompleted;
+	
 	private static final Logger LOGGER = LoggerFactory.getLogger(StrategyPessimisticHeuristic.class);
 
 	public static StrategyPessimisticHeuristic build() {
@@ -72,14 +73,14 @@ public class StrategyPessimisticHeuristic implements Strategy {
 	}
 
 	private StrategyPessimisticHeuristic() {
-		LOGGER.info("StratLimPess");
+		profileCompleted = false;
+		LOGGER.info("LimitedPessimistic");
 	}
 
 	@Override
 	public Question nextQuestion() {
 		final int m = knowledge.getAlternatives().size();
-		checkArgument(m >= 2, "Questions can be asked only if there are at least two alternatives.");
-
+		Verify.verify(m > 2 || (m == 2 && !profileCompleted));
 		questions = selectQuestions();	
 		assert !questions.isEmpty();
 
@@ -208,6 +209,9 @@ public class StrategyPessimisticHeuristic implements Strategy {
 				questv.add(qv);
 			}
 		}
+		if (questv.isEmpty()) {
+			profileCompleted = true;
+		}
 		return questv;
 	}
 
@@ -280,6 +284,7 @@ public class StrategyPessimisticHeuristic implements Strategy {
 	@Override
 	public void setKnowledge(PrefKnowledge knowledge) {
 		this.knowledge = knowledge;
+		profileCompleted = knowledge.isProfileComplete();
 		rc = new RegretComputer(knowledge);
 	}
 

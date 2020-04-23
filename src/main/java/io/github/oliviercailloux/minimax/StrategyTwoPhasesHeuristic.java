@@ -14,6 +14,7 @@ import org.apfloat.AprationalMath;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import com.google.common.base.Verify;
 import com.google.common.collect.Range;
 import com.google.common.collect.SetMultimap;
 import com.google.common.graph.Graph;
@@ -83,71 +84,53 @@ public class StrategyTwoPhasesHeuristic implements Strategy {
 		questionsToCommittee = qToCommittee;
 		committeeFirst = cFirst;
 		profileCompleted = false;
-		LOGGER.info("");
+		LOGGER.info("TwoPhHeuristic");
 	}
 
 	/**
 	 * Returns the next question that this strategy thinks is best asking.
 	 * 
-	 * @return a question, or null if (1) there are no more questions or (2) if the
-	 *         number of questions to be asked is reached. E.g. Case (1): we ask x
-	 *         questions to the committee and then we want to ask y questions to the
-	 *         voters, but the maximum number of questions we can ask to the voter
-	 *         is less than y. A particular case of (1) is when the number x of
-	 *         questions that we want to ask to the committee is 0. Case (2): we
-	 *         want to ask y questions to the voters and then x questions to the
-	 *         committee, but the number of questions we can ask to the voter is w <
-	 *         y. What we do is to ask w questions to the voters and then proceed
-	 *         with the x questions to the committee. The number of total questions
-	 *         in both cases is less than x+y.
+	 * @return a question.
 	 * 
-	 * @throws IllegalArgumenteException if there are less than two alternatives.
+	 * @throws VerifyException       if there are less than two alternatives or if
+	 *                               there are exactly two alternatives and the
+	 *                               profile is complete.
+	 * @throws IllegalStateException if the profile is complete and a question for
+	 *                               the voters is demanded.
 	 */
 	@Override
 	public Question nextQuestion() {
 		final int m = knowledge.getAlternatives().size();
-		checkArgument(m >= 2, "Questions can be asked only if there are at least two alternatives.");
-		Question q = null;
+		Verify.verify(m > 2 || (m == 2 && !profileCompleted));
+		assert (questionsToVoters != 0 || questionsToCommittee != 0);
 
-		if (questionsToVoters != 0 || questionsToCommittee != 0) {
-			SetMultimap<Alternative, PairwiseMaxRegret> mmr = rc.getMinimalMaxRegrets().asMultimap();
-			Alternative xStar = mmr.keySet().iterator().next();
-			PairwiseMaxRegret currentSolution = mmr.get(xStar).iterator().next();
-			Alternative yBar = currentSolution.getY();
-			PSRWeights wBar = currentSolution.getWeights();
+		SetMultimap<Alternative, PairwiseMaxRegret> mmr = rc.getMinimalMaxRegrets().asMultimap();
+		Alternative xStar = mmr.keySet().iterator().next();
+		PairwiseMaxRegret currentSolution = mmr.get(xStar).iterator().next();
+		Alternative yBar = currentSolution.getY();
+		PSRWeights wBar = currentSolution.getWeights();
+		Question q;
 
-			if (committeeFirst) {
-				if (questionsToCommittee > 0) {
-					q = selectQuestionToCommittee(wBar, xStar, yBar);
-					questionsToCommittee--;
-				} else {
-					if (questionsToVoters > 0) {
-						q = selectQuestionToVoters(xStar, yBar);
-						if (q != null) {
-							questionsToVoters--;
-						} else {
-							questionsToVoters = 0;
-						}
-					}
-				}
+		if (committeeFirst) {
+			if (questionsToCommittee > 0) {
+				q = selectQuestionToCommittee(wBar, xStar, yBar);
+				questionsToCommittee--;
 			} else {
-				if (questionsToVoters > 0) {
-					q = selectQuestionToVoters(xStar, yBar);
-					if (q != null) {
-						questionsToVoters--;
-					} else {
-						questionsToVoters = 0;
-						q = selectQuestionToCommittee(wBar, xStar, yBar);
-						questionsToCommittee--;
-					}
-				} else {
-					if (questionsToCommittee > 0) {
-						q = selectQuestionToCommittee(wBar, xStar, yBar);
-						questionsToCommittee--;
-					}
-				}
+				q = selectQuestionToVoters(xStar, yBar);
+				questionsToVoters--;
+
+			}
+		} else {
+			if (questionsToVoters > 0) {
+				q = selectQuestionToVoters(xStar, yBar);
+				questionsToVoters--;
+
+			} else {
+				q = selectQuestionToCommittee(wBar, xStar, yBar);
+				questionsToCommittee--;
 			}
 		}
+
 		return q;
 	}
 
@@ -173,30 +156,32 @@ public class StrategyTwoPhasesHeuristic implements Strategy {
 
 	private Question selectQuestionToVoters(Alternative xStar, Alternative yBar) {
 		questionsV = selectQuestionsVoters(xStar, yBar);
-		Question next = null;
-		if (!questionsV.isEmpty()) {
-			Question nextQ = questionsV.iterator().next();
-			double minScore = getScore(nextQ);
-			nextQuestionsV = new LinkedList<>();
-			nextQuestionsV.add(nextQ);
+		if (questionsV.isEmpty()) {
+			profileCompleted = true;
+			throw new IllegalStateException("The profile is complete and a question to the voters has been demanded.");
+		}
 
-			for (Question q : questionsV) {
-				double score = getScore(q);
-				if (score < minScore) {
-					nextQ = q;
-					minScore = score;
-					nextQuestionsV.clear();
-					nextQuestionsV.add(nextQ);
-				} else {
-					if (score == minScore && !nextQuestionsV.contains(q)) {
-						nextQuestionsV.add(q);
-					}
+		Question nextQ = questionsV.iterator().next();
+		double minScore = getScore(nextQ);
+		nextQuestionsV = new LinkedList<>();
+		nextQuestionsV.add(nextQ);
+
+		for (Question q : questionsV) {
+			double score = getScore(q);
+			if (score < minScore) {
+				nextQ = q;
+				minScore = score;
+				nextQuestionsV.clear();
+				nextQuestionsV.add(nextQ);
+			} else {
+				if (score == minScore && !nextQuestionsV.contains(q)) {
+					nextQuestionsV.add(q);
 				}
 			}
-			int randomPos = (int) (nextQuestionsV.size() * Math.random());
-			next = nextQuestionsV.get(randomPos);
 		}
-		return next;
+		int randomPos = (int) (nextQuestionsV.size() * Math.random());
+		return nextQuestionsV.get(randomPos);
+
 	}
 
 	private Set<Question> selectQuestionsVoters(Alternative xStar, Alternative yBar) {
@@ -343,6 +328,7 @@ public class StrategyTwoPhasesHeuristic implements Strategy {
 	public void setKnowledge(PrefKnowledge knowledge) {
 		this.knowledge = knowledge;
 		rc = new RegretComputer(knowledge);
+		profileCompleted = knowledge.isProfileComplete();
 	}
 
 	/** only for testing purposes */

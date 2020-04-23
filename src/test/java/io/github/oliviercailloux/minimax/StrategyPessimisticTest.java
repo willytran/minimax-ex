@@ -10,6 +10,8 @@ import org.apfloat.Apint;
 import org.apfloat.Aprational;
 import org.junit.jupiter.api.Test;
 
+import com.google.common.base.VerifyException;
+
 import io.github.oliviercailloux.minimax.StrategyPessimistic;
 import io.github.oliviercailloux.minimax.elicitation.PrefKnowledge;
 import io.github.oliviercailloux.minimax.elicitation.Question;
@@ -27,16 +29,16 @@ public class StrategyPessimisticTest {
 		final PrefKnowledge k = PrefKnowledge.given(Generator.getAlternatives(1), Generator.getVoters(1));
 		final StrategyPessimistic s = StrategyPessimistic.build();
 		s.setKnowledge(k);
-		assertThrows(IllegalArgumentException.class, () -> s.nextQuestion());
+		assertThrows(VerifyException.class, () -> s.nextQuestion());
 	}
 
 	@Test
 	void testTwoAltsOneVKnown() {
 		final PrefKnowledge k = PrefKnowledge.given(Generator.getAlternatives(2), Generator.getVoters(1));
 		final StrategyPessimistic s = StrategyPessimistic.build();
-		s.setKnowledge(k);
 		k.getProfile().get(new Voter(1)).asGraph().putEdge(new Alternative(1), new Alternative(2));
-		assertThrows(IllegalArgumentException.class, () -> s.nextQuestion());
+		s.setKnowledge(k);
+		assertThrows(VerifyException.class, () -> s.nextQuestion());
 	}
 
 	@Test

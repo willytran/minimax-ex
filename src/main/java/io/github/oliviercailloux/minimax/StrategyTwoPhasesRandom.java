@@ -17,6 +17,7 @@ import org.apfloat.AprationalMath;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import com.google.common.base.Verify;
 import com.google.common.collect.ImmutableSet;
 import com.google.common.collect.Range;
 import com.google.common.collect.SetMultimap;
@@ -34,34 +35,30 @@ public class StrategyTwoPhasesRandom implements Strategy {
 
 	private PrefKnowledge knowledge;
 	public boolean profileCompleted;
-	private static boolean weightsFirst;
+	private boolean committeeFirst;
 	private Random random;
-	private static int nbComQuest;
-	private static int nbVotQuest;
-	private static int m;
+	private static int questionsToCommittee;
+	private static int questionsToVoters;
 
 	private static final Logger LOGGER = LoggerFactory.getLogger(StrategyTwoPhasesRandom.class);
 
 	public static StrategyTwoPhasesRandom build(int nbCommitteeQuestions, int nbVotersQuestions,
 			boolean committeeFirst) {
-		nbComQuest = nbCommitteeQuestions;
-		nbVotQuest = nbVotersQuestions;
-		weightsFirst = committeeFirst;
-		return new StrategyTwoPhasesRandom();
+		return new StrategyTwoPhasesRandom(nbCommitteeQuestions, nbVotersQuestions, committeeFirst);
 	}
 
 	public static StrategyTwoPhasesRandom build(int nbCommitteeQuestions, int nbVotersQuestions) {
-		nbComQuest = nbCommitteeQuestions;
-		nbVotQuest = nbVotersQuestions;
-		weightsFirst = true;
-		return new StrategyTwoPhasesRandom();
+		return new StrategyTwoPhasesRandom(nbCommitteeQuestions, nbVotersQuestions, true);
 	}
 
-	private StrategyTwoPhasesRandom() {
+	private StrategyTwoPhasesRandom(int nbCommitteeQuestions, int nbVotersQuestions, boolean cFirst) {
 		final long seed = ThreadLocalRandom.current().nextLong();
-		LOGGER.info("Using seed: {}.", seed);
+		LOGGER.info("TwoPhRandom. Using seed: {}.", seed);
 		random = new Random(seed);
 		profileCompleted = false;
+		questionsToCommittee = nbCommitteeQuestions;
+		questionsToVoters = nbVotersQuestions;
+		committeeFirst = cFirst;
 	}
 
 	void setRandom(Random random) {
@@ -71,64 +68,47 @@ public class StrategyTwoPhasesRandom implements Strategy {
 	/**
 	 * Returns the next question that this strategy thinks is best asking.
 	 * 
-	 * @return a question, or null if (1) there are no more questions or (2) if the
-	 *         number of questions to be asked is reached. E.g. Case (1): we ask x
-	 *         questions to the committee and then we want to ask y questions to the
-	 *         voters, but the maximum number of questions we can ask to the voter
-	 *         is less than y. A particular case of (1) is when the number x of
-	 *         questions that we want to ask to the committee is 0. Case (2): we
-	 *         want to ask y questions to the voters and then x questions to the
-	 *         committee, but the number of questions we can ask to the voter is w <
-	 *         y. What we do is to ask w questions to the voters and then proceed
-	 *         with the x questions to the committee. The number of total questions
-	 *         in both cases is less than x+y.
+	 * @return a question.
 	 * 
-	 * @throws IllegalArgumenteException if there are less than two alternatives.
+	 * @throws VerifyException       if there are less than two alternatives or if
+	 *                               there are exactly two alternatives and the
+	 *                               profile is complete.
+	 * @throws IllegalStateException if the profile is complete and a question for
+	 *                               the voters is demanded.
 	 */
 	@Override
 	public Question nextQuestion() {
-		checkArgument(m >= 2, "Questions can be asked only if there are at least two alternatives.");
-		Question q = null;
+		final int m = knowledge.getAlternatives().size();
+		Verify.verify(m > 2 || (m == 2 && !profileCompleted));
+		assert (questionsToVoters != 0 || questionsToCommittee != 0);
+		Question q;
 
-		if (nbVotQuest != 0 || nbComQuest != 0) {
-
-			if (weightsFirst) {
-				if (nbComQuest > 0) {
-					q = questionToCom();
-					nbComQuest--;
-				} else {
-					if (nbVotQuest > 0) {
-						q = questionToVot();
-						if (q != null) {
-							nbVotQuest--;
-						} else {
-							nbVotQuest = 0;
-						}
-					}
-				}
+		if (committeeFirst) {
+			if (questionsToCommittee > 0) {
+				q = questionToCommittee();
+				questionsToCommittee--;
 			} else {
-				if (nbVotQuest > 0) {
-					q = questionToVot();
-					if (q != null) {
-						nbVotQuest--;
-					} else {
-						nbVotQuest = 0;
-						q = questionToCom();
-						nbComQuest--;
-					}
-				} else {
-					if (nbComQuest > 0) {
-						q = questionToCom();
-						nbComQuest--;
-					}
-				}
+				q = questionToVoters();
+				questionsToVoters--;
+
+			}
+		} else {
+			if (questionsToVoters > 0) {
+				q = questionToVoters();
+				questionsToVoters--;
+
+			} else {
+				q = questionToCommittee();
+				questionsToCommittee--;
 			}
 		}
+
 		return q;
 	}
 
-	private Question questionToVot() {
+	private Question questionToVoters() {
 		final ImmutableSet.Builder<Voter> questionableVotersBuilder = ImmutableSet.builder();
+		final int m = knowledge.getAlternatives().size();
 		for (Voter voter : knowledge.getVoters()) {
 			final Graph<Alternative> graph = knowledge.getProfile().get(voter).asTransitiveGraph();
 			if (graph.edges().size() != m * (m - 1) / 2) {
@@ -136,31 +116,30 @@ public class StrategyTwoPhasesRandom implements Strategy {
 			}
 		}
 		final ImmutableSet<Voter> questionableVoters = questionableVotersBuilder.build();
-		Question q = null;
 
-		if (!questionableVoters.isEmpty()) {
-			final int idx = random.nextInt(questionableVoters.size());
-			final Voter voter = questionableVoters.asList().get(idx);
-			final ArrayList<Alternative> altsRandomOrder = new ArrayList<>(knowledge.getAlternatives());
-			Collections.shuffle(altsRandomOrder, random);
-			final Graph<Alternative> graph = knowledge.getProfile().get(voter).asTransitiveGraph();
-			final Optional<Alternative> withIncomparabilities = altsRandomOrder.stream()
-					.filter((a1) -> graph.adjacentNodes(a1).size() != m - 1).findAny();
-			assert withIncomparabilities.isPresent();
-			final Alternative a1 = withIncomparabilities.get();
-			final Optional<Alternative> incomparable = altsRandomOrder.stream()
-					.filter((a2) -> !a1.equals(a2) && !graph.adjacentNodes(a1).contains(a2)).findAny();
-			assert incomparable.isPresent();
-			final Alternative a2 = incomparable.get();
-
-			q = Question.toVoter(voter, a1, a2);
-		} else {
+		if (questionableVoters.isEmpty()) {
 			profileCompleted = true;
+			throw new IllegalStateException("The profile is complete and a question to the voters has been demanded.");
 		}
-		return q;
+		final int idx = random.nextInt(questionableVoters.size());
+		final Voter voter = questionableVoters.asList().get(idx);
+		final ArrayList<Alternative> altsRandomOrder = new ArrayList<>(knowledge.getAlternatives());
+		Collections.shuffle(altsRandomOrder, random);
+		final Graph<Alternative> graph = knowledge.getProfile().get(voter).asTransitiveGraph();
+		final Optional<Alternative> withIncomparabilities = altsRandomOrder.stream()
+				.filter((a1) -> graph.adjacentNodes(a1).size() != m - 1).findAny();
+		assert withIncomparabilities.isPresent();
+		final Alternative a1 = withIncomparabilities.get();
+		final Optional<Alternative> incomparable = altsRandomOrder.stream()
+				.filter((a2) -> !a1.equals(a2) && !graph.adjacentNodes(a1).contains(a2)).findAny();
+		assert incomparable.isPresent();
+		final Alternative a2 = incomparable.get();
+
+		return Question.toVoter(voter, a1, a2);
 	}
 
-	private Question questionToCom() {
+	private Question questionToCommittee() {
+		final int m = knowledge.getAlternatives().size();
 		final ArrayList<Integer> candidateRanks = IntStream.rangeClosed(1, m - 2).boxed()
 				.collect(Collectors.toCollection(ArrayList::new));
 		Collections.shuffle(candidateRanks, random);
@@ -178,7 +157,7 @@ public class StrategyTwoPhasesRandom implements Strategy {
 	@Override
 	public void setKnowledge(PrefKnowledge knowledge) {
 		this.knowledge = knowledge;
-		m = knowledge.getAlternatives().size();
+		profileCompleted = knowledge.isProfileComplete();
 	}
 
 	@Override

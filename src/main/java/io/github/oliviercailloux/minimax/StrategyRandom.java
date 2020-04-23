@@ -17,6 +17,7 @@ import org.apfloat.AprationalMath;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import com.google.common.base.Verify;
 import com.google.common.collect.ImmutableSet;
 import com.google.common.collect.Range;
 import com.google.common.graph.Graph;
@@ -43,7 +44,7 @@ public class StrategyRandom implements Strategy {
 
 	private StrategyRandom() {
 		final long seed = ThreadLocalRandom.current().nextLong();
-		LOGGER.info("Using seed: {}.", seed);
+		LOGGER.info("Random. Using seed: {}.", seed);
 		random = new Random(seed);
 		profileCompleted = false;
 	}
@@ -55,9 +56,7 @@ public class StrategyRandom implements Strategy {
 	@Override
 	public Question nextQuestion() {
 		final int m = knowledge.getAlternatives().size();
-
-		checkArgument(m >= 2, "Questions can be asked only if there are at least two alternatives.");
-
+		Verify.verify(m > 2 || (m == 2 && !profileCompleted));
 		final ImmutableSet.Builder<Voter> questionableVotersBuilder = ImmutableSet.builder();
 		for (Voter voter : knowledge.getVoters()) {
 			final Graph<Alternative> graph = knowledge.getProfile().get(voter).asTransitiveGraph();
@@ -126,6 +125,7 @@ public class StrategyRandom implements Strategy {
 	@Override
 	public void setKnowledge(PrefKnowledge knowledge) {
 		this.knowledge = knowledge;
+		profileCompleted = knowledge.isProfileComplete();
 	}
 
 	@Override
