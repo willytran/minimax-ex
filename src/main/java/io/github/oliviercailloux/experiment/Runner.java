@@ -20,42 +20,35 @@ import io.github.oliviercailloux.minimax.StrategyPessimistic;
 import io.github.oliviercailloux.minimax.StrategyPessimisticHeuristic;
 import io.github.oliviercailloux.minimax.StrategyRandom;
 import io.github.oliviercailloux.minimax.StrategyTwoPhasesHeuristic;
-import io.github.oliviercailloux.minimax.StrategyTwoPhasesRandom;
-import io.github.oliviercailloux.minimax.StrategyType;
 import io.github.oliviercailloux.minimax.elicitation.Answer;
 import io.github.oliviercailloux.minimax.elicitation.Oracle;
 import io.github.oliviercailloux.minimax.elicitation.PrefKnowledge;
 import io.github.oliviercailloux.minimax.elicitation.Question;
 import io.github.oliviercailloux.minimax.elicitation.QuestionType;
-import io.github.oliviercailloux.minimax.old_strategies.StrategyMiniMaxIncr;
-import io.github.oliviercailloux.minimax.old_strategies.StrategyTaus;
-import io.github.oliviercailloux.minimax.old_strategies.StrategyTwoPhases;
-import io.github.oliviercailloux.minimax.old_strategies.StrategyTwoPhasesTau;
 import io.github.oliviercailloux.minimax.utils.AggregationOperator.AggOps;
 import io.github.oliviercailloux.minimax.utils.Generator;
 
 public class Runner {
 	@SuppressWarnings("unused")
 	private static final Logger LOGGER = LoggerFactory.getLogger(Runner.class);
-
 	private static final String root = Paths.get("").toAbsolutePath() + "/experiments/";
 
 	public static void main(String[] args) throws IOException {
 		boolean committeeFirst = true;
-		final int k = 500; // nbQuestions
-		final int nbRuns = 25;
+		final int k = 50; // nbQuestions
+		final int nbRuns = 1;
 		final int m = 3; // alternatives
 		final int n = 3; // agents
 		String head = "nbQst = " + k;
 
-		Strategy stRandom = StrategyRandom.build();
-		runXP(k, nbRuns, m, n, stRandom, head);
-
-		Strategy stPessimistic = StrategyPessimistic.build(AggOps.MAX);
-		runXP(k, nbRuns, m, n, stPessimistic, head);
-
-		Strategy stLimitedPess = StrategyPessimisticHeuristic.build(AggOps.MAX);
-		runXP(k, nbRuns, m, n, stLimitedPess, head);
+//		Strategy stRandom = StrategyRandom.build();
+//		runXP(k, nbRuns, m, n, stRandom, head);
+//
+//		Strategy stPessimistic = StrategyPessimistic.build(AggOps.MAX);
+//		runXP(k, nbRuns, m, n, stPessimistic, head);
+//
+//		Strategy stLimitedPess = StrategyPessimisticHeuristic.build(AggOps.MAX);
+//		runXP(k, nbRuns, m, n, stLimitedPess, head);
 
 		Strategy stTwoPhHeuristic;
 		for (int i = 0; i <= k; i += 50) {
@@ -64,12 +57,12 @@ public class Runner {
 			runXP(k, nbRuns, m, n, stTwoPhHeuristic, head);
 		}
 
-		committeeFirst = false;
-		for (int i = 0; i <= k; i += 50) {
-			stTwoPhHeuristic = StrategyTwoPhasesHeuristic.build(i, (k - i), committeeFirst);
-			head = "qV = " + i + " then qC = " + (k - i);
-			runXP(k, nbRuns, m, n, stTwoPhHeuristic, head);
-		}
+//		committeeFirst = false;
+//		for (int i = 0; i <= k; i += 50) {
+//			stTwoPhHeuristic = StrategyTwoPhasesHeuristic.build(i, (k - i), committeeFirst);
+//			head = "qV = " + i + " then qC = " + (k - i);
+//			runXP(k, nbRuns, m, n, stTwoPhHeuristic, head);
+//		}
 
 	}
 
@@ -170,20 +163,17 @@ public class Runner {
 
 		final ImmutableList.Builder<Question> qBuilder = ImmutableList.builder();
 		final ImmutableList.Builder<Long> tBuilder = ImmutableList.builder();
-		try {
-			for (int i = 1; i <= k; i++) {
-				final long startTime = System.currentTimeMillis();
-				final Question q = strategy.nextQuestion();
-//				LOGGER.info("Asked {}.", q);
+
+		for (int i = 1; i <= k; i++) {
+			final long startTime = System.currentTimeMillis();
+			final Question q = strategy.nextQuestion();
+			if (q != null) {
 				final Answer a = oracle.getAnswer(q);
 				knowledge.update(q, a);
-				qBuilder.add(q);
-				tBuilder.add(startTime);
-			}
-		} catch (IllegalArgumentException e) {
-			/** We want to return the results so far, because there’s no more questions. */
-			e.printStackTrace();
-			System.out.println("ERROR " + knowledge.toString());
+			} // we don't stop the for so that all runs have the same nb of questions
+			LOGGER.info("Asked {}.", q);
+			qBuilder.add(q);
+			tBuilder.add(startTime);
 		}
 
 		final long endTime = System.currentTimeMillis();
