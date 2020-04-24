@@ -35,34 +35,28 @@ public class Runner {
 
 	public static void main(String[] args) throws IOException {
 		boolean committeeFirst = true;
-		final int k = 50; // nbQuestions
-		final int nbRuns = 1;
-		final int m = 3; // alternatives
-		final int n = 3; // agents
+		final int k = 500; // nbQuestions
+		final int nbRuns = 10;
+		final int m = 10; // alternatives
+		final int n = 20; // agents
 		String head = "nbQst = " + k;
 
-//		Strategy stRandom = StrategyRandom.build();
-//		runXP(k, nbRuns, m, n, stRandom, head);
-//
-//		Strategy stPessimistic = StrategyPessimistic.build(AggOps.MAX);
-//		runXP(k, nbRuns, m, n, stPessimistic, head);
-//
-//		Strategy stLimitedPess = StrategyPessimisticHeuristic.build(AggOps.MAX);
-//		runXP(k, nbRuns, m, n, stLimitedPess, head);
+		Strategy stRandom = StrategyRandom.build();
+		runXP(k, nbRuns, m, n, stRandom, head);
 
-		Strategy stTwoPhHeuristic;
-		for (int i = 0; i <= k; i += 50) {
-			stTwoPhHeuristic = StrategyTwoPhasesHeuristic.build(i, (k - i), committeeFirst);
-			head = "qC = " + (k - i) + " then qV = " + i;
-			runXP(k, nbRuns, m, n, stTwoPhHeuristic, head);
-		}
+		Strategy stPessimistic = StrategyPessimistic.build(AggOps.MAX);
+		runXP(k, nbRuns, m, n, stPessimistic, head);
 
-//		committeeFirst = false;
-//		for (int i = 0; i <= k; i += 50) {
-//			stTwoPhHeuristic = StrategyTwoPhasesHeuristic.build(i, (k - i), committeeFirst);
-//			head = "qV = " + i + " then qC = " + (k - i);
-//			runXP(k, nbRuns, m, n, stTwoPhHeuristic, head);
-//		}
+		Strategy stLimitedPess = StrategyPessimisticHeuristic.build(AggOps.MAX);
+		runXP(k, nbRuns, m, n, stLimitedPess, head);
+
+		Strategy stTwoPhHeuristic = StrategyTwoPhasesHeuristic.build(350, 150, committeeFirst);
+		head = "qC = " + 150 + " then qV = " + 350;
+		runXP(k, nbRuns, m, n, stTwoPhHeuristic, head);
+
+		stTwoPhHeuristic = StrategyTwoPhasesHeuristic.build(350, 150, !committeeFirst);
+		head = "qV = " + 350 + " then qC = " + 150;
+		runXP(k, nbRuns, m, n, stTwoPhHeuristic, head);
 
 	}
 
@@ -88,7 +82,6 @@ public class Runner {
 
 		for (int j = 0; j < k + 1; ++j) {
 			writer.addValue(j);
-			System.out.println("Avg regret for " + j + " questions");
 			for (int col = 0; col < results.size(); ++col) {
 				double avg;
 				if (j < results.values().asList().get(col).size()) {
@@ -133,16 +126,9 @@ public class Runner {
 		for (int i = 0; i < nbQuestions; i++) {
 			qstWriter.addValue(i + 1);
 			for (int col = 0; col < nbRuns; col++) {
-				Question q;
 				final ImmutableList<Question> questions = runs.getRun(col).getQuestions();
-				if (i < questions.size()) {
-					q = questions.get(i);
-				} else {
-					q = null;
-				}
-				if (q == null) {
-					qstWriter.addValue(-1);
-				} else if (q.getType().equals(QuestionType.COMMITTEE_QUESTION)) {
+				final Question q = questions.get(i);
+				if (q.getType().equals(QuestionType.COMMITTEE_QUESTION)) {
 					qstWriter.addValue(0);
 				} else {
 					qstWriter.addValue(1);
@@ -167,11 +153,9 @@ public class Runner {
 		for (int i = 1; i <= k; i++) {
 			final long startTime = System.currentTimeMillis();
 			final Question q = strategy.nextQuestion();
-			if (q != null) {
-				final Answer a = oracle.getAnswer(q);
-				knowledge.update(q, a);
-			} // we don't stop the for so that all runs have the same nb of questions
-			LOGGER.info("Asked {}.", q);
+			final Answer a = oracle.getAnswer(q);
+			knowledge.update(q, a);
+//			LOGGER.info("Asked {}.", q);
 			qBuilder.add(q);
 			tBuilder.add(startTime);
 		}
