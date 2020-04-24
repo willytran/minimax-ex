@@ -109,7 +109,6 @@ public class PrefKnowledge {
 	public void addConstraint(int rank, ComparisonOperator op, Aprational lambda) {
 		checkArgument(rank >= 1);
 		checkArgument(rank <= alternatives.size() - 2);
-		cow.addConstraint(rank, op, lambda.doubleValue());
 
 		/** The constraint is that D_i/D_{i+1} OP lambda. */
 		final Range<Aprational> providedRange;
@@ -131,6 +130,8 @@ public class PrefKnowledge {
 				"The provided constraint makes the program infeasible.");
 		final Range<Aprational> restr = existingRange.intersection(providedRange);
 		checkArgument(!restr.isEmpty(), "The provided constraint makes the program (just) infeasible.");
+
+		cow.addConstraint(rank, op, lambda.doubleValue());
 		lambdaRanges.put(rank, restr);
 	}
 
