@@ -30,8 +30,6 @@ import io.github.oliviercailloux.y2018.j_voting.Voter;
 
 public class StrategyRandom implements Strategy {
 
-	public boolean profileCompleted;
-
 	private static final Logger LOGGER = LoggerFactory.getLogger(StrategyRandom.class);
 
 	public static StrategyRandom build() {
@@ -46,7 +44,6 @@ public class StrategyRandom implements Strategy {
 		final long seed = ThreadLocalRandom.current().nextLong();
 		LOGGER.info("Random. Using seed: {}.", seed);
 		random = new Random(seed);
-		profileCompleted = false;
 	}
 
 	void setRandom(Random random) {
@@ -56,7 +53,7 @@ public class StrategyRandom implements Strategy {
 	@Override
 	public Question nextQuestion() {
 		final int m = knowledge.getAlternatives().size();
-		Verify.verify(m > 2 || (m == 2 && !profileCompleted));
+		Verify.verify(m > 2 || (m == 2 && !knowledge.isProfileComplete()));
 		final ImmutableSet.Builder<Voter> questionableVotersBuilder = ImmutableSet.builder();
 		for (Voter voter : knowledge.getVoters()) {
 			final Graph<Alternative> graph = knowledge.getProfile().get(voter).asTransitiveGraph();
@@ -114,18 +111,12 @@ public class StrategyRandom implements Strategy {
 			final Alternative a2 = incomparable.get();
 			q = Question.toVoter(voter, a1, a2);
 		}
-
-		if (!existsQuestionVoters) {
-			profileCompleted = true;
-		}
-
 		return q;
 	}
 
 	@Override
 	public void setKnowledge(PrefKnowledge knowledge) {
 		this.knowledge = knowledge;
-		profileCompleted = knowledge.isProfileComplete();
 	}
 
 	@Override

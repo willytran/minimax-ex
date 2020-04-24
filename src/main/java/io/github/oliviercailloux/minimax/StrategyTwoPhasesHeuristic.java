@@ -41,7 +41,6 @@ import io.github.oliviercailloux.y2018.j_voting.Voter;
 public class StrategyTwoPhasesHeuristic implements Strategy {
 
 	private PrefKnowledge knowledge;
-	public boolean profileCompleted;
 	private static AggOps op;
 	private static double w1;
 	private static double w2;
@@ -83,7 +82,6 @@ public class StrategyTwoPhasesHeuristic implements Strategy {
 		questionsToVoters = qToVoters;
 		questionsToCommittee = qToCommittee;
 		committeeFirst = cFirst;
-		profileCompleted = false;
 		LOGGER.info("TwoPhHeuristic");
 	}
 
@@ -101,7 +99,7 @@ public class StrategyTwoPhasesHeuristic implements Strategy {
 	@Override
 	public Question nextQuestion() {
 		final int m = knowledge.getAlternatives().size();
-		Verify.verify(m > 2 || (m == 2 && !profileCompleted));
+		Verify.verify(m > 2 || (m == 2 && !knowledge.isProfileComplete()));
 		assert (questionsToVoters != 0 || questionsToCommittee != 0);
 
 		SetMultimap<Alternative, PairwiseMaxRegret> mmr = rc.getMinimalMaxRegrets().asMultimap();
@@ -157,7 +155,6 @@ public class StrategyTwoPhasesHeuristic implements Strategy {
 	private Question selectQuestionToVoters(Alternative xStar, Alternative yBar) {
 		questionsV = selectQuestionsVoters(xStar, yBar);
 		if (questionsV.isEmpty()) {
-			profileCompleted = true;
 			throw new IllegalStateException("The profile is complete and a question to the voters has been demanded.");
 		}
 
@@ -328,7 +325,6 @@ public class StrategyTwoPhasesHeuristic implements Strategy {
 	public void setKnowledge(PrefKnowledge knowledge) {
 		this.knowledge = knowledge;
 		rc = new RegretComputer(knowledge);
-		profileCompleted = knowledge.isProfileComplete();
 	}
 
 	/** only for testing purposes */

@@ -36,8 +36,8 @@ public class StrategyPessimisticTest {
 	void testTwoAltsOneVKnown() {
 		final PrefKnowledge k = PrefKnowledge.given(Generator.getAlternatives(2), Generator.getVoters(1));
 		final StrategyPessimistic s = StrategyPessimistic.build();
-		k.getProfile().get(new Voter(1)).asGraph().putEdge(new Alternative(1), new Alternative(2));
 		s.setKnowledge(k);
+		k.getProfile().get(new Voter(1)).asGraph().putEdge(new Alternative(1), new Alternative(2));
 		assertThrows(VerifyException.class, () -> s.nextQuestion());
 	}
 

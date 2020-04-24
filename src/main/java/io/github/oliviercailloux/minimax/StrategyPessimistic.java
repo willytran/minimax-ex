@@ -44,7 +44,6 @@ public class StrategyPessimistic implements Strategy {
 	private static double w2;
 	private static HashMap<Question, Double> questions;
 	private static List<Question> nextQuestions;
-	public boolean profileCompleted;
 
 	private static final Logger LOGGER = LoggerFactory.getLogger(StrategyPessimistic.class);
 
@@ -70,7 +69,6 @@ public class StrategyPessimistic implements Strategy {
 	}
 
 	private StrategyPessimistic() {
-		profileCompleted = false;
 		LOGGER.info("Pessimistic");
 	}
 
@@ -86,7 +84,7 @@ public class StrategyPessimistic implements Strategy {
 	@Override
 	public Question nextQuestion() throws VerifyException {
 		final int m = knowledge.getAlternatives().size();
-		Verify.verify(m > 2 || (m == 2 && !profileCompleted));
+		Verify.verify(m > 2 || (m == 2 && !knowledge.isProfileComplete()));
 		questions = new HashMap<>();
 
 		for (Voter voter : knowledge.getVoters()) {
@@ -103,10 +101,6 @@ public class StrategyPessimistic implements Strategy {
 					}
 				}
 			}
-		}
-
-		if (questions.isEmpty()) {
-			profileCompleted = true;
 		}
 
 		final ArrayList<Integer> candidateRanks = IntStream.rangeClosed(1, m - 2).boxed()
@@ -205,7 +199,6 @@ public class StrategyPessimistic implements Strategy {
 	@Override
 	public void setKnowledge(PrefKnowledge knowledge) {
 		this.knowledge = knowledge;
-		profileCompleted = knowledge.isProfileComplete();
 	}
 
 	/** only for testing purposes */

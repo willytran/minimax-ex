@@ -47,7 +47,6 @@ public class StrategyPessimisticHeuristic implements Strategy {
 	private static Set<Question> questions;
 	private static List<Question> nextQuestions;
 	private static RegretComputer rc;
-	public boolean profileCompleted;
 	
 	private static final Logger LOGGER = LoggerFactory.getLogger(StrategyPessimisticHeuristic.class);
 
@@ -73,14 +72,13 @@ public class StrategyPessimisticHeuristic implements Strategy {
 	}
 
 	private StrategyPessimisticHeuristic() {
-		profileCompleted = false;
 		LOGGER.info("LimitedPessimistic");
 	}
 
 	@Override
 	public Question nextQuestion() {
 		final int m = knowledge.getAlternatives().size();
-		Verify.verify(m > 2 || (m == 2 && !profileCompleted));
+		Verify.verify(m > 2 || (m == 2 && !knowledge.isProfileComplete()));
 		questions = selectQuestions();	
 		assert !questions.isEmpty();
 
@@ -209,9 +207,7 @@ public class StrategyPessimisticHeuristic implements Strategy {
 				questv.add(qv);
 			}
 		}
-		if (questv.isEmpty()) {
-			profileCompleted = true;
-		}
+		
 		return questv;
 	}
 
@@ -284,7 +280,6 @@ public class StrategyPessimisticHeuristic implements Strategy {
 	@Override
 	public void setKnowledge(PrefKnowledge knowledge) {
 		this.knowledge = knowledge;
-		profileCompleted = knowledge.isProfileComplete();
 		rc = new RegretComputer(knowledge);
 	}
 

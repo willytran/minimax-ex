@@ -42,10 +42,10 @@ class StrategyRandomTest {
 	void testTwoAltsOneVKnown() {
 		final PrefKnowledge k = PrefKnowledge.given(Generator.getAlternatives(2), Generator.getVoters(1));
 		final StrategyRandom s = StrategyRandom.build();
+		s.setKnowledge(k);
 		final Random notRandom = new Random(0);
 		s.setRandom(notRandom);
 		k.getProfile().get(new Voter(1)).asGraph().putEdge(new Alternative(1), new Alternative(2));
-		s.setKnowledge(k);
 		assertThrows(VerifyException.class, () -> s.nextQuestion());
 	}
 
@@ -76,7 +76,7 @@ class StrategyRandomTest {
 		final StrategyRandom s = StrategyRandom.build();
 		final Random notRandom = new Random(0);
 		s.setRandom(notRandom);
-
+		s.setKnowledge(k);
 		final MutableGraph<Alternative> g1 = k.getProfile().get(new Voter(1)).asGraph();
 		g1.putEdge(new Alternative(1), new Alternative(2));
 		g1.putEdge(new Alternative(2), new Alternative(3));
@@ -86,7 +86,6 @@ class StrategyRandomTest {
 		g2.putEdge(new Alternative(1), new Alternative(2));
 		g2.putEdge(new Alternative(2), new Alternative(3));
 		g2.putEdge(new Alternative(3), new Alternative(4));
-		s.setKnowledge(k);
 		assertEquals(Question.toCommittee(new Aprational(new Apint(3), new Apint(2)), 2), s.nextQuestion());
 	}
 
@@ -96,13 +95,13 @@ class StrategyRandomTest {
 		final StrategyRandom s = StrategyRandom.build();
 		final Random notRandom = new Random(0);
 		s.setRandom(notRandom);
+		s.setKnowledge(k);
 		final MutableGraph<Alternative> g1 = k.getProfile().get(new Voter(1)).asGraph();
 		g1.putEdge(new Alternative(1), new Alternative(2));
 		g1.putEdge(new Alternative(2), new Alternative(3));
 		final MutableGraph<Alternative> g2 = k.getProfile().get(new Voter(2)).asGraph();
 		g2.putEdge(new Alternative(1), new Alternative(2));
 		g2.putEdge(new Alternative(2), new Alternative(3));
-		s.setKnowledge(k);
 		assertEquals(Question.toCommittee(new Aprational(new Apint(3), new Apint(2)), 1), s.nextQuestion());
 	}
 
@@ -112,6 +111,7 @@ class StrategyRandomTest {
 		final StrategyRandom s = StrategyRandom.build();
 		final Random notRandom = new Random(0);
 		s.setRandom(notRandom);
+		s.setKnowledge(k);
 		final MutableGraph<Alternative> g1 = k.getProfile().get(new Voter(1)).asGraph();
 		g1.putEdge(new Alternative(1), new Alternative(2));
 		g1.putEdge(new Alternative(2), new Alternative(3));
@@ -119,8 +119,7 @@ class StrategyRandomTest {
 		g2.putEdge(new Alternative(1), new Alternative(2));
 		g2.putEdge(new Alternative(2), new Alternative(3));
 		k.addConstraint(1, ComparisonOperator.EQ, new Apint(1));
-		s.setKnowledge(k);
-		assertTrue(s.profileCompleted);
+		assertTrue(k.isProfileComplete());
 		assertTrue(s.nextQuestion().getType() == QuestionType.COMMITTEE_QUESTION);
 //		prof complete and next qst is committee 
 	}
@@ -131,11 +130,11 @@ class StrategyRandomTest {
 		final StrategyRandom s = StrategyRandom.build();
 		final Random notRandom = new Random(0);
 		s.setRandom(notRandom);
+		s.setKnowledge(k);
 		final MutableGraph<Alternative> g = k.getProfile().get(new Voter(1)).asGraph();
 		g.putEdge(new Alternative(1), new Alternative(2));
 		g.putEdge(new Alternative(2), new Alternative(3));
-		s.setKnowledge(k);
-		assertTrue(s.profileCompleted);
+		assertTrue(k.isProfileComplete());
 		assertTrue(s.nextQuestion().getType() == QuestionType.COMMITTEE_QUESTION);
 //		prof complete and next qst is committee 
 	}

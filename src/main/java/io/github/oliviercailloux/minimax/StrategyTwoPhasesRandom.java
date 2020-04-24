@@ -34,7 +34,6 @@ import io.github.oliviercailloux.y2018.j_voting.Voter;
 public class StrategyTwoPhasesRandom implements Strategy {
 
 	private PrefKnowledge knowledge;
-	public boolean profileCompleted;
 	private boolean committeeFirst;
 	private Random random;
 	private static int questionsToCommittee;
@@ -55,7 +54,6 @@ public class StrategyTwoPhasesRandom implements Strategy {
 		final long seed = ThreadLocalRandom.current().nextLong();
 		LOGGER.info("TwoPhRandom. Using seed: {}.", seed);
 		random = new Random(seed);
-		profileCompleted = false;
 		questionsToCommittee = nbCommitteeQuestions;
 		questionsToVoters = nbVotersQuestions;
 		committeeFirst = cFirst;
@@ -79,7 +77,7 @@ public class StrategyTwoPhasesRandom implements Strategy {
 	@Override
 	public Question nextQuestion() {
 		final int m = knowledge.getAlternatives().size();
-		Verify.verify(m > 2 || (m == 2 && !profileCompleted));
+		Verify.verify(m > 2 || (m == 2 && !knowledge.isProfileComplete()));
 		assert (questionsToVoters != 0 || questionsToCommittee != 0);
 		Question q;
 
@@ -118,7 +116,6 @@ public class StrategyTwoPhasesRandom implements Strategy {
 		final ImmutableSet<Voter> questionableVoters = questionableVotersBuilder.build();
 
 		if (questionableVoters.isEmpty()) {
-			profileCompleted = true;
 			throw new IllegalStateException("The profile is complete and a question to the voters has been demanded.");
 		}
 		final int idx = random.nextInt(questionableVoters.size());
@@ -157,7 +154,6 @@ public class StrategyTwoPhasesRandom implements Strategy {
 	@Override
 	public void setKnowledge(PrefKnowledge knowledge) {
 		this.knowledge = knowledge;
-		profileCompleted = knowledge.isProfileComplete();
 	}
 
 	@Override
