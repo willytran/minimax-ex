@@ -12,6 +12,7 @@ import org.slf4j.LoggerFactory;
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.Iterators;
 import com.google.common.collect.PeekingIterator;
+import com.google.common.math.Stats;
 
 import io.github.oliviercailloux.minimax.elicitation.Oracle;
 import io.github.oliviercailloux.minimax.elicitation.PrefKnowledge;
@@ -84,6 +85,17 @@ public class Run {
 		final ImmutableList<Long> times = builder.build();
 		verify(times.stream().mapToLong(Long::longValue).sum() == getTotalTimeMs());
 		return times;
+	}
+
+	public Long getAvgQuestionTimesMs() {
+		ImmutableList<Long> times = this.getQuestionTimesMs();
+		long sum = 0;
+		for (int i = 0; i < times.size(); i++) {
+			sum += times.get(i);
+		}
+//		Stats stat = Stats.of(times);
+//		stat.mean();
+		return sum/times.size();
 	}
 
 	public int getNbQVoters() {
