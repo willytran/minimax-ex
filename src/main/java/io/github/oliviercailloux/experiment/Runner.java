@@ -48,17 +48,17 @@ public class Runner {
 //		runXP(k, nbRuns, m, n, stPessimistic, head);
 
 		Strategy stLimitedPess = StrategyPessimisticHeuristic.build(AggOps.MAX);
-//		runXP(k, nbRuns, 5, 10, stLimitedPess, head);
+		runXP(k, nbRuns, 5, 10, stLimitedPess, head);
 		stLimitedPess = StrategyPessimisticHeuristic.build(AggOps.MAX);
-//		runXP(k, nbRuns, 5, 15, stLimitedPess, head);
+		runXP(k, nbRuns, 5, 15, stLimitedPess, head);
 		stLimitedPess = StrategyPessimisticHeuristic.build(AggOps.MAX);
-//		runXP(k, nbRuns, 5, 20, stLimitedPess, head);
+		runXP(k, nbRuns, 5, 20, stLimitedPess, head);
 		stLimitedPess = StrategyPessimisticHeuristic.build(AggOps.MAX);
-//		runXP(800, nbRuns, 10, 20, stLimitedPess, "nbQst = " +800);
+		runXP(800, nbRuns, 10, 20, stLimitedPess, "nbQst = " +800);
 		stLimitedPess = StrategyPessimisticHeuristic.build(AggOps.MAX);
 		runXP(800, 10, 10, 30, stLimitedPess, "nbQst = " +800);
 		stLimitedPess = StrategyPessimisticHeuristic.build(AggOps.MAX);
-		runXP(800, 10, 15, 30, stLimitedPess, "nbQst = " +1000);
+		runXP(800, 10, 15, 30, stLimitedPess, "nbQst = " +800);
 				
 //		Strategy stTwoPhHeuristic = StrategyTwoPhasesHeuristic.build(350, 150, committeeFirst);
 //		head = "qC = " + 150 + " then qV = " + 350;
