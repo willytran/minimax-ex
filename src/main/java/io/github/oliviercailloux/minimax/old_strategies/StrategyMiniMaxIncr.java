@@ -25,6 +25,7 @@ import com.google.common.graph.Graph;
 import io.github.oliviercailloux.jlp.elements.SumTerms;
 import io.github.oliviercailloux.jlp.elements.SumTermsBuilder;
 import io.github.oliviercailloux.minimax.Strategy;
+import io.github.oliviercailloux.minimax.StrategyType;
 import io.github.oliviercailloux.minimax.elicitation.ConstraintsOnWeights;
 import io.github.oliviercailloux.minimax.elicitation.PSRWeights;
 import io.github.oliviercailloux.minimax.elicitation.PrefKnowledge;
@@ -230,6 +231,12 @@ public class StrategyMiniMaxIncr implements Strategy {
 	public void setKnowledge(PrefKnowledge knowledge) {
 		this.knowledge = knowledge;
 		regretComputer = new RegretComputer(knowledge);
+	}
+
+	@Override
+	public StrategyType getStrategyType() {
+		// TODO Auto-generated method stub
+		return null;
 	}
 
 //		for (Voter v : knowledge.getVoters()) {

@@ -1,6 +1,5 @@
 package io.github.oliviercailloux.minimax;
 
-import static com.google.common.base.Preconditions.checkArgument;
 import static java.util.Objects.requireNonNull;
 
 import java.util.ArrayList;
@@ -18,16 +17,14 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import com.google.common.base.Verify;
+import com.google.common.base.VerifyException;
 import com.google.common.collect.ImmutableSet;
 import com.google.common.collect.Range;
-import com.google.common.collect.SetMultimap;
 import com.google.common.graph.Graph;
 
-import io.github.oliviercailloux.minimax.elicitation.PSRWeights;
 import io.github.oliviercailloux.minimax.elicitation.PrefKnowledge;
 import io.github.oliviercailloux.minimax.elicitation.Question;
 import io.github.oliviercailloux.minimax.elicitation.QuestionCommittee;
-import io.github.oliviercailloux.minimax.regret.PairwiseMaxRegret;
 import io.github.oliviercailloux.y2018.j_voting.Alternative;
 import io.github.oliviercailloux.y2018.j_voting.Voter;
 
@@ -159,6 +156,11 @@ public class StrategyTwoPhasesRandom implements Strategy {
 	@Override
 	public String toString() {
 		return "TwoPhRandom";
+	}
+
+	@Override
+	public StrategyType getStrategyType() {
+		return StrategyType.TWO_PHASES_RANDOM;
 	}
 
 }

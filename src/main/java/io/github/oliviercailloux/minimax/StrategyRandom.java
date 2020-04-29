@@ -1,6 +1,5 @@
 package io.github.oliviercailloux.minimax;
 
-import static com.google.common.base.Preconditions.checkArgument;
 import static java.util.Objects.requireNonNull;
 
 import java.util.ArrayList;
@@ -122,5 +121,10 @@ public class StrategyRandom implements Strategy {
 	@Override
 	public String toString() {
 		return "Random";
+	}
+
+	@Override
+	public StrategyType getStrategyType() {
+		return StrategyType.RANDOM;
 	}
 }

@@ -16,4 +16,6 @@ public interface Strategy {
 	 *                         complete.
 	 */
 	public Question nextQuestion() throws IllegalStateException;
+	
+	public StrategyType getStrategyType();
 }

@@ -95,6 +95,7 @@ public class StrategyTwoPhasesHeuristic implements Strategy {
 	 *                               profile is complete.
 	 * @throws IllegalStateException if the profile is complete and a question for
 	 *                               the voters is demanded.
+	 * @throws IllegalStateException if more questions than expected are asked.
 	 */
 	@Override
 	public Question nextQuestion() {
@@ -113,20 +114,23 @@ public class StrategyTwoPhasesHeuristic implements Strategy {
 			if (questionsToCommittee > 0) {
 				q = selectQuestionToCommittee(wBar, xStar, yBar);
 				questionsToCommittee--;
-			} else {
+			} else if (questionsToVoters > 0) {
 				q = selectQuestionToVoters(xStar, yBar);
 				questionsToVoters--;
-
+			} else {
+				System.out.println(questionsToCommittee + "     "+ questionsToVoters);
+				throw new IllegalStateException("More questions than expected.");
 			}
 		} else {
 			if (questionsToVoters > 0) {
 				q = selectQuestionToVoters(xStar, yBar);
 				questionsToVoters--;
 
-			} else {
+			} else if (questionsToCommittee > 0) {
 				q = selectQuestionToCommittee(wBar, xStar, yBar);
 				questionsToCommittee--;
-			}
+			} else
+				throw new IllegalStateException("More questions than expected.");
 		}
 
 		return q;
@@ -335,5 +339,10 @@ public class StrategyTwoPhasesHeuristic implements Strategy {
 	@Override
 	public String toString() {
 		return "TwoPhHeuristic";
+	}
+	
+	@Override
+	public StrategyType getStrategyType() {
+		return StrategyType.TWO_PHASES_HEURISTIC;
 	}
 }

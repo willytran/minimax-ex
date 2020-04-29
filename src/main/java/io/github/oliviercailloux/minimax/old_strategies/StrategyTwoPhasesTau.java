@@ -20,6 +20,7 @@ import com.google.common.collect.Range;
 import com.google.common.graph.Graph;
 
 import io.github.oliviercailloux.minimax.Strategy;
+import io.github.oliviercailloux.minimax.StrategyType;
 import io.github.oliviercailloux.minimax.elicitation.PSRWeights;
 import io.github.oliviercailloux.minimax.elicitation.PrefKnowledge;
 import io.github.oliviercailloux.minimax.elicitation.Question;
@@ -177,6 +178,12 @@ public class StrategyTwoPhasesTau implements Strategy {
 	public void setKnowledge(PrefKnowledge knowledge) {
 		this.knowledge = knowledge;
 		m = knowledge.getAlternatives().size();
+	}
+
+	@Override
+	public StrategyType getStrategyType() {
+		// TODO Auto-generated method stub
+		return null;
 	}
 
 }

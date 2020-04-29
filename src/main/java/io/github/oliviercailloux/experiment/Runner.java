@@ -16,16 +16,13 @@ import com.univocity.parsers.csv.CsvWriter;
 import com.univocity.parsers.csv.CsvWriterSettings;
 
 import io.github.oliviercailloux.minimax.Strategy;
-import io.github.oliviercailloux.minimax.StrategyPessimistic;
-import io.github.oliviercailloux.minimax.StrategyPessimisticHeuristic;
-import io.github.oliviercailloux.minimax.StrategyRandom;
 import io.github.oliviercailloux.minimax.StrategyTwoPhasesHeuristic;
+import io.github.oliviercailloux.minimax.StrategyType;
 import io.github.oliviercailloux.minimax.elicitation.Answer;
 import io.github.oliviercailloux.minimax.elicitation.Oracle;
 import io.github.oliviercailloux.minimax.elicitation.PrefKnowledge;
 import io.github.oliviercailloux.minimax.elicitation.Question;
 import io.github.oliviercailloux.minimax.elicitation.QuestionType;
-import io.github.oliviercailloux.minimax.utils.AggregationOperator.AggOps;
 import io.github.oliviercailloux.minimax.utils.Generator;
 
 public class Runner {
@@ -33,8 +30,11 @@ public class Runner {
 	private static final Logger LOGGER = LoggerFactory.getLogger(Runner.class);
 	private static final String root = Paths.get("").toAbsolutePath() + "/experiments/";
 
+	private static int qV = 0;
+	private static int qC = 0;
+	private static boolean committeeFirst = true;
+
 	public static void main(String[] args) throws IOException {
-		boolean committeeFirst = true;
 		final int k = 500; // nbQuestions
 		final int nbRuns = 25;
 		final int m = 10; // alternatives
@@ -47,33 +47,38 @@ public class Runner {
 //		Strategy stPessimistic = StrategyPessimistic.build(AggOps.MAX);
 //		runXP(k, nbRuns, m, n, stPessimistic, head);
 
-		Strategy stLimitedPess = StrategyPessimisticHeuristic.build(AggOps.MAX);
-		runXP(k, nbRuns, 5, 10, stLimitedPess, head);
-		stLimitedPess = StrategyPessimisticHeuristic.build(AggOps.MAX);
-		runXP(k, nbRuns, 5, 15, stLimitedPess, head);
-		stLimitedPess = StrategyPessimisticHeuristic.build(AggOps.MAX);
-		runXP(k, nbRuns, 5, 20, stLimitedPess, head);
-		stLimitedPess = StrategyPessimisticHeuristic.build(AggOps.MAX);
-		runXP(800, nbRuns, 10, 20, stLimitedPess, "nbQst = " +800);
-		stLimitedPess = StrategyPessimisticHeuristic.build(AggOps.MAX);
-		runXP(800, 10, 10, 30, stLimitedPess, "nbQst = " +800);
-		stLimitedPess = StrategyPessimisticHeuristic.build(AggOps.MAX);
-		runXP(800, 10, 15, 30, stLimitedPess, "nbQst = " +800);
-				
-//		Strategy stTwoPhHeuristic = StrategyTwoPhasesHeuristic.build(350, 150, committeeFirst);
-//		head = "qC = " + 150 + " then qV = " + 350;
-//		runXP(k, nbRuns, m, n, stTwoPhHeuristic, head);
-//
-//		stTwoPhHeuristic = StrategyTwoPhasesHeuristic.build(350, 150, !committeeFirst);
-//		head = "qV = " + 350 + " then qC = " + 150;
-//		runXP(k, nbRuns, m, n, stTwoPhHeuristic, head);
+		/*
+		 * Experiments Table 2
+		 * 
+		 * Strategy stLimitedPess = StrategyPessimisticHeuristic.build(AggOps.MAX);
+		 * runXP(k, nbRuns, 5, 10, stLimitedPess, head); stLimitedPess =
+		 * StrategyPessimisticHeuristic.build(AggOps.MAX); runXP(k, nbRuns, 5, 15,
+		 * stLimitedPess, head); stLimitedPess =
+		 * StrategyPessimisticHeuristic.build(AggOps.MAX); runXP(k, nbRuns, 5, 20,
+		 * stLimitedPess, head); stLimitedPess =
+		 * StrategyPessimisticHeuristic.build(AggOps.MAX); runXP(800, nbRuns, 10, 20,
+		 * stLimitedPess, "nbQst = " +800); stLimitedPess =
+		 * StrategyPessimisticHeuristic.build(AggOps.MAX); runXP(800, 10, 10, 30,
+		 * stLimitedPess, "nbQst = " +800); stLimitedPess =
+		 * StrategyPessimisticHeuristic.build(AggOps.MAX); runXP(800, 10, 15, 30,
+		 * stLimitedPess, "nbQst = " +800);
+		 */
 
-//		Strategy stTwoPhHeuristic;
-//		for (int i = 0; i <= k; i += 50) {
-//			stTwoPhHeuristic = StrategyTwoPhasesHeuristic.build(i, (k - i), committeeFirst);
-//			head = "qC = " + (k - i) + " then qV = " + i;
-//			runXP(k, nbRuns, m, n, stTwoPhHeuristic, head);
-//		}
+		Strategy stTwoPhHeuristic;
+
+		for (int i = 0; i <= k; i += 50) {
+			qV = i;
+			qC = k - i;
+			stTwoPhHeuristic = StrategyTwoPhasesHeuristic.build(qV, qC, committeeFirst);
+			head = "qC = " + qC + " then qV = " + qV;
+			try {
+				runXP(k, nbRuns, m, n, stTwoPhHeuristic, head);
+			} catch (IllegalStateException e) {
+				System.out.println("Complete at qV " + qV);
+				e.printStackTrace();
+				break;
+			}
+		}
 
 //		committeeFirst = false;
 //		for (int i = 0; i <= k; i += 50) {
@@ -123,6 +128,9 @@ public class Runner {
 			throws IOException {
 		final ImmutableList.Builder<Run> builder = ImmutableList.builder();
 		for (int i = 0; i < nbRuns; ++i) {
+			if (strategy.getStrategyType().equals(StrategyType.TWO_PHASES_HEURISTIC)) {
+				strategy = StrategyTwoPhasesHeuristic.build(qV, qC, committeeFirst);
+			}
 			final Run run = run(strategy, m, n, nbQuestions);
 			builder.add(run);
 			System.out.println("Run " + (i + 1) + " of " + nbRuns);
@@ -152,7 +160,6 @@ public class Runner {
 			for (int col = 0; col < nbRuns; col++) {
 				final ImmutableList<Question> questions = runs.getRun(col).getQuestions();
 				final Question q = questions.get(i);
-//				System.out.println(runs.getRun(col).getQuestionTimesMs().get(i));
 				if (q.getType().equals(QuestionType.COMMITTEE_QUESTION)) {
 					qstWriter.addValue(0);
 				} else {

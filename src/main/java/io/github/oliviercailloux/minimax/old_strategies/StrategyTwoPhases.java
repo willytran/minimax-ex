@@ -20,6 +20,7 @@ import com.google.common.collect.Range;
 import com.google.common.graph.Graph;
 
 import io.github.oliviercailloux.minimax.Strategy;
+import io.github.oliviercailloux.minimax.StrategyType;
 import io.github.oliviercailloux.minimax.elicitation.PrefKnowledge;
 import io.github.oliviercailloux.minimax.elicitation.Question;
 import io.github.oliviercailloux.minimax.elicitation.QuestionCommittee;
@@ -161,6 +162,12 @@ public class StrategyTwoPhases implements Strategy {
 	/** only for testing purposes */
 	public static HashMap<QuestionVoter, Double> getVoterQuestions() {
 		return voterQuestions;
+	}
+
+	@Override
+	public StrategyType getStrategyType() {
+		// TODO Auto-generated method stub
+		return null;
 	}
 
 }

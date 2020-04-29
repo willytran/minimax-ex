@@ -216,4 +216,20 @@ public class StrategyPessimistic implements Strategy {
 		return "Pessimistic";
 	}
 
+	@Override
+	public StrategyType getStrategyType() {
+		switch (op) {
+		case MAX:
+			return StrategyType.PESSIMISTIC_MAX;
+		case MIN:
+			return StrategyType.PESSIMISTIC_MIN;
+		case WEIGHTED_AVERAGE:
+			return StrategyType.PESSIMISTIC_WEIGHTED_AVG;
+		case AVG:
+			return StrategyType.PESSIMISTIC_AVG;
+		default:
+			throw new IllegalStateException();
+		}	
+	}
+
 }
