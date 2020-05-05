@@ -2,6 +2,7 @@ package io.github.oliviercailloux.minimax;
 
 import static com.google.common.base.Preconditions.checkArgument;
 
+import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.LinkedList;
 import java.util.List;
@@ -141,19 +142,25 @@ public class StrategyTwoPhasesHeuristic implements Strategy {
 
 		int maxRank = 2;
 		double maxDiff = Math.abs(wBar.getWeightAtRank(maxRank) - wMin.getWeightAtRank(maxRank));
-
-		for (int i = maxRank + 1; i <= knowledge.getAlternatives().size(); i++) {
+		ArrayList<Integer> ranks = new ArrayList<>();
+		ranks.add(maxRank);
+		
+		for (int i = maxRank + 1; i < knowledge.getAlternatives().size(); i++) {
 			double diff = Math.abs(wBar.getWeightAtRank(i) - wMin.getWeightAtRank(i));
-			if (diff > maxDiff) {
+			if (Math.abs(maxDiff-diff)<=0.01) {
+				ranks.add(i);
+			}else {
 				maxDiff = diff;
 				maxRank = i;
+				ranks.clear();
+				ranks.add(i);
 			}
 		}
-
-		Range<Aprational> lambdaRange = knowledge.getLambdaRange(maxRank - 1);
+		int randomPos = (int) (ranks.size() * Math.random());
+		Range<Aprational> lambdaRange = knowledge.getLambdaRange(ranks.get(randomPos) - 1);
 		Aprational avg = AprationalMath.sum(lambdaRange.lowerEndpoint(), lambdaRange.upperEndpoint())
 				.divide(new Apint(2));
-		return Question.toCommittee(QuestionCommittee.given(avg, maxRank - 1));
+		return Question.toCommittee(QuestionCommittee.given(avg, ranks.get(randomPos) - 1));
 	}
 
 	private Question selectQuestionToVoters(Alternative xStar, Alternative yBar) {
