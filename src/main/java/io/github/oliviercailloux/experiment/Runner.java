@@ -36,7 +36,7 @@ public class Runner {
 
 	public static void main(String[] args) throws IOException {
 		final int k = 500; // nbQuestions
-		final int nbRuns = 25;
+		final int nbRuns = 10;
 		final int m = 10; // alternatives
 		final int n = 20; // agents
 		String head = "nbQst = " + k;
@@ -66,7 +66,23 @@ public class Runner {
 
 		Strategy stTwoPhHeuristic;
 
-		for (int i = 0; i <= k; i += 50) {
+//		for (int i = 0; i <= k; i += 50) {
+//			qV = i;
+//			qC = k - i;
+//			System.out.println(qV);
+//			stTwoPhHeuristic = StrategyTwoPhasesHeuristic.build(qV, qC, committeeFirst);
+//			head = "qC = " + qC + " then qV = " + qV;
+//			try {
+//				runXP(k, nbRuns, m, n, stTwoPhHeuristic, head);
+//			} catch (IllegalStateException e) {
+//				System.out.println("Complete at qV " + qV);
+//				e.printStackTrace();
+//				break;
+//			}
+//		}
+	
+		committeeFirst = false;
+		for (int i = 250; i >= 0; i -= 50) {
 			qV = i;
 			qC = k - i;
 			System.out.println(qV);
@@ -81,12 +97,6 @@ public class Runner {
 			}
 		}
 
-//		committeeFirst = false;
-//		for (int i = 0; i <= k; i += 50) {
-//			stTwoPhHeuristic = StrategyTwoPhasesHeuristic.build(i, (k - i), committeeFirst);
-//			head = "qV = " + i + " then qC = " + (k - i);
-//			runXP(k, nbRuns, m, n, stTwoPhHeuristic, head);
-//		}
 	}
 
 	private static void runXP(int k, int nbRuns, int m, int n, Strategy strategy, String head) throws IOException {
