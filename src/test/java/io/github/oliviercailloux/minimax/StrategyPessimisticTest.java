@@ -12,11 +12,10 @@ import org.junit.jupiter.api.Test;
 
 import com.google.common.base.VerifyException;
 
-import io.github.oliviercailloux.minimax.StrategyPessimistic;
 import io.github.oliviercailloux.minimax.elicitation.PrefKnowledge;
 import io.github.oliviercailloux.minimax.elicitation.Question;
 import io.github.oliviercailloux.minimax.elicitation.QuestionType;
-import io.github.oliviercailloux.minimax.old_strategies.Regret;
+import io.github.oliviercailloux.minimax.regret.RegretComputer;
 import io.github.oliviercailloux.minimax.utils.AggregationOperator.AggOps;
 import io.github.oliviercailloux.y2018.j_voting.Alternative;
 import io.github.oliviercailloux.y2018.j_voting.Generator;
@@ -130,15 +129,13 @@ public class StrategyPessimisticTest {
 			if (qq.getType().equals(QuestionType.VOTER_QUESTION)) {
 				k.getProfile().get(qq.getQuestionVoter().getVoter()).asGraph().putEdge(
 						qq.getQuestionVoter().getFirstAlternative(), qq.getQuestionVoter().getSecondAlternative());
-				Regret.getMMRAlternatives(k);
-				double yesRegret = Regret.getMMR();
+				double yesRegret = new RegretComputer(k).getMinimalMaxRegrets().getMinimalMaxRegretValue();
 				k.getProfile().get(qq.getQuestionVoter().getVoter()).asGraph().removeEdge(
 						qq.getQuestionVoter().getFirstAlternative(), qq.getQuestionVoter().getSecondAlternative());
 
 				k.getProfile().get(qq.getQuestionVoter().getVoter()).asGraph().putEdge(
 						qq.getQuestionVoter().getSecondAlternative(), qq.getQuestionVoter().getFirstAlternative());
-				Regret.getMMRAlternatives(k);
-				double noRegret = Regret.getMMR();
+				double noRegret = new RegretComputer(k).getMinimalMaxRegrets().getMinimalMaxRegretValue();
 				k.getProfile().get(qq.getQuestionVoter().getVoter()).asGraph().removeEdge(
 						qq.getQuestionVoter().getSecondAlternative(), qq.getQuestionVoter().getFirstAlternative());
 				assertEquals(Math.max(yesRegret, noRegret), s.getScore(qq), 0.001);
