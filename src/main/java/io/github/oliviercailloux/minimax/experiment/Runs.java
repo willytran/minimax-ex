@@ -1,4 +1,4 @@
-package io.github.oliviercailloux.experiment;
+package io.github.oliviercailloux.minimax.experiment;
 
 import static com.google.common.base.Preconditions.checkArgument;
 

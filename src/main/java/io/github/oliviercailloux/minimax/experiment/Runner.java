@@ -1,4 +1,4 @@
-package io.github.oliviercailloux.experiment;
+package io.github.oliviercailloux.minimax.experiment;
 
 import java.io.IOException;
 import java.nio.file.Files;
@@ -189,7 +189,7 @@ public class Runner {
 	}
 
 	public static Run run(Strategy strategy, int m, int n, int k) {
-		final Oracle oracle = Oracle.build(ImmutableMap.copyOf(Generator.genProfile(m, n)), Generator.genWeights(m));
+		final Oracle oracle = Oracle.build(Generator.genProfile(m, n), Generator.genWeights(m));
 
 		final PrefKnowledge knowledge = PrefKnowledge.given(oracle.getAlternatives(), oracle.getProfile().keySet());
 		strategy.setKnowledge(knowledge);

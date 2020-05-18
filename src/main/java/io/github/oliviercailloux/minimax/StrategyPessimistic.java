@@ -34,8 +34,9 @@ import io.github.oliviercailloux.minimax.utils.AggregationOperator.AggOps;
 import io.github.oliviercailloux.y2018.j_voting.Alternative;
 import io.github.oliviercailloux.y2018.j_voting.Voter;
 
-/** Uses the Regret to get the next question. **/
-
+/**
+ * Uses the Regret to get the next question.
+ **/
 public class StrategyPessimistic implements Strategy {
 
 	private PrefKnowledge knowledge;
@@ -75,7 +76,7 @@ public class StrategyPessimistic implements Strategy {
 	/**
 	 * Returns the next question that this strategy thinks is best asking. If the
 	 * knowledge is complete the strategy refines the scoring vector.
-	 * 
+	 *
 	 * @return a question.
 	 * @throws VerifyException if there are less than two alternatives or if there
 	 *                         are exactly two alternatives and the profile is
@@ -229,7 +230,7 @@ public class StrategyPessimistic implements Strategy {
 			return StrategyType.PESSIMISTIC_AVG;
 		default:
 			throw new IllegalStateException();
-		}	
+		}
 	}
 
 }
