@@ -1,7 +1,6 @@
 package io.github.oliviercailloux.experiment;
 
 import static com.google.common.base.Preconditions.checkArgument;
-import static com.google.common.base.Preconditions.checkState;
 import static com.google.common.base.Verify.verify;
 
 import java.util.List;
@@ -39,7 +38,7 @@ public class Run {
 		checkArgument(!startTimes.isEmpty());
 		checkArgument(startTimes.size() == questions.size());
 		checkArgument(questions.size() >= 1);
-		checkArgument(endTime >= startTimes.get(startTimes.size() - 1));
+		getQuestionTimesMs();
 		this.oracle = oracle;
 		this.startTimes = ImmutableList.copyOf(startTimes);
 		this.questions = ImmutableList.copyOf(questions);
@@ -78,24 +77,14 @@ public class Run {
 			} else {
 				end = endTime;
 			}
-			checkState(end - start >= 0l);
+			/** Using check argument because this is called from the constructor. */
+			checkArgument(end - start >= 0l);
 			builder.add(end - start);
 		}
 
 		final ImmutableList<Long> times = builder.build();
 		verify(times.stream().mapToLong(Long::longValue).sum() == getTotalTimeMs());
 		return times;
-	}
-
-	public Long getAvgQuestionTimesMs() {
-		ImmutableList<Long> times = this.getQuestionTimesMs();
-		long sum = 0;
-		for (int i = 0; i < times.size(); i++) {
-			sum += times.get(i);
-		}
-//		Stats stat = Stats.of(times);
-//		stat.mean();
-		return sum/times.size();
 	}
 
 	public int getNbQVoters() {

@@ -12,6 +12,7 @@ import org.slf4j.LoggerFactory;
 
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.ImmutableMap;
+import com.google.common.math.Stats;
 import com.univocity.parsers.csv.CsvWriter;
 import com.univocity.parsers.csv.CsvWriterSettings;
 
@@ -49,7 +50,7 @@ public class Runner {
 
 		/*
 		 * Experiments Table 2
-		 * 
+		 *
 		 * Strategy stLimitedPess = StrategyPessimisticHeuristic.build(AggOps.MAX);
 		 * runXP(k, nbRuns, 5, 10, stLimitedPess, head); stLimitedPess =
 		 * StrategyPessimisticHeuristic.build(AggOps.MAX); runXP(k, nbRuns, 5, 15,
@@ -80,7 +81,7 @@ public class Runner {
 //				break;
 //			}
 //		}
-	
+
 		committeeFirst = false;
 		for (int i = 250; i >= 0; i -= 50) {
 			qV = i;
@@ -148,7 +149,7 @@ public class Runner {
 			final Run run = run(st, m, n, nbQuestions);
 			builder.add(run);
 			System.out.println("Run " + (i + 1) + " of " + nbRuns);
-			System.out.println("mean avg time: " + run.getAvgQuestionTimesMs() + " ms");
+			System.out.println("mean avg time: " + Stats.of(run.getQuestionTimesMs()).mean() + " ms");
 		}
 		final Runs runs = Runs.of(builder.build());
 		printQuestions(runs, title, nbQuestions);
