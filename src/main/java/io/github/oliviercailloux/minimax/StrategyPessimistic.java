@@ -1,11 +1,15 @@
 package io.github.oliviercailloux.minimax;
 
 import static com.google.common.base.Preconditions.checkArgument;
+import static com.google.common.base.Preconditions.checkNotNull;
+import static com.google.common.base.Preconditions.checkState;
+import static com.google.common.base.Verify.verify;
 
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Set;
 import java.util.stream.Collectors;
 import java.util.stream.IntStream;
 
@@ -15,10 +19,12 @@ import org.apfloat.AprationalMath;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import com.google.common.base.Verify;
 import com.google.common.base.VerifyException;
+import com.google.common.collect.ImmutableMap;
+import com.google.common.collect.ImmutableSet;
 import com.google.common.collect.Range;
 import com.google.common.collect.SetMultimap;
+import com.google.common.graph.EndpointPair;
 import com.google.common.graph.Graph;
 
 import io.github.oliviercailloux.jlp.elements.ComparisonOperator;
@@ -39,11 +45,22 @@ import io.github.oliviercailloux.y2018.j_voting.Voter;
  **/
 public class StrategyPessimistic implements Strategy {
 
+	public static ImmutableSet<EndpointPair<Alternative>> getIncomparablePairs(Graph<Alternative> graph) {
+		final Set<Alternative> alternatives = graph.nodes();
+		final ImmutableSet.Builder<EndpointPair<Alternative>> builder = ImmutableSet.builder();
+		for (Alternative a1 : alternatives) {
+			final Set<Alternative> known = graph.adjacentNodes(a1);
+			alternatives.stream().filter(a2 -> !known.contains(a2)).filter(a2 -> !a2.equals(a1))
+					.forEach(a2 -> builder.add(EndpointPair.unordered(a1, a2)));
+		}
+		return builder.build();
+	}
+
 	private PrefKnowledge knowledge;
 	private static AggOps op;
 	private static double w1;
 	private static double w2;
-	private static HashMap<Question, Double> questions;
+	private HashMap<Question, Double> questions;
 	private static List<Question> nextQuestions;
 
 	private static final Logger LOGGER = LoggerFactory.getLogger(StrategyPessimistic.class);
@@ -73,33 +90,27 @@ public class StrategyPessimistic implements Strategy {
 		LOGGER.info("Pessimistic");
 	}
 
-	/**
-	 * Returns the next question that this strategy thinks is best asking. If the
-	 * knowledge is complete the strategy refines the scoring vector.
-	 *
-	 * @return a question.
-	 * @throws VerifyException if there are less than two alternatives or if there
-	 *                         are exactly two alternatives and the profile is
-	 *                         complete.
-	 */
 	@Override
 	public Question nextQuestion() throws VerifyException {
 		final int m = knowledge.getAlternatives().size();
-		Verify.verify(m > 2 || (m == 2 && !knowledge.isProfileComplete()));
+		verify(m >= 2);
+		if (m == 2) {
+			checkState(!knowledge.isProfileComplete());
+		}
 		questions = new HashMap<>();
 
 		for (Voter voter : knowledge.getVoters()) {
 			final Graph<Alternative> graph = knowledge.getProfile().get(voter).asTransitiveGraph();
-
+			getIncomparablePairs(graph).stream().<Question>map(p -> Question.toVoter(voter, p.nodeU(), p.nodeV()))
+					.collect(ImmutableMap.toImmutableMap(q -> q, this::getScore));
 			for (Alternative a1 : knowledge.getAlternatives()) {
 				if (graph.adjacentNodes(a1).size() != m - 1) {
-					for (Alternative a2 : knowledge.getAlternatives()) {
-						if (!a1.equals(a2) && !graph.adjacentNodes(a1).contains(a2)) {
-							Question q = Question.toVoter(voter, a1, a2);
-							double score = getScore(q);
-							questions.put(q, score);
-						}
-					}
+					final Set<Alternative> known = graph.adjacentNodes(a1);
+					final ImmutableMap<Question, Double> questionsToVoters = knowledge.getAlternatives().stream()
+							.filter(a2 -> !known.contains(a2)).filter(a2 -> !a2.equals(a1))
+							.map(a2 -> Question.toVoter(voter, a1, a2))
+							.collect(ImmutableMap.toImmutableMap(q -> q, this::getScore));
+					questions.putAll(questionsToVoters);
 				}
 			}
 		}
@@ -160,13 +171,13 @@ public class StrategyPessimistic implements Strategy {
 		PrefKnowledge noKnowledge = PrefKnowledge.copyOf(knowledge);
 
 		if (q.getType().equals(QuestionType.VOTER_QUESTION)) {
-			QuestionVoter qv = q.getQuestionVoter();
+			QuestionVoter qv = q.asQuestionVoter();
 			Alternative a = qv.getFirstAlternative();
 			Alternative b = qv.getSecondAlternative();
 			yesKnowledge.getProfile().get(qv.getVoter()).asGraph().putEdge(a, b);
 			noKnowledge.getProfile().get(qv.getVoter()).asGraph().putEdge(b, a);
 		} else if (q.getType().equals(QuestionType.COMMITTEE_QUESTION)) {
-			QuestionCommittee qc = q.getQuestionCommittee();
+			QuestionCommittee qc = q.asQuestionCommittee();
 			Aprational lambda = qc.getLambda();
 			int rank = qc.getRank();
 			yesKnowledge.addConstraint(rank, ComparisonOperator.GE, lambda);
@@ -199,16 +210,17 @@ public class StrategyPessimistic implements Strategy {
 
 	@Override
 	public void setKnowledge(PrefKnowledge knowledge) {
-		this.knowledge = knowledge;
+		checkArgument(knowledge.getAlternatives().size() >= 2);
+		this.knowledge = checkNotNull(knowledge);
 	}
 
 	/** only for testing purposes */
-	public static HashMap<Question, Double> getQuestions() {
+	public HashMap<Question, Double> getQuestions() {
 		return questions;
 	}
 
 	/** only for testing purposes */
-	public static List<Question> getNextQuestions() {
+	public static List<Question> getNextQuestions1() {
 		return nextQuestions;
 	}
 

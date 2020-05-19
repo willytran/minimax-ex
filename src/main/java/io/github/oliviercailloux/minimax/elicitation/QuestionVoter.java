@@ -12,8 +12,8 @@ import io.github.oliviercailloux.y2018.j_voting.Voter;
 
 /**
  * Immutable. A Question to a voter with the form: is alternative <em>a</em>
- * weakly preferred to <em>b</em>? The alternatives <em>a</em> and <em>b</em>
- * are different.
+ * preferred to <em>b</em>? The alternatives <em>a</em> and <em>b</em> are
+ * different.
  *
  * @author xoxor
  * @author Olivier Cailloux

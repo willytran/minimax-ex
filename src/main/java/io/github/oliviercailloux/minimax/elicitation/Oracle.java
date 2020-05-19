@@ -53,14 +53,14 @@ public class Oracle {
 	public Answer getAnswer(Question q) {
 		switch (q.getType()) {
 		case VOTER_QUESTION: {
-			QuestionVoter qv = q.getQuestionVoter();
+			QuestionVoter qv = q.asQuestionVoter();
 			Voter v = qv.getVoter();
 			checkArgument(profile.containsKey(v));
 			VoterStrictPreference vsp = profile.get(v);
 			return vsp.askQuestion(qv);
 		}
 		case COMMITTEE_QUESTION: {
-			QuestionCommittee qc = q.getQuestionCommittee();
+			QuestionCommittee qc = q.asQuestionCommittee();
 			return weights.askQuestion(qc);
 		}
 		default:

@@ -258,8 +258,8 @@ public class StrategyTwoPhasesHeuristic implements Strategy {
 						qv = Question.toVoter(v, xStar, questAlt); // x>c, x>f or x>u
 					}
 				}
-				assert (!vpref.hasEdgeConnecting(qv.getQuestionVoter().getFirstAlternative(),
-						qv.getQuestionVoter().getSecondAlternative()));
+				assert (!vpref.hasEdgeConnecting(qv.asQuestionVoter().getFirstAlternative(),
+						qv.asQuestionVoter().getSecondAlternative()));
 				questv.add(qv);
 			}
 		}
@@ -295,13 +295,13 @@ public class StrategyTwoPhasesHeuristic implements Strategy {
 		PrefKnowledge noKnowledge = PrefKnowledge.copyOf(knowledge);
 
 		if (q.getType().equals(QuestionType.VOTER_QUESTION)) {
-			QuestionVoter qv = q.getQuestionVoter();
+			QuestionVoter qv = q.asQuestionVoter();
 			Alternative a = qv.getFirstAlternative();
 			Alternative b = qv.getSecondAlternative();
 			yesKnowledge.getProfile().get(qv.getVoter()).asGraph().putEdge(a, b);
 			noKnowledge.getProfile().get(qv.getVoter()).asGraph().putEdge(b, a);
 		} else if (q.getType().equals(QuestionType.COMMITTEE_QUESTION)) {
-			QuestionCommittee qc = q.getQuestionCommittee();
+			QuestionCommittee qc = q.asQuestionCommittee();
 			Aprational lambda = qc.getLambda();
 			int rank = qc.getRank();
 			yesKnowledge.addConstraint(rank, ComparisonOperator.GE, lambda);

@@ -2,7 +2,6 @@ package io.github.oliviercailloux.minimax.elicitation;
 
 import static com.google.common.base.Preconditions.checkArgument;
 
-import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.Map;
 import java.util.Map.Entry;
@@ -11,6 +10,7 @@ import java.util.Set;
 import org.apfloat.Apint;
 import org.apfloat.Aprational;
 
+import com.google.common.base.VerifyException;
 import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.ImmutableSet;
 import com.google.common.collect.Range;
@@ -167,14 +167,14 @@ public class PrefKnowledge {
 					}
 				}
 			}
-		}	
+		}
 		return !questionable;
 	}
-	
+
 	public void update(Question question, Answer answer) {
 		switch (question.getType()) {
 		case VOTER_QUESTION:
-			final QuestionVoter qv = question.getQuestionVoter();
+			final QuestionVoter qv = question.asQuestionVoter();
 			final Alternative a = qv.getFirstAlternative();
 			final Alternative b = qv.getSecondAlternative();
 			final VoterPartialPreference voterPartialPreference = getProfile().get(qv.getVoter());
@@ -187,12 +187,12 @@ public class PrefKnowledge {
 				break;
 			case EQUAL:
 			default:
-				throw new IllegalStateException();
+				throw new VerifyException();
 			}
 			voterPartialPreference.setGraphChanged();
 			break;
 		case COMMITTEE_QUESTION:
-			final QuestionCommittee qc = question.getQuestionCommittee();
+			final QuestionCommittee qc = question.asQuestionCommittee();
 			final Aprational lambda = qc.getLambda();
 			final int rank = qc.getRank();
 			final ComparisonOperator op;
@@ -207,12 +207,12 @@ public class PrefKnowledge {
 				op = ComparisonOperator.LE;
 				break;
 			default:
-				throw new IllegalStateException();
+				throw new VerifyException();
 			}
 			addConstraint(rank, op, lambda);
 			break;
 		default:
-			throw new IllegalStateException();
+			throw new VerifyException();
 		}
 	}
 

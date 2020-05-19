@@ -10,8 +10,6 @@ import org.apfloat.Apint;
 import org.apfloat.Aprational;
 import org.junit.jupiter.api.Test;
 
-import com.google.common.base.VerifyException;
-
 import io.github.oliviercailloux.minimax.elicitation.PrefKnowledge;
 import io.github.oliviercailloux.minimax.elicitation.Question;
 import io.github.oliviercailloux.minimax.elicitation.QuestionType;
@@ -27,8 +25,7 @@ public class StrategyPessimisticTest {
 	void testOneAlt() {
 		final PrefKnowledge k = PrefKnowledge.given(Generator.getAlternatives(1), Generator.getVoters(1));
 		final StrategyPessimistic s = StrategyPessimistic.build();
-		s.setKnowledge(k);
-		assertThrows(VerifyException.class, () -> s.nextQuestion());
+		assertThrows(IllegalArgumentException.class, () -> s.setKnowledge(k));
 	}
 
 	@Test
@@ -37,7 +34,7 @@ public class StrategyPessimisticTest {
 		final StrategyPessimistic s = StrategyPessimistic.build();
 		s.setKnowledge(k);
 		k.getProfile().get(new Voter(1)).asGraph().putEdge(new Alternative(1), new Alternative(2));
-		assertThrows(VerifyException.class, () -> s.nextQuestion());
+		assertThrows(IllegalStateException.class, () -> s.nextQuestion());
 	}
 
 	@Test
@@ -51,7 +48,7 @@ public class StrategyPessimisticTest {
 		q.add(q1);
 		q.add(q2);
 		s.nextQuestion();
-		assertEquals(q, StrategyPessimistic.getQuestions().keySet());
+		assertEquals(q, s.getQuestions().keySet());
 	}
 
 	@Test
@@ -66,7 +63,7 @@ public class StrategyPessimisticTest {
 		final Set<Question> q = new HashSet<>();
 		q.add(q1);
 		q.add(q2);
-		assertEquals(q, StrategyPessimistic.getQuestions().keySet());
+		assertEquals(q, s.getQuestions().keySet());
 	}
 
 	@Test
@@ -84,8 +81,8 @@ public class StrategyPessimisticTest {
 		q.add(q2);
 		q.add(q3);
 		q.add(q4);
-		assertEquals(q, StrategyPessimistic.getQuestions().keySet());
-		for (Double d : StrategyPessimistic.getQuestions().values()) {
+		assertEquals(q, s.getQuestions().keySet());
+		for (Double d : s.getQuestions().values()) {
 			assertEquals(0d, d, 0.0001);
 		}
 	}
@@ -112,7 +109,7 @@ public class StrategyPessimisticTest {
 		q.add(q3);
 		q.add(q4);
 		q.add(q5);
-		assertEquals(q, StrategyPessimistic.getQuestions().keySet());
+		assertEquals(q, s.getQuestions().keySet());
 	}
 
 	@Test
@@ -125,19 +122,19 @@ public class StrategyPessimisticTest {
 		s.setKnowledge(k);
 		s.nextQuestion();
 
-		for (Question qq : StrategyPessimistic.getQuestions().keySet()) {
+		for (Question qq : s.getQuestions().keySet()) {
 			if (qq.getType().equals(QuestionType.VOTER_QUESTION)) {
-				k.getProfile().get(qq.getQuestionVoter().getVoter()).asGraph().putEdge(
-						qq.getQuestionVoter().getFirstAlternative(), qq.getQuestionVoter().getSecondAlternative());
+				k.getProfile().get(qq.asQuestionVoter().getVoter()).asGraph().putEdge(
+						qq.asQuestionVoter().getFirstAlternative(), qq.asQuestionVoter().getSecondAlternative());
 				double yesRegret = new RegretComputer(k).getMinimalMaxRegrets().getMinimalMaxRegretValue();
-				k.getProfile().get(qq.getQuestionVoter().getVoter()).asGraph().removeEdge(
-						qq.getQuestionVoter().getFirstAlternative(), qq.getQuestionVoter().getSecondAlternative());
+				k.getProfile().get(qq.asQuestionVoter().getVoter()).asGraph().removeEdge(
+						qq.asQuestionVoter().getFirstAlternative(), qq.asQuestionVoter().getSecondAlternative());
 
-				k.getProfile().get(qq.getQuestionVoter().getVoter()).asGraph().putEdge(
-						qq.getQuestionVoter().getSecondAlternative(), qq.getQuestionVoter().getFirstAlternative());
+				k.getProfile().get(qq.asQuestionVoter().getVoter()).asGraph().putEdge(
+						qq.asQuestionVoter().getSecondAlternative(), qq.asQuestionVoter().getFirstAlternative());
 				double noRegret = new RegretComputer(k).getMinimalMaxRegrets().getMinimalMaxRegretValue();
-				k.getProfile().get(qq.getQuestionVoter().getVoter()).asGraph().removeEdge(
-						qq.getQuestionVoter().getSecondAlternative(), qq.getQuestionVoter().getFirstAlternative());
+				k.getProfile().get(qq.asQuestionVoter().getVoter()).asGraph().removeEdge(
+						qq.asQuestionVoter().getSecondAlternative(), qq.asQuestionVoter().getFirstAlternative());
 				assertEquals(Math.max(yesRegret, noRegret), s.getScore(qq), 0.001);
 			}
 		}

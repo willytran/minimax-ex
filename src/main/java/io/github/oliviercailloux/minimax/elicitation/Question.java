@@ -1,12 +1,15 @@
 package io.github.oliviercailloux.minimax.elicitation;
 
+import static com.google.common.base.Preconditions.checkNotNull;
+import static com.google.common.base.Preconditions.checkState;
+import static com.google.common.base.Verify.verify;
+
 import java.util.Objects;
 
 import org.apfloat.Aprational;
 
 import com.google.common.base.MoreObjects;
 import com.google.common.base.MoreObjects.ToStringHelper;
-import com.google.common.base.Preconditions;
 
 import io.github.oliviercailloux.y2018.j_voting.Alternative;
 import io.github.oliviercailloux.y2018.j_voting.Voter;
@@ -40,22 +43,24 @@ public class Question {
 	private final QuestionCommittee qc;
 
 	private Question(QuestionVoter qv) {
-		this.qv = Objects.requireNonNull(qv);
+		this.qv = checkNotNull(qv);
 		this.qc = null;
 	}
 
 	private Question(QuestionCommittee qc) {
-		this.qc = Objects.requireNonNull(qc);
+		this.qc = checkNotNull(qc);
 		this.qv = null;
 	}
 
-	public QuestionVoter getQuestionVoter() {
-		Preconditions.checkState(qc == null);
+	public QuestionVoter asQuestionVoter() {
+		checkState(qc == null);
+		verify(qv != null);
 		return qv;
 	}
 
-	public QuestionCommittee getQuestionCommittee() {
-		Preconditions.checkState(qv == null);
+	public QuestionCommittee asQuestionCommittee() {
+		checkState(qv == null);
+		verify(qc != null);
 		return qc;
 	}
 
