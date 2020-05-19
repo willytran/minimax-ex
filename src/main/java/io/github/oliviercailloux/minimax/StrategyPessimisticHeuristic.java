@@ -61,16 +61,6 @@ public class StrategyPessimisticHeuristic implements Strategy {
 		return new StrategyPessimisticHeuristic();
 	}
 
-	public static StrategyPessimisticHeuristic build(AggOps operator, double w_1, double w_2) {
-		checkArgument(operator.equals(AggOps.WEIGHTED_AVERAGE));
-		checkArgument(w_1 > 0);
-		checkArgument(w_2 > 0);
-		op = operator;
-		w1 = w_1;
-		w2 = w_2;
-		return new StrategyPessimisticHeuristic();
-	}
-
 	private StrategyPessimisticHeuristic() {
 		LOGGER.info("LimitedPessimistic");
 	}
