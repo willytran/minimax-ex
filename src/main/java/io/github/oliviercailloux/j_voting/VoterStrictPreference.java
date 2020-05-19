@@ -113,13 +113,14 @@ public class VoterStrictPreference {
 	public VoterPreferenceInformation askQuestion(QuestionVoter qv) {
 		final Alternative better;
 		final Alternative worst;
-		if (preference.getAlternativeRank(qv.getFirstAlternative()) < preference
-				.getAlternativeRank(qv.getSecondAlternative())) {
-			better = qv.getFirstAlternative();
-			worst = qv.getSecondAlternative();
+		final Alternative a = qv.getFirstAlternative();
+		final Alternative b = qv.getSecondAlternative();
+		if (preference.getAlternativeRank(a) < preference.getAlternativeRank(b)) {
+			better = a;
+			worst = b;
 		} else {
-			worst = qv.getFirstAlternative();
-			better = qv.getSecondAlternative();
+			worst = a;
+			better = b;
 		}
 		return VoterPreferenceInformation.given(qv.getVoter(), better, worst);
 	}

@@ -1,11 +1,12 @@
 package io.github.oliviercailloux.minimax.elicitation;
 
 import static com.google.common.base.Preconditions.checkArgument;
-import static java.util.Objects.requireNonNull;
+import static com.google.common.base.Preconditions.checkNotNull;
 
 import java.util.Objects;
 
 import com.google.common.base.MoreObjects;
+import com.google.common.collect.ImmutableSet;
 
 import io.github.oliviercailloux.y2018.j_voting.Alternative;
 import io.github.oliviercailloux.y2018.j_voting.Voter;
@@ -30,13 +31,17 @@ public class QuestionVoter {
 
 	private QuestionVoter(Voter voter, Alternative a, Alternative b) {
 		checkArgument(!a.equals(b));
-		this.voter = requireNonNull(voter);
-		this.a = requireNonNull(a);
-		this.b = requireNonNull(b);
+		this.voter = checkNotNull(voter);
+		this.a = checkNotNull(a);
+		this.b = checkNotNull(b);
 	}
 
 	public Voter getVoter() {
 		return this.voter;
+	}
+
+	public ImmutableSet<Alternative> getAlternatives() {
+		return ImmutableSet.of(a, b);
 	}
 
 	public Alternative getFirstAlternative() {
@@ -53,17 +58,17 @@ public class QuestionVoter {
 			return false;
 		}
 		final QuestionVoter q2 = (QuestionVoter) o2;
-		return Objects.equals(voter, q2.voter) && Objects.equals(a, q2.a) && Objects.equals(b, q2.b);
+		return Objects.equals(voter, q2.voter) && Objects.equals(getAlternatives(), q2.getAlternatives());
 	}
 
 	@Override
 	public int hashCode() {
-		return Objects.hash(voter, a, b);
+		return Objects.hash(voter, getAlternatives());
 	}
 
 	@Override
 	public String toString() {
-		return MoreObjects.toStringHelper(this).add("voter", voter).add("a", a).add("b", b).toString();
+		return MoreObjects.toStringHelper(this).add("voter", voter).add("alternatives", getAlternatives()).toString();
 	}
 
 }
