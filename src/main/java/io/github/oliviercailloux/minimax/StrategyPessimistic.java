@@ -36,8 +36,6 @@ public class StrategyPessimistic implements Strategy {
 
 	private static AggOps op;
 	private ImmutableMap<Question, Double> questions;
-	private static List<Question> nextQuestions;
-
 	private static final Logger LOGGER = LoggerFactory.getLogger(StrategyPessimistic.class);
 	private final StrategyHelper helper;
 
@@ -136,11 +134,6 @@ public class StrategyPessimistic implements Strategy {
 	/** only for testing purposes */
 	public ImmutableMap<Question, Double> getQuestions() {
 		return questions;
-	}
-
-	/** only for testing purposes */
-	public static List<Question> getNextQuestions1() {
-		return nextQuestions;
 	}
 
 	@Override
