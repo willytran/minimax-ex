@@ -171,44 +171,21 @@ public class PrefKnowledge {
 		return !questionable;
 	}
 
-	public void update(Question question, Answer answer) {
-		switch (question.getType()) {
+	public void update(PreferenceInformation information) {
+		switch (information.getType()) {
 		case VOTER_QUESTION:
-			final QuestionVoter qv = question.asQuestionVoter();
-			final Alternative a = qv.getFirstAlternative();
-			final Alternative b = qv.getSecondAlternative();
-			final VoterPartialPreference voterPartialPreference = getProfile().get(qv.getVoter());
-			switch (answer) {
-			case GREATER:
-				voterPartialPreference.asGraph().putEdge(a, b);
-				break;
-			case LOWER:
-				voterPartialPreference.asGraph().putEdge(b, a);
-				break;
-			case EQUAL:
-			default:
-				throw new VerifyException();
-			}
+			final VoterPreferenceInformation v = information.asVoterInformation();
+			final Alternative better = v.getBetterAlternative();
+			final Alternative worst = v.getWorstAlternative();
+			final VoterPartialPreference voterPartialPreference = getProfile().get(v.getVoter());
+			voterPartialPreference.asGraph().putEdge(better, worst);
 			voterPartialPreference.setGraphChanged();
 			break;
 		case COMMITTEE_QUESTION:
-			final QuestionCommittee qc = question.asQuestionCommittee();
-			final Aprational lambda = qc.getLambda();
-			final int rank = qc.getRank();
-			final ComparisonOperator op;
-			switch (answer) {
-			case EQUAL:
-				op = ComparisonOperator.EQ;
-				break;
-			case GREATER:
-				op = ComparisonOperator.GE;
-				break;
-			case LOWER:
-				op = ComparisonOperator.LE;
-				break;
-			default:
-				throw new VerifyException();
-			}
+			final CommitteePreferenceInformation c = information.asCommitteeInformation();
+			final int rank = c.getRank();
+			final ComparisonOperator op = c.getOperator();
+			final Aprational lambda = c.getLambda();
 			addConstraint(rank, op, lambda);
 			break;
 		default:

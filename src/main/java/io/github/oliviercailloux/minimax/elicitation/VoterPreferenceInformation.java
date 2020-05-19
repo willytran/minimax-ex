@@ -20,12 +20,12 @@ public class VoterPreferenceInformation {
 	}
 
 	private final Voter voter;
-	private final Alternative best, worst;
+	private final Alternative better, worst;
 
 	private VoterPreferenceInformation(Voter voter, Alternative best, Alternative worst) {
 		checkArgument(!best.equals(worst));
 		this.voter = checkNotNull(voter);
-		this.best = checkNotNull(best);
+		this.better = checkNotNull(best);
 		this.worst = checkNotNull(worst);
 	}
 
@@ -33,8 +33,8 @@ public class VoterPreferenceInformation {
 		return this.voter;
 	}
 
-	public Alternative getBestAlternative() {
-		return best;
+	public Alternative getBetterAlternative() {
+		return better;
 	}
 
 	public Alternative getWorstAlternative() {
@@ -47,17 +47,17 @@ public class VoterPreferenceInformation {
 			return false;
 		}
 		final VoterPreferenceInformation i2 = (VoterPreferenceInformation) o2;
-		return Objects.equals(voter, i2.voter) && Objects.equals(best, i2.best) && Objects.equals(worst, i2.worst);
+		return Objects.equals(voter, i2.voter) && Objects.equals(better, i2.better) && Objects.equals(worst, i2.worst);
 	}
 
 	@Override
 	public int hashCode() {
-		return Objects.hash(voter, best, worst);
+		return Objects.hash(voter, better, worst);
 	}
 
 	@Override
 	public String toString() {
-		return MoreObjects.toStringHelper(this).add("voter", voter).add("best", best).add("worst", worst).toString();
+		return MoreObjects.toStringHelper(this).add("voter", voter).add("best", better).add("worst", worst).toString();
 	}
 
 }

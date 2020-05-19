@@ -11,7 +11,6 @@ import org.slf4j.LoggerFactory;
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.Iterators;
 import com.google.common.collect.PeekingIterator;
-import com.google.common.math.Stats;
 
 import io.github.oliviercailloux.minimax.elicitation.Oracle;
 import io.github.oliviercailloux.minimax.elicitation.PrefKnowledge;
@@ -38,13 +37,13 @@ public class Run {
 		checkArgument(!startTimes.isEmpty());
 		checkArgument(startTimes.size() == questions.size());
 		checkArgument(questions.size() >= 1);
-		getQuestionTimesMs();
 		this.oracle = oracle;
 		this.startTimes = ImmutableList.copyOf(startTimes);
 		this.questions = ImmutableList.copyOf(questions);
 		this.endTime = endTime;
 		this.regrets = null;
 		verify((getNbQVoters() + getNbQCommittee()) == questions.size());
+		getQuestionTimesMs();
 	}
 
 	public Oracle getOracle() {
@@ -115,7 +114,7 @@ public class Run {
 			builder.add(rc.getMinimalMaxRegrets());
 
 			for (Question question : questions) {
-				knowledge.update(question, oracle.getAnswer(question));
+				knowledge.update(oracle.getPreferenceInformation(question));
 				builder.add(rc.getMinimalMaxRegrets());
 			}
 

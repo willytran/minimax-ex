@@ -8,6 +8,7 @@ import org.junit.jupiter.api.Test;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import io.github.oliviercailloux.jlp.elements.ComparisonOperator;
 import io.github.oliviercailloux.minimax.utils.Generator;
 
 public class PSRWeightsTest {
@@ -18,21 +19,21 @@ public class PSRWeightsTest {
 	public void testLambda() {
 		Aprational a = new Aprational(new Apint(2), new Apint(3));
 		QuestionCommittee qc = QuestionCommittee.given(a, 1);
-		Answer answ;
+		ComparisonOperator answ;
 		PSRWeights weights = Generator.genWeights(7);
 		double left = (weights.getWeightAtRank(1) - weights.getWeightAtRank(2));
 		double right = a.doubleValue() * (weights.getWeightAtRank(2) - weights.getWeightAtRank(3));
 		if (left > right) {
-			answ = Answer.GREATER;
+			answ = ComparisonOperator.GE;
 		} else if (left == right) {
-			answ = Answer.EQUAL;
+			answ = ComparisonOperator.EQ;
 		} else {
-			answ = Answer.LOWER;
+			answ = ComparisonOperator.LE;
 		}
 		LOGGER.debug("Weights: {}.", weights);
 		LOGGER.debug(a.numerator() + " / " + a.denominator() + " = " + a.doubleValue());
 		LOGGER.debug(left + " " + answ + " " + right);
-		assertEquals(answ, weights.askQuestion(qc));
+		assertEquals(answ, weights.askQuestion(qc).getOperator());
 
 	}
 }

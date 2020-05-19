@@ -19,9 +19,9 @@ import com.univocity.parsers.csv.CsvWriterSettings;
 import io.github.oliviercailloux.minimax.Strategy;
 import io.github.oliviercailloux.minimax.StrategyTwoPhasesHeuristic;
 import io.github.oliviercailloux.minimax.StrategyType;
-import io.github.oliviercailloux.minimax.elicitation.Answer;
 import io.github.oliviercailloux.minimax.elicitation.Oracle;
 import io.github.oliviercailloux.minimax.elicitation.PrefKnowledge;
+import io.github.oliviercailloux.minimax.elicitation.PreferenceInformation;
 import io.github.oliviercailloux.minimax.elicitation.Question;
 import io.github.oliviercailloux.minimax.elicitation.QuestionType;
 import io.github.oliviercailloux.minimax.utils.Generator;
@@ -200,8 +200,8 @@ public class Runner {
 		for (int i = 1; i <= k; i++) {
 			final long startTime = System.currentTimeMillis();
 			final Question q = strategy.nextQuestion();
-			final Answer a = oracle.getAnswer(q);
-			knowledge.update(q, a);
+			final PreferenceInformation a = oracle.getPreferenceInformation(q);
+			knowledge.update(a);
 //			LOGGER.info("Asked {}.", q);
 			qBuilder.add(q);
 			tBuilder.add(startTime);

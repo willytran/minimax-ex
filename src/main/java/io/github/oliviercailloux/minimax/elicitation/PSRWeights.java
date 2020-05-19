@@ -11,6 +11,8 @@ import com.google.common.base.MoreObjects;
 import com.google.common.base.Preconditions;
 import com.google.common.collect.ImmutableList;
 
+import io.github.oliviercailloux.jlp.elements.ComparisonOperator;
+
 /**
  *
  * Immutable. May represent an empty vector.
@@ -76,19 +78,23 @@ public class PSRWeights {
 	/**
 	 * Given a query d * (w_i − w_{i+1}) >= n * (w_{i+1} − w_{i+2}) where n/d = λ
 	 *
-	 * @return if the term on the left is GREATER, EQUAL or LOWER than the right one
+	 * @return the appropriate information indicating whether the term on the left
+	 *         is greater than, equal to or lower than the right one
 	 */
-	public Answer askQuestion(QuestionCommittee qc) {
+	public CommitteePreferenceInformation askQuestion(QuestionCommittee qc) {
 		int i = qc.getRank();
 		Aprational lambda = qc.getLambda();
 		double left = lambda.denominator().intValue() * (weights.get(i - 1) - weights.get(i));
 		double right = lambda.numerator().intValue() * (weights.get(i) - weights.get(i + 1));
+		final ComparisonOperator op;
 		if (left > right) {
-			return Answer.GREATER;
+			op = ComparisonOperator.GE;
 		} else if (left == right) {
-			return Answer.EQUAL;
+			op = ComparisonOperator.EQ;
+		} else {
+			op = ComparisonOperator.LE;
 		}
-		return Answer.LOWER;
+		return CommitteePreferenceInformation.given(i, op, lambda);
 	}
 
 	@Override

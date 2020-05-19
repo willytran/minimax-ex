@@ -6,8 +6,8 @@ import java.util.List;
 
 import com.google.common.base.MoreObjects;
 
-import io.github.oliviercailloux.minimax.elicitation.Answer;
 import io.github.oliviercailloux.minimax.elicitation.QuestionVoter;
+import io.github.oliviercailloux.minimax.elicitation.VoterPreferenceInformation;
 import io.github.oliviercailloux.y2018.j_voting.Alternative;
 import io.github.oliviercailloux.y2018.j_voting.StrictPreference;
 import io.github.oliviercailloux.y2018.j_voting.Voter;
@@ -108,14 +108,20 @@ public class VoterStrictPreference {
 	/**
 	 * Given a query a > b
 	 *
-	 * @return if a is greater or lower than b
+	 * @return whether a is better or worst than b
 	 */
-	public Answer askQuestion(QuestionVoter qv) {
+	public VoterPreferenceInformation askQuestion(QuestionVoter qv) {
+		final Alternative better;
+		final Alternative worst;
 		if (preference.getAlternativeRank(qv.getFirstAlternative()) < preference
 				.getAlternativeRank(qv.getSecondAlternative())) {
-			return Answer.GREATER;
+			better = qv.getFirstAlternative();
+			worst = qv.getSecondAlternative();
+		} else {
+			worst = qv.getFirstAlternative();
+			better = qv.getSecondAlternative();
 		}
-		return Answer.LOWER;
+		return VoterPreferenceInformation.given(qv.getVoter(), better, worst);
 	}
 
 	@Override

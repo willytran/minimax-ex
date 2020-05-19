@@ -13,7 +13,12 @@ import com.google.common.base.MoreObjects;
 import io.github.oliviercailloux.jlp.elements.ComparisonOperator;
 
 /**
+ * <p>
  * Immutable.
+ * </p>
+ * <p>
+ * Represents the constraint: (w_i − w_{i+1}) OP λ (w_{i+1} − w_{i+2}).
+ * </p>
  */
 public class CommitteePreferenceInformation {
 

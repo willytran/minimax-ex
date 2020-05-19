@@ -8,6 +8,7 @@ import java.util.List;
 import java.util.Map;
 
 import com.google.common.base.MoreObjects;
+import com.google.common.base.VerifyException;
 import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.ImmutableSet;
 import com.google.common.collect.ImmutableSortedSet;
@@ -50,21 +51,21 @@ public class Oracle {
 		checkArgument(weights.size() == nbAlts);
 	}
 
-	public Answer getAnswer(Question q) {
+	public PreferenceInformation getPreferenceInformation(Question q) {
 		switch (q.getType()) {
 		case VOTER_QUESTION: {
 			QuestionVoter qv = q.asQuestionVoter();
 			Voter v = qv.getVoter();
 			checkArgument(profile.containsKey(v));
 			VoterStrictPreference vsp = profile.get(v);
-			return vsp.askQuestion(qv);
+			return PreferenceInformation.aboutVoter(vsp.askQuestion(qv));
 		}
 		case COMMITTEE_QUESTION: {
 			QuestionCommittee qc = q.asQuestionCommittee();
-			return weights.askQuestion(qc);
+			return PreferenceInformation.aboutCommittee(weights.askQuestion(qc));
 		}
 		default:
-			throw new AssertionError();
+			throw new VerifyException();
 		}
 	}
 

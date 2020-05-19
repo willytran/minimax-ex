@@ -11,6 +11,7 @@ import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.ImmutableSet;
 
 import io.github.oliviercailloux.j_voting.VoterStrictPreference;
+import io.github.oliviercailloux.jlp.elements.ComparisonOperator;
 import io.github.oliviercailloux.y2018.j_voting.Alternative;
 import io.github.oliviercailloux.y2018.j_voting.Voter;
 
@@ -48,6 +49,7 @@ class OracleTest {
 		final ImmutableList<Alternative> pref1 = ImmutableList.of(a1, a2, a3);
 		final Oracle oracle = Oracle.build(ImmutableMap.of(v1, VoterStrictPreference.given(v1, pref1)),
 				PSRWeights.given(ImmutableList.of(1d, 0.5d, 0d)));
-		assertEquals(Answer.EQUAL, oracle.getAnswer(Question.toCommittee(new Apint(1), 1)));
+		assertEquals(ComparisonOperator.EQ, oracle.getPreferenceInformation(Question.toCommittee(new Apint(1), 1))
+				.asCommitteeInformation().getOperator());
 	}
 }
