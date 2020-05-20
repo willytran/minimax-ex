@@ -14,7 +14,6 @@ import io.github.oliviercailloux.minimax.elicitation.PrefKnowledge;
 import io.github.oliviercailloux.minimax.elicitation.Question;
 import io.github.oliviercailloux.minimax.elicitation.QuestionType;
 import io.github.oliviercailloux.minimax.regret.RegretComputer;
-import io.github.oliviercailloux.minimax.utils.AggregationOperator.AggOps;
 import io.github.oliviercailloux.y2018.j_voting.Alternative;
 import io.github.oliviercailloux.y2018.j_voting.Generator;
 import io.github.oliviercailloux.y2018.j_voting.Voter;
@@ -94,7 +93,7 @@ public class StrategyPessimisticTest {
 		k.getProfile().get(new Voter(1)).asGraph().putEdge(new Alternative(2), new Alternative(3));
 		k.getProfile().get(new Voter(2)).asGraph().putEdge(new Alternative(1), new Alternative(2));
 		k.getProfile().get(new Voter(1)).setGraphChanged();
-		StrategyPessimistic s = StrategyPessimistic.build(AggOps.MAX);
+		StrategyPessimistic s = StrategyPessimistic.build();
 		s.setKnowledge(k);
 		s.nextQuestion();
 		final Question q1 = Question.toVoter(new Voter(2), new Alternative(3), new Alternative(2));
@@ -118,7 +117,7 @@ public class StrategyPessimisticTest {
 		k.getProfile().get(new Voter(1)).asGraph().putEdge(new Alternative(1), new Alternative(2));
 		k.getProfile().get(new Voter(1)).asGraph().putEdge(new Alternative(2), new Alternative(3));
 		k.getProfile().get(new Voter(2)).asGraph().putEdge(new Alternative(1), new Alternative(2));
-		StrategyPessimistic s = StrategyPessimistic.build(AggOps.MAX);
+		StrategyPessimistic s = StrategyPessimistic.build();
 		s.setKnowledge(k);
 		s.nextQuestion();
 

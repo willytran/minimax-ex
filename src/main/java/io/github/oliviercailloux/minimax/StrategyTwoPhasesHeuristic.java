@@ -33,7 +33,7 @@ import io.github.oliviercailloux.minimax.elicitation.QuestionVoter;
 import io.github.oliviercailloux.minimax.regret.PairwiseMaxRegret;
 import io.github.oliviercailloux.minimax.regret.RegretComputer;
 import io.github.oliviercailloux.minimax.utils.AggregationOperator;
-import io.github.oliviercailloux.minimax.utils.AggregationOperator.AggOps;
+import io.github.oliviercailloux.minimax.utils.AggOp;
 import io.github.oliviercailloux.y2018.j_voting.Alternative;
 import io.github.oliviercailloux.y2018.j_voting.Voter;
 
@@ -42,7 +42,7 @@ import io.github.oliviercailloux.y2018.j_voting.Voter;
 public class StrategyTwoPhasesHeuristic implements Strategy {
 
 	private PrefKnowledge knowledge;
-	private static AggOps op;
+	private static AggOp op;
 	private static double w1;
 	private static double w2;
 	private int questionsToVoters;
@@ -57,20 +57,20 @@ public class StrategyTwoPhasesHeuristic implements Strategy {
 
 	public static StrategyTwoPhasesHeuristic build(int questionsToVoters, int questionsToCommittee,
 			boolean committeeFirst) {
-		op = AggOps.MAX;
+		op = AggOp.MAX;
 		return new StrategyTwoPhasesHeuristic(questionsToVoters, questionsToCommittee, committeeFirst);
 	}
 
-	public static StrategyTwoPhasesHeuristic build(AggOps operator, int questionsToVoters, int questionsToCommittee,
+	public static StrategyTwoPhasesHeuristic build(AggOp operator, int questionsToVoters, int questionsToCommittee,
 			boolean committeeFirst) {
-		checkArgument(!operator.equals(AggOps.WEIGHTED_AVERAGE));
+		checkArgument(!operator.equals(AggOp.WEIGHTED_AVERAGE));
 		op = operator;
 		return new StrategyTwoPhasesHeuristic(questionsToVoters, questionsToCommittee, committeeFirst);
 	}
 
-	public static StrategyTwoPhasesHeuristic build(AggOps operator, double w_1, double w_2, int questionsToVoters,
+	public static StrategyTwoPhasesHeuristic build(AggOp operator, double w_1, double w_2, int questionsToVoters,
 			int questionsToCommittee, boolean committeeFirst) {
-		checkArgument(operator.equals(AggOps.WEIGHTED_AVERAGE));
+		checkArgument(operator.equals(AggOp.WEIGHTED_AVERAGE));
 		checkArgument(w_1 > 0);
 		checkArgument(w_2 > 0);
 		op = operator;

@@ -32,7 +32,7 @@ import io.github.oliviercailloux.minimax.elicitation.QuestionVoter;
 import io.github.oliviercailloux.minimax.regret.PairwiseMaxRegret;
 import io.github.oliviercailloux.minimax.regret.RegretComputer;
 import io.github.oliviercailloux.minimax.utils.AggregationOperator;
-import io.github.oliviercailloux.minimax.utils.AggregationOperator.AggOps;
+import io.github.oliviercailloux.minimax.utils.AggOp;
 import io.github.oliviercailloux.y2018.j_voting.Alternative;
 import io.github.oliviercailloux.y2018.j_voting.Voter;
 
@@ -41,7 +41,7 @@ import io.github.oliviercailloux.y2018.j_voting.Voter;
 public class StrategyPessimisticHeuristic implements Strategy {
 
 	private PrefKnowledge knowledge;
-	private static AggOps op;
+	private static AggOp op;
 	private static double w1;
 	private static double w2;
 	private static Set<Question> questions;
@@ -51,12 +51,12 @@ public class StrategyPessimisticHeuristic implements Strategy {
 	private static final Logger LOGGER = LoggerFactory.getLogger(StrategyPessimisticHeuristic.class);
 
 	public static StrategyPessimisticHeuristic build() {
-		op = AggOps.MAX;
+		op = AggOp.MAX;
 		return new StrategyPessimisticHeuristic();
 	}
 
-	public static StrategyPessimisticHeuristic build(AggOps operator) {
-		checkArgument(!operator.equals(AggOps.WEIGHTED_AVERAGE));
+	public static StrategyPessimisticHeuristic build(AggOp operator) {
+		checkArgument(!operator.equals(AggOp.WEIGHTED_AVERAGE));
 		op = operator;
 		return new StrategyPessimisticHeuristic();
 	}

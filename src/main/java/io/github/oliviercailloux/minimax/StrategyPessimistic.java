@@ -1,17 +1,16 @@
 package io.github.oliviercailloux.minimax;
 
-import static com.google.common.base.Preconditions.checkArgument;
+import static com.google.common.base.Preconditions.checkNotNull;
 import static com.google.common.base.Verify.verify;
 
 import java.util.Comparator;
-import java.util.List;
 import java.util.Map;
+import java.util.function.DoubleBinaryOperator;
 
 import org.apfloat.Aprational;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import com.google.common.base.VerifyException;
 import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.ImmutableMap.Builder;
 import com.google.common.collect.ImmutableSet;
@@ -25,8 +24,7 @@ import io.github.oliviercailloux.minimax.elicitation.QuestionType;
 import io.github.oliviercailloux.minimax.elicitation.QuestionVoter;
 import io.github.oliviercailloux.minimax.regret.PairwiseMaxRegret;
 import io.github.oliviercailloux.minimax.regret.RegretComputer;
-import io.github.oliviercailloux.minimax.utils.AggregationOperator;
-import io.github.oliviercailloux.minimax.utils.AggregationOperator.AggOps;
+import io.github.oliviercailloux.minimax.utils.MmrOperator;
 import io.github.oliviercailloux.y2018.j_voting.Alternative;
 
 /**
@@ -34,29 +32,27 @@ import io.github.oliviercailloux.y2018.j_voting.Alternative;
  **/
 public class StrategyPessimistic implements Strategy {
 
-	private static AggOps op;
-	private ImmutableMap<Question, Double> questions;
 	private static final Logger LOGGER = LoggerFactory.getLogger(StrategyPessimistic.class);
+	private ImmutableMap<Question, Double> questions;
 	private final StrategyHelper helper;
+	private final DoubleBinaryOperator mmrOperator;
 
 	public static StrategyPessimistic build() {
-		op = AggOps.MAX;
-		return new StrategyPessimistic();
+		return new StrategyPessimistic(MmrOperator.MAX);
 	}
 
-	public static StrategyPessimistic build(AggOps operator) {
-		checkArgument(!operator.equals(AggOps.WEIGHTED_AVERAGE));
-		op = operator;
-		return new StrategyPessimistic();
+	public static StrategyPessimistic build(DoubleBinaryOperator mmrOperator) {
+		return new StrategyPessimistic(mmrOperator);
 	}
 
-	private StrategyPessimistic() {
+	private StrategyPessimistic(DoubleBinaryOperator mmrOperator) {
 		LOGGER.info("Pessimistic");
 		helper = StrategyHelper.newInstance();
+		this.mmrOperator = checkNotNull(mmrOperator);
 	}
 
 	@Override
-	public Question nextQuestion() throws VerifyException {
+	public Question nextQuestion() {
 		helper.getAndCheckSize();
 
 		final Builder<Question, Double> questionsBuilder = ImmutableMap.builder();
@@ -113,17 +109,7 @@ public class StrategyPessimistic implements Strategy {
 		Alternative xStarNo = mmrNo.keySet().iterator().next();
 		double noMMR = mmrNo.get(xStarNo).iterator().next().getPmrValue();
 
-		switch (op) {
-		case MAX:
-			return AggregationOperator.getMax(yesMMR, noMMR);
-		case MIN:
-			return AggregationOperator.getMin(yesMMR, noMMR);
-		case AVG:
-			return AggregationOperator.getAvg(yesMMR, noMMR);
-		case WEIGHTED_AVERAGE:
-		default:
-			throw new IllegalStateException();
-		}
+		return mmrOperator.applyAsDouble(yesMMR, noMMR);
 	}
 
 	@Override
@@ -131,8 +117,7 @@ public class StrategyPessimistic implements Strategy {
 		helper.setKnowledge(knowledge);
 	}
 
-	/** only for testing purposes */
-	public ImmutableMap<Question, Double> getQuestions() {
+	ImmutableMap<Question, Double> getQuestions() {
 		return questions;
 	}
 
@@ -143,18 +128,7 @@ public class StrategyPessimistic implements Strategy {
 
 	@Override
 	public StrategyType getStrategyType() {
-		switch (op) {
-		case MAX:
-			return StrategyType.PESSIMISTIC_MAX;
-		case MIN:
-			return StrategyType.PESSIMISTIC_MIN;
-		case WEIGHTED_AVERAGE:
-			return StrategyType.PESSIMISTIC_WEIGHTED_AVG;
-		case AVG:
-			return StrategyType.PESSIMISTIC_AVG;
-		default:
-			throw new IllegalStateException();
-		}
+		return StrategyType.PESSIMISTIC;
 	}
 
 }
