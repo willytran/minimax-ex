@@ -7,6 +7,9 @@ import java.util.function.Supplier;
 
 import io.github.oliviercailloux.minimax.Strategy;
 import io.github.oliviercailloux.minimax.StrategyByMmr;
+import io.github.oliviercailloux.minimax.StrategyPessimisticHeuristic;
+import io.github.oliviercailloux.minimax.StrategyRandom;
+import io.github.oliviercailloux.minimax.StrategyTwoPhasesHeuristic;
 import io.github.oliviercailloux.minimax.StrategyType;
 import io.github.oliviercailloux.minimax.utils.MmrOperator;
 
@@ -14,22 +17,31 @@ public class StrategyFactory implements Supplier<Strategy> {
 	public static StrategyFactory given(StrategyType family, Map<String, Object> parameters) {
 		switch (family) {
 		case PESSIMISTIC:
-			return aggregatingMmrs((MmrOperator) parameters.get("Mmr operator"));
+			return aggregatingMmrs((MmrOperator) parameters.get("MMR operator"));
 		case PESSIMISTIC_HEURISTIC:
-//			return "LimitedPess";
 		case RANDOM:
-//			return "Random";
-		case TWO_PHASES_RANDOM:
-//			return "TwoPhasesRandom";
 		case TWO_PHASES_HEURISTIC:
-//			return "TwoPhases";
 		default:
 			throw new UnsupportedOperationException();
 		}
 	}
 
 	public static StrategyFactory aggregatingMmrs(MmrOperator mmrOperator) {
-		return new StrategyFactory(() -> StrategyByMmr.build(mmrOperator), "Pessimistic " + mmrOperator);
+		return new StrategyFactory(() -> StrategyByMmr.build(mmrOperator), "By MMR " + mmrOperator);
+	}
+
+	public static StrategyFactory pessimisticHeuristic() {
+		return new StrategyFactory(() -> StrategyPessimisticHeuristic.build(), "By MMMR limited");
+	}
+
+	public static StrategyFactory random() {
+		return new StrategyFactory(() -> StrategyRandom.build(), "Random");
+	}
+
+	public static StrategyFactory twoPhases(int questionsToVoters, int questionsToCommittee, boolean committeeFirst) {
+		return new StrategyFactory(
+				() -> StrategyTwoPhasesHeuristic.build(questionsToVoters, questionsToCommittee, committeeFirst),
+				"Two phases");
 	}
 
 	private final Supplier<Strategy> supplier;
