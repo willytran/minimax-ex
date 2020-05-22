@@ -5,6 +5,7 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.LinkedList;
+import java.util.function.Supplier;
 import java.util.stream.Stream;
 
 import org.slf4j.Logger;
@@ -17,13 +18,12 @@ import com.univocity.parsers.csv.CsvWriter;
 import com.univocity.parsers.csv.CsvWriterSettings;
 
 import io.github.oliviercailloux.minimax.Strategy;
-import io.github.oliviercailloux.minimax.StrategyTwoPhasesHeuristic;
-import io.github.oliviercailloux.minimax.StrategyType;
 import io.github.oliviercailloux.minimax.elicitation.Oracle;
 import io.github.oliviercailloux.minimax.elicitation.PrefKnowledge;
 import io.github.oliviercailloux.minimax.elicitation.PreferenceInformation;
 import io.github.oliviercailloux.minimax.elicitation.Question;
 import io.github.oliviercailloux.minimax.elicitation.QuestionType;
+import io.github.oliviercailloux.minimax.strategies.StrategyFactory;
 import io.github.oliviercailloux.minimax.utils.Generator;
 
 public class Runner {
@@ -65,7 +65,7 @@ public class Runner {
 		 * stLimitedPess, "nbQst = " +800);
 		 */
 
-		Strategy stTwoPhHeuristic;
+//		Strategy stTwoPhHeuristic;
 
 //		for (int i = 0; i <= k; i += 50) {
 //			qV = i;
@@ -87,10 +87,9 @@ public class Runner {
 			qV = i;
 			qC = k - i;
 			System.out.println(qV);
-			stTwoPhHeuristic = StrategyTwoPhasesHeuristic.build(qV, qC, committeeFirst);
 			head = "qC = " + qC + " then qV = " + qV;
 			try {
-				runXP(k, nbRuns, m, n, stTwoPhHeuristic, head);
+				runXP(k, nbRuns, m, n, StrategyFactory.twoPhases(qV, qC, committeeFirst), head);
 			} catch (IllegalStateException e) {
 				System.out.println("Complete at qV " + qV);
 				e.printStackTrace();
@@ -100,13 +99,11 @@ public class Runner {
 
 	}
 
-	private static void runXP(int k, int nbRuns, int m, int n, Strategy strategy, String head) throws IOException {
-		String title = root + "m" + m + "n" + n + strategy.toString() + "_" + k;
-		if (strategy.getStrategyType().equals(StrategyType.TWO_PHASES_HEURISTIC)) {
-			title = root + "m" + m + "n" + n + strategy.toString() + "_qV" + qV + "qC" + qC;
-		}
+	private static void runXP(int k, int nbRuns, int m, int n, Supplier<Strategy> strategyFactory, String head)
+			throws IOException {
+		String title = root + "m" + m + "n" + n + strategyFactory.toString() + "_" + k;
 		final ImmutableMap.Builder<String, ImmutableList<Double>> builder = ImmutableMap.builder();
-		final Runs runs = runRepeatedly(strategy, k, m, n, nbRuns, title);
+		final Runs runs = runRepeatedly(strategyFactory, k, m, n, nbRuns, title);
 
 		System.out.println("Time for the stats:");
 		long s = System.currentTimeMillis();
@@ -138,14 +135,11 @@ public class Runner {
 		writer.close();
 	}
 
-	private static Runs runRepeatedly(Strategy strategy, int nbQuestions, int m, int n, int nbRuns, String title)
-			throws IOException {
+	private static Runs runRepeatedly(Supplier<Strategy> strategyFactory, int nbQuestions, int m, int n, int nbRuns,
+			String title) throws IOException {
 		final ImmutableList.Builder<Run> builder = ImmutableList.builder();
-		Strategy st = strategy;
+		Strategy st = strategyFactory.get();
 		for (int i = 0; i < nbRuns; ++i) {
-			if (strategy.getStrategyType().equals(StrategyType.TWO_PHASES_HEURISTIC)) {
-				st = StrategyTwoPhasesHeuristic.build(qV, qC, committeeFirst);
-			}
 			final Run run = run(st, m, n, nbQuestions);
 			builder.add(run);
 			System.out.println("Run " + (i + 1) + " of " + nbRuns);

@@ -41,7 +41,8 @@ public class StrategyFactory implements Supplier<Strategy> {
 	public static StrategyFactory twoPhases(int questionsToVoters, int questionsToCommittee, boolean committeeFirst) {
 		return new StrategyFactory(
 				() -> StrategyTwoPhasesHeuristic.build(questionsToVoters, questionsToCommittee, committeeFirst),
-				"Two phases");
+				"Two phases " + "qV: " + questionsToVoters + "; qC: " + questionsToCommittee + "; committee first? "
+						+ committeeFirst);
 	}
 
 	private final Supplier<Strategy> supplier;
