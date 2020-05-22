@@ -23,14 +23,14 @@ public class StrategyPessimisticTest {
 	@Test
 	void testOneAlt() {
 		final PrefKnowledge k = PrefKnowledge.given(Generator.getAlternatives(1), Generator.getVoters(1));
-		final StrategyPessimistic s = StrategyPessimistic.build();
+		final StrategyByMmr s = StrategyByMmr.build();
 		assertThrows(IllegalArgumentException.class, () -> s.setKnowledge(k));
 	}
 
 	@Test
 	void testTwoAltsOneVKnown() {
 		final PrefKnowledge k = PrefKnowledge.given(Generator.getAlternatives(2), Generator.getVoters(1));
-		final StrategyPessimistic s = StrategyPessimistic.build();
+		final StrategyByMmr s = StrategyByMmr.build();
 		s.setKnowledge(k);
 		k.getProfile().get(new Voter(1)).asGraph().putEdge(new Alternative(1), new Alternative(2));
 		assertThrows(IllegalStateException.class, () -> s.nextQuestion());
@@ -39,7 +39,7 @@ public class StrategyPessimisticTest {
 	@Test
 	void testTwoAltsOneV() {
 		final PrefKnowledge k = PrefKnowledge.given(Generator.getAlternatives(2), Generator.getVoters(1));
-		final StrategyPessimistic s = StrategyPessimistic.build();
+		final StrategyByMmr s = StrategyByMmr.build();
 		s.setKnowledge(k);
 		final Question q1 = Question.toVoter(new Voter(1), new Alternative(1), new Alternative(2));
 		final Question q2 = Question.toVoter(new Voter(1), new Alternative(2), new Alternative(1));
@@ -53,7 +53,7 @@ public class StrategyPessimisticTest {
 	@Test
 	void testTwoAltsTwoVsOneKnown() {
 		final PrefKnowledge k = PrefKnowledge.given(Generator.getAlternatives(2), Generator.getVoters(2));
-		final StrategyPessimistic s = StrategyPessimistic.build();
+		final StrategyByMmr s = StrategyByMmr.build();
 		s.setKnowledge(k);
 		k.getProfile().get(new Voter(1)).asGraph().putEdge(new Alternative(1), new Alternative(2));
 		s.nextQuestion();
@@ -68,7 +68,7 @@ public class StrategyPessimisticTest {
 	@Test
 	void testTwoAltsTwoVs() {
 		final PrefKnowledge k = PrefKnowledge.given(Generator.getAlternatives(2), Generator.getVoters(2));
-		final StrategyPessimistic s = StrategyPessimistic.build();
+		final StrategyByMmr s = StrategyByMmr.build();
 		s.setKnowledge(k);
 		s.nextQuestion();
 		final Question q1 = Question.toVoter(new Voter(1), new Alternative(1), new Alternative(2));
@@ -93,7 +93,7 @@ public class StrategyPessimisticTest {
 		k.getProfile().get(new Voter(1)).asGraph().putEdge(new Alternative(2), new Alternative(3));
 		k.getProfile().get(new Voter(2)).asGraph().putEdge(new Alternative(1), new Alternative(2));
 		k.getProfile().get(new Voter(1)).setGraphChanged();
-		StrategyPessimistic s = StrategyPessimistic.build();
+		StrategyByMmr s = StrategyByMmr.build();
 		s.setKnowledge(k);
 		s.nextQuestion();
 		final Question q1 = Question.toVoter(new Voter(2), new Alternative(3), new Alternative(2));
@@ -117,7 +117,7 @@ public class StrategyPessimisticTest {
 		k.getProfile().get(new Voter(1)).asGraph().putEdge(new Alternative(1), new Alternative(2));
 		k.getProfile().get(new Voter(1)).asGraph().putEdge(new Alternative(2), new Alternative(3));
 		k.getProfile().get(new Voter(2)).asGraph().putEdge(new Alternative(1), new Alternative(2));
-		StrategyPessimistic s = StrategyPessimistic.build();
+		StrategyByMmr s = StrategyByMmr.build();
 		s.setKnowledge(k);
 		s.nextQuestion();
 

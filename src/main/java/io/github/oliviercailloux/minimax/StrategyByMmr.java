@@ -30,22 +30,22 @@ import io.github.oliviercailloux.y2018.j_voting.Alternative;
 /**
  * Uses the Regret to get the next question.
  **/
-public class StrategyPessimistic implements Strategy {
+public class StrategyByMmr implements Strategy {
 
-	private static final Logger LOGGER = LoggerFactory.getLogger(StrategyPessimistic.class);
+	private static final Logger LOGGER = LoggerFactory.getLogger(StrategyByMmr.class);
 	private ImmutableMap<Question, Double> questions;
 	private final StrategyHelper helper;
 	private final DoubleBinaryOperator mmrOperator;
 
-	public static StrategyPessimistic build() {
-		return new StrategyPessimistic(MmrOperator.MAX);
+	public static StrategyByMmr build() {
+		return new StrategyByMmr(MmrOperator.MAX);
 	}
 
-	public static StrategyPessimistic build(DoubleBinaryOperator mmrOperator) {
-		return new StrategyPessimistic(mmrOperator);
+	public static StrategyByMmr build(DoubleBinaryOperator mmrOperator) {
+		return new StrategyByMmr(mmrOperator);
 	}
 
-	private StrategyPessimistic(DoubleBinaryOperator mmrOperator) {
+	private StrategyByMmr(DoubleBinaryOperator mmrOperator) {
 		LOGGER.info("Pessimistic");
 		helper = StrategyHelper.newInstance();
 		this.mmrOperator = checkNotNull(mmrOperator);

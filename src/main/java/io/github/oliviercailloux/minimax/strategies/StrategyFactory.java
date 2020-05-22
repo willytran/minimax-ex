@@ -6,7 +6,7 @@ import java.util.Map;
 import java.util.function.Supplier;
 
 import io.github.oliviercailloux.minimax.Strategy;
-import io.github.oliviercailloux.minimax.StrategyPessimistic;
+import io.github.oliviercailloux.minimax.StrategyByMmr;
 import io.github.oliviercailloux.minimax.StrategyType;
 import io.github.oliviercailloux.minimax.utils.MmrOperator;
 
@@ -29,7 +29,7 @@ public class StrategyFactory implements Supplier<Strategy> {
 	}
 
 	public static StrategyFactory aggregatingMmrs(MmrOperator mmrOperator) {
-		return new StrategyFactory(() -> StrategyPessimistic.build(mmrOperator), "Pessimistic " + mmrOperator);
+		return new StrategyFactory(() -> StrategyByMmr.build(mmrOperator), "Pessimistic " + mmrOperator);
 	}
 
 	private final Supplier<Strategy> supplier;
