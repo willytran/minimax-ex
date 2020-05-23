@@ -70,15 +70,13 @@ public class RegretComputer {
 			}
 		}
 		final double pmr = knowledge.getConstraintsOnWeights().maximize(builder.build());
-//		assert (Math.pow(10, -1 * EPSILON_EXPONENT) > ConstraintsOnWeights.EPSILON);
-		PairwiseMaxRegret pmrY;
+		/** Just a check that the value seems to make sense. */
+		verify(Math.abs(pmr) <= knowledge.getVoters().size());
 		if (x.equals(y)) {
-			pmrY = PairwiseMaxRegret.given(x, y, ranksOfX, ranksOfX,
-					knowledge.getConstraintsOnWeights().getLastSolution(), 0);
-		} else {
-			pmrY = PairwiseMaxRegret.given(x, y, ranksOfX, ranksOfY,
-					knowledge.getConstraintsOnWeights().getLastSolution(), pmr);
+			verify(pmr == 0d);
 		}
+		final PairwiseMaxRegret pmrY = PairwiseMaxRegret.given(x, y, ranksOfX, ranksOfX,
+				knowledge.getConstraintsOnWeights().getLastSolution(), 0d);
 		return pmrY;
 	}
 
