@@ -75,7 +75,7 @@ public class RegretComputer {
 		if (x.equals(y)) {
 			verify(pmr == 0d);
 		}
-		final PairwiseMaxRegret pmrY = PairwiseMaxRegret.given(x, y, ranksOfX, ranksOfX,
+		final PairwiseMaxRegret pmrY = PairwiseMaxRegret.given(x, y, ranksOfX, ranksOfY,
 				knowledge.getConstraintsOnWeights().getLastSolution(), pmr);
 		return pmrY;
 	}
