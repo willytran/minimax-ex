@@ -1,4 +1,4 @@
-package io.github.oliviercailloux.minimax;
+package io.github.oliviercailloux.minimax.strategies;
 
 import io.github.oliviercailloux.minimax.elicitation.PrefKnowledge;
 import io.github.oliviercailloux.minimax.elicitation.Question;

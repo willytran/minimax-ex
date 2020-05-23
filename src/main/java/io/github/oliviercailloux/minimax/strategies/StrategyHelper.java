@@ -1,4 +1,4 @@
-package io.github.oliviercailloux.minimax;
+package io.github.oliviercailloux.minimax.strategies;
 
 import static com.google.common.base.Preconditions.checkArgument;
 import static com.google.common.base.Preconditions.checkNotNull;

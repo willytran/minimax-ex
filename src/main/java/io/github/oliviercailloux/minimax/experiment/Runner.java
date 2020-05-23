@@ -17,12 +17,12 @@ import com.google.common.math.Stats;
 import com.univocity.parsers.csv.CsvWriter;
 import com.univocity.parsers.csv.CsvWriterSettings;
 
-import io.github.oliviercailloux.minimax.Strategy;
 import io.github.oliviercailloux.minimax.elicitation.Oracle;
 import io.github.oliviercailloux.minimax.elicitation.PrefKnowledge;
 import io.github.oliviercailloux.minimax.elicitation.PreferenceInformation;
 import io.github.oliviercailloux.minimax.elicitation.Question;
 import io.github.oliviercailloux.minimax.elicitation.QuestionType;
+import io.github.oliviercailloux.minimax.strategies.Strategy;
 import io.github.oliviercailloux.minimax.strategies.StrategyFactory;
 import io.github.oliviercailloux.minimax.utils.Generator;
 

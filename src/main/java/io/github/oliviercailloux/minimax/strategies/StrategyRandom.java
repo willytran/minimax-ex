@@ -1,4 +1,4 @@
-package io.github.oliviercailloux.minimax;
+package io.github.oliviercailloux.minimax.strategies;
 
 import static java.util.Objects.requireNonNull;
 

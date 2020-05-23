@@ -6,16 +6,10 @@ import static com.google.common.base.Preconditions.checkState;
 import java.util.Map;
 import java.util.function.Supplier;
 
-import io.github.oliviercailloux.minimax.Strategy;
-import io.github.oliviercailloux.minimax.StrategyByMmr;
-import io.github.oliviercailloux.minimax.StrategyPessimisticHeuristic;
-import io.github.oliviercailloux.minimax.StrategyRandom;
-import io.github.oliviercailloux.minimax.StrategyTwoPhasesHeuristic;
-import io.github.oliviercailloux.minimax.StrategyType;
 import io.github.oliviercailloux.minimax.utils.MmrOperator;
 
 public class StrategyFactory implements Supplier<Strategy> {
-	public static StrategyFactory given(StrategyType family, Map<String, Object> parameters) {
+	static StrategyFactory given(StrategyType family, Map<String, Object> parameters) {
 		switch (family) {
 		case PESSIMISTIC:
 			return aggregatingMmrs((MmrOperator) parameters.get("MMR operator"));

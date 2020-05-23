@@ -1,7 +1,8 @@
-package io.github.oliviercailloux.minimax;
+package io.github.oliviercailloux.minimax.strategies;
 
 import static com.google.common.base.Preconditions.checkArgument;
 
+import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.LinkedList;
 import java.util.List;
@@ -38,92 +39,157 @@ import io.github.oliviercailloux.y2018.j_voting.Voter;
 
 /** Uses the Regret to get the next question. **/
 
-public class StrategyPessimisticHeuristic implements Strategy {
+public class StrategyTwoPhasesHeuristic implements Strategy {
 
 	private PrefKnowledge knowledge;
 	private static AggOp op;
 	private static double w1;
 	private static double w2;
-	private static Set<Question> questions;
-	private static List<Question> nextQuestions;
-	private static RegretComputer rc;
-	
-	private static final Logger LOGGER = LoggerFactory.getLogger(StrategyPessimisticHeuristic.class);
+	private int questionsToVoters;
+	private int questionsToCommittee;
+	private boolean committeeFirst;
 
-	public static StrategyPessimisticHeuristic build() {
+	private static Set<Question> questionsV;
+	private static List<Question> nextQuestionsV;
+	private static RegretComputer rc;
+
+	private static final Logger LOGGER = LoggerFactory.getLogger(StrategyTwoPhasesHeuristic.class);
+
+	public static StrategyTwoPhasesHeuristic build(int questionsToVoters, int questionsToCommittee,
+			boolean committeeFirst) {
 		op = AggOp.MAX;
-		return new StrategyPessimisticHeuristic();
+		return new StrategyTwoPhasesHeuristic(questionsToVoters, questionsToCommittee, committeeFirst);
 	}
 
-	public static StrategyPessimisticHeuristic build(AggOp operator) {
+	public static StrategyTwoPhasesHeuristic build(AggOp operator, int questionsToVoters, int questionsToCommittee,
+			boolean committeeFirst) {
 		checkArgument(!operator.equals(AggOp.WEIGHTED_AVERAGE));
 		op = operator;
-		return new StrategyPessimisticHeuristic();
+		return new StrategyTwoPhasesHeuristic(questionsToVoters, questionsToCommittee, committeeFirst);
 	}
 
-	private StrategyPessimisticHeuristic() {
-		LOGGER.info("LimitedPessimistic");
+	public static StrategyTwoPhasesHeuristic build(AggOp operator, double w_1, double w_2, int questionsToVoters,
+			int questionsToCommittee, boolean committeeFirst) {
+		checkArgument(operator.equals(AggOp.WEIGHTED_AVERAGE));
+		checkArgument(w_1 > 0);
+		checkArgument(w_2 > 0);
+		op = operator;
+		w1 = w_1;
+		w2 = w_2;
+		return new StrategyTwoPhasesHeuristic(questionsToVoters, questionsToCommittee, committeeFirst);
 	}
 
+	private StrategyTwoPhasesHeuristic(int qToVoters, int qToCommittee, boolean cFirst) {
+		questionsToVoters = qToVoters;
+		questionsToCommittee = qToCommittee;
+		committeeFirst = cFirst;
+		LOGGER.info("TwoPhHeuristic");
+	}
+
+	/**
+	 * Returns the next question that this strategy thinks is best asking.
+	 * 
+	 * @return a question.
+	 * 
+	 * @throws VerifyException       if there are less than two alternatives or if
+	 *                               there are exactly two alternatives and the
+	 *                               profile is complete.
+	 * @throws IllegalStateException if the profile is complete and a question for
+	 *                               the voters is demanded.
+	 * @throws IllegalStateException if more questions than expected are asked.
+	 */
 	@Override
 	public Question nextQuestion() {
 		final int m = knowledge.getAlternatives().size();
 		Verify.verify(m > 2 || (m == 2 && !knowledge.isProfileComplete()));
-		questions = selectQuestions();	
-		assert !questions.isEmpty();
+		assert (questionsToVoters != 0 || questionsToCommittee != 0);
 
-		Question nextQ = questions.iterator().next();
-		double minScore = getScore(nextQ);
-		nextQuestions = new LinkedList<>();
-		nextQuestions.add(nextQ);
-
-		for (Question q : questions) {
-			double score = getScore(q);
-			if (score < minScore) {
-				nextQ = q;
-				minScore = score;
-				nextQuestions.clear();
-				nextQuestions.add(nextQ);
-			} else {
-				if (score == minScore && !nextQuestions.contains(q)) {
-					nextQuestions.add(q);
-				}
-			}
-		}
-		int randomPos = (int) (nextQuestions.size() * Math.random());
-		return nextQuestions.get(randomPos);
-	}
-
-	private Set<Question> selectQuestions() {
 		SetMultimap<Alternative, PairwiseMaxRegret> mmr = rc.getMinimalMaxRegrets().asMultimap();
 		Alternative xStar = mmr.keySet().iterator().next();
 		PairwiseMaxRegret currentSolution = mmr.get(xStar).iterator().next();
 		Alternative yBar = currentSolution.getY();
 		PSRWeights wBar = currentSolution.getWeights();
-		Set<Question> quests = new HashSet<>();
-		quests.addAll(selectQuestionsVoters(xStar, yBar));
-		quests.add(selectQuestionCommittee(wBar, xStar, yBar));
-		return quests;
+		Question q;
+
+		if (committeeFirst) {
+			if (questionsToCommittee > 0) {
+				q = selectQuestionToCommittee(wBar, xStar, yBar);
+				questionsToCommittee--;
+			} else if (questionsToVoters > 0) {
+				q = selectQuestionToVoters(xStar, yBar);
+				questionsToVoters--;
+			} else {
+				System.out.println(questionsToCommittee + "     "+ questionsToVoters);
+				throw new IllegalStateException("More questions than expected.");
+			}
+		} else {
+			if (questionsToVoters > 0) {
+				q = selectQuestionToVoters(xStar, yBar);
+				questionsToVoters--;
+
+			} else if (questionsToCommittee > 0) {
+				q = selectQuestionToCommittee(wBar, xStar, yBar);
+				questionsToCommittee--;
+			} else
+				throw new IllegalStateException("More questions than expected.");
+		}
+
+		return q;
 	}
 
-	private Question selectQuestionCommittee(PSRWeights wBar, Alternative xStar, Alternative yBar) {
+	private Question selectQuestionToCommittee(PSRWeights wBar, Alternative xStar, Alternative yBar) {
 		PSRWeights wMin = getMinTauW(xStar, yBar);
 
 		int maxRank = 2;
 		double maxDiff = Math.abs(wBar.getWeightAtRank(maxRank) - wMin.getWeightAtRank(maxRank));
-
-		for (int i = maxRank + 1; i <= knowledge.getAlternatives().size(); i++) {
+		ArrayList<Integer> ranks = new ArrayList<>();
+		ranks.add(maxRank);
+		
+		for (int i = maxRank + 1; i < knowledge.getAlternatives().size(); i++) {
 			double diff = Math.abs(wBar.getWeightAtRank(i) - wMin.getWeightAtRank(i));
-			if (diff > maxDiff ) {
+			if (Math.abs(maxDiff-diff)<=0.01) {
+				ranks.add(i);
+			}else {
 				maxDiff = diff;
 				maxRank = i;
+				ranks.clear();
+				ranks.add(i);
 			}
 		}
-
-		Range<Aprational> lambdaRange = knowledge.getLambdaRange(maxRank - 1);
+		int randomPos = (int) (ranks.size() * Math.random());
+		Range<Aprational> lambdaRange = knowledge.getLambdaRange(ranks.get(randomPos) - 1);
 		Aprational avg = AprationalMath.sum(lambdaRange.lowerEndpoint(), lambdaRange.upperEndpoint())
 				.divide(new Apint(2));
-		return Question.toCommittee(QuestionCommittee.given(avg, maxRank - 1));
+		return Question.toCommittee(QuestionCommittee.given(avg, ranks.get(randomPos) - 1));
+	}
+
+	private Question selectQuestionToVoters(Alternative xStar, Alternative yBar) {
+		questionsV = selectQuestionsVoters(xStar, yBar);
+		if (questionsV.isEmpty()) {
+			throw new IllegalStateException("The profile is complete and a question to the voters has been demanded.");
+		}
+
+		Question nextQ = questionsV.iterator().next();
+		double minScore = getScore(nextQ);
+		nextQuestionsV = new LinkedList<>();
+		nextQuestionsV.add(nextQ);
+
+		for (Question q : questionsV) {
+			double score = getScore(q);
+			if (score < minScore) {
+				nextQ = q;
+				minScore = score;
+				nextQuestionsV.clear();
+				nextQuestionsV.add(nextQ);
+			} else {
+				if (score == minScore && !nextQuestionsV.contains(q)) {
+					nextQuestionsV.add(q);
+				}
+			}
+		}
+		int randomPos = (int) (nextQuestionsV.size() * Math.random());
+		return nextQuestionsV.get(randomPos);
+
 	}
 
 	private Set<Question> selectQuestionsVoters(Alternative xStar, Alternative yBar) {
@@ -197,7 +263,6 @@ public class StrategyPessimisticHeuristic implements Strategy {
 				questv.add(qv);
 			}
 		}
-		
 		return questv;
 	}
 
@@ -275,12 +340,11 @@ public class StrategyPessimisticHeuristic implements Strategy {
 
 	/** only for testing purposes */
 	public static Set<Question> getQuestions() {
-		return questions;
-	}
-	
-	@Override
-	public String toString() {
-		return "LimitedPessimistic";
+		return questionsV;
 	}
 
+	@Override
+	public String toString() {
+		return "TwoPhHeuristic";
+	}
 }
