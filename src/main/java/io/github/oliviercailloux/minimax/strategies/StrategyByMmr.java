@@ -24,7 +24,6 @@ import io.github.oliviercailloux.minimax.elicitation.QuestionType;
 import io.github.oliviercailloux.minimax.elicitation.QuestionVoter;
 import io.github.oliviercailloux.minimax.regret.PairwiseMaxRegret;
 import io.github.oliviercailloux.minimax.regret.RegretComputer;
-import io.github.oliviercailloux.minimax.utils.MmrOperator;
 import io.github.oliviercailloux.y2018.j_voting.Alternative;
 
 /**

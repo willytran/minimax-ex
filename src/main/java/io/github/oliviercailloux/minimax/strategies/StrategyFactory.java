@@ -6,8 +6,6 @@ import static com.google.common.base.Preconditions.checkState;
 import java.util.Map;
 import java.util.function.Supplier;
 
-import io.github.oliviercailloux.minimax.utils.MmrOperator;
-
 public class StrategyFactory implements Supplier<Strategy> {
 	static StrategyFactory given(StrategyType family, Map<String, Object> parameters) {
 		switch (family) {
