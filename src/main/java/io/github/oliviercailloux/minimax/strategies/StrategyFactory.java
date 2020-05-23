@@ -31,7 +31,7 @@ public class StrategyFactory implements Supplier<Strategy> {
 	}
 
 	public static StrategyFactory pessimisticHeuristic() {
-		return new StrategyFactory(() -> StrategyPessimisticHeuristic.build(), "By MMMR limited");
+		return new StrategyFactory(() -> StrategyPessimisticHeuristic.build(), "By MMR limited");
 	}
 
 	public static StrategyFactory random() {
