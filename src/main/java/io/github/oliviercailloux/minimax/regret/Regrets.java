@@ -68,12 +68,12 @@ public class Regrets {
 
 	private final ImmutableSetMultimap<Alternative, PairwiseMaxRegret> regrets;
 	/**
-	 * for each alternative x, the pairwise max regrets concerning x, indexed by the
+	 * For each alternative x, the pairwise max regrets concerning x, indexed by the
 	 * level of the regret, iterating from lowest to highest regret.
 	 */
 	private ImmutableMap<Alternative, SetMultimap<Double, PairwiseMaxRegret>> regretsSorted;
 
-	public Regrets(SetMultimap<Alternative, PairwiseMaxRegret> regrets) {
+	private Regrets(SetMultimap<Alternative, PairwiseMaxRegret> regrets) {
 		this.regrets = ImmutableSetMultimap.copyOf(regrets);
 		checkArgument(!regrets.isEmpty());
 		checkArgument(regrets.entries().stream().allMatch((e) -> e.getValue().getX().equals(e.getKey())));
