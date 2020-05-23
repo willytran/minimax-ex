@@ -29,6 +29,4 @@ public interface Strategy {
 	 *                               profile is complete.
 	 */
 	public Question nextQuestion();
-
-	public StrategyType getStrategyType();
 }

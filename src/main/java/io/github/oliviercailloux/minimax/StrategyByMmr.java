@@ -126,9 +126,4 @@ public class StrategyByMmr implements Strategy {
 		return "Pessimistic";
 	}
 
-	@Override
-	public StrategyType getStrategyType() {
-		return StrategyType.PESSIMISTIC;
-	}
-
 }

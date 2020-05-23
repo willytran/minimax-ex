@@ -283,9 +283,4 @@ public class StrategyPessimisticHeuristic implements Strategy {
 		return "LimitedPessimistic";
 	}
 
-	@Override
-	public StrategyType getStrategyType() {
-		return StrategyType.PESSIMISTIC_HEURISTIC;
-	}
-
 }

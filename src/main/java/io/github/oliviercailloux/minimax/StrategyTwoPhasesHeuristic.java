@@ -347,9 +347,4 @@ public class StrategyTwoPhasesHeuristic implements Strategy {
 	public String toString() {
 		return "TwoPhHeuristic";
 	}
-	
-	@Override
-	public StrategyType getStrategyType() {
-		return StrategyType.TWO_PHASES_HEURISTIC;
-	}
 }

@@ -122,9 +122,4 @@ public class StrategyRandom implements Strategy {
 	public String toString() {
 		return "Random";
 	}
-
-	@Override
-	public StrategyType getStrategyType() {
-		return StrategyType.RANDOM;
-	}
 }
