@@ -66,7 +66,7 @@ public class StrategyByMmr implements Strategy {
 		questions = questionsBuilder.build();
 		verify(!questions.isEmpty());
 
-		final double bestScore = questions.values().stream().max(Comparator.naturalOrder()).get();
+		final double bestScore = questions.values().stream().min(Comparator.naturalOrder()).get();
 		final ImmutableSet<Question> bestQuestions = questions.entrySet().stream()
 				.filter(e -> e.getValue() == bestScore).map(Map.Entry::getKey).collect(ImmutableSet.toImmutableSet());
 		final int pos = helper.nextInt(bestQuestions.size());
