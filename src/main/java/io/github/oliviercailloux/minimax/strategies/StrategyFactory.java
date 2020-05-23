@@ -1,6 +1,7 @@
 package io.github.oliviercailloux.minimax.strategies;
 
 import static com.google.common.base.Preconditions.checkNotNull;
+import static com.google.common.base.Preconditions.checkState;
 
 import java.util.Map;
 import java.util.function.Supplier;
@@ -56,7 +57,8 @@ public class StrategyFactory implements Supplier<Strategy> {
 	@Override
 	public Strategy get() {
 		final Strategy instance = supplier.get();
-		return checkNotNull(instance);
+		checkState(instance != null);
+		return instance;
 	}
 
 	/**
