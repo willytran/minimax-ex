@@ -10,6 +10,7 @@ import java.util.Set;
 import java.util.SortedMap;
 import java.util.function.Function;
 
+import com.google.common.base.MoreObjects;
 import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.ImmutableSet;
 import com.google.common.collect.ImmutableSetMultimap;
@@ -173,5 +174,11 @@ public class Regrets {
 		return regrets.keySet().stream().filter((x) -> getMaxRegret(x) <= value)
 				.collect(ImmutableSetMultimap.flatteningToImmutableSetMultimap(Function.identity(),
 						(x) -> getRegretsSorted(x).tailMap(value - epsilon).values().stream().flatMap(Set::stream)));
+	}
+
+	@Override
+	public String toString() {
+		initSorted();
+		return MoreObjects.toStringHelper(this).addValue(regretsSorted).toString();
 	}
 }

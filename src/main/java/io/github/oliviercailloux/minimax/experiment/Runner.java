@@ -102,7 +102,6 @@ public class Runner {
 	private static void runXP(int k, int nbRuns, int m, int n, Supplier<Strategy> strategyFactory, String head)
 			throws IOException {
 		String title = root + "m" + m + "n" + n + strategyFactory.toString() + "_" + k;
-		final ImmutableMap.Builder<String, ImmutableList<Double>> builder = ImmutableMap.builder();
 		final Runs runs = runRepeatedly(strategyFactory, k, m, n, nbRuns, title);
 
 		System.out.println("Time for the stats:");
@@ -110,6 +109,7 @@ public class Runner {
 		final ImmutableList<Double> regrets = runs.getAverageMinimalMaxRegrets();
 		System.out.println((System.currentTimeMillis() - s) / 1000);
 
+		final ImmutableMap.Builder<String, ImmutableList<Double>> builder = ImmutableMap.builder();
 		builder.put(head, regrets);
 		final ImmutableMap<String, ImmutableList<Double>> results = builder.build();
 
@@ -138,8 +138,8 @@ public class Runner {
 	private static Runs runRepeatedly(Supplier<Strategy> strategyFactory, int nbQuestions, int m, int n, int nbRuns,
 			String title) throws IOException {
 		final ImmutableList.Builder<Run> builder = ImmutableList.builder();
-		Strategy st = strategyFactory.get();
 		for (int i = 0; i < nbRuns; ++i) {
+			final Strategy st = strategyFactory.get();
 			final Run run = run(st, m, n, nbQuestions);
 			builder.add(run);
 			System.out.println("Run " + (i + 1) + " of " + nbRuns);
@@ -182,6 +182,12 @@ public class Runner {
 		return;
 	}
 
+	/**
+	 * Creates a new random oracle; returns a single run of asking k questions with
+	 * the given strategy.
+	 *
+	 * @param strategy should be freshly instanciated
+	 */
 	public static Run run(Strategy strategy, int m, int n, int k) {
 		final Oracle oracle = Oracle.build(Generator.genProfile(m, n), Generator.genWeights(m));
 
