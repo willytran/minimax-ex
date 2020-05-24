@@ -101,4 +101,19 @@ public class ForwardingMutableGraph<N> implements MutableGraph<N> {
 	public boolean removeEdge(N nodeU, N nodeV) {
 		return delegate.removeEdge(nodeU, nodeV);
 	}
+
+	@Override
+	public boolean hasEdgeConnecting(EndpointPair<N> endpoints) {
+		return delegate.hasEdgeConnecting(endpoints);
+	}
+
+	@Override
+	public boolean putEdge(EndpointPair<N> endpoints) {
+		return delegate.putEdge(endpoints);
+	}
+
+	@Override
+	public boolean removeEdge(EndpointPair<N> endpoints) {
+		return delegate.removeEdge(endpoints);
+	}
 }
