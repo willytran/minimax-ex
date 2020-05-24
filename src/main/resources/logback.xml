@@ -1,8 +1,10 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<configuration xmlns="http://ch.qos.logback/xml/ns/logback"
+<configuration
+	xmlns="http://ch.qos.logback/xml/ns/logback"
 	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
 	xsi:schemaLocation="http://ch.qos.logback/xml/ns/logback https://raw.githubusercontent.com/enricopulatzo/logback-XSD/master/src/main/xsd/logback.xsd">
-	<appender name="STDOUT" class="ch.qos.logback.core.ConsoleAppender">
+	<appender name="STDOUT"
+		class="ch.qos.logback.core.ConsoleAppender">
 		<encoder>
 			<pattern>%d{HH:mm:ss.SSS} [%thread] %-5level %logger{36} - %msg%n
 			</pattern>
@@ -11,7 +13,7 @@
 			<level>INFO</level>
 		</filter>
 	</appender>
-	
+
 	<appender name="File" class="ch.qos.logback.core.FileAppender">
 		<file>out.log</file>
 		<append>false</append>
@@ -25,5 +27,21 @@
 		<appender-ref ref="STDOUT" />
 		<appender-ref ref="File" />
 	</root>
-	<logger name="io.github.oliviercailloux.jlp.or_tools.OrToolsSolver" level="ERROR" />
+	<logger
+		name="io.github.oliviercailloux.y2018.j_voting.Alternative"
+		level="ERROR" />
+	<logger
+		name="io.github.oliviercailloux.y2018.j_voting.Generator"
+		level="ERROR" />
+	<logger
+		name="io.github.oliviercailloux.y2018.j_voting.Preference"
+		level="ERROR" />
+	<logger
+		name="io.github.oliviercailloux.y2018.j_voting.StrictPreference"
+		level="ERROR" />
+	<logger name="io.github.oliviercailloux.y2018.j_voting.Voter"
+		level="ERROR" />
+	<logger
+		name="io.github.oliviercailloux.jlp.or_tools.OrToolsSolver"
+		level="ERROR" />
 </configuration>
