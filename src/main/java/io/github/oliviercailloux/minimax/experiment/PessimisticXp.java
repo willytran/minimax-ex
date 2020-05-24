@@ -16,10 +16,10 @@ public class PessimisticXp {
 
 	public static void main(String[] args) {
 		final StrategyFactory pessimisticFactory = StrategyFactory.aggregatingMmrs(MmrOperator.MAX);
-		/** (4, 4, 100): 21 sec; need 19 q to reach 0. */
-		/** (5, 4, 100): 67 sec. */
-		/** (5, 4, 30): 29 sec. */
-		/** (5, 5, 30): 46 sec. */
+		/** (4, 4, 100), Saucisson: 21 sec; need about 19 q to reach 0. */
+		/** (5, 4, 100), Saucisson: 67 sec. */
+		/** (5, 4, 30), Saucisson: 29 sec. */
+		/** (5, 5, 30), Saucisson: 44 sec. */
 		final int m = 5;
 		final int n = 5;
 		final int k = 30;
