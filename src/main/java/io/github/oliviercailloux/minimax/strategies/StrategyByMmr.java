@@ -45,7 +45,6 @@ public class StrategyByMmr implements Strategy {
 	}
 
 	private StrategyByMmr(DoubleBinaryOperator mmrOperator) {
-		LOGGER.info("Pessimistic");
 		helper = StrategyHelper.newInstance();
 		this.mmrOperator = checkNotNull(mmrOperator);
 	}
