@@ -5,6 +5,7 @@ import static com.google.common.base.Verify.verify;
 
 import java.util.Comparator;
 import java.util.Map;
+import java.util.Random;
 import java.util.function.DoubleBinaryOperator;
 
 import org.apfloat.Aprational;
@@ -49,9 +50,18 @@ public class StrategyByMmr implements Strategy {
 		this.mmrOperator = checkNotNull(mmrOperator);
 	}
 
+	public void setRandom(Random random) {
+		helper.setRandom(random);
+	}
+
+	@Override
+	public void setKnowledge(PrefKnowledge knowledge) {
+		helper.setKnowledge(knowledge);
+	}
+
 	@Override
 	public Question nextQuestion() {
-		helper.getAndCheckSize();
+		helper.getAndCheckM();
 
 		final Builder<Question, Double> questionsBuilder = ImmutableMap.builder();
 
@@ -68,8 +78,7 @@ public class StrategyByMmr implements Strategy {
 		final ImmutableSet<Question> bestQuestions = questions.entrySet().stream()
 				.filter(e -> e.getValue() == bestScore).map(Map.Entry::getKey).collect(ImmutableSet.toImmutableSet());
 		LOGGER.debug("Best questions: {}.", bestQuestions);
-		final int pos = helper.nextInt(bestQuestions.size());
-		return bestQuestions.asList().get(pos);
+		return helper.draw(bestQuestions);
 	}
 
 	public double getScore(QuestionVoter q) {
@@ -111,18 +120,8 @@ public class StrategyByMmr implements Strategy {
 		return mmrOperator.applyAsDouble(yesMMR, noMMR);
 	}
 
-	@Override
-	public void setKnowledge(PrefKnowledge knowledge) {
-		helper.setKnowledge(knowledge);
-	}
-
 	ImmutableMap<Question, Double> getQuestions() {
 		return questions;
-	}
-
-	@Override
-	public String toString() {
-		return "Pessimistic";
 	}
 
 }

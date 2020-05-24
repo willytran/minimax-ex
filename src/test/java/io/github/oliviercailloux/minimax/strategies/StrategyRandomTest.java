@@ -12,14 +12,12 @@ import org.junit.jupiter.api.Test;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import com.google.common.base.VerifyException;
 import com.google.common.graph.MutableGraph;
 
 import io.github.oliviercailloux.jlp.elements.ComparisonOperator;
 import io.github.oliviercailloux.minimax.elicitation.PrefKnowledge;
 import io.github.oliviercailloux.minimax.elicitation.Question;
 import io.github.oliviercailloux.minimax.elicitation.QuestionType;
-import io.github.oliviercailloux.minimax.strategies.StrategyRandom;
 import io.github.oliviercailloux.y2018.j_voting.Alternative;
 import io.github.oliviercailloux.y2018.j_voting.Generator;
 import io.github.oliviercailloux.y2018.j_voting.Voter;
@@ -33,10 +31,7 @@ class StrategyRandomTest {
 	void testOneAlt() {
 		final PrefKnowledge k = PrefKnowledge.given(Generator.getAlternatives(1), Generator.getVoters(1));
 		final StrategyRandom s = StrategyRandom.build();
-		s.setKnowledge(k);
-		final Random notRandom = new Random(0);
-		s.setRandom(notRandom);
-		assertThrows(VerifyException.class, () -> s.nextQuestion());
+		assertThrows(IllegalArgumentException.class, () -> s.setKnowledge(k));
 	}
 
 	@Test
@@ -47,7 +42,7 @@ class StrategyRandomTest {
 		final Random notRandom = new Random(0);
 		s.setRandom(notRandom);
 		k.getProfile().get(new Voter(1)).asGraph().putEdge(new Alternative(1), new Alternative(2));
-		assertThrows(VerifyException.class, () -> s.nextQuestion());
+		assertThrows(IllegalStateException.class, () -> s.nextQuestion());
 	}
 
 	@Test
@@ -122,7 +117,7 @@ class StrategyRandomTest {
 		k.addConstraint(1, ComparisonOperator.EQ, new Apint(1));
 		assertTrue(k.isProfileComplete());
 		assertTrue(s.nextQuestion().getType() == QuestionType.COMMITTEE_QUESTION);
-//		prof complete and next qst is committee 
+//		prof complete and next qst is committee
 	}
 
 	@Test
@@ -137,7 +132,7 @@ class StrategyRandomTest {
 		g.putEdge(new Alternative(2), new Alternative(3));
 		assertTrue(k.isProfileComplete());
 		assertTrue(s.nextQuestion().getType() == QuestionType.COMMITTEE_QUESTION);
-//		prof complete and next qst is committee 
+//		prof complete and next qst is committee
 	}
 
 }

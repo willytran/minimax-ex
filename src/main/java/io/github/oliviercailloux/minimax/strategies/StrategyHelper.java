@@ -7,12 +7,15 @@ import static com.google.common.base.Verify.verify;
 
 import java.util.Random;
 import java.util.Set;
+import java.util.concurrent.ThreadLocalRandom;
 import java.util.stream.IntStream;
 import java.util.stream.Stream;
 
 import org.apfloat.Apint;
 import org.apfloat.Aprational;
 import org.apfloat.AprationalMath;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import com.google.common.collect.ImmutableSet;
 import com.google.common.collect.Range;
@@ -26,33 +29,34 @@ import io.github.oliviercailloux.y2018.j_voting.Alternative;
 import io.github.oliviercailloux.y2018.j_voting.Voter;
 
 public class StrategyHelper {
+	@SuppressWarnings("unused")
+	private static final Logger LOGGER = LoggerFactory.getLogger(StrategyHelper.class);
+
 	public static ImmutableSet<EndpointPair<Alternative>> getIncomparablePairs(Graph<Alternative> graph) {
 		final Set<Alternative> alternatives = graph.nodes();
 		final ImmutableSet.Builder<EndpointPair<Alternative>> builder = ImmutableSet.builder();
 		for (Alternative a1 : alternatives) {
-			final Set<Alternative> known = graph.adjacentNodes(a1);
-			alternatives.stream().filter(a2 -> !known.contains(a2)).filter(a2 -> !a2.equals(a1))
-					.forEach(a2 -> builder.add(EndpointPair.unordered(a1, a2)));
+			final Stream<Alternative> incomparable = getIncomparables(graph, a1);
+			incomparable.forEach(a2 -> builder.add(EndpointPair.unordered(a1, a2)));
 		}
 		return builder.build();
+	}
+
+	public static Stream<Alternative> getIncomparables(Graph<Alternative> graph, Alternative a1) {
+		final Set<Alternative> known = graph.adjacentNodes(a1);
+		return graph.nodes().stream().filter(a2 -> !known.contains(a2)).filter(a2 -> !a2.equals(a1));
 	}
 
 	public static StrategyHelper newInstance() {
 		return new StrategyHelper();
 	}
 
-	public static StrategyHelper using(PrefKnowledge knowledge) {
-		final StrategyHelper strategyHelper = new StrategyHelper();
-		strategyHelper.setKnowledge(knowledge);
-		return strategyHelper;
-	}
-
 	private PrefKnowledge knowledge;
-	private final Random random;
+	private Random random;
 
-	public StrategyHelper() {
+	private StrategyHelper() {
 		knowledge = null;
-		random = new Random();
+		random = null;
 	}
 
 	public PrefKnowledge getKnowledge() {
@@ -65,8 +69,50 @@ public class StrategyHelper {
 		this.knowledge = knowledge;
 	}
 
+	public int getAndCheckM() {
+		final int m = getM();
+		verify(m >= 2);
+		if (m == 2) {
+			checkState(!getKnowledge().isProfileComplete());
+		}
+		return m;
+	}
+
+	private int getM() {
+		return getKnowledge().getAlternatives().size();
+	}
+
+	public Random getRandom() {
+		if (random == null) {
+			final long seed = ThreadLocalRandom.current().nextLong();
+			LOGGER.info("Random uses seed {}.", seed);
+			random = new Random(seed);
+		}
+		return random;
+	}
+
+	public void setRandom(Random random) {
+		this.random = checkNotNull(random);
+	}
+
+	public int nextInt(int size) {
+		return getRandom().nextInt(size);
+	}
+
+	public <E> E draw(ImmutableSet<E> candidates) {
+		checkArgument(!candidates.isEmpty());
+		final int i = getRandom().nextInt(candidates.size());
+		return candidates.asList().get(i);
+	}
+
+	public ImmutableSet<Voter> getQuestionableVoters() {
+		return getKnowledge().getVoters().stream().filter(v -> getKnowledge().getPartialPreference(v)
+				.asTransitiveGraph().edges().size() != getM() * (getM() - 1) / 2)
+				.collect(ImmutableSet.toImmutableSet());
+	}
+
 	public ImmutableSet<QuestionVoter> getPossibleVoterQuestions() {
-		return knowledge.getVoters().stream().flatMap(this::getPossibleVoterQuestions)
+		return getKnowledge().getVoters().stream().flatMap(this::getPossibleVoterQuestions)
 				.collect(ImmutableSet.toImmutableSet());
 	}
 
@@ -78,14 +124,14 @@ public class StrategyHelper {
 	}
 
 	private ImmutableSet<Integer> getRanksWithLambdaRangesWiderThan(double threshold) {
-		return IntStream.rangeClosed(1, knowledge.getAlternatives().size() - 2).boxed()
-				.filter(r -> getWidthOfLambdaRangeAtRank(r) > threshold).collect(ImmutableSet.toImmutableSet());
+		return IntStream.rangeClosed(1, getM() - 2).boxed().filter(r -> getWidthOfLambdaRangeAtRank(r) > threshold)
+				.collect(ImmutableSet.toImmutableSet());
 	}
 
 	private double getWidthOfLambdaRangeAtRank(int rank) {
 		checkArgument(rank >= 1);
-		checkArgument(rank <= knowledge.getAlternatives().size() - 2);
-		final Range<Aprational> lambdaRange = knowledge.getLambdaRange(rank);
+		checkArgument(rank <= getM() - 2);
+		final Range<Aprational> lambdaRange = getKnowledge().getLambdaRange(rank);
 		return (lambdaRange.upperEndpoint().subtract(lambdaRange.lowerEndpoint())).doubleValue();
 	}
 
@@ -105,7 +151,7 @@ public class StrategyHelper {
 		} else {
 			questions = questionsThreshold;
 		}
-		if (knowledge.getAlternatives().size() > 2) {
+		if (getM() > 2) {
 			/**
 			 * This fails iff the knowledge includes exact points for all lambdas
 			 * (equivalently, if all lambda ranges are empty). Considering the way our
@@ -116,23 +162,10 @@ public class StrategyHelper {
 		return questions;
 	}
 
-	private QuestionCommittee getQuestionAboutHalfRange(int rank) {
-		final Range<Aprational> lambdaRange = knowledge.getLambdaRange(rank);
+	public QuestionCommittee getQuestionAboutHalfRange(int rank) {
+		final Range<Aprational> lambdaRange = getKnowledge().getLambdaRange(rank);
 		final Aprational avg = AprationalMath.sum(lambdaRange.lowerEndpoint(), lambdaRange.upperEndpoint())
 				.divide(new Apint(2));
 		return QuestionCommittee.given(avg, rank);
-	}
-
-	public int getAndCheckSize() {
-		final int m = getKnowledge().getAlternatives().size();
-		verify(m >= 2);
-		if (m == 2) {
-			checkState(!getKnowledge().isProfileComplete());
-		}
-		return m;
-	}
-
-	public int nextInt(int size) {
-		return random.nextInt(size);
 	}
 }

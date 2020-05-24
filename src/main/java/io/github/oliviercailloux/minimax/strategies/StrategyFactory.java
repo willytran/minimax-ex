@@ -4,9 +4,17 @@ import static com.google.common.base.Preconditions.checkNotNull;
 import static com.google.common.base.Preconditions.checkState;
 
 import java.util.Map;
+import java.util.Random;
+import java.util.concurrent.ThreadLocalRandom;
 import java.util.function.Supplier;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 public class StrategyFactory implements Supplier<Strategy> {
+	@SuppressWarnings("unused")
+	private static final Logger LOGGER = LoggerFactory.getLogger(StrategyFactory.class);
+
 	static StrategyFactory given(StrategyType family, Map<String, Object> parameters) {
 		switch (family) {
 		case PESSIMISTIC:
@@ -20,7 +28,12 @@ public class StrategyFactory implements Supplier<Strategy> {
 	}
 
 	public static StrategyFactory aggregatingMmrs(MmrOperator mmrOperator) {
-		return new StrategyFactory(() -> StrategyByMmr.build(mmrOperator), "By MMR " + mmrOperator);
+		final Random random = getRandom();
+		return new StrategyFactory(() -> {
+			final StrategyByMmr strategy = StrategyByMmr.build(mmrOperator);
+			strategy.setRandom(random);
+			return strategy;
+		}, "By MMR " + mmrOperator);
 	}
 
 	public static StrategyFactory pessimisticHeuristic() {
@@ -28,7 +41,12 @@ public class StrategyFactory implements Supplier<Strategy> {
 	}
 
 	public static StrategyFactory random() {
-		return new StrategyFactory(() -> StrategyRandom.build(), "Random");
+		final Random random = getRandom();
+		return new StrategyFactory(() -> {
+			final StrategyRandom strategy = StrategyRandom.build();
+			strategy.setRandom(random);
+			return strategy;
+		}, "Random");
 	}
 
 	public static StrategyFactory twoPhases(int questionsToVoters, int questionsToCommittee, boolean committeeFirst) {
@@ -36,6 +54,13 @@ public class StrategyFactory implements Supplier<Strategy> {
 				() -> StrategyTwoPhasesHeuristic.build(questionsToVoters, questionsToCommittee, committeeFirst),
 				"Two phases " + "qV: " + questionsToVoters + "; qC: " + questionsToCommittee + "; committee first? "
 						+ committeeFirst);
+	}
+
+	private static Random getRandom() {
+		final long seed = ThreadLocalRandom.current().nextLong();
+		LOGGER.info("Random uses seed {}.", seed);
+		final Random random = new Random(seed);
+		return random;
 	}
 
 	private final Supplier<Strategy> supplier;
