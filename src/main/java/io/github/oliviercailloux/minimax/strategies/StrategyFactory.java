@@ -11,6 +11,8 @@ import java.util.function.Supplier;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import com.google.common.base.MoreObjects;
+
 public class StrategyFactory implements Supplier<Strategy> {
 	@SuppressWarnings("unused")
 	private static final Logger LOGGER = LoggerFactory.getLogger(StrategyFactory.class);
@@ -58,9 +60,8 @@ public class StrategyFactory implements Supplier<Strategy> {
 
 	private static Random getRandom() {
 		final long seed = ThreadLocalRandom.current().nextLong();
-		LOGGER.info("Random uses seed {}.", seed);
-		final Random random = new Random(seed);
-		return random;
+		LOGGER.info("Using seed {} as random source.", seed);
+		return new Random(seed);
 	}
 
 	private final Supplier<Strategy> supplier;
@@ -79,11 +80,16 @@ public class StrategyFactory implements Supplier<Strategy> {
 	}
 
 	/**
-	 * Returns a short description identifying this factory uniquely.
+	 * Returns a short description (omits the seed).
 	 */
+	public String getDescription() {
+		return description;
+	}
+
 	@Override
 	public String toString() {
-		return description;
+//		TODO return MoreObjects.toStringHelper(this).add("Description", description).add("Seed", seed).toString();
+		return MoreObjects.toStringHelper(this).add("Description", description).toString();
 	}
 
 }

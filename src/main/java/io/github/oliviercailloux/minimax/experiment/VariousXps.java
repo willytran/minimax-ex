@@ -90,9 +90,9 @@ public class VariousXps {
 
 	}
 
-	private static void runXP(int k, int nbRuns, int m, int n, Supplier<Strategy> strategyFactory, String head)
+	private static void runXP(int k, int nbRuns, int m, int n, StrategyFactory strategyFactory, String head)
 			throws IOException {
-		String title = root + "m" + m + "n" + n + strategyFactory.toString() + "_" + k;
+		String title = root + "m" + m + "n" + n + strategyFactory.getDescription() + "_" + k;
 		final Runs runs = runRepeatedly(strategyFactory, k, m, n, nbRuns, title);
 
 		System.out.println("Time for the stats:");
