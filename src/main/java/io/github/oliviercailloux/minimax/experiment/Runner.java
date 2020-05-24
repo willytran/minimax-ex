@@ -1,13 +1,8 @@
 package io.github.oliviercailloux.minimax.experiment;
 
-import java.io.IOException;
-import java.nio.file.Files;
-import java.nio.file.Path;
-import java.nio.file.Paths;
-import java.util.LinkedList;
-import java.util.function.Supplier;
+import java.text.NumberFormat;
+import java.util.Locale;
 import java.util.stream.IntStream;
-import java.util.stream.Stream;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -15,21 +10,27 @@ import org.slf4j.LoggerFactory;
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.ImmutableMap;
 import com.google.common.math.Stats;
-import com.univocity.parsers.csv.CsvWriter;
-import com.univocity.parsers.csv.CsvWriterSettings;
 
 import io.github.oliviercailloux.minimax.elicitation.Oracle;
 import io.github.oliviercailloux.minimax.elicitation.PrefKnowledge;
 import io.github.oliviercailloux.minimax.elicitation.PreferenceInformation;
 import io.github.oliviercailloux.minimax.elicitation.Question;
-import io.github.oliviercailloux.minimax.elicitation.QuestionType;
 import io.github.oliviercailloux.minimax.strategies.Strategy;
-import io.github.oliviercailloux.minimax.strategies.StrategyFactory;
 import io.github.oliviercailloux.minimax.utils.Generator;
 
 public class Runner {
 	@SuppressWarnings("unused")
 	private static final Logger LOGGER = LoggerFactory.getLogger(Runner.class);
+
+	public static final NumberFormat FORMATTER = getFormatter();
+
+	private static NumberFormat getFormatter() {
+		final NumberFormat formatter = NumberFormat.getNumberInstance(Locale.ENGLISH);
+		formatter.setMinimumFractionDigits(1);
+		formatter.setMaximumFractionDigits(1);
+		return formatter;
+	}
+
 	/**
 	 * Creates a new random oracle; returns a single run of asking k questions with
 	 * the given strategy.
@@ -74,6 +75,18 @@ public class Runner {
 				.boxed().collect(ImmutableMap.toImmutableMap(i -> i,
 						i -> run.getMinimalMaxRegrets().get(i).getMinimalMaxRegretValue()));
 		LOGGER.info("Regrets: {}.", everyFive);
+	}
+
+	public static void summarize(Runs runs) {
+		final ImmutableMap<Integer, String> everyFive = IntStream.rangeClosed(0, runs.getK()).filter(i -> i % 5 == 0)
+				.boxed()
+				.collect(ImmutableMap.toImmutableMap(i -> i, i -> asString(runs.getMinimalMaxRegretStats().get(i))));
+		LOGGER.info("Regrets: {}.", everyFive);
+	}
+
+	public static String asString(Stats stats) {
+		return "[" + FORMATTER.format(stats.min()) + "; " + FORMATTER.format(stats.mean()) + "; "
+				+ FORMATTER.format(stats.max()) + "]±" + FORMATTER.format(stats.populationStandardDeviation());
 	}
 
 }

@@ -2,8 +2,8 @@ package io.github.oliviercailloux.minimax.experiment;
 
 import static com.google.common.base.Preconditions.checkArgument;
 
-import java.util.Iterator;
 import java.util.List;
+import java.util.stream.IntStream;
 
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.ImmutableSet;
@@ -32,23 +32,57 @@ public class Runs {
 	 * @return a list of size k + 1.
 	 */
 	public ImmutableList<Double> getAverageMinimalMaxRegrets() {
-		final ImmutableList.Builder<Double> average = ImmutableList.builder();
+		final ImmutableList<Stats> stats = getMinimalMaxRegretStats();
+		return stats.stream().map(Stats::mean).collect(ImmutableList.toImmutableList());
+	}
+
+	/**
+	 * @return a list of size k + 1.
+	 */
+	public ImmutableList<Stats> getMinimalMaxRegretStats() {
+		final ImmutableList.Builder<Stats> statsBuilder = ImmutableList.builder();
 		for (int i = 0; i < k + 1; ++i) {
 			final int finali = i;
 			final ImmutableList<Double> allIthRegrets = runs.stream().map((r) -> r.getMinimalMaxRegrets().get(finali))
 					.map(Regrets::getMinimalMaxRegretValue).collect(ImmutableList.toImmutableList());
-			final Stats stats = Stats.of(allIthRegrets);
-			average.add(stats.mean());
+			statsBuilder.add(Stats.of(allIthRegrets));
 		}
-		return average.build();
+		return statsBuilder.build();
+	}
+
+	/**
+	 * @return a list of size k.
+	 */
+	public ImmutableList<Stats> getQuestionTimeStats() {
+		final ImmutableList.Builder<Stats> statsBuilder = ImmutableList.builder();
+		for (int i = 0; i < k; ++i) {
+			final int finali = i;
+			final ImmutableList<Integer> allIths = runs.stream().map((r) -> r.getQuestionTimesMs().get(finali))
+					.collect(ImmutableList.toImmutableList());
+			statsBuilder.add(Stats.of(allIths));
+		}
+		return statsBuilder.build();
+	}
+
+	public Stats getTotalTimeStats() {
+		final IntStream totalTimesStream = runs.stream().mapToInt(Run::getTotalTimeMs);
+		return Stats.of(totalTimesStream);
 	}
 
 	public int nbRuns() {
 		return runs.size();
 	}
 
+	public ImmutableList<Run> getRuns() {
+		return runs;
+	}
+
 	public Run getRun(int i) {
 		checkArgument(i < runs.size());
 		return runs.get(i);
+	}
+
+	public int getK() {
+		return k;
 	}
 }

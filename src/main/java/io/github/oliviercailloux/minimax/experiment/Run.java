@@ -3,6 +3,7 @@ package io.github.oliviercailloux.minimax.experiment;
 import static com.google.common.base.Preconditions.checkArgument;
 import static com.google.common.base.Verify.verify;
 
+import java.time.Duration;
 import java.util.List;
 
 import org.slf4j.Logger;
@@ -44,6 +45,7 @@ public class Run {
 		this.regrets = null;
 		verify((getNbQVoters() + getNbQCommittee()) == questions.size());
 		getQuestionTimesMs();
+		getTotalTimeMs();
 	}
 
 	public Oracle getOracle() {
@@ -64,8 +66,8 @@ public class Run {
 	/**
 	 * @return a list of size k.
 	 */
-	public ImmutableList<Long> getQuestionTimesMs() {
-		final ImmutableList.Builder<Long> builder = ImmutableList.builder();
+	public ImmutableList<Integer> getQuestionTimesMs() {
+		final ImmutableList.Builder<Integer> builder = ImmutableList.builder();
 
 		final PeekingIterator<Long> peekingIterator = Iterators.peekingIterator(startTimes.iterator());
 		while (peekingIterator.hasNext()) {
@@ -76,13 +78,15 @@ public class Run {
 			} else {
 				end = endTime;
 			}
+			final long diff = end - start;
 			/** Using check argument because this is called from the constructor. */
-			checkArgument(end - start >= 0l);
-			builder.add(end - start);
+			checkArgument(diff >= 0l);
+			final int diffInt = Math.toIntExact(diff);
+			builder.add(diffInt);
 		}
 
-		final ImmutableList<Long> times = builder.build();
-		verify(times.stream().mapToLong(Long::longValue).sum() == getTotalTimeMs());
+		final ImmutableList<Integer> times = builder.build();
+		verify(times.stream().mapToInt(Integer::intValue).sum() == getTotalTimeMs());
 		return times;
 	}
 
@@ -98,8 +102,15 @@ public class Run {
 		return ((double) getNbQVoters()) / (double) (getNbQVoters() + getNbQCommittee());
 	}
 
-	public long getTotalTimeMs() {
-		return endTime - startTimes.get(0);
+	public int getTotalTimeMs() {
+		/**
+		 * An int can store a time of 20 days, this should be enough for one run.
+		 */
+		return Math.toIntExact(endTime - startTimes.get(0));
+	}
+
+	public Duration getTotalTime() {
+		return Duration.ofMillis(getTotalTimeMs());
 	}
 
 	/**
