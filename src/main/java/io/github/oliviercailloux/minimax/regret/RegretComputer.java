@@ -55,10 +55,24 @@ public class RegretComputer {
 
 	private PairwiseMaxRegret getPmr(Alternative x, Alternative y, Map<Voter, Integer> ranksOfX,
 			SortedMultiset<Integer> multiSetOfRanksOfX) {
-		final int m = knowledge.getAlternatives().size();
 		final ImmutableMap<Voter, Integer> ranksOfY = getBestRanksOfY(x, y);
 		final ImmutableSortedMultiset<Integer> multiSetOfRanksOfY = ImmutableSortedMultiset.copyOf(ranksOfY.values());
 
+		final SumTerms sumTerms = getTermScoreYMinusScoreX(multiSetOfRanksOfY, multiSetOfRanksOfX);
+		final double pmr = knowledge.getConstraintsOnWeights().maximize(sumTerms);
+		/** Just a check that the value seems to make sense. */
+		verify(Math.abs(pmr) <= knowledge.getVoters().size());
+		if (x.equals(y)) {
+			verify(pmr == 0d);
+		}
+		final PairwiseMaxRegret pmrY = PairwiseMaxRegret.given(x, y, ranksOfX, ranksOfY,
+				knowledge.getConstraintsOnWeights().getLastSolution(), pmr);
+		return pmrY;
+	}
+
+	public SumTerms getTermScoreYMinusScoreX(SortedMultiset<Integer> multiSetOfRanksOfY,
+			SortedMultiset<Integer> multiSetOfRanksOfX) {
+		final int m = knowledge.getAlternatives().size();
 		final SumTermsBuilder builder = SumTerms.builder();
 		for (int r = 1; r <= m; ++r) {
 			final int coefY = multiSetOfRanksOfY.count(r);
@@ -69,15 +83,7 @@ public class RegretComputer {
 				builder.add(term);
 			}
 		}
-		final double pmr = knowledge.getConstraintsOnWeights().maximize(builder.build());
-		/** Just a check that the value seems to make sense. */
-		verify(Math.abs(pmr) <= knowledge.getVoters().size());
-		if (x.equals(y)) {
-			verify(pmr == 0d);
-		}
-		final PairwiseMaxRegret pmrY = PairwiseMaxRegret.given(x, y, ranksOfX, ranksOfY,
-				knowledge.getConstraintsOnWeights().getLastSolution(), pmr);
-		return pmrY;
+		return builder.build();
 	}
 
 	public ImmutableMap<Voter, Integer> getWorstRanksOfX(Alternative x) {
@@ -122,8 +128,8 @@ public class RegretComputer {
 		assert 0 <= nbStrictlyBetterThanY && nbStrictlyBetterThanY <= m - 1;
 		final int beta;
 		if (transitivePreference.hasEdgeConnecting(x, y) || x.equals(y)) {
-			HashSet<Alternative> incomparableAlternatives = new HashSet<>(transitivePreference.nodes());
-			HashSet<Alternative> notBetterThanX = new HashSet<>(transitivePreference.successors(x));
+			final HashSet<Alternative> incomparableAlternatives = new HashSet<>(transitivePreference.nodes());
+			final HashSet<Alternative> notBetterThanX = new HashSet<>(transitivePreference.successors(x));
 			notBetterThanX.add(x);
 			incomparableAlternatives.removeAll(notBetterThanX);
 			incomparableAlternatives.removeAll(strictlyBetterThanY);

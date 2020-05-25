@@ -151,9 +151,9 @@ public class Regrets {
 
 	/**
 	 * @return a non-empty map whose key set contains each alternative whose max
-	 *         regret is ≤ {@link #getMinimalMaxRegretValue()}, and for each such
+	 *         regret is {@link #getMinimalMaxRegretValue()}, and for each such
 	 *         alternative x, the non-empty set of PMRs(x, …) whose regret value is
-	 *         {@link #getMinimalMaxRegretValue()}].
+	 *         {@link #getMinimalMaxRegretValue()}.
 	 */
 	public Regrets getMinimalMaxRegrets() {
 		final ImmutableSetMultimap<Alternative, PairwiseMaxRegret> minimalMaxRegrets = getMinimalMaxRegrets(0d);
@@ -173,7 +173,7 @@ public class Regrets {
 		final double value = getMinimalMaxRegretValue(epsilon);
 		return regrets.keySet().stream().filter((x) -> getMaxRegret(x) <= value)
 				.collect(ImmutableSetMultimap.flatteningToImmutableSetMultimap(Function.identity(),
-						(x) -> getRegretsSorted(x).tailMap(value - epsilon).values().stream().flatMap(Set::stream)));
+						x -> getRegretsSorted(x).tailMap(value - epsilon).values().stream().flatMap(Set::stream)));
 	}
 
 	@Override

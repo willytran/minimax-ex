@@ -25,6 +25,8 @@ import com.google.common.graph.Graph;
 import io.github.oliviercailloux.minimax.elicitation.PrefKnowledge;
 import io.github.oliviercailloux.minimax.elicitation.QuestionCommittee;
 import io.github.oliviercailloux.minimax.elicitation.QuestionVoter;
+import io.github.oliviercailloux.minimax.regret.RegretComputer;
+import io.github.oliviercailloux.minimax.regret.Regrets;
 import io.github.oliviercailloux.y2018.j_voting.Alternative;
 import io.github.oliviercailloux.y2018.j_voting.Voter;
 
@@ -85,7 +87,7 @@ public class StrategyHelper {
 	public Random getRandom() {
 		if (random == null) {
 			final long seed = ThreadLocalRandom.current().nextLong();
-			LOGGER.info("Random uses seed {}.", seed);
+			LOGGER.debug("Random uses seed {}.", seed);
 			random = new Random(seed);
 		}
 		return random;
@@ -167,5 +169,13 @@ public class StrategyHelper {
 		final Aprational avg = AprationalMath.sum(lambdaRange.lowerEndpoint(), lambdaRange.upperEndpoint())
 				.divide(new Apint(2));
 		return QuestionCommittee.given(avg, rank);
+	}
+
+	public RegretComputer getRegretComputer() {
+		return new RegretComputer(getKnowledge());
+	}
+
+	public Regrets getMinimalMaxRegrets() {
+		return getRegretComputer().getMinimalMaxRegrets();
 	}
 }

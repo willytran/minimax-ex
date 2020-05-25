@@ -5,19 +5,33 @@ import static com.google.common.base.Verify.verify;
 
 import java.util.Comparator;
 import java.util.Map;
+import java.util.Optional;
 import java.util.Random;
 import java.util.function.DoubleBinaryOperator;
+import java.util.stream.IntStream;
 
+import org.apfloat.Apint;
 import org.apfloat.Aprational;
+import org.apfloat.AprationalMath;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import com.google.common.base.VerifyException;
 import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.ImmutableMap.Builder;
 import com.google.common.collect.ImmutableSet;
+import com.google.common.collect.ImmutableSetMultimap;
+import com.google.common.collect.ImmutableSortedMultiset;
+import com.google.common.collect.Range;
 import com.google.common.collect.SetMultimap;
+import com.google.common.graph.EndpointPair;
+import com.google.common.graph.Graph;
+import com.google.common.graph.ImmutableGraph;
 
 import io.github.oliviercailloux.jlp.elements.ComparisonOperator;
+import io.github.oliviercailloux.jlp.elements.SumTerms;
+import io.github.oliviercailloux.minimax.elicitation.ConstraintsOnWeights;
+import io.github.oliviercailloux.minimax.elicitation.PSRWeights;
 import io.github.oliviercailloux.minimax.elicitation.PrefKnowledge;
 import io.github.oliviercailloux.minimax.elicitation.Question;
 import io.github.oliviercailloux.minimax.elicitation.QuestionCommittee;
@@ -26,6 +40,7 @@ import io.github.oliviercailloux.minimax.elicitation.QuestionVoter;
 import io.github.oliviercailloux.minimax.regret.PairwiseMaxRegret;
 import io.github.oliviercailloux.minimax.regret.RegretComputer;
 import io.github.oliviercailloux.y2018.j_voting.Alternative;
+import io.github.oliviercailloux.y2018.j_voting.Voter;
 
 /**
  * Uses the Regret to get the next question.
@@ -36,6 +51,7 @@ public class StrategyByMmr implements Strategy {
 	private ImmutableMap<Question, Double> questions;
 	private final StrategyHelper helper;
 	private final DoubleBinaryOperator mmrOperator;
+	private final boolean limited;
 
 	public static StrategyByMmr build() {
 		return new StrategyByMmr(MmrOperator.MAX);
@@ -48,6 +64,7 @@ public class StrategyByMmr implements Strategy {
 	private StrategyByMmr(DoubleBinaryOperator mmrOperator) {
 		helper = StrategyHelper.newInstance();
 		this.mmrOperator = checkNotNull(mmrOperator);
+		limited = false;
 	}
 
 	public void setRandom(Random random) {
@@ -61,15 +78,35 @@ public class StrategyByMmr implements Strategy {
 
 	@Override
 	public Question nextQuestion() {
-		helper.getAndCheckM();
+		final int m = helper.getAndCheckM();
 
 		final Builder<Question, Double> questionsBuilder = ImmutableMap.builder();
 
-		questionsBuilder.putAll(helper.getPossibleVoterQuestions().stream()
-				.collect(ImmutableMap.toImmutableMap(q -> Question.toVoter(q), this::getScore)));
+		if (limited) {
+			final ImmutableSetMultimap<Alternative, PairwiseMaxRegret> mmrs = helper.getMinimalMaxRegrets()
+					.asMultimap();
+			final Alternative xStar = helper.draw(mmrs.keySet());
+			final PairwiseMaxRegret pmr = helper.draw(mmrs.get(xStar).stream().collect(ImmutableSet.toImmutableSet()));
+			final Alternative yBar = pmr.getY();
+			helper.getQuestionableVoters().stream().map(v -> getLimitedQuestion(xStar, yBar, v))
+					.forEach(q -> questionsBuilder.put(Question.toVoter(q), getScore(q)));
 
-		questionsBuilder.putAll(helper.getQuestionsAboutLambdaRangesWiderThanOrAll(0.1).stream()
-				.collect(ImmutableMap.toImmutableMap(q -> Question.toCommittee(q), this::getScore)));
+			final PSRWeights wBar = pmr.getWeights();
+			final PSRWeights wMin = getMinTauW(pmr);
+			final ImmutableSetMultimap<Double, Integer> ranksBySpread = IntStream.rangeClosed(1, m).boxed()
+					.collect(ImmutableSetMultimap.toImmutableSetMultimap(
+							i -> Math.abs(wBar.getWeightAtRank(i) - wMin.getWeightAtRank(i)), i -> i));
+			final double minSpread = ranksBySpread.keySet().stream().min(Comparator.naturalOrder()).get();
+			final ImmutableSet<Integer> minSpreadRanks = ranksBySpread.get(minSpread);
+			final QuestionCommittee qC = helper.getQuestionAboutHalfRange(helper.draw(minSpreadRanks));
+			questionsBuilder.put(Question.toCommittee(qC), getScore(qC));
+		} else {
+			questionsBuilder.putAll(helper.getPossibleVoterQuestions().stream()
+					.collect(ImmutableMap.toImmutableMap(q -> Question.toVoter(q), this::getScore)));
+
+			questionsBuilder.putAll(helper.getQuestionsAboutLambdaRangesWiderThanOrAll(0.1).stream()
+					.collect(ImmutableMap.toImmutableMap(q -> Question.toCommittee(q), this::getScore)));
+		}
 
 		questions = questionsBuilder.build();
 		verify(!questions.isEmpty());
@@ -79,6 +116,43 @@ public class StrategyByMmr implements Strategy {
 				.filter(e -> e.getValue() == bestScore).map(Map.Entry::getKey).collect(ImmutableSet.toImmutableSet());
 		LOGGER.debug("Best questions: {}.", bestQuestions);
 		return helper.draw(bestQuestions);
+	}
+
+	public QuestionVoter getLimitedQuestion(Alternative xStar, Alternative yBar, Voter voter) {
+		final ImmutableGraph<Alternative> graph = helper.getKnowledge().getPartialPreference(voter).asTransitiveGraph();
+		final QuestionVoter question;
+		if (!graph.adjacentNodes(xStar).contains(yBar)) {
+			question = QuestionVoter.given(voter, xStar, yBar);
+		} else {
+			final Alternative tryFirst;
+			final Alternative trySecond;
+			if (graph.hasEdgeConnecting(xStar, yBar)) {
+				tryFirst = xStar;
+				trySecond = yBar;
+			} else if (graph.hasEdgeConnecting(yBar, xStar)) {
+				tryFirst = xStar;
+				trySecond = yBar;
+			} else {
+				throw new VerifyException(String.valueOf(xStar.equals(yBar))
+						+ " Should reach here only when profile is complete or some weights are known to be equal, which we suppose will not happen.");
+			}
+			question = getQuestionAboutIncomparableTo(voter, graph, tryFirst)
+					.or(() -> getQuestionAboutIncomparableTo(voter, graph, trySecond))
+					.orElseGet(() -> getQuestionAbout(voter, helper.draw(StrategyHelper.getIncomparablePairs(graph))));
+		}
+		return question;
+	}
+
+	private Optional<QuestionVoter> getQuestionAboutIncomparableTo(Voter voter, Graph<Alternative> graph,
+			Alternative a) {
+		final ImmutableSet<Alternative> incomparables = StrategyHelper.getIncomparables(graph, a)
+				.collect(ImmutableSet.toImmutableSet());
+		return incomparables.isEmpty() ? Optional.empty()
+				: Optional.of(QuestionVoter.given(voter, a, helper.draw(incomparables)));
+	}
+
+	private QuestionVoter getQuestionAbout(Voter voter, EndpointPair<Alternative> incomparablePair) {
+		return QuestionVoter.given(voter, incomparablePair.nodeU(), incomparablePair.nodeV());
 	}
 
 	public double getScore(QuestionVoter q) {
@@ -122,6 +196,20 @@ public class StrategyByMmr implements Strategy {
 
 	ImmutableMap<Question, Double> getQuestions() {
 		return questions;
+	}
+
+	private PSRWeights getMinTauW(PairwiseMaxRegret pmr) {
+		final ImmutableSortedMultiset<Integer> multiSetOfRanksOfX = ImmutableSortedMultiset
+				.copyOf(pmr.getRanksOfX().values());
+		final ImmutableSortedMultiset<Integer> multiSetOfRanksOfY = ImmutableSortedMultiset
+				.copyOf(pmr.getRanksOfY().values());
+
+		final RegretComputer regretComputer = helper.getRegretComputer();
+
+		final SumTerms sumTerms = regretComputer.getTermScoreYMinusScoreX(multiSetOfRanksOfY, multiSetOfRanksOfX);
+		final ConstraintsOnWeights cow = helper.getKnowledge().getConstraintsOnWeights();
+		cow.minimize(sumTerms);
+		return cow.getLastSolution();
 	}
 
 }
