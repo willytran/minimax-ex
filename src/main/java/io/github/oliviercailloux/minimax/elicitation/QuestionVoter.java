@@ -4,15 +4,21 @@ import static com.google.common.base.Preconditions.checkArgument;
 import static com.google.common.base.Preconditions.checkNotNull;
 
 import java.util.Comparator;
+import java.util.Iterator;
 import java.util.Objects;
+import java.util.Set;
 
+import javax.json.bind.annotation.JsonbCreator;
+import javax.json.bind.annotation.JsonbProperty;
 import javax.json.bind.annotation.JsonbPropertyOrder;
 import javax.json.bind.annotation.JsonbTransient;
+import javax.json.bind.annotation.JsonbTypeAdapter;
 
 import com.google.common.base.MoreObjects;
 import com.google.common.collect.ImmutableSet;
 import com.google.common.collect.ImmutableSortedSet;
 
+import io.github.oliviercailloux.minimax.experiment.json.VoterAdapter;
 import io.github.oliviercailloux.y2018.j_voting.Alternative;
 import io.github.oliviercailloux.y2018.j_voting.Voter;
 
@@ -28,10 +34,19 @@ import io.github.oliviercailloux.y2018.j_voting.Voter;
 @JsonbPropertyOrder({ "voter", "alternatives" })
 public class QuestionVoter {
 
+	@JsonbCreator
+	public static QuestionVoter given(@JsonbProperty("voter") Voter voter,
+			@JsonbProperty("alternatives") Set<Alternative> alternatives) {
+		checkArgument(alternatives.size() == 2);
+		final Iterator<Alternative> iterator = alternatives.iterator();
+		return new QuestionVoter(voter, iterator.next(), iterator.next());
+	}
+
 	public static QuestionVoter given(Voter voter, Alternative a, Alternative b) {
 		return new QuestionVoter(voter, a, b);
 	}
 
+	@JsonbTypeAdapter(VoterAdapter.class)
 	private final Voter voter;
 	private final Alternative a, b;
 

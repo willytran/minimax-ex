@@ -1,12 +1,15 @@
 package io.github.oliviercailloux.minimax.elicitation;
 
 import static com.google.common.base.Preconditions.checkArgument;
-import static java.util.Objects.requireNonNull;
+import static com.google.common.base.Preconditions.checkNotNull;
 
 import java.util.Comparator;
-import java.util.List;
 import java.util.Map;
+import java.util.Objects;
+import java.util.Set;
 
+import javax.json.bind.annotation.JsonbCreator;
+import javax.json.bind.annotation.JsonbProperty;
 import javax.json.bind.annotation.JsonbPropertyOrder;
 import javax.json.bind.annotation.JsonbTransient;
 import javax.json.bind.annotation.JsonbTypeAdapter;
@@ -16,9 +19,9 @@ import com.google.common.base.VerifyException;
 import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.ImmutableSet;
 import com.google.common.collect.ImmutableSortedSet;
+import com.google.common.collect.Iterables;
 
 import io.github.oliviercailloux.j_voting.VoterStrictPreference;
-import io.github.oliviercailloux.minimax.experiment.json.ProfileAdapter;
 import io.github.oliviercailloux.minimax.experiment.json.WeightsAdapter;
 import io.github.oliviercailloux.y2018.j_voting.Alternative;
 import io.github.oliviercailloux.y2018.j_voting.Voter;
@@ -34,29 +37,35 @@ import io.github.oliviercailloux.y2018.j_voting.Voter;
 @JsonbPropertyOrder({ "profile", "weights" })
 public class Oracle {
 
-	public static Oracle build(Map<Voter, VoterStrictPreference> profile, PSRWeights weights) {
+	@JsonbCreator
+	public static Oracle build(@JsonbProperty("profile") Set<VoterStrictPreference> profile,
+			@JsonbProperty("weights") PSRWeights weights) {
 		return new Oracle(profile, weights);
 	}
 
-	@JsonbTypeAdapter(ProfileAdapter.class)
+	public static Oracle build(Map<Voter, VoterStrictPreference> profile, PSRWeights weights) {
+		checkArgument(profile.entrySet().stream().allMatch((e) -> e.getValue().getVoter().equals(e.getKey())));
+		return new Oracle(ImmutableSet.copyOf(profile.values()), weights);
+	}
+
 	private final ImmutableMap<Voter, VoterStrictPreference> profile;
 	@JsonbTypeAdapter(WeightsAdapter.class)
 	private final PSRWeights weights;
 	@JsonbTransient
 	private final ImmutableSortedSet<Alternative> alternatives;
 
-	private Oracle(Map<Voter, VoterStrictPreference> profile, PSRWeights weights) {
+	private Oracle(Set<VoterStrictPreference> profile, PSRWeights weights) {
 		checkArgument(profile.size() >= 1);
-		this.profile = ImmutableMap.copyOf(profile);
-		this.weights = requireNonNull(weights);
-		checkArgument(profile.entrySet().stream().allMatch((e) -> e.getValue().getVoter().equals(e.getKey())));
+		this.profile = profile.stream().collect(ImmutableMap.toImmutableMap(VoterStrictPreference::getVoter, p -> p));
+		this.weights = checkNotNull(weights);
 
-		final Comparator<Alternative> comparingIds = Comparator.comparingInt(Alternative::getId);
-		final List<Alternative> alternativesList = profile.values().stream().findAny().get().getAlternatives();
-		this.alternatives = ImmutableSortedSet.copyOf(comparingIds, alternativesList);
+		final ImmutableSet<Set<Alternative>> allAlternativeSets = profile.stream()
+				.map(VoterStrictPreference::getAlternatives).map(ImmutableSet::copyOf)
+				.collect(ImmutableSet.toImmutableSet());
+		checkArgument(allAlternativeSets.size() == 1, allAlternativeSets);
+		this.alternatives = ImmutableSortedSet.copyOf(Comparator.comparingInt(Alternative::getId),
+				Iterables.getOnlyElement(allAlternativeSets));
 
-		checkArgument(profile.values().stream().map(VoterStrictPreference::getAlternatives)
-				.allMatch((l) -> ImmutableSet.copyOf(l).equals(alternatives)));
 		final int nbAlts = alternatives.size();
 		checkArgument(weights.size() == nbAlts);
 	}
@@ -105,6 +114,21 @@ public class Oracle {
 	@JsonbTransient
 	public int getN() {
 		return profile.size();
+	}
+
+	@Override
+	public boolean equals(Object o2) {
+		if (!(o2 instanceof Oracle)) {
+			return false;
+		}
+
+		final Oracle or2 = (Oracle) o2;
+		return profile.equals(or2.profile) && weights.equals(or2.weights);
+	}
+
+	@Override
+	public int hashCode() {
+		return Objects.hash(profile, weights);
 	}
 
 	@Override

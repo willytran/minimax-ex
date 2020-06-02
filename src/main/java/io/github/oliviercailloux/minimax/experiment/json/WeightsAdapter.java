@@ -14,6 +14,6 @@ public class WeightsAdapter implements JsonbAdapter<PSRWeights, List<Double>> {
 
 	@Override
 	public PSRWeights adaptFromJson(List<Double> obj) {
-		throw new UnsupportedOperationException();
+		return PSRWeights.given(obj);
 	}
 }

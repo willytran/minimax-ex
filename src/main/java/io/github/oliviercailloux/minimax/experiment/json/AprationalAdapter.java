@@ -4,6 +4,7 @@ import javax.json.Json;
 import javax.json.JsonObject;
 import javax.json.bind.adapter.JsonbAdapter;
 
+import org.apfloat.Apint;
 import org.apfloat.Aprational;
 
 public class AprationalAdapter implements JsonbAdapter<Aprational, JsonObject> {
@@ -15,6 +16,6 @@ public class AprationalAdapter implements JsonbAdapter<Aprational, JsonObject> {
 
 	@Override
 	public Aprational adaptFromJson(JsonObject obj) {
-		throw new UnsupportedOperationException();
+		return new Aprational(new Apint(obj.getInt("numerator")), new Apint(obj.getInt("denominator")));
 	}
 }

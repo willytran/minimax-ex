@@ -19,6 +19,6 @@ public class StrictPreferenceAdapter implements JsonbAdapter<StrictPreference, L
 
 	@Override
 	public StrictPreference adaptFromJson(List<Integer> obj) {
-		throw new UnsupportedOperationException();
+		return new StrictPreference(obj.stream().map(Alternative::new).collect(ImmutableList.toImmutableList()));
 	}
 }

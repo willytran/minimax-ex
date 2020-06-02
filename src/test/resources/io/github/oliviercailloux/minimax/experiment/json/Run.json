@@ -27,9 +27,7 @@
     "questions": [
         {
             "toVoter": {
-                "voter": {
-                    "id": 1
-                },
+                "voter": 1,
                 "alternatives": [
                     1,
                     2

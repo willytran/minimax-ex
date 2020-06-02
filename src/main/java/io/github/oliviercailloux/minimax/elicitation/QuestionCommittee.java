@@ -5,6 +5,8 @@ import static java.util.Objects.requireNonNull;
 
 import java.util.Objects;
 
+import javax.json.bind.annotation.JsonbCreator;
+import javax.json.bind.annotation.JsonbProperty;
 import javax.json.bind.annotation.JsonbPropertyOrder;
 import javax.json.bind.annotation.JsonbTypeAdapter;
 
@@ -26,7 +28,8 @@ import io.github.oliviercailloux.minimax.experiment.json.AprationalAdapter;
 @JsonbPropertyOrder({ "lambda", "rank" })
 public class QuestionCommittee {
 
-	public static QuestionCommittee given(Aprational lambda, int rank) {
+	@JsonbCreator
+	public static QuestionCommittee given(@JsonbProperty("lambda") Aprational lambda, @JsonbProperty("rank") int rank) {
 		return new QuestionCommittee(lambda, rank);
 	}
 
@@ -35,6 +38,10 @@ public class QuestionCommittee {
 
 	private QuestionCommittee(Aprational lambda, int rank) {
 		this.lambda = requireNonNull(lambda);
+		/**
+		 * It is unfortunately possible to create an aprational with a null numerator.
+		 */
+		checkArgument(lambda.numerator() != null);
 		checkArgument(rank >= 1);
 		this.rank = rank;
 	}

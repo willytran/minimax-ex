@@ -38,14 +38,23 @@ public class JsonConverter {
 	}
 
 	public static PrintableJsonObject toJson(Oracle oracle) {
-		return JsonbUtils.toJsonObject(oracle);
+		return JsonbUtils.toJsonObject(oracle, new ProfileAdapter(), new PreferenceAdapter());
+	}
+
+	public static Oracle toOracle(String json) {
+		return JsonbUtils.fromJson(json, Oracle.class, new ProfileAdapter(), new PreferenceAdapter());
 	}
 
 	public static PrintableJsonObject toJson(Run run) {
-		return JsonbUtils.toJsonObject(run, new QuestionAdapter());
+		return JsonbUtils.toJsonObject(run, new ProfileAdapter(), new PreferenceAdapter(), new QuestionAdapter());
 	}
 
 	public static PrintableJsonObject toJson(Runs run) {
-		return JsonbUtils.toJsonObject(run, new QuestionAdapter());
+		return JsonbUtils.toJsonObject(run, new ProfileAdapter(), new PreferenceAdapter(), new QuestionAdapter());
+	}
+
+	public static Runs toRuns(String json) {
+		return JsonbUtils.fromJson(json, Runs.class, new ProfileAdapter(), new PreferenceAdapter(),
+				new QuestionAdapter(), new WeightsAdapter(), new RunsAdapter());
 	}
 }

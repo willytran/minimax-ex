@@ -15,6 +15,6 @@ public class RunsAdapter implements JsonbAdapter<Runs, List<Run>> {
 
 	@Override
 	public Runs adaptFromJson(List<Run> obj) {
-		throw new UnsupportedOperationException();
+		return Runs.of(obj);
 	}
 }

@@ -99,8 +99,22 @@ public class JsonConverterTests {
 	@Test
 	void testRuns() throws Exception {
 		final PrintableJsonObject json = JsonConverter.toJson(Runs.of(ImmutableList.of(run, run)));
-		LOGGER.info("Json: {}.", json);
 		final String expected = Files.readString(Path.of(getClass().getResource("Runs.json").toURI()));
 		assertEquals(expected, json.toString());
+	}
+
+	/**
+	 * TODO throw back the runtime exception unchanged in JsonbUtils.
+	 */
+	@Test
+	void testToRuns() throws Exception {
+		final String source = Files.readString(Path.of(getClass().getResource("Runs.json").toURI()));
+		final Runs actual = JsonConverter.toRuns(source);
+		final Runs expected = Runs.of(ImmutableList.of(run, run));
+		final Run r1 = expected.getRuns().get(0);
+		final Run r1Actual = actual.getRuns().get(0);
+		assertEquals(r1.getOracle(), r1Actual.getOracle());
+		assertEquals(r1.getQuestions(), r1Actual.getQuestions());
+		assertEquals(expected, actual);
 	}
 }

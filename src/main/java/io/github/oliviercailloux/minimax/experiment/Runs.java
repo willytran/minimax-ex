@@ -3,10 +3,14 @@ package io.github.oliviercailloux.minimax.experiment;
 import static com.google.common.base.Preconditions.checkArgument;
 
 import java.util.List;
+import java.util.Objects;
 import java.util.stream.IntStream;
 
+import javax.json.bind.annotation.JsonbCreator;
+import javax.json.bind.annotation.JsonbProperty;
 import javax.json.bind.annotation.JsonbTypeAdapter;
 
+import com.google.common.base.MoreObjects;
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.ImmutableSet;
 import com.google.common.math.Stats;
@@ -17,12 +21,13 @@ import io.github.oliviercailloux.minimax.regret.Regrets;
 @JsonbTypeAdapter(RunsAdapter.class)
 public class Runs {
 
-	private ImmutableList<Run> runs;
-	private final int k;
-
-	public static Runs of(List<Run> runs) {
+	@JsonbCreator
+	public static Runs of(@JsonbProperty("runs") List<Run> runs) {
 		return new Runs(runs);
 	}
+
+	private final ImmutableList<Run> runs;
+	private final int k;
 
 	private Runs(List<Run> runs) {
 		checkArgument(!runs.isEmpty());
@@ -88,5 +93,25 @@ public class Runs {
 
 	public int getK() {
 		return k;
+	}
+
+	@Override
+	public boolean equals(Object o2) {
+		if (!(o2 instanceof Runs)) {
+			return false;
+		}
+
+		final Runs r2 = (Runs) o2;
+		return runs.equals(r2.runs);
+	}
+
+	@Override
+	public int hashCode() {
+		return Objects.hash(runs);
+	}
+
+	@Override
+	public String toString() {
+		return MoreObjects.toStringHelper(this).add("runs", runs).toString();
 	}
 }
