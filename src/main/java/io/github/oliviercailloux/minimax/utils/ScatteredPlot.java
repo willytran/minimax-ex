@@ -36,55 +36,52 @@ public class ScatteredPlot {
 //		plot.setBackgroundPaint(Color.WHITE);
 
 		// Create Panel
-		ChartPanel panel = new ChartPanel(chart);
-		try {
-			OutputStream out = new FileOutputStream(fileName);
+//		ChartPanel panel = new ChartPanel(chart);
+
+		try (OutputStream out = new FileOutputStream(fileName)) {
 			ChartUtilities.writeChartAsPNG(out, chart, 1600, 1000);
-		} catch (IOException ex) {
-			ex.printStackTrace();
 		}
 
 	}
 
 	/*
-	 * Note:
-	 * 	CSV csvReader = new CSV();
-	 *  CategoryDataset csvData = csvReader.readCategoryDataset(new FileReader(csvPath));
-	 * cannot be used because it assumes only numbers in the csv
+	 * Note: CSV csvReader = new CSV(); CategoryDataset csvData =
+	 * csvReader.readCategoryDataset(new FileReader(csvPath)); cannot be used
+	 * because it assumes only numbers in the csv
 	 */
 
 	private static XYDataset readCSV(String csvPath) throws FileNotFoundException, IOException {
-		BufferedReader csvReader = new BufferedReader(new FileReader(csvPath));
+		try (BufferedReader csvReader = new BufferedReader(new FileReader(csvPath))) {
+			XYSeriesCollection dataset = new XYSeriesCollection();
+			XYSeries questionsVoters = new XYSeries("questionsVoters");
+			XYSeries questionsCommittee = new XYSeries("questionsCommittee");
 
-		XYSeriesCollection dataset = new XYSeriesCollection();
-		XYSeries questionsVoters = new XYSeries("questionsVoters");
-		XYSeries questionsCommittee = new XYSeries("questionsCommittee");
+			int rows = 1;
+			String row = csvReader.readLine();
+			// 800 questions are too much, it's hard to see anything
+			// in order to print the distribution of only the first 200 question
+			// uncomment the following
+			// while ((row = csvReader.readLine()) != null && rows<200) {
+			while ((row = csvReader.readLine()) != null) {
+				String[] data = row.split(",");
+				int cols = 1;
+				for (int col = 1; col < data.length; col += 2) {
+					if (data[col].equals("1")) {
+						questionsVoters.add(rows, cols++);
 
-		int rows = 1;
-		String row = csvReader.readLine();
-		// 800 questions are too much, it's hard to see anything
-		// in order to print the distribution of only the first 200 question
-		// uncomment the following
-		// while ((row = csvReader.readLine()) != null && rows<200) {
-		while ((row = csvReader.readLine()) != null) {
-			String[] data = row.split(",");
-			int cols = 1;
-			for (int col = 1; col < data.length; col += 2) {
-				if (data[col].equals("1")) {
-					questionsVoters.add(rows, cols++);
-
-				} else {
-					questionsCommittee.add(rows, cols++);
+					} else {
+						questionsCommittee.add(rows, cols++);
+					}
 				}
+				rows++;
 			}
-			rows++;
+			csvReader.close();
+
+			dataset.addSeries(questionsVoters);
+			dataset.addSeries(questionsCommittee);
+
+			return dataset;
 		}
-		csvReader.close();
-
-		dataset.addSeries(questionsVoters);
-		dataset.addSeries(questionsCommittee);
-
-		return dataset;
 	}
 
 	public static void main(String[] args) {
