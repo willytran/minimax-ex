@@ -7,6 +7,10 @@ import java.util.Comparator;
 import java.util.List;
 import java.util.Map;
 
+import javax.json.bind.annotation.JsonbPropertyOrder;
+import javax.json.bind.annotation.JsonbTransient;
+import javax.json.bind.annotation.JsonbTypeAdapter;
+
 import com.google.common.base.MoreObjects;
 import com.google.common.base.VerifyException;
 import com.google.common.collect.ImmutableMap;
@@ -14,6 +18,8 @@ import com.google.common.collect.ImmutableSet;
 import com.google.common.collect.ImmutableSortedSet;
 
 import io.github.oliviercailloux.j_voting.VoterStrictPreference;
+import io.github.oliviercailloux.minimax.experiment.json.ProfileAdapter;
+import io.github.oliviercailloux.minimax.experiment.json.WeightsAdapter;
 import io.github.oliviercailloux.y2018.j_voting.Alternative;
 import io.github.oliviercailloux.y2018.j_voting.Voter;
 
@@ -25,14 +31,18 @@ import io.github.oliviercailloux.y2018.j_voting.Voter;
  * @author Olivier Cailloux
  *
  */
+@JsonbPropertyOrder({ "profile", "weights" })
 public class Oracle {
 
 	public static Oracle build(Map<Voter, VoterStrictPreference> profile, PSRWeights weights) {
 		return new Oracle(profile, weights);
 	}
 
+	@JsonbTypeAdapter(ProfileAdapter.class)
 	private final ImmutableMap<Voter, VoterStrictPreference> profile;
+	@JsonbTypeAdapter(WeightsAdapter.class)
 	private final PSRWeights weights;
+	@JsonbTransient
 	private final ImmutableSortedSet<Alternative> alternatives;
 
 	private Oracle(Map<Voter, VoterStrictPreference> profile, PSRWeights weights) {
@@ -87,10 +97,12 @@ public class Oracle {
 		return weights;
 	}
 
+	@JsonbTransient
 	public int getM() {
 		return alternatives.size();
 	}
 
+	@JsonbTransient
 	public int getN() {
 		return profile.size();
 	}

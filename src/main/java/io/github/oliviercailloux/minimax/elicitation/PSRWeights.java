@@ -23,9 +23,10 @@ import io.github.oliviercailloux.jlp.elements.ComparisonOperator;
  */
 public class PSRWeights {
 
+	private static final double UPPER_BOUND = 1d;
+	private static final double LOWER_BOUND = 0d;
+
 	private final ImmutableList<Double> weights;
-	private final double upperBound = 1d;
-	private final double lowerBound = 0d;
 
 	public static PSRWeights given(List<Double> weights) {
 		return new PSRWeights(weights);
@@ -33,23 +34,22 @@ public class PSRWeights {
 
 	private PSRWeights(List<Double> weights) {
 		Preconditions.checkNotNull(weights);
-		checkArgument(weights.isEmpty() || weights.get(0) == upperBound);
-		checkArgument(weights.size() <= 1 || weights.get(weights.size() - 1) == lowerBound);
+		checkArgument(weights.isEmpty() || weights.get(0) == UPPER_BOUND);
+		checkArgument(weights.size() <= 1 || weights.get(weights.size() - 1) == LOWER_BOUND);
 		this.weights = ImmutableList.copyOf(weights);
-		checkArgument(isConvex(), weights);
+		checkConvex();
 	}
 
-	private boolean isConvex() {
+	private void checkConvex() {
 		double wi1, wi2, wi3;
 		for (int i = 0; i < weights.size() - 2; i++) {
 			wi1 = weights.get(i);
 			wi2 = weights.get(i + 1);
 			wi3 = weights.get(i + 2);
 			if ((wi1 - wi2) < (wi2 - wi3)) {
-				return false;
+				throw new IllegalArgumentException("At " + i);
 			}
 		}
-		return true;
 	}
 
 	/**
@@ -98,11 +98,6 @@ public class PSRWeights {
 	}
 
 	@Override
-	public String toString() {
-		return MoreObjects.toStringHelper(this).addValue(weights).toString();
-	}
-
-	@Override
 	public boolean equals(Object o) {
 		if (!(o instanceof PSRWeights)) {
 			return false;
@@ -114,6 +109,11 @@ public class PSRWeights {
 	@Override
 	public int hashCode() {
 		return Objects.hash(this.weights);
+	}
+
+	@Override
+	public String toString() {
+		return MoreObjects.toStringHelper(this).addValue(weights).toString();
 	}
 
 }

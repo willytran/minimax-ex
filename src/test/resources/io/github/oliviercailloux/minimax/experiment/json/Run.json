@@ -1,0 +1,53 @@
+{
+    "oracle": {
+        "profile": [
+            {
+                "voter": 1,
+                "preference": [
+                    1,
+                    2,
+                    3
+                ]
+            },
+            {
+                "voter": 2,
+                "preference": [
+                    3,
+                    2,
+                    1
+                ]
+            }
+        ],
+        "weights": [
+            1.0,
+            0.4,
+            0.0
+        ]
+    },
+    "questions": [
+        {
+            "toVoter": {
+                "voter": {
+                    "id": 1
+                },
+                "alternatives": [
+                    1,
+                    2
+                ]
+            }
+        },
+        {
+            "toCommittee": {
+                "lambda": {
+                    "numerator": 1,
+                    "denominator": 2
+                },
+                "rank": 1
+            }
+        }
+    ],
+    "timesMs": [
+        8,
+        2
+    ]
+}

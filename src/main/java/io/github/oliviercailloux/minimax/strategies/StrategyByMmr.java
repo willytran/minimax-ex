@@ -10,9 +10,7 @@ import java.util.Random;
 import java.util.function.DoubleBinaryOperator;
 import java.util.stream.IntStream;
 
-import org.apfloat.Apint;
 import org.apfloat.Aprational;
-import org.apfloat.AprationalMath;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -22,7 +20,6 @@ import com.google.common.collect.ImmutableMap.Builder;
 import com.google.common.collect.ImmutableSet;
 import com.google.common.collect.ImmutableSetMultimap;
 import com.google.common.collect.ImmutableSortedMultiset;
-import com.google.common.collect.Range;
 import com.google.common.collect.SetMultimap;
 import com.google.common.graph.EndpointPair;
 import com.google.common.graph.Graph;
@@ -48,23 +45,28 @@ import io.github.oliviercailloux.y2018.j_voting.Voter;
 public class StrategyByMmr implements Strategy {
 
 	private static final Logger LOGGER = LoggerFactory.getLogger(StrategyByMmr.class);
-	private ImmutableMap<Question, Double> questions;
 	private final StrategyHelper helper;
 	private final DoubleBinaryOperator mmrOperator;
 	private final boolean limited;
 
+	private ImmutableMap<Question, Double> questions;
+
 	public static StrategyByMmr build() {
-		return new StrategyByMmr(MmrOperator.MAX);
+		return new StrategyByMmr(MmrOperator.MAX, false);
 	}
 
 	public static StrategyByMmr build(DoubleBinaryOperator mmrOperator) {
-		return new StrategyByMmr(mmrOperator);
+		return new StrategyByMmr(mmrOperator, false);
 	}
 
-	private StrategyByMmr(DoubleBinaryOperator mmrOperator) {
+	public static StrategyByMmr limited() {
+		return new StrategyByMmr(MmrOperator.MAX, true);
+	}
+
+	private StrategyByMmr(DoubleBinaryOperator mmrOperator, boolean limited) {
 		helper = StrategyHelper.newInstance();
 		this.mmrOperator = checkNotNull(mmrOperator);
-		limited = false;
+		this.limited = limited;
 	}
 
 	public void setRandom(Random random) {
@@ -130,8 +132,8 @@ public class StrategyByMmr implements Strategy {
 				tryFirst = xStar;
 				trySecond = yBar;
 			} else if (graph.hasEdgeConnecting(yBar, xStar)) {
-				tryFirst = xStar;
-				trySecond = yBar;
+				tryFirst = yBar;
+				trySecond = xStar;
 			} else {
 				throw new VerifyException(String.valueOf(xStar.equals(yBar))
 						+ " Should reach here only when profile is complete or some weights are known to be equal, which we suppose will not happen.");
