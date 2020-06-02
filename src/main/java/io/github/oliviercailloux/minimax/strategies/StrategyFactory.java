@@ -80,7 +80,7 @@ public class StrategyFactory implements Supplier<Strategy> {
 	}
 
 	/**
-	 * Returns a short description (omits the seed).
+	 * Returns a short description of this factory (omits the seed).
 	 */
 	public String getDescription() {
 		return description;

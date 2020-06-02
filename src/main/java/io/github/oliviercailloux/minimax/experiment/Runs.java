@@ -5,12 +5,16 @@ import static com.google.common.base.Preconditions.checkArgument;
 import java.util.List;
 import java.util.stream.IntStream;
 
+import javax.json.bind.annotation.JsonbTypeAdapter;
+
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.ImmutableSet;
 import com.google.common.math.Stats;
 
+import io.github.oliviercailloux.minimax.experiment.json.RunsAdapter;
 import io.github.oliviercailloux.minimax.regret.Regrets;
 
+@JsonbTypeAdapter(RunsAdapter.class)
 public class Runs {
 
 	private ImmutableList<Run> runs;

@@ -5,9 +5,14 @@ import static java.util.Objects.requireNonNull;
 
 import java.util.Objects;
 
+import javax.json.bind.annotation.JsonbPropertyOrder;
+import javax.json.bind.annotation.JsonbTypeAdapter;
+
 import org.apfloat.Aprational;
 
 import com.google.common.base.MoreObjects;
+
+import io.github.oliviercailloux.minimax.experiment.json.AprationalAdapter;
 
 /**
  * Immutable. A Question to the (chair of the) committee, with the form: is (w_r
@@ -18,6 +23,7 @@ import com.google.common.base.MoreObjects;
  * @author Olivier Cailloux
  *
  */
+@JsonbPropertyOrder({ "lambda", "rank" })
 public class QuestionCommittee {
 
 	public static QuestionCommittee given(Aprational lambda, int rank) {
@@ -33,6 +39,7 @@ public class QuestionCommittee {
 		this.rank = rank;
 	}
 
+	@JsonbTypeAdapter(AprationalAdapter.class)
 	public Aprational getLambda() {
 		return lambda;
 	}

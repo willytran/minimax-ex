@@ -4,10 +4,17 @@ import static java.util.Objects.requireNonNull;
 
 import java.util.List;
 
+import javax.json.bind.annotation.JsonbCreator;
+import javax.json.bind.annotation.JsonbProperty;
+import javax.json.bind.annotation.JsonbPropertyOrder;
+import javax.json.bind.annotation.JsonbTransient;
+import javax.json.bind.annotation.JsonbTypeAdapter;
+
 import com.google.common.base.MoreObjects;
 
 import io.github.oliviercailloux.minimax.elicitation.QuestionVoter;
 import io.github.oliviercailloux.minimax.elicitation.VoterPreferenceInformation;
+import io.github.oliviercailloux.minimax.experiment.json.VoterAdapter;
 import io.github.oliviercailloux.y2018.j_voting.Alternative;
 import io.github.oliviercailloux.y2018.j_voting.StrictPreference;
 import io.github.oliviercailloux.y2018.j_voting.Voter;
@@ -19,6 +26,7 @@ import io.github.oliviercailloux.y2018.j_voting.Voter;
  * @author Olivier Cailloux
  *
  */
+@JsonbPropertyOrder({ "voter", "preference" })
 public class VoterStrictPreference {
 
 	/**
@@ -29,11 +37,16 @@ public class VoterStrictPreference {
 	 *                           (may be empty).
 	 * @return a voter strict preference object.
 	 */
-	public static VoterStrictPreference given(Voter voter, List<Alternative> rankedAlternatives) {
+	@JsonbCreator
+	public static VoterStrictPreference given(@JsonbProperty("voter") Voter voter,
+			@JsonbProperty("preference") List<Alternative> rankedAlternatives) {
 		return new VoterStrictPreference(voter, rankedAlternatives);
 	}
 
+	@JsonbTypeAdapter(VoterAdapter.class)
 	private final Voter voter;
+
+	@JsonbTransient
 	private final StrictPreference preference;
 
 	private VoterStrictPreference(Voter voter, List<Alternative> rankedAlternatives) {
@@ -47,6 +60,7 @@ public class VoterStrictPreference {
 	 *
 	 * @return a list of {@link #size()} elements.
 	 */
+	@JsonbProperty("preference")
 	public List<Alternative> getAlternatives() {
 		return preference.getAlternatives();
 	}
