@@ -49,6 +49,11 @@ public class JsonConverter {
 		return JsonbUtils.toJsonObject(run, new ProfileAdapter(), new PreferenceAdapter(), new QuestionAdapter());
 	}
 
+	public static Run toRun(String json) {
+		return JsonbUtils.fromJson(json, Run.class, new ProfileAdapter(), new PreferenceAdapter(),
+				new QuestionAdapter(), new WeightsAdapter());
+	}
+
 	public static PrintableJsonObject toJson(Runs run) {
 		return JsonbUtils.toJsonObject(run, new ProfileAdapter(), new PreferenceAdapter(), new QuestionAdapter());
 	}

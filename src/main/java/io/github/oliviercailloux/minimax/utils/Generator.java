@@ -1,6 +1,7 @@
 package io.github.oliviercailloux.minimax.utils;
 
 import static com.google.common.base.Preconditions.checkArgument;
+import static com.google.common.base.Verify.verify;
 
 import java.util.Arrays;
 import java.util.Collections;
@@ -62,6 +63,7 @@ public class Generator {
 			profile.put(v, pref);
 		}
 
+		verify(profile.size() == nbVoters);
 		return profile;
 	}
 

@@ -4,6 +4,7 @@ import static com.google.common.base.Preconditions.checkArgument;
 import static com.google.common.base.Preconditions.checkNotNull;
 
 import java.util.Comparator;
+import java.util.List;
 import java.util.Map;
 import java.util.Objects;
 import java.util.Set;
@@ -16,6 +17,7 @@ import javax.json.bind.annotation.JsonbTypeAdapter;
 
 import com.google.common.base.MoreObjects;
 import com.google.common.base.VerifyException;
+import com.google.common.collect.ImmutableList;
 import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.ImmutableSet;
 import com.google.common.collect.ImmutableSortedSet;
@@ -38,14 +40,14 @@ import io.github.oliviercailloux.y2018.j_voting.Voter;
 public class Oracle {
 
 	@JsonbCreator
-	public static Oracle build(@JsonbProperty("profile") Set<VoterStrictPreference> profile,
+	public static Oracle build(@JsonbProperty("profile") List<VoterStrictPreference> profile,
 			@JsonbProperty("weights") PSRWeights weights) {
 		return new Oracle(profile, weights);
 	}
 
 	public static Oracle build(Map<Voter, VoterStrictPreference> profile, PSRWeights weights) {
 		checkArgument(profile.entrySet().stream().allMatch((e) -> e.getValue().getVoter().equals(e.getKey())));
-		return new Oracle(ImmutableSet.copyOf(profile.values()), weights);
+		return new Oracle(ImmutableList.copyOf(profile.values()), weights);
 	}
 
 	private final ImmutableMap<Voter, VoterStrictPreference> profile;
@@ -54,7 +56,7 @@ public class Oracle {
 	@JsonbTransient
 	private final ImmutableSortedSet<Alternative> alternatives;
 
-	private Oracle(Set<VoterStrictPreference> profile, PSRWeights weights) {
+	private Oracle(List<VoterStrictPreference> profile, PSRWeights weights) {
 		checkArgument(profile.size() >= 1);
 		this.profile = profile.stream().collect(ImmutableMap.toImmutableMap(VoterStrictPreference::getVoter, p -> p));
 		this.weights = checkNotNull(weights);

@@ -12,6 +12,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import com.google.common.base.MoreObjects;
+import com.google.common.collect.ImmutableList;
 
 public class StrategyFactory implements Supplier<Strategy> {
 	@SuppressWarnings("unused")
@@ -20,7 +21,7 @@ public class StrategyFactory implements Supplier<Strategy> {
 	static StrategyFactory given(StrategyType family, Map<String, Object> parameters) {
 		switch (family) {
 		case PESSIMISTIC:
-			return aggregatingMmrs((MmrOperator) parameters.get("MMR operator"));
+			return byMmrs((MmrOperator) parameters.get("MMR operator"));
 		case PESSIMISTIC_HEURISTIC:
 		case RANDOM:
 		case TWO_PHASES_HEURISTIC:
@@ -29,17 +30,27 @@ public class StrategyFactory implements Supplier<Strategy> {
 		}
 	}
 
-	public static StrategyFactory aggregatingMmrs(MmrOperator mmrOperator) {
+	public static StrategyFactory byMmrs(MmrOperator mmrOperator) {
 		final Random random = getRandom();
 		return new StrategyFactory(() -> {
 			final StrategyByMmr strategy = StrategyByMmr.build(mmrOperator);
 			strategy.setRandom(random);
 			return strategy;
-		}, "By MMR " + mmrOperator);
+		}, mmrOperator.equals(MmrOperator.MAX) ? "Pessimistic" : "By MMR " + mmrOperator);
 	}
 
+	public static StrategyFactory limited() {
+		final Random random = getRandom();
+		return new StrategyFactory(() -> {
+			final StrategyByMmr strategy = StrategyByMmr.limited(ImmutableList.of());
+			strategy.setRandom(random);
+			return strategy;
+		}, "Limited");
+	}
+
+	@Deprecated
 	public static StrategyFactory pessimisticHeuristic() {
-		return new StrategyFactory(() -> StrategyPessimisticHeuristic.build(), "By MMR limited");
+		return new StrategyFactory(() -> StrategyPessimisticHeuristic.build(), "Limited old");
 	}
 
 	public static StrategyFactory random() {

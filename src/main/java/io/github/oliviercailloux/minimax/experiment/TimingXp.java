@@ -12,8 +12,8 @@ public class TimingXp {
 	@SuppressWarnings("unused")
 	private static final Logger LOGGER = LoggerFactory.getLogger(TimingXp.class);
 
-	public static void main(String[] args) {
-		final StrategyFactory pessimisticFactory = StrategyFactory.aggregatingMmrs(MmrOperator.MAX);
+	public static void main(String[] args) throws Exception {
+		final StrategyFactory pessimisticFactory = StrategyFactory.byMmrs(MmrOperator.MAX);
 		/** (5, 5, 1), Saucisson: 0.77 ± 0.03 sec. */
 		/** (5, 5, 30), Saucisson: 18.2 ± 1.1 sec. */
 		final int m = 5;

@@ -5,9 +5,12 @@ import static com.google.common.base.Preconditions.checkNotNull;
 import static com.google.common.base.Preconditions.checkState;
 import static com.google.common.base.Verify.verify;
 
+import java.util.Comparator;
+import java.util.Optional;
 import java.util.Random;
 import java.util.Set;
 import java.util.concurrent.ThreadLocalRandom;
+import java.util.function.Function;
 import java.util.stream.IntStream;
 import java.util.stream.Stream;
 
@@ -18,6 +21,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import com.google.common.collect.ImmutableSet;
+import com.google.common.collect.ImmutableSetMultimap;
 import com.google.common.collect.Range;
 import com.google.common.graph.EndpointPair;
 import com.google.common.graph.Graph;
@@ -47,6 +51,15 @@ public class StrategyHelper {
 	public static Stream<Alternative> getIncomparables(Graph<Alternative> graph, Alternative a1) {
 		final Set<Alternative> known = graph.adjacentNodes(a1);
 		return graph.nodes().stream().filter(a2 -> !known.contains(a2)).filter(a2 -> !a2.equals(a1));
+	}
+
+	public static <K, V extends Comparable<V>> ImmutableSet<K> getMinimalElements(Stream<K> keys,
+			Function<? super K, ? extends V> valueFunction) {
+		final ImmutableSetMultimap<V, K> keysByValue = keys
+				.collect(ImmutableSetMultimap.toImmutableSetMultimap(valueFunction, i -> i));
+		final Optional<V> minValueOpt = keysByValue.keySet().stream().min(Comparator.naturalOrder());
+		final ImmutableSet<K> minKeys = minValueOpt.isEmpty() ? ImmutableSet.of() : keysByValue.get(minValueOpt.get());
+		return minKeys;
 	}
 
 	public static StrategyHelper newInstance() {

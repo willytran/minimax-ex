@@ -13,8 +13,11 @@ import javax.json.bind.annotation.JsonbTypeAdapter;
 import com.google.common.base.MoreObjects;
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.ImmutableSet;
+import com.google.common.collect.Iterables;
+import com.google.common.collect.MoreCollectors;
 import com.google.common.math.Stats;
 
+import io.github.oliviercailloux.minimax.elicitation.Oracle;
 import io.github.oliviercailloux.minimax.experiment.json.RunsAdapter;
 import io.github.oliviercailloux.minimax.regret.Regrets;
 
@@ -33,8 +36,14 @@ public class Runs {
 		checkArgument(!runs.isEmpty());
 		this.runs = ImmutableList.copyOf(runs);
 		final ImmutableSet<Integer> ks = runs.stream().map(Run::getK).collect(ImmutableSet.toImmutableSet());
+		final ImmutableSet<Integer> ms = runs.stream().map(Run::getOracle).map(Oracle::getM)
+				.collect(ImmutableSet.toImmutableSet());
+		final ImmutableSet<Integer> ns = runs.stream().map(Run::getOracle).map(Oracle::getN)
+				.collect(ImmutableSet.toImmutableSet());
 		checkArgument(ks.size() == 1, "All runs should have the same number of questions.");
-		k = ks.iterator().next();
+		checkArgument(ms.size() == 1, "All runs should have the same number of alternatives.");
+		checkArgument(ns.size() == 1, "All runs should have the same number of voters.");
+		k = Iterables.getOnlyElement(ks);
 	}
 
 	/**
@@ -93,6 +102,14 @@ public class Runs {
 
 	public int getK() {
 		return k;
+	}
+
+	public int getM() {
+		return runs.stream().map(Run::getOracle).map(Oracle::getM).collect(MoreCollectors.onlyElement());
+	}
+
+	public int getN() {
+		return runs.stream().map(Run::getOracle).map(Oracle::getN).collect(MoreCollectors.onlyElement());
 	}
 
 	@Override

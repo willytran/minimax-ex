@@ -1,9 +1,13 @@
 package io.github.oliviercailloux.minimax.strategies;
 
+import static com.google.common.base.Preconditions.checkArgument;
 import static com.google.common.base.Preconditions.checkNotNull;
+import static com.google.common.base.Preconditions.checkState;
 import static com.google.common.base.Verify.verify;
 
 import java.util.Comparator;
+import java.util.Iterator;
+import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 import java.util.Random;
@@ -15,6 +19,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import com.google.common.base.VerifyException;
+import com.google.common.collect.ImmutableList;
 import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.ImmutableMap.Builder;
 import com.google.common.collect.ImmutableSet;
@@ -44,29 +49,101 @@ import io.github.oliviercailloux.y2018.j_voting.Voter;
  **/
 public class StrategyByMmr implements Strategy {
 
+	public static class QuestioningConstraint {
+		public static QuestioningConstraint of(QuestionType kind, int number) {
+			return new QuestioningConstraint(kind, number);
+		}
+
+		private final QuestionType kind;
+		private final int number;
+
+		private QuestioningConstraint(QuestionType kind, int number) {
+			this.kind = checkNotNull(kind);
+			checkArgument(number >= 1);
+			this.number = number;
+		}
+
+		public QuestionType getKind() {
+			return kind;
+		}
+
+		public int getNumber() {
+			return number;
+		}
+	}
+
+	private static class QuestioningConstraints {
+		public static QuestioningConstraints of(List<QuestioningConstraint> constraints) {
+			return new QuestioningConstraints(constraints);
+		}
+
+		private final ImmutableList<QuestioningConstraint> constraints;
+		private int asked;
+
+		private QuestioningConstraints(List<QuestioningConstraint> constraints) {
+			this.constraints = ImmutableList.copyOf(constraints);
+			asked = 0;
+		}
+
+		public void next() {
+			++asked;
+		}
+
+		public boolean hasCurrentConstraint() {
+			final int nbConstraints = constraints.stream().mapToInt(QuestioningConstraint::getNumber).sum();
+			return asked < nbConstraints;
+		}
+
+		public QuestionType getCurrentConstraint() {
+			checkState(hasCurrentConstraint());
+
+			int skip = asked;
+			final Iterator<QuestioningConstraint> iterator = constraints.iterator();
+			QuestioningConstraint current = null;
+			while (skip >= 0 && iterator.hasNext()) {
+				current = iterator.next();
+				skip -= current.getNumber();
+			}
+			verify(skip < 0);
+			assert (current != null);
+			return current.getKind();
+		}
+
+		public boolean mayAskCommittee() {
+			return hasCurrentConstraint() ? getCurrentConstraint().equals(QuestionType.COMMITTEE_QUESTION) : true;
+		}
+
+		public boolean mayAskVoters() {
+			return hasCurrentConstraint() ? getCurrentConstraint().equals(QuestionType.VOTER_QUESTION) : true;
+		}
+
+	}
+
 	private static final Logger LOGGER = LoggerFactory.getLogger(StrategyByMmr.class);
 	private final StrategyHelper helper;
 	private final DoubleBinaryOperator mmrOperator;
-	private final boolean limited;
+	private boolean limited;
 
 	private ImmutableMap<Question, Double> questions;
+	private QuestioningConstraints constraints;
 
 	public static StrategyByMmr build() {
-		return new StrategyByMmr(MmrOperator.MAX, false);
+		return new StrategyByMmr(MmrOperator.MAX, false, ImmutableList.of());
 	}
 
 	public static StrategyByMmr build(DoubleBinaryOperator mmrOperator) {
-		return new StrategyByMmr(mmrOperator, false);
+		return new StrategyByMmr(mmrOperator, false, ImmutableList.of());
 	}
 
-	public static StrategyByMmr limited() {
-		return new StrategyByMmr(MmrOperator.MAX, true);
+	public static StrategyByMmr limited(List<QuestioningConstraint> constraints) {
+		return new StrategyByMmr(MmrOperator.MAX, true, constraints);
 	}
 
-	private StrategyByMmr(DoubleBinaryOperator mmrOperator, boolean limited) {
+	private StrategyByMmr(DoubleBinaryOperator mmrOperator, boolean limited, List<QuestioningConstraint> constraints) {
 		helper = StrategyHelper.newInstance();
 		this.mmrOperator = checkNotNull(mmrOperator);
 		this.limited = limited;
+		this.constraints = QuestioningConstraints.of(constraints);
 	}
 
 	public void setRandom(Random random) {
@@ -76,6 +153,14 @@ public class StrategyByMmr implements Strategy {
 	@Override
 	public void setKnowledge(PrefKnowledge knowledge) {
 		helper.setKnowledge(knowledge);
+	}
+
+	public boolean isLimited() {
+		return limited;
+	}
+
+	public void setLimited(boolean limited) {
+		this.limited = limited;
 	}
 
 	@Override
@@ -89,26 +174,31 @@ public class StrategyByMmr implements Strategy {
 					.asMultimap();
 			final Alternative xStar = helper.draw(mmrs.keySet());
 			final PairwiseMaxRegret pmr = helper.draw(mmrs.get(xStar).stream().collect(ImmutableSet.toImmutableSet()));
-			final Alternative yBar = pmr.getY();
-			helper.getQuestionableVoters().stream().map(v -> getLimitedQuestion(xStar, yBar, v))
-					.forEach(q -> questionsBuilder.put(Question.toVoter(q), getScore(q)));
+			if (constraints.mayAskVoters()) {
+				final Alternative yBar = pmr.getY();
+				helper.getQuestionableVoters().stream().map(v -> getLimitedQuestion(xStar, yBar, v))
+						.forEach(q -> questionsBuilder.put(Question.toVoter(q), getScore(q)));
+			}
 
-			final PSRWeights wBar = pmr.getWeights();
-			final PSRWeights wMin = getMinTauW(pmr);
-			final ImmutableSetMultimap<Double, Integer> ranksBySpread = IntStream.rangeClosed(1, m).boxed()
-					.collect(ImmutableSetMultimap.toImmutableSetMultimap(
-							i -> Math.abs(wBar.getWeightAtRank(i) - wMin.getWeightAtRank(i)), i -> i));
-			final double minSpread = ranksBySpread.keySet().stream().min(Comparator.naturalOrder()).get();
-			final ImmutableSet<Integer> minSpreadRanks = ranksBySpread.get(minSpread);
-			final QuestionCommittee qC = helper.getQuestionAboutHalfRange(helper.draw(minSpreadRanks));
-			questionsBuilder.put(Question.toCommittee(qC), getScore(qC));
+			if (constraints.mayAskCommittee()) {
+				final PSRWeights wBar = pmr.getWeights();
+				final PSRWeights wMin = getMinTauW(pmr);
+				final ImmutableSet<Integer> minSpreadRanks = StrategyHelper
+						.getMinimalElements(IntStream.rangeClosed(1, m - 2).boxed(), i -> getSpread(wBar, wMin, i));
+				final QuestionCommittee qC = helper.getQuestionAboutHalfRange(helper.draw(minSpreadRanks));
+				questionsBuilder.put(Question.toCommittee(qC), getScore(qC));
+			}
 		} else {
-			questionsBuilder.putAll(helper.getPossibleVoterQuestions().stream()
-					.collect(ImmutableMap.toImmutableMap(q -> Question.toVoter(q), this::getScore)));
-
-			questionsBuilder.putAll(helper.getQuestionsAboutLambdaRangesWiderThanOrAll(0.1).stream()
-					.collect(ImmutableMap.toImmutableMap(q -> Question.toCommittee(q), this::getScore)));
+			if (constraints.mayAskVoters()) {
+				questionsBuilder.putAll(helper.getPossibleVoterQuestions().stream()
+						.collect(ImmutableMap.toImmutableMap(q -> Question.toVoter(q), this::getScore)));
+			}
+			if (constraints.mayAskCommittee()) {
+				questionsBuilder.putAll(helper.getQuestionsAboutLambdaRangesWiderThanOrAll(0.1).stream()
+						.collect(ImmutableMap.toImmutableMap(q -> Question.toCommittee(q), this::getScore)));
+			}
 		}
+		constraints.next();
 
 		questions = questionsBuilder.build();
 		verify(!questions.isEmpty());
@@ -118,6 +208,11 @@ public class StrategyByMmr implements Strategy {
 				.filter(e -> e.getValue() == bestScore).map(Map.Entry::getKey).collect(ImmutableSet.toImmutableSet());
 		LOGGER.debug("Best questions: {}.", bestQuestions);
 		return helper.draw(bestQuestions);
+	}
+
+	private double getSpread(PSRWeights wBar, PSRWeights wMin, int i) {
+		return IntStream.rangeClosed(0, 2).boxed()
+				.mapToDouble(k -> Math.abs(wBar.getWeightAtRank(i + k) - wMin.getWeightAtRank(i + k))).sum();
 	}
 
 	public QuestionVoter getLimitedQuestion(Alternative xStar, Alternative yBar, Voter voter) {
