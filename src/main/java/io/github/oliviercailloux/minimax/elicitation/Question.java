@@ -10,6 +10,7 @@ import org.apfloat.Aprational;
 
 import com.google.common.base.MoreObjects;
 import com.google.common.base.MoreObjects.ToStringHelper;
+import com.google.common.base.VerifyException;
 
 import io.github.oliviercailloux.y2018.j_voting.Alternative;
 import io.github.oliviercailloux.y2018.j_voting.Voter;
@@ -65,10 +66,43 @@ public class Question {
 	}
 
 	public QuestionType getType() {
-		if (qv == null) {
+		if (qc != null) {
 			return QuestionType.COMMITTEE_QUESTION;
 		}
-		return QuestionType.VOTER_QUESTION;
+		if (qv != null) {
+			return QuestionType.VOTER_QUESTION;
+		}
+		throw new VerifyException();
+	}
+
+	public PreferenceInformation getPositiveInformation() {
+		final PreferenceInformation information;
+		switch (getType()) {
+		case COMMITTEE_QUESTION:
+			information = PreferenceInformation.aboutCommittee(qc.getPositiveInformation());
+			break;
+		case VOTER_QUESTION:
+			information = PreferenceInformation.aboutVoter(qv.getPositiveInformation());
+			break;
+		default:
+			throw new VerifyError();
+		}
+		return information;
+	}
+
+	public PreferenceInformation getNegativeInformation() {
+		final PreferenceInformation information;
+		switch (getType()) {
+		case COMMITTEE_QUESTION:
+			information = PreferenceInformation.aboutCommittee(qc.getNegativeInformation());
+			break;
+		case VOTER_QUESTION:
+			information = PreferenceInformation.aboutVoter(qv.getNegativeInformation());
+			break;
+		default:
+			throw new VerifyError();
+		}
+		return information;
 	}
 
 	@Override
@@ -96,7 +130,7 @@ public class Question {
 			helper.addValue(qv);
 			break;
 		default:
-			throw new AssertionError();
+			throw new VerifyError();
 		}
 		return helper.toString();
 	}

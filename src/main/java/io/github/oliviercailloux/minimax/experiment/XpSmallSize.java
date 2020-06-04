@@ -22,6 +22,7 @@ public class XpSmallSize {
 		final int m = 5;
 		final int n = 5;
 		final int k = 30;
+//		final StrategyFactory factory = StrategyFactory.limited();
 		final StrategyFactory factory = StrategyFactory.limited();
 //		final StrategyFactory factory = StrategyFactory.byMmrs(MmrOperator.MAX);
 //		final StrategyFactory factory = StrategyFactory.random();

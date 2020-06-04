@@ -47,7 +47,7 @@ public class StrategyPessimisticTest {
 		q.add(q1);
 		q.add(q2);
 		s.nextQuestion();
-		assertEquals(q, s.getQuestions().keySet());
+		assertEquals(q, s.getQuestions());
 	}
 
 	@Test
@@ -62,7 +62,7 @@ public class StrategyPessimisticTest {
 		final Set<Question> q = new HashSet<>();
 		q.add(q1);
 		q.add(q2);
-		assertEquals(q, s.getQuestions().keySet());
+		assertEquals(q, s.getQuestions());
 	}
 
 	@Test
@@ -72,17 +72,13 @@ public class StrategyPessimisticTest {
 		s.setKnowledge(k);
 		s.nextQuestion();
 		final Question q1 = Question.toVoter(new Voter(1), new Alternative(1), new Alternative(2));
-		final Question q2 = Question.toVoter(new Voter(1), new Alternative(2), new Alternative(1));
 		final Question q3 = Question.toVoter(new Voter(2), new Alternative(1), new Alternative(2));
-		final Question q4 = Question.toVoter(new Voter(2), new Alternative(2), new Alternative(1));
-		final Set<Question> q = new HashSet<>();
-		q.add(q1);
-		q.add(q2);
-		q.add(q3);
-		q.add(q4);
-		assertEquals(q, s.getQuestions().keySet());
-		for (Double d : s.getQuestions().values()) {
-			assertEquals(0d, d, 0.0001);
+		final Set<Question> expected = new HashSet<>();
+		expected.add(q1);
+		expected.add(q3);
+		assertEquals(expected, s.getQuestions());
+		for (Question q : s.getQuestions()) {
+			assertEquals(0d, s.getScore(q), 0.0001);
 		}
 	}
 
@@ -108,7 +104,7 @@ public class StrategyPessimisticTest {
 		q.add(q3);
 		q.add(q4);
 		q.add(q5);
-		assertEquals(q, s.getQuestions().keySet());
+		assertEquals(q, s.getQuestions());
 	}
 
 	@Test
@@ -121,7 +117,7 @@ public class StrategyPessimisticTest {
 		s.setKnowledge(k);
 		s.nextQuestion();
 
-		for (Question qq : s.getQuestions().keySet()) {
+		for (Question qq : s.getQuestions()) {
 			if (qq.getType().equals(QuestionType.VOTER_QUESTION)) {
 				k.getProfile().get(qq.asQuestionVoter().getVoter()).asGraph().putEdge(
 						qq.asQuestionVoter().getFirstAlternative(), qq.asQuestionVoter().getSecondAlternative());

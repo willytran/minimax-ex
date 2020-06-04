@@ -8,12 +8,14 @@ import java.util.Objects;
 import javax.json.bind.annotation.JsonbCreator;
 import javax.json.bind.annotation.JsonbProperty;
 import javax.json.bind.annotation.JsonbPropertyOrder;
+import javax.json.bind.annotation.JsonbTransient;
 import javax.json.bind.annotation.JsonbTypeAdapter;
 
 import org.apfloat.Aprational;
 
 import com.google.common.base.MoreObjects;
 
+import io.github.oliviercailloux.jlp.elements.ComparisonOperator;
 import io.github.oliviercailloux.minimax.experiment.json.AprationalAdapter;
 
 /**
@@ -58,6 +60,16 @@ public class QuestionCommittee {
 	 */
 	public int getRank() {
 		return rank;
+	}
+
+	@JsonbTransient
+	public CommitteePreferenceInformation getPositiveInformation() {
+		return CommitteePreferenceInformation.given(rank, ComparisonOperator.GE, lambda);
+	}
+
+	@JsonbTransient
+	public CommitteePreferenceInformation getNegativeInformation() {
+		return CommitteePreferenceInformation.given(rank, ComparisonOperator.LE, lambda);
 	}
 
 	@Override

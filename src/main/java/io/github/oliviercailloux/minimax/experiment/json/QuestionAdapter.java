@@ -26,7 +26,7 @@ public class QuestionAdapter implements JsonbAdapter<Question, JsonObject> {
 		final JsonObjectBuilder builder = Json.createObjectBuilder();
 		switch (obj.getType()) {
 		case COMMITTEE_QUESTION:
-			builder.add("toCommittee", JsonbUtils.toJsonObject(obj.asQuestionCommittee()));
+			builder.add("toCommittee", JsonbUtils.toJsonObject(obj.asQuestionCommittee(), new AprationalAdapter()));
 			break;
 		case VOTER_QUESTION:
 			builder.add("toVoter", JsonbUtils.toJsonObject(obj.asQuestionVoter(), new AlternativeAdapter()));

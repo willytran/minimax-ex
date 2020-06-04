@@ -75,6 +75,16 @@ public class QuestionVoter {
 		return b;
 	}
 
+	@JsonbTransient
+	public VoterPreferenceInformation getPositiveInformation() {
+		return VoterPreferenceInformation.given(voter, a, b);
+	}
+
+	@JsonbTransient
+	public VoterPreferenceInformation getNegativeInformation() {
+		return VoterPreferenceInformation.given(voter, b, a);
+	}
+
 	@Override
 	public boolean equals(Object o2) {
 		if (!(o2 instanceof QuestionVoter)) {

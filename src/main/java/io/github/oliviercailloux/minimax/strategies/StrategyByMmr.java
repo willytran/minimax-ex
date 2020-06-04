@@ -5,32 +5,25 @@ import static com.google.common.base.Preconditions.checkNotNull;
 import static com.google.common.base.Preconditions.checkState;
 import static com.google.common.base.Verify.verify;
 
-import java.util.Comparator;
 import java.util.Iterator;
 import java.util.List;
-import java.util.Map;
 import java.util.Optional;
 import java.util.Random;
 import java.util.function.DoubleBinaryOperator;
 import java.util.stream.IntStream;
 
-import org.apfloat.Aprational;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import com.google.common.base.VerifyException;
 import com.google.common.collect.ImmutableList;
-import com.google.common.collect.ImmutableMap;
-import com.google.common.collect.ImmutableMap.Builder;
 import com.google.common.collect.ImmutableSet;
 import com.google.common.collect.ImmutableSetMultimap;
 import com.google.common.collect.ImmutableSortedMultiset;
-import com.google.common.collect.SetMultimap;
 import com.google.common.graph.EndpointPair;
 import com.google.common.graph.Graph;
 import com.google.common.graph.ImmutableGraph;
 
-import io.github.oliviercailloux.jlp.elements.ComparisonOperator;
 import io.github.oliviercailloux.jlp.elements.SumTerms;
 import io.github.oliviercailloux.minimax.elicitation.ConstraintsOnWeights;
 import io.github.oliviercailloux.minimax.elicitation.PSRWeights;
@@ -124,7 +117,7 @@ public class StrategyByMmr implements Strategy {
 	private final DoubleBinaryOperator mmrOperator;
 	private boolean limited;
 
-	private ImmutableMap<Question, Double> questions;
+	private ImmutableSet<Question> questions;
 	private QuestioningConstraints constraints;
 
 	public static StrategyByMmr build() {
@@ -166,8 +159,14 @@ public class StrategyByMmr implements Strategy {
 	@Override
 	public Question nextQuestion() {
 		final int m = helper.getAndCheckM();
+		if (m == 2) {
+			checkState(constraints.mayAskVoters());
+		}
+		if (!constraints.mayAskCommittee()) {
+			checkState(!helper.getKnowledge().isProfileComplete());
+		}
 
-		final Builder<Question, Double> questionsBuilder = ImmutableMap.builder();
+		final ImmutableSet.Builder<Question> questionsBuilder = ImmutableSet.builder();
 
 		if (limited) {
 			final ImmutableSetMultimap<Alternative, PairwiseMaxRegret> mmrs = helper.getMinimalMaxRegrets()
@@ -177,25 +176,24 @@ public class StrategyByMmr implements Strategy {
 			if (constraints.mayAskVoters()) {
 				final Alternative yBar = pmr.getY();
 				helper.getQuestionableVoters().stream().map(v -> getLimitedQuestion(xStar, yBar, v))
-						.forEach(q -> questionsBuilder.put(Question.toVoter(q), getScore(q)));
+						.forEach(q -> questionsBuilder.add(Question.toVoter(q)));
 			}
 
-			if (constraints.mayAskCommittee()) {
+			if (constraints.mayAskCommittee() && m >= 3) {
 				final PSRWeights wBar = pmr.getWeights();
 				final PSRWeights wMin = getMinTauW(pmr);
 				final ImmutableSet<Integer> minSpreadRanks = StrategyHelper
 						.getMinimalElements(IntStream.rangeClosed(1, m - 2).boxed(), i -> getSpread(wBar, wMin, i));
 				final QuestionCommittee qC = helper.getQuestionAboutHalfRange(helper.draw(minSpreadRanks));
-				questionsBuilder.put(Question.toCommittee(qC), getScore(qC));
+				questionsBuilder.add(Question.toCommittee(qC));
 			}
 		} else {
 			if (constraints.mayAskVoters()) {
-				questionsBuilder.putAll(helper.getPossibleVoterQuestions().stream()
-						.collect(ImmutableMap.toImmutableMap(q -> Question.toVoter(q), this::getScore)));
+				helper.getPossibleVoterQuestions().stream().forEach(q -> questionsBuilder.add(Question.toVoter(q)));
 			}
 			if (constraints.mayAskCommittee()) {
-				questionsBuilder.putAll(helper.getQuestionsAboutLambdaRangesWiderThanOrAll(0.1).stream()
-						.collect(ImmutableMap.toImmutableMap(q -> Question.toCommittee(q), this::getScore)));
+				helper.getQuestionsAboutLambdaRangesWiderThanOrAll(0.1).stream()
+						.forEach(q -> questionsBuilder.add(Question.toCommittee(q)));
 			}
 		}
 		constraints.next();
@@ -203,9 +201,8 @@ public class StrategyByMmr implements Strategy {
 		questions = questionsBuilder.build();
 		verify(!questions.isEmpty());
 
-		final double bestScore = questions.values().stream().min(Comparator.naturalOrder()).get();
-		final ImmutableSet<Question> bestQuestions = questions.entrySet().stream()
-				.filter(e -> e.getValue() == bestScore).map(Map.Entry::getKey).collect(ImmutableSet.toImmutableSet());
+		final ImmutableSet<Question> bestQuestions = StrategyHelper.getMinimalElements(questions.stream(),
+				this::getScore);
 		LOGGER.debug("Best questions: {}.", bestQuestions);
 		return helper.draw(bestQuestions);
 	}
@@ -261,37 +258,26 @@ public class StrategyByMmr implements Strategy {
 	}
 
 	public double getScore(Question q) {
-		PrefKnowledge yesKnowledge = PrefKnowledge.copyOf(helper.getKnowledge());
-		PrefKnowledge noKnowledge = PrefKnowledge.copyOf(helper.getKnowledge());
-
-		if (q.getType().equals(QuestionType.VOTER_QUESTION)) {
-			QuestionVoter qv = q.asQuestionVoter();
-			Alternative a = qv.getFirstAlternative();
-			Alternative b = qv.getSecondAlternative();
-			yesKnowledge.getProfile().get(qv.getVoter()).asGraph().putEdge(a, b);
-			noKnowledge.getProfile().get(qv.getVoter()).asGraph().putEdge(b, a);
-		} else if (q.getType().equals(QuestionType.COMMITTEE_QUESTION)) {
-			QuestionCommittee qc = q.asQuestionCommittee();
-			Aprational lambda = qc.getLambda();
-			int rank = qc.getRank();
-			yesKnowledge.addConstraint(rank, ComparisonOperator.GE, lambda);
-			noKnowledge.addConstraint(rank, ComparisonOperator.LE, lambda);
+		final double yesMMR;
+		{
+			final PrefKnowledge updatedKnowledge = PrefKnowledge.copyOf(helper.getKnowledge());
+			updatedKnowledge.update(q.getPositiveInformation());
+			final RegretComputer rc = new RegretComputer(updatedKnowledge);
+			yesMMR = rc.getMinimalMaxRegrets().getMinimalMaxRegretValue();
 		}
 
-		RegretComputer rcYes = new RegretComputer(yesKnowledge);
-		SetMultimap<Alternative, PairwiseMaxRegret> mmrYes = rcYes.getMinimalMaxRegrets().asMultimap();
-		Alternative xStarYes = mmrYes.keySet().iterator().next();
-		double yesMMR = mmrYes.get(xStarYes).iterator().next().getPmrValue();
-
-		RegretComputer rcNo = new RegretComputer(noKnowledge);
-		SetMultimap<Alternative, PairwiseMaxRegret> mmrNo = rcNo.getMinimalMaxRegrets().asMultimap();
-		Alternative xStarNo = mmrNo.keySet().iterator().next();
-		double noMMR = mmrNo.get(xStarNo).iterator().next().getPmrValue();
+		final double noMMR;
+		{
+			final PrefKnowledge updatedKnowledge = PrefKnowledge.copyOf(helper.getKnowledge());
+			updatedKnowledge.update(q.getNegativeInformation());
+			final RegretComputer rc = new RegretComputer(updatedKnowledge);
+			noMMR = rc.getMinimalMaxRegrets().getMinimalMaxRegretValue();
+		}
 
 		return mmrOperator.applyAsDouble(yesMMR, noMMR);
 	}
 
-	ImmutableMap<Question, Double> getQuestions() {
+	ImmutableSet<Question> getQuestions() {
 		return questions;
 	}
 

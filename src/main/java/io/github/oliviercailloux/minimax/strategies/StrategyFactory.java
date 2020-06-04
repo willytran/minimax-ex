@@ -3,16 +3,21 @@ package io.github.oliviercailloux.minimax.strategies;
 import static com.google.common.base.Preconditions.checkNotNull;
 import static com.google.common.base.Preconditions.checkState;
 
+import java.util.List;
 import java.util.Map;
 import java.util.Random;
 import java.util.concurrent.ThreadLocalRandom;
 import java.util.function.Supplier;
+import java.util.stream.Collectors;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import com.google.common.base.MoreObjects;
 import com.google.common.collect.ImmutableList;
+
+import io.github.oliviercailloux.minimax.elicitation.QuestionType;
+import io.github.oliviercailloux.minimax.strategies.StrategyByMmr.QuestioningConstraint;
 
 public class StrategyFactory implements Supplier<Strategy> {
 	@SuppressWarnings("unused")
@@ -40,9 +45,43 @@ public class StrategyFactory implements Supplier<Strategy> {
 	}
 
 	public static StrategyFactory limited() {
+		return limited(ImmutableList.of());
+	}
+
+	public static StrategyFactory limitedCommitteeThenVoters(int nbQuestionsToCommittee, int nbQuestionsToVoters) {
+		final QuestioningConstraint cConstraint = StrategyByMmr.QuestioningConstraint
+				.of(QuestionType.COMMITTEE_QUESTION, nbQuestionsToCommittee);
+		final QuestioningConstraint vConstraint = StrategyByMmr.QuestioningConstraint.of(QuestionType.VOTER_QUESTION,
+				nbQuestionsToVoters);
+		final List<QuestioningConstraint> constraints = ImmutableList.of(cConstraint, vConstraint);
+		return limited(constraints);
+	}
+
+	public static StrategyFactory limited(List<QuestioningConstraint> constraints) {
 		final Random random = getRandom();
+
+		final String prefix = ", constrained to [";
+		final String suffix = "]";
+		final String constraintsDescription = constraints.stream()
+				.map(c -> c.getNumber() + (c.getKind() == QuestionType.COMMITTEE_QUESTION ? "c" : "v"))
+				.collect(Collectors.joining(", ", prefix, suffix));
+
 		return new StrategyFactory(() -> {
-			final StrategyByMmr strategy = StrategyByMmr.limited(ImmutableList.of());
+			final StrategyByMmr strategy = StrategyByMmr.limited(constraints);
+			strategy.setRandom(random);
+			return strategy;
+		}, "Limited" + constraintsDescription);
+	}
+
+	public static StrategyFactory votersThenCommittee(int nbQuestionsToVoters, int nbQuestionsToCommittee) {
+		final QuestioningConstraint cConstraint = StrategyByMmr.QuestioningConstraint
+				.of(QuestionType.COMMITTEE_QUESTION, nbQuestionsToCommittee);
+		final QuestioningConstraint vConstraint = StrategyByMmr.QuestioningConstraint.of(QuestionType.VOTER_QUESTION,
+				nbQuestionsToVoters);
+		final Random random = getRandom();
+
+		return new StrategyFactory(() -> {
+			final StrategyByMmr strategy = StrategyByMmr.limited(ImmutableList.of(vConstraint, cConstraint));
 			strategy.setRandom(random);
 			return strategy;
 		}, "Limited");
