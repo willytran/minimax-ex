@@ -61,6 +61,6 @@ public class JsonConverter {
 
 	public static Runs toRuns(String json) {
 		return JsonbUtils.fromJson(json, Runs.class, new ProfileAdapter(), new PreferenceAdapter(),
-				new QuestionAdapter(), new WeightsAdapter(), new RunsAdapter());
+				new QuestionAdapter(), new WeightsAdapter(), new FactoryAdapter());
 	}
 }

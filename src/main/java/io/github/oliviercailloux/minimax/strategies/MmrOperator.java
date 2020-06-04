@@ -14,6 +14,19 @@ public class MmrOperator implements DoubleBinaryOperator {
 
 	public static MmrOperator MIN = new MmrOperator((mmr1, mmr2) -> (mmr1 <= mmr2) ? mmr1 : mmr2);
 
+	public static MmrOperator valueOf(String string) {
+		switch (string) {
+		case "MAX":
+			return MmrOperator.MAX;
+		case "AVERAGE":
+			return MmrOperator.AVERAGE;
+		case "MIN":
+			return MmrOperator.MIN;
+		default:
+			throw new VerifyException();
+		}
+	}
+
 	private DoubleBinaryOperator delegate;
 
 	private MmrOperator(DoubleBinaryOperator delegate) {

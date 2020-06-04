@@ -5,7 +5,6 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.LinkedList;
-import java.util.function.Supplier;
 import java.util.stream.Stream;
 
 import com.google.common.collect.ImmutableList;
@@ -16,7 +15,6 @@ import com.univocity.parsers.csv.CsvWriterSettings;
 
 import io.github.oliviercailloux.minimax.elicitation.Question;
 import io.github.oliviercailloux.minimax.elicitation.QuestionType;
-import io.github.oliviercailloux.minimax.strategies.Strategy;
 import io.github.oliviercailloux.minimax.strategies.StrategyFactory;
 
 public class VariousXps {
@@ -126,17 +124,16 @@ public class VariousXps {
 		writer.close();
 	}
 
-	private static Runs runRepeatedly(Supplier<Strategy> strategyFactory, int nbQuestions, int m, int n, int nbRuns,
-			String title) throws IOException {
+	private static Runs runRepeatedly(StrategyFactory factory, int nbQuestions, int m, int n, int nbRuns, String title)
+			throws IOException {
 		final ImmutableList.Builder<Run> builder = ImmutableList.builder();
 		for (int i = 0; i < nbRuns; ++i) {
-			final Strategy st = strategyFactory.get();
-			final Run run = Runner.run(st, m, n, nbQuestions);
+			final Run run = Runner.run(factory.get(), m, n, nbQuestions);
 			builder.add(run);
 			System.out.println("Run " + (i + 1) + " of " + nbRuns);
 			System.out.println("mean avg time: " + Stats.of(run.getQuestionTimesMs()).mean() + " ms");
 		}
-		final Runs runs = Runs.of(builder.build());
+		final Runs runs = Runs.of(factory, builder.build());
 		printQuestions(runs, title, nbQuestions);
 		return runs;
 	}

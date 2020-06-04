@@ -3,19 +3,25 @@ package io.github.oliviercailloux.minimax.strategies;
 import static com.google.common.base.Preconditions.checkNotNull;
 import static com.google.common.base.Preconditions.checkState;
 
+import java.util.ArrayList;
 import java.util.List;
-import java.util.Map;
 import java.util.Random;
 import java.util.concurrent.ThreadLocalRandom;
 import java.util.function.Supplier;
 import java.util.stream.Collectors;
+
+import javax.json.JsonObject;
+import javax.json.JsonString;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import com.google.common.base.MoreObjects;
 import com.google.common.collect.ImmutableList;
+import com.google.common.collect.ImmutableMap;
 
+import io.github.oliviercailloux.json.JsonbUtils;
+import io.github.oliviercailloux.json.PrintableJsonObject;
 import io.github.oliviercailloux.minimax.elicitation.QuestionType;
 import io.github.oliviercailloux.minimax.strategies.StrategyByMmr.QuestioningConstraint;
 
@@ -26,11 +32,18 @@ public class StrategyFactory implements Supplier<Strategy> {
 	@SuppressWarnings("unused")
 	private static final Logger LOGGER = LoggerFactory.getLogger(StrategyFactory.class);
 
-	static StrategyFactory given(StrategyType family, Map<String, Object> parameters) {
+	public static StrategyFactory fromJson(JsonObject json) {
+		final JsonString familyJson = json.getJsonString("family");
+		final StrategyType family = StrategyType.valueOf(familyJson.getString());
 		switch (family) {
 		case PESSIMISTIC:
-			return byMmrs((long) parameters.get("seed"), (MmrOperator) parameters.get("mmrOperator"));
+			return byMmrs(json.getJsonNumber("seed").longValue(), MmrOperator.valueOf(json.getString("mmrOperator")));
 		case PESSIMISTIC_HEURISTIC:
+			@SuppressWarnings("serial")
+			final ArrayList<QuestioningConstraint> type = new ArrayList<>() {// nothing
+			};
+			return limited(json.getJsonNumber("seed").longValue(), JsonbUtils
+					.fromJson(json.getJsonArray("constraints").toString(), type.getClass().getGenericSuperclass()));
 		case RANDOM:
 		case TWO_PHASES_HEURISTIC:
 		default:
@@ -45,11 +58,14 @@ public class StrategyFactory implements Supplier<Strategy> {
 
 	public static StrategyFactory byMmrs(long seed, MmrOperator mmrOperator) {
 		final Random random = new Random(seed);
+		final PrintableJsonObject json = JsonbUtils.toJsonObject(
+				ImmutableMap.of("family", StrategyType.PESSIMISTIC, "seed", seed, "mmrOperator", mmrOperator));
+
 		return new StrategyFactory(() -> {
 			final StrategyByMmr strategy = StrategyByMmr.build(mmrOperator);
 			strategy.setRandom(random);
 			return strategy;
-		}, mmrOperator.equals(MmrOperator.MAX) ? "Pessimistic" : "By MMR " + mmrOperator);
+		}, json, mmrOperator.equals(MmrOperator.MAX) ? "Pessimistic" : "By MMR " + mmrOperator);
 	}
 
 	public static StrategyFactory limited() {
@@ -76,6 +92,11 @@ public class StrategyFactory implements Supplier<Strategy> {
 	}
 
 	public static StrategyFactory limited(long seed, List<QuestioningConstraint> constraints) {
+		final Random random = new Random(seed);
+
+		final PrintableJsonObject json = JsonbUtils.toJsonObject(ImmutableMap.of("family",
+				StrategyType.PESSIMISTIC_HEURISTIC, "seed", seed, "constraints", constraints));
+
 		final String prefix = ", constrained to [";
 		final String suffix = "]";
 		final String constraintsDescription = constraints.stream()
@@ -83,48 +104,51 @@ public class StrategyFactory implements Supplier<Strategy> {
 						+ (c.getKind() == QuestionType.COMMITTEE_QUESTION ? "c" : "v"))
 				.collect(Collectors.joining(", ", prefix, suffix));
 
-		final Random random = new Random(seed);
-
 		return new StrategyFactory(() -> {
 			final StrategyByMmr strategy = StrategyByMmr.limited(constraints);
 			strategy.setRandom(random);
 			return strategy;
-		}, "Limited" + constraintsDescription);
+		}, json, "Limited" + constraintsDescription);
 	}
 
 	@Deprecated
 	public static StrategyFactory pessimisticHeuristic() {
-		return new StrategyFactory(() -> StrategyPessimisticHeuristic.build(), "Limited old");
+		final PrintableJsonObject json = JsonbUtils
+				.toJsonObject(ImmutableMap.of("family", StrategyType.PESSIMISTIC_HEURISTIC));
+		return new StrategyFactory(() -> StrategyPessimisticHeuristic.build(), json, "Limited old");
 	}
 
 	public static StrategyFactory random() {
-		final Random random = getRandom();
+		final long seed = ThreadLocalRandom.current().nextLong();
+		final PrintableJsonObject json = JsonbUtils
+				.toJsonObject(ImmutableMap.of("family", StrategyType.RANDOM, "seed", seed));
+
+		final Random random = new Random(seed);
 		return new StrategyFactory(() -> {
 			final StrategyRandom strategy = StrategyRandom.build();
 			strategy.setRandom(random);
 			return strategy;
-		}, "Random");
+		}, json, "Random");
 	}
 
 	@Deprecated
 	public static StrategyFactory twoPhases(int questionsToVoters, int questionsToCommittee, boolean committeeFirst) {
+		final PrintableJsonObject json = JsonbUtils
+				.toJsonObject(ImmutableMap.of("family", StrategyType.TWO_PHASES_HEURISTIC));
+
 		return new StrategyFactory(
-				() -> StrategyTwoPhasesHeuristic.build(questionsToVoters, questionsToCommittee, committeeFirst),
+				() -> StrategyTwoPhasesHeuristic.build(questionsToVoters, questionsToCommittee, committeeFirst), json,
 				"Two phases " + "qV: " + questionsToVoters + "; qC: " + questionsToCommittee + "; committee first? "
 						+ committeeFirst);
 	}
 
-	public static Random getRandom() {
-		final long seed = ThreadLocalRandom.current().nextLong();
-		LOGGER.info("Using seed {} as random source.", seed);
-		return new Random(seed);
-	}
-
 	private final Supplier<Strategy> supplier;
 	private final String description;
+	private JsonObject json;
 
-	private StrategyFactory(Supplier<Strategy> supplier, String description) {
+	private StrategyFactory(Supplier<Strategy> supplier, JsonObject json, String description) {
 		this.supplier = checkNotNull(supplier);
+		this.json = checkNotNull(json);
 		this.description = checkNotNull(description);
 	}
 
@@ -133,6 +157,10 @@ public class StrategyFactory implements Supplier<Strategy> {
 		final Strategy instance = supplier.get();
 		checkState(instance != null);
 		return instance;
+	}
+
+	public JsonObject toJson() {
+		return json;
 	}
 
 	/**

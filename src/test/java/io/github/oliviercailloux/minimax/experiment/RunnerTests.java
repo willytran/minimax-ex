@@ -1,5 +1,12 @@
 package io.github.oliviercailloux.minimax.experiment;
 
+import static io.github.oliviercailloux.minimax.Basics.a1;
+import static io.github.oliviercailloux.minimax.Basics.a2;
+import static io.github.oliviercailloux.minimax.Basics.a3;
+import static io.github.oliviercailloux.minimax.Basics.factory;
+import static io.github.oliviercailloux.minimax.Basics.p1;
+import static io.github.oliviercailloux.minimax.Basics.v1;
+import static io.github.oliviercailloux.minimax.Basics.w;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
 import java.util.Iterator;
@@ -14,13 +21,8 @@ import com.google.common.collect.ImmutableMap;
 
 import io.github.oliviercailloux.j_voting.VoterStrictPreference;
 import io.github.oliviercailloux.minimax.elicitation.Oracle;
-import io.github.oliviercailloux.minimax.elicitation.PSRWeights;
 import io.github.oliviercailloux.minimax.elicitation.Question;
-import io.github.oliviercailloux.minimax.experiment.Run;
-import io.github.oliviercailloux.minimax.experiment.Runs;
 import io.github.oliviercailloux.minimax.regret.Regrets;
-import io.github.oliviercailloux.y2018.j_voting.Alternative;
-import io.github.oliviercailloux.y2018.j_voting.Voter;
 
 class RunnerTests {
 	@SuppressWarnings("unused")
@@ -28,13 +30,7 @@ class RunnerTests {
 
 	@Test
 	void test() {
-		final Voter v1 = new Voter(1);
-		final Alternative a1 = new Alternative(1);
-		final Alternative a2 = new Alternative(2);
-		final Alternative a3 = new Alternative(3);
-		final ImmutableList<Alternative> pref1 = ImmutableList.of(a1, a2, a3);
-		final Oracle oracle = Oracle.build(ImmutableMap.of(v1, VoterStrictPreference.given(v1, pref1)),
-				PSRWeights.given(ImmutableList.of(1d, 0.4d, 0d)));
+		final Oracle oracle = Oracle.build(ImmutableMap.of(v1, VoterStrictPreference.given(v1, p1)), w);
 		final Run run1 = Run.of(oracle, ImmutableList.of(10l, 11l),
 				ImmutableList.of(Question.toVoter(v1, a1, a2), Question.toVoter(v1, a2, a3)), 13l);
 		/**
@@ -45,7 +41,7 @@ class RunnerTests {
 		assertEquals(ImmutableList.of(1d, 1d, 0d), run1.getMinimalMaxRegrets().stream()
 				.map(Regrets::getMinimalMaxRegretValue).collect(ImmutableList.toImmutableList()));
 
-		final Runs runsSingleton = Runs.of(ImmutableList.of(run1));
+		final Runs runsSingleton = Runs.of(factory, ImmutableList.of(run1));
 		assertEquals(ImmutableList.of(1d, 1d, 0d), runsSingleton.getAverageMinimalMaxRegrets());
 
 		final Run run2 = Run.of(oracle, ImmutableList.of(10l, 11l),
@@ -53,10 +49,10 @@ class RunnerTests {
 		assertEquals(ImmutableList.of(1d, 1d, 1d), run2.getMinimalMaxRegrets().stream()
 				.map(Regrets::getMinimalMaxRegretValue).collect(ImmutableList.toImmutableList()));
 
-		final Runs runsTwo = Runs.of(ImmutableList.of(run1, run2));
+		final Runs runsTwo = Runs.of(factory, ImmutableList.of(run1, run2));
 		assertEquals(ImmutableList.of(1d, 1d, 0.5d), runsTwo.getAverageMinimalMaxRegrets());
 
-		final Runs runsThree = Runs.of(ImmutableList.of(run1, run2, run1));
+		final Runs runsThree = Runs.of(factory, ImmutableList.of(run1, run2, run1));
 		final ImmutableList<Double> avg = runsThree.getAverageMinimalMaxRegrets();
 		assertEquals(3, avg.size());
 		final Iterator<Double> iterator = avg.iterator();

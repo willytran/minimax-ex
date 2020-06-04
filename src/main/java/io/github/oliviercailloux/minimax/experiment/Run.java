@@ -140,6 +140,26 @@ public class Run {
 	}
 
 	/**
+	 * Returns the regrets after having asked i questions.
+	 * 
+	 * @param i ≤ k
+	 */
+	@JsonbTransient
+	public Regrets getRegrets(int i) {
+		checkArgument(i <= questions.size());
+
+		if (regrets != null) {
+			return regrets.get(i);
+		}
+
+		final PrefKnowledge knowledge = PrefKnowledge.given(oracle.getAlternatives(), oracle.getProfile().keySet());
+		questions.stream().limit(i).forEach(q -> knowledge.update(oracle.getPreferenceInformation(q)));
+
+		final RegretComputer rc = new RegretComputer(knowledge);
+		return rc.getMinimalMaxRegrets();
+	}
+
+	/**
 	 * @return a list of size k + 1.
 	 */
 	@JsonbTransient

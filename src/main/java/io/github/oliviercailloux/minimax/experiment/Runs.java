@@ -1,6 +1,7 @@
 package io.github.oliviercailloux.minimax.experiment;
 
 import static com.google.common.base.Preconditions.checkArgument;
+import static com.google.common.base.Preconditions.checkNotNull;
 
 import java.util.List;
 import java.util.Objects;
@@ -8,6 +9,8 @@ import java.util.stream.IntStream;
 
 import javax.json.bind.annotation.JsonbCreator;
 import javax.json.bind.annotation.JsonbProperty;
+import javax.json.bind.annotation.JsonbPropertyOrder;
+import javax.json.bind.annotation.JsonbTransient;
 import javax.json.bind.annotation.JsonbTypeAdapter;
 
 import com.google.common.base.MoreObjects;
@@ -17,20 +20,25 @@ import com.google.common.collect.MoreCollectors;
 import com.google.common.math.Stats;
 
 import io.github.oliviercailloux.minimax.elicitation.Oracle;
-import io.github.oliviercailloux.minimax.experiment.json.RunsAdapter;
+import io.github.oliviercailloux.minimax.experiment.json.FactoryAdapter;
+import io.github.oliviercailloux.minimax.strategies.StrategyFactory;
 
-@JsonbTypeAdapter(RunsAdapter.class)
+@JsonbPropertyOrder({ "factory", "runs" })
 public class Runs {
 
 	@JsonbCreator
-	public static Runs of(@JsonbProperty("runs") List<Run> runs) {
-		return new Runs(runs);
+	public static Runs of(@JsonbProperty("factory") StrategyFactory factory, @JsonbProperty("runs") List<Run> runs) {
+		return new Runs(factory, runs);
 	}
 
+	@JsonbTypeAdapter(FactoryAdapter.class)
+	private final StrategyFactory factory;
 	private final ImmutableList<Run> runs;
+	@JsonbTransient
 	private final int maxK;
 
-	private Runs(List<Run> runs) {
+	private Runs(StrategyFactory factory, List<Run> runs) {
+		this.factory = checkNotNull(factory);
 		checkArgument(!runs.isEmpty());
 		this.runs = ImmutableList.copyOf(runs);
 		maxK = runs.stream().mapToInt(Run::getK).max().getAsInt();
@@ -38,16 +46,22 @@ public class Runs {
 				.collect(ImmutableSet.toImmutableSet());
 		final ImmutableSet<Integer> ns = runs.stream().map(Run::getOracle).map(Oracle::getN)
 				.collect(ImmutableSet.toImmutableSet());
-		checkArgument(runs.stream().allMatch(
-				r -> r.getK() < maxK ? r.getMinimalMaxRegrets().get(r.getK()).getMinimalMaxRegretValue() == 0d : true),
+		checkArgument(
+				runs.stream().allMatch(
+						r -> r.getK() < maxK ? r.getRegrets(r.getK()).getMinimalMaxRegretValue() == 0d : true),
 				"All runs should have either k questions or end with no regret.");
 		checkArgument(ms.size() == 1, "All runs should have the same number of alternatives.");
 		checkArgument(ns.size() == 1, "All runs should have the same number of voters.");
 	}
 
+	public StrategyFactory getFactory() {
+		return factory;
+	}
+
 	/**
 	 * @return a list of size k + 1.
 	 */
+	@JsonbTransient
 	public ImmutableList<Double> getAverageMinimalMaxRegrets() {
 		final ImmutableList<Stats> stats = getMinimalMaxRegretStats();
 		return stats.stream().map(Stats::mean).collect(ImmutableList.toImmutableList());
@@ -56,6 +70,7 @@ public class Runs {
 	/**
 	 * @return a list of size k + 1.
 	 */
+	@JsonbTransient
 	public ImmutableList<Stats> getMinimalMaxRegretStats() {
 		final ImmutableList.Builder<Stats> statsBuilder = ImmutableList.builder();
 		for (int i = 0; i < maxK + 1; ++i) {
@@ -68,17 +83,20 @@ public class Runs {
 		return statsBuilder.build();
 	}
 
+	@JsonbTransient
 	public Stats getQuestionTimeStats() {
 		final ImmutableList<Integer> allTimes = runs.stream().flatMap((r) -> r.getQuestionTimesMs().stream())
 				.collect(ImmutableList.toImmutableList());
 		return Stats.of(allTimes);
 	}
 
+	@JsonbTransient
 	public Stats getTotalTimeStats() {
 		final IntStream totalTimesStream = runs.stream().mapToInt(Run::getTotalTimeMs);
 		return Stats.of(totalTimesStream);
 	}
 
+	@JsonbTransient
 	public int nbRuns() {
 		return runs.size();
 	}
@@ -87,6 +105,7 @@ public class Runs {
 		return runs;
 	}
 
+	@JsonbTransient
 	public Run getRun(int i) {
 		checkArgument(i < runs.size());
 		return runs.get(i);
@@ -96,12 +115,14 @@ public class Runs {
 		return maxK;
 	}
 
+	@JsonbTransient
 	public int getM() {
-		return runs.stream().map(Run::getOracle).map(Oracle::getM).collect(MoreCollectors.onlyElement());
+		return runs.stream().map(Run::getOracle).map(Oracle::getM).distinct().collect(MoreCollectors.onlyElement());
 	}
 
+	@JsonbTransient
 	public int getN() {
-		return runs.stream().map(Run::getOracle).map(Oracle::getN).collect(MoreCollectors.onlyElement());
+		return runs.stream().map(Run::getOracle).map(Oracle::getN).distinct().collect(MoreCollectors.onlyElement());
 	}
 
 	@Override

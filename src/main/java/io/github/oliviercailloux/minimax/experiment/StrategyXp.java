@@ -13,7 +13,6 @@ import com.google.common.collect.ImmutableList;
 
 import io.github.oliviercailloux.minimax.elicitation.QuestionType;
 import io.github.oliviercailloux.minimax.experiment.json.JsonConverter;
-import io.github.oliviercailloux.minimax.experiment.other_formats.ToCsv;
 import io.github.oliviercailloux.minimax.strategies.StrategyByMmr;
 import io.github.oliviercailloux.minimax.strategies.StrategyFactory;
 
@@ -23,11 +22,10 @@ public class StrategyXp {
 
 	public static void main(String[] args) throws Exception {
 		final int m = 10;
-		final int n = 20;
-		final int k = 500;
+		final int n = 5;
+		final int k = 300;
 //		final StrategyFactory factory = StrategyFactory.limited();
-		final long seed = ThreadLocalRandom.current().nextLong();
-		final StrategyFactory factory = StrategyFactory.limited(seed, ImmutableList
+		final StrategyFactory factory = StrategyFactory.limited(ThreadLocalRandom.current().nextLong(), ImmutableList
 				.of(StrategyByMmr.QuestioningConstraint.of(QuestionType.VOTER_QUESTION, Integer.MAX_VALUE)));
 //		final StrategyFactory factory = StrategyFactory.byMmrs(MmrOperator.MAX);
 //		final StrategyFactory factory = StrategyFactory.random();
@@ -51,10 +49,10 @@ public class StrategyXp {
 			final Run run = Runner.run(factory.get(), m, n, k);
 			LOGGER.info("Time (run {}): {}.", i, run.getTotalTime());
 			runsBuilder.add(run);
-			final Runs runs = Runs.of(runsBuilder.build());
+			final Runs runs = Runs.of(factory, runsBuilder.build());
 //			Runner.summarize(runs);
 			Files.writeString(tmpJson, JsonConverter.toJson(runs).toString());
-			Files.writeString(tmpCsv, ToCsv.toCsv(runs));
+//			Files.writeString(tmpCsv, ToCsv.toCsv(runs));
 		}
 
 		final String prefix = factory.getDescription() + ", m = " + m + ", n = " + n + ", k = " + k + ", nbRuns = "

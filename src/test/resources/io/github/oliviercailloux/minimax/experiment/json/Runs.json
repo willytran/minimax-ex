@@ -1,104 +1,120 @@
-[
-    {
-        "oracle": {
-            "profile": [
-                {
-                    "voter": 1,
-                    "preference": [
-                        1,
-                        2,
-                        3
-                    ]
-                },
-                {
-                    "voter": 2,
-                    "preference": [
-                        3,
-                        2,
-                        1
-                    ]
-                }
-            ],
-            "weights": [
-                1.0,
-                0.4,
-                0.0
-            ]
-        },
-        "questions": [
+{
+    "factory": {
+        "family": "PESSIMISTIC_HEURISTIC",
+        "seed": 100,
+        "constraints": [
             {
-                "toVoter": {
-                    "voter": 1,
-                    "alternatives": [
-                        1,
-                        2
-                    ]
-                }
+                "kind": "VOTER_QUESTION",
+                "number": 1
             },
             {
-                "toCommittee": {
-                    "lambda": {
-                        "numerator": 1,
-                        "denominator": 2
-                    },
-                    "rank": 1
-                }
+                "kind": "COMMITTEE_QUESTION",
+                "number": 2147483647
             }
-        ],
-        "timesMs": [
-            8,
-            2
         ]
     },
-    {
-        "oracle": {
-            "profile": [
+    "runs": [
+        {
+            "oracle": {
+                "profile": [
+                    {
+                        "voter": 1,
+                        "preference": [
+                            1,
+                            2,
+                            3
+                        ]
+                    },
+                    {
+                        "voter": 2,
+                        "preference": [
+                            3,
+                            2,
+                            1
+                        ]
+                    }
+                ],
+                "weights": [
+                    1.0,
+                    0.4,
+                    0.0
+                ]
+            },
+            "questions": [
                 {
-                    "voter": 1,
-                    "preference": [
-                        1,
-                        2,
-                        3
-                    ]
+                    "toVoter": {
+                        "voter": 1,
+                        "alternatives": [
+                            1,
+                            2
+                        ]
+                    }
                 },
                 {
-                    "voter": 2,
-                    "preference": [
-                        3,
-                        2,
-                        1
-                    ]
+                    "toCommittee": {
+                        "lambda": {
+                            "numerator": 1,
+                            "denominator": 2
+                        },
+                        "rank": 1
+                    }
                 }
             ],
-            "weights": [
-                1.0,
-                0.4,
-                0.0
+            "timesMs": [
+                8,
+                2
             ]
         },
-        "questions": [
-            {
-                "toVoter": {
-                    "voter": 1,
-                    "alternatives": [
-                        1,
-                        2
-                    ]
-                }
-            },
-            {
-                "toCommittee": {
-                    "lambda": {
-                        "numerator": 1,
-                        "denominator": 2
+        {
+            "oracle": {
+                "profile": [
+                    {
+                        "voter": 1,
+                        "preference": [
+                            1,
+                            2,
+                            3
+                        ]
                     },
-                    "rank": 1
+                    {
+                        "voter": 2,
+                        "preference": [
+                            3,
+                            2,
+                            1
+                        ]
+                    }
+                ],
+                "weights": [
+                    1.0,
+                    0.4,
+                    0.0
+                ]
+            },
+            "questions": [
+                {
+                    "toVoter": {
+                        "voter": 1,
+                        "alternatives": [
+                            1,
+                            2
+                        ]
+                    }
+                },
+                {
+                    "toCommittee": {
+                        "lambda": {
+                            "numerator": 1,
+                            "denominator": 2
+                        },
+                        "rank": 1
+                    }
                 }
-            }
-        ],
-        "timesMs": [
-            8,
-            2
-        ]
-    }
-]
+            ],
+            "timesMs": [
+                8,
+                2
+            ]
+        }
+    ]
+}

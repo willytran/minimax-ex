@@ -29,7 +29,7 @@ public class TimingXp {
 			LOGGER.info("Time: {}.", run.getTotalTimeMs());
 			runsBuilder.add(run);
 		}
-		final Runs runs = Runs.of(runsBuilder.build());
+		final Runs runs = Runs.of(pessimisticFactory, runsBuilder.build());
 		LOGGER.info("Timing statistics for finding an average question: {}.", runs.getQuestionTimeStats());
 		LOGGER.info("Timing statistics for finding all questions: {}.", runs.getTotalTimeStats());
 	}
