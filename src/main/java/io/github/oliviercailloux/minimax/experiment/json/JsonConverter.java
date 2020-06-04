@@ -42,7 +42,8 @@ public class JsonConverter {
 	}
 
 	public static Oracle toOracle(String json) {
-		return JsonbUtils.fromJson(json, Oracle.class, new ProfileAdapter(), new PreferenceAdapter());
+		return JsonbUtils.fromJson(json, Oracle.class, new ProfileAdapter(), new PreferenceAdapter(),
+				new WeightsAdapter());
 	}
 
 	public static PrintableJsonObject toJson(Run run) {

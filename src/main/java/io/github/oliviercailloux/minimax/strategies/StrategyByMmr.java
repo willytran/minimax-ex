@@ -15,6 +15,7 @@ import java.util.stream.IntStream;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import com.google.common.base.MoreObjects;
 import com.google.common.base.VerifyException;
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.ImmutableSet;
@@ -23,6 +24,7 @@ import com.google.common.collect.ImmutableSortedMultiset;
 import com.google.common.graph.EndpointPair;
 import com.google.common.graph.Graph;
 import com.google.common.graph.ImmutableGraph;
+import com.google.common.math.IntMath;
 
 import io.github.oliviercailloux.jlp.elements.SumTerms;
 import io.github.oliviercailloux.minimax.elicitation.ConstraintsOnWeights;
@@ -63,6 +65,12 @@ public class StrategyByMmr implements Strategy {
 		public int getNumber() {
 			return number;
 		}
+
+		@Override
+		public String toString() {
+			return MoreObjects.toStringHelper(this).add("kind", kind)
+					.add("number", number == Integer.MAX_VALUE ? "∞" : number).toString();
+		}
 	}
 
 	private static class QuestioningConstraints {
@@ -74,6 +82,10 @@ public class StrategyByMmr implements Strategy {
 		private int asked;
 
 		private QuestioningConstraints(List<QuestioningConstraint> constraints) {
+			if (!constraints.isEmpty()) {
+				checkArgument(constraints.stream().limit(constraints.size() - 1).map(QuestioningConstraint::getNumber)
+						.noneMatch(n -> n == Integer.MAX_VALUE));
+			}
 			this.constraints = ImmutableList.copyOf(constraints);
 			asked = 0;
 		}
@@ -83,7 +95,11 @@ public class StrategyByMmr implements Strategy {
 		}
 
 		public boolean hasCurrentConstraint() {
-			final int nbConstraints = constraints.stream().mapToInt(QuestioningConstraint::getNumber).sum();
+			if (!constraints.isEmpty() && constraints.get(constraints.size() - 1).number == Integer.MAX_VALUE) {
+				return true;
+			}
+			final int nbConstraints = constraints.stream().mapToInt(QuestioningConstraint::getNumber).reduce(0,
+					IntMath::checkedAdd);
 			return asked < nbConstraints;
 		}
 
@@ -136,6 +152,7 @@ public class StrategyByMmr implements Strategy {
 		helper = StrategyHelper.newInstance();
 		this.mmrOperator = checkNotNull(mmrOperator);
 		this.limited = limited;
+		LOGGER.debug("Creating with constraints: {}.", constraints);
 		this.constraints = QuestioningConstraints.of(constraints);
 	}
 
@@ -165,6 +182,8 @@ public class StrategyByMmr implements Strategy {
 		if (!constraints.mayAskCommittee()) {
 			checkState(!helper.getKnowledge().isProfileComplete());
 		}
+		LOGGER.debug("Next question, allowing committee? {}; allowing voters? {}.", constraints.mayAskCommittee(),
+				constraints.mayAskVoters());
 
 		final ImmutableSet.Builder<Question> questionsBuilder = ImmutableSet.builder();
 
@@ -173,7 +192,7 @@ public class StrategyByMmr implements Strategy {
 					.asMultimap();
 			final Alternative xStar = helper.draw(mmrs.keySet());
 			final PairwiseMaxRegret pmr = helper.draw(mmrs.get(xStar).stream().collect(ImmutableSet.toImmutableSet()));
-			if (constraints.mayAskVoters()) {
+			if (constraints.mayAskVoters() && !helper.getKnowledge().isProfileComplete()) {
 				final Alternative yBar = pmr.getY();
 				helper.getQuestionableVoters().stream().map(v -> getLimitedQuestion(xStar, yBar, v))
 						.forEach(q -> questionsBuilder.add(Question.toVoter(q)));
@@ -216,7 +235,13 @@ public class StrategyByMmr implements Strategy {
 		final ImmutableGraph<Alternative> graph = helper.getKnowledge().getPartialPreference(voter).asTransitiveGraph();
 		final QuestionVoter question;
 		if (!graph.adjacentNodes(xStar).contains(yBar)) {
-			question = QuestionVoter.given(voter, xStar, yBar);
+			if (xStar.equals(yBar)) {
+				verify(helper.getMinimalMaxRegrets().getMinimalMaxRegretValue() == 0d);
+				/** We do not care which question we ask. */
+				question = helper.getPossibleVoterQuestions().iterator().next();
+			} else {
+				question = QuestionVoter.given(voter, xStar, yBar);
+			}
 		} else {
 			final Alternative tryFirst;
 			final Alternative trySecond;
@@ -247,14 +272,6 @@ public class StrategyByMmr implements Strategy {
 
 	private QuestionVoter getQuestionAbout(Voter voter, EndpointPair<Alternative> incomparablePair) {
 		return QuestionVoter.given(voter, incomparablePair.nodeU(), incomparablePair.nodeV());
-	}
-
-	public double getScore(QuestionVoter q) {
-		return getScore(Question.toVoter(q));
-	}
-
-	public double getScore(QuestionCommittee q) {
-		return getScore(Question.toCommittee(q));
 	}
 
 	public double getScore(Question q) {

@@ -90,6 +90,14 @@ public class JsonConverterTests {
 	}
 
 	@Test
+	void testToOracle() throws Exception {
+		final String source = Files.readString(Path.of(getClass().getResource("Oracle.json").toURI()));
+		final Oracle actual = JsonConverter.toOracle(source);
+		final Oracle expected = oracle;
+		assertEquals(expected, actual);
+	}
+
+	@Test
 	void testRun() throws Exception {
 		final PrintableJsonObject json = JsonConverter.toJson(run);
 		final String expected = Files.readString(Path.of(getClass().getResource("Run.json").toURI()));

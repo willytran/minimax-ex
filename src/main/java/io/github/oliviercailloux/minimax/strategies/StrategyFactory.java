@@ -15,10 +15,14 @@ import org.slf4j.LoggerFactory;
 
 import com.google.common.base.MoreObjects;
 import com.google.common.collect.ImmutableList;
+import com.google.common.collect.ImmutableMap;
 
 import io.github.oliviercailloux.minimax.elicitation.QuestionType;
 import io.github.oliviercailloux.minimax.strategies.StrategyByMmr.QuestioningConstraint;
 
+/**
+ * Immutable.
+ */
 public class StrategyFactory implements Supplier<Strategy> {
 	@SuppressWarnings("unused")
 	private static final Logger LOGGER = LoggerFactory.getLogger(StrategyFactory.class);
@@ -26,7 +30,7 @@ public class StrategyFactory implements Supplier<Strategy> {
 	static StrategyFactory given(StrategyType family, Map<String, Object> parameters) {
 		switch (family) {
 		case PESSIMISTIC:
-			return byMmrs((MmrOperator) parameters.get("MMR operator"));
+			return byMmrs((long) parameters.get("seed"), (MmrOperator) parameters.get("mmrOperator"));
 		case PESSIMISTIC_HEURISTIC:
 		case RANDOM:
 		case TWO_PHASES_HEURISTIC:
@@ -35,8 +39,13 @@ public class StrategyFactory implements Supplier<Strategy> {
 		}
 	}
 
-	public static StrategyFactory byMmrs(MmrOperator mmrOperator) {
-		final Random random = getRandom();
+	public static StrategyFactory pessimistic() {
+		final long seed = ThreadLocalRandom.current().nextLong();
+		return byMmrs(seed, MmrOperator.MAX);
+	}
+
+	public static StrategyFactory byMmrs(long seed, MmrOperator mmrOperator) {
+		final Random random = new Random(seed);
 		return new StrategyFactory(() -> {
 			final StrategyByMmr strategy = StrategyByMmr.build(mmrOperator);
 			strategy.setRandom(random);
@@ -45,46 +54,43 @@ public class StrategyFactory implements Supplier<Strategy> {
 	}
 
 	public static StrategyFactory limited() {
-		return limited(ImmutableList.of());
+		final long seed = ThreadLocalRandom.current().nextLong();
+		return limited(seed, ImmutableList.of());
 	}
 
-	public static StrategyFactory limitedCommitteeThenVoters(int nbQuestionsToCommittee, int nbQuestionsToVoters) {
+	public static StrategyFactory limitedCommitteeThenVoters(int nbQuestionsToCommittee) {
 		final QuestioningConstraint cConstraint = StrategyByMmr.QuestioningConstraint
 				.of(QuestionType.COMMITTEE_QUESTION, nbQuestionsToCommittee);
 		final QuestioningConstraint vConstraint = StrategyByMmr.QuestioningConstraint.of(QuestionType.VOTER_QUESTION,
-				nbQuestionsToVoters);
-		final List<QuestioningConstraint> constraints = ImmutableList.of(cConstraint, vConstraint);
-		return limited(constraints);
+				Integer.MAX_VALUE);
+		final long seed = ThreadLocalRandom.current().nextLong();
+		return limited(seed, ImmutableList.of(cConstraint, vConstraint));
 	}
 
-	public static StrategyFactory limited(List<QuestioningConstraint> constraints) {
-		final Random random = getRandom();
+	public static StrategyFactory limitedVotersThenCommittee(int nbQuestionsToVoters) {
+		final QuestioningConstraint vConstraint = StrategyByMmr.QuestioningConstraint.of(QuestionType.VOTER_QUESTION,
+				nbQuestionsToVoters);
+		final QuestioningConstraint cConstraint = StrategyByMmr.QuestioningConstraint
+				.of(QuestionType.COMMITTEE_QUESTION, Integer.MAX_VALUE);
+		final long seed = ThreadLocalRandom.current().nextLong();
+		return limited(seed, ImmutableList.of(vConstraint, cConstraint));
+	}
 
+	public static StrategyFactory limited(long seed, List<QuestioningConstraint> constraints) {
 		final String prefix = ", constrained to [";
 		final String suffix = "]";
 		final String constraintsDescription = constraints.stream()
-				.map(c -> c.getNumber() + (c.getKind() == QuestionType.COMMITTEE_QUESTION ? "c" : "v"))
+				.map(c -> (c.getNumber() == Integer.MAX_VALUE ? "∞" : c.getNumber())
+						+ (c.getKind() == QuestionType.COMMITTEE_QUESTION ? "c" : "v"))
 				.collect(Collectors.joining(", ", prefix, suffix));
+
+		final Random random = new Random(seed);
 
 		return new StrategyFactory(() -> {
 			final StrategyByMmr strategy = StrategyByMmr.limited(constraints);
 			strategy.setRandom(random);
 			return strategy;
 		}, "Limited" + constraintsDescription);
-	}
-
-	public static StrategyFactory votersThenCommittee(int nbQuestionsToVoters, int nbQuestionsToCommittee) {
-		final QuestioningConstraint cConstraint = StrategyByMmr.QuestioningConstraint
-				.of(QuestionType.COMMITTEE_QUESTION, nbQuestionsToCommittee);
-		final QuestioningConstraint vConstraint = StrategyByMmr.QuestioningConstraint.of(QuestionType.VOTER_QUESTION,
-				nbQuestionsToVoters);
-		final Random random = getRandom();
-
-		return new StrategyFactory(() -> {
-			final StrategyByMmr strategy = StrategyByMmr.limited(ImmutableList.of(vConstraint, cConstraint));
-			strategy.setRandom(random);
-			return strategy;
-		}, "Limited");
 	}
 
 	@Deprecated
@@ -101,6 +107,7 @@ public class StrategyFactory implements Supplier<Strategy> {
 		}, "Random");
 	}
 
+	@Deprecated
 	public static StrategyFactory twoPhases(int questionsToVoters, int questionsToCommittee, boolean committeeFirst) {
 		return new StrategyFactory(
 				() -> StrategyTwoPhasesHeuristic.build(questionsToVoters, questionsToCommittee, committeeFirst),
@@ -108,7 +115,7 @@ public class StrategyFactory implements Supplier<Strategy> {
 						+ committeeFirst);
 	}
 
-	private static Random getRandom() {
+	public static Random getRandom() {
 		final long seed = ThreadLocalRandom.current().nextLong();
 		LOGGER.info("Using seed {} as random source.", seed);
 		return new Random(seed);
@@ -116,7 +123,6 @@ public class StrategyFactory implements Supplier<Strategy> {
 
 	private final Supplier<Strategy> supplier;
 	private final String description;
-
 	private StrategyFactory(Supplier<Strategy> supplier, String description) {
 		this.supplier = checkNotNull(supplier);
 		this.description = checkNotNull(description);

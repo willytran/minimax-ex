@@ -4,29 +4,34 @@ import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.StandardCopyOption;
+import java.util.concurrent.ThreadLocalRandom;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import com.google.common.collect.ImmutableList;
 
+import io.github.oliviercailloux.minimax.elicitation.QuestionType;
 import io.github.oliviercailloux.minimax.experiment.json.JsonConverter;
 import io.github.oliviercailloux.minimax.experiment.other_formats.ToCsv;
+import io.github.oliviercailloux.minimax.strategies.StrategyByMmr;
 import io.github.oliviercailloux.minimax.strategies.StrategyFactory;
 
-public class XpSmallSize {
+public class StrategyXp {
 	@SuppressWarnings("unused")
-	private static final Logger LOGGER = LoggerFactory.getLogger(XpSmallSize.class);
+	private static final Logger LOGGER = LoggerFactory.getLogger(StrategyXp.class);
 
 	public static void main(String[] args) throws Exception {
-		final int m = 5;
-		final int n = 5;
-		final int k = 30;
+		final int m = 10;
+		final int n = 20;
+		final int k = 500;
 //		final StrategyFactory factory = StrategyFactory.limited();
-		final StrategyFactory factory = StrategyFactory.limited();
+		final long seed = ThreadLocalRandom.current().nextLong();
+		final StrategyFactory factory = StrategyFactory.limited(seed, ImmutableList
+				.of(StrategyByMmr.QuestioningConstraint.of(QuestionType.VOTER_QUESTION, Integer.MAX_VALUE)));
 //		final StrategyFactory factory = StrategyFactory.byMmrs(MmrOperator.MAX);
 //		final StrategyFactory factory = StrategyFactory.random();
-		runs(factory, m, n, k, 5);
+		runs(factory, m, n, k, 50);
 	}
 
 	/**
@@ -34,14 +39,14 @@ public class XpSmallSize {
 	 * questions).
 	 */
 	private static void runs(StrategyFactory factory, int m, int n, int k, int nbRuns) throws IOException {
-		final Path outDir = Path.of("experiments/Small/");
+		final Path outDir = Path.of("experiments/Strategy/");
 		Files.createDirectories(outDir);
 		final String prefixTemp = factory.getDescription() + ", m = " + m + ", n = " + n + ", k = " + k + ", ongoing";
 		final Path tmpJson = outDir.resolve(prefixTemp + ".json");
 		final Path tmpCsv = outDir.resolve(prefixTemp + ".csv");
 
 		final ImmutableList.Builder<Run> runsBuilder = ImmutableList.builder();
-		LOGGER.info("Started {}.", factory.getDescription());
+		LOGGER.info("Started '{}'.", factory.getDescription());
 		for (int i = 0; i < nbRuns; ++i) {
 			final Run run = Runner.run(factory.get(), m, n, k);
 			LOGGER.info("Time (run {}): {}.", i, run.getTotalTime());

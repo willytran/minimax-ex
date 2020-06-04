@@ -5,7 +5,6 @@ import org.slf4j.LoggerFactory;
 
 import com.google.common.collect.ImmutableList;
 
-import io.github.oliviercailloux.minimax.strategies.MmrOperator;
 import io.github.oliviercailloux.minimax.strategies.StrategyFactory;
 
 public class TimingXp {
@@ -13,7 +12,7 @@ public class TimingXp {
 	private static final Logger LOGGER = LoggerFactory.getLogger(TimingXp.class);
 
 	public static void main(String[] args) throws Exception {
-		final StrategyFactory pessimisticFactory = StrategyFactory.byMmrs(MmrOperator.MAX);
+		final StrategyFactory pessimisticFactory = StrategyFactory.pessimistic();
 		/** (5, 5, 1), Saucisson: 0.77 ± 0.03 sec. */
 		/** (5, 5, 30), Saucisson: 18.2 ± 1.1 sec. */
 		final int m = 5;

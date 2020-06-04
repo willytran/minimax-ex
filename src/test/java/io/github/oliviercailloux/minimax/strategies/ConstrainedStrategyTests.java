@@ -1,6 +1,5 @@
 package io.github.oliviercailloux.minimax.strategies;
 
-import static com.google.common.base.Verify.verify;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
 import org.junit.jupiter.api.Test;
@@ -14,15 +13,15 @@ class ConstrainedStrategyTests {
 	@Test
 	void test() {
 		final PrefKnowledge k = PrefKnowledge.given(Generator.getAlternatives(3), Generator.getVoters(1));
-		final StrategyFactory factory = StrategyFactory.limitedCommitteeThenVoters(10, 5);
+		final StrategyFactory factory = StrategyFactory.limitedCommitteeThenVoters(10);
 		final Strategy twoPhase = factory.get();
-		assertEquals("Limited, constrained to [10c, 5v]", factory.getDescription());
+		assertEquals("Limited, constrained to [10c, ∞v]", factory.getDescription());
 		twoPhase.setKnowledge(k);
 		for (int i = 0; i < 10; ++i) {
-			verify(twoPhase.nextQuestion().getType().equals(QuestionType.COMMITTEE_QUESTION));
+			assertEquals(QuestionType.COMMITTEE_QUESTION, twoPhase.nextQuestion().getType(), "" + i);
 		}
-		for (int i = 0; i < 5; ++i) {
-			verify(twoPhase.nextQuestion().getType().equals(QuestionType.VOTER_QUESTION));
+		for (int i = 0; i < 15; ++i) {
+			assertEquals(QuestionType.VOTER_QUESTION, twoPhase.nextQuestion().getType());
 		}
 	}
 

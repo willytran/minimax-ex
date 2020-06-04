@@ -3,6 +3,7 @@ package io.github.oliviercailloux.j_voting;
 import static java.util.Objects.requireNonNull;
 
 import java.util.List;
+import java.util.Objects;
 
 import javax.json.bind.annotation.JsonbCreator;
 import javax.json.bind.annotation.JsonbProperty;
@@ -81,12 +82,12 @@ public class VoterStrictPreference {
 			return false;
 		}
 		final VoterStrictPreference v2 = (VoterStrictPreference) o2;
-		return v2.preference.equals(preference);
+		return v2.voter.equals(voter) && v2.preference.equals(preference);
 	}
 
 	@Override
 	public int hashCode() {
-		return preference.hashCode();
+		return Objects.hash(voter, preference);
 	}
 
 	/**
