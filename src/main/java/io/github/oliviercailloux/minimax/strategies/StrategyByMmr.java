@@ -12,6 +12,8 @@ import java.util.Random;
 import java.util.function.DoubleBinaryOperator;
 import java.util.stream.IntStream;
 
+import javax.json.bind.annotation.JsonbPropertyOrder;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -44,6 +46,7 @@ import io.github.oliviercailloux.y2018.j_voting.Voter;
  **/
 public class StrategyByMmr implements Strategy {
 
+	@JsonbPropertyOrder({ "kind", "number" })
 	public static class QuestioningConstraint {
 		public static QuestioningConstraint of(QuestionType kind, int number) {
 			return new QuestioningConstraint(kind, number);

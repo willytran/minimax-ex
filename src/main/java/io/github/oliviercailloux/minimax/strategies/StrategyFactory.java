@@ -15,7 +15,6 @@ import org.slf4j.LoggerFactory;
 
 import com.google.common.base.MoreObjects;
 import com.google.common.collect.ImmutableList;
-import com.google.common.collect.ImmutableMap;
 
 import io.github.oliviercailloux.minimax.elicitation.QuestionType;
 import io.github.oliviercailloux.minimax.strategies.StrategyByMmr.QuestioningConstraint;
@@ -123,6 +122,7 @@ public class StrategyFactory implements Supplier<Strategy> {
 
 	private final Supplier<Strategy> supplier;
 	private final String description;
+
 	private StrategyFactory(Supplier<Strategy> supplier, String description) {
 		this.supplier = checkNotNull(supplier);
 		this.description = checkNotNull(description);

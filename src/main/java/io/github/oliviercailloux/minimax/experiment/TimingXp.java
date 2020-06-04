@@ -30,7 +30,7 @@ public class TimingXp {
 			runsBuilder.add(run);
 		}
 		final Runs runs = Runs.of(runsBuilder.build());
-		LOGGER.info("Timing statistics for finding first question: {}.", runs.getQuestionTimeStats().get(0));
+		LOGGER.info("Timing statistics for finding an average question: {}.", runs.getQuestionTimeStats());
 		LOGGER.info("Timing statistics for finding all questions: {}.", runs.getTotalTimeStats());
 	}
 }

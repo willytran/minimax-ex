@@ -21,7 +21,7 @@ public class ToCsv {
 	private static final Logger LOGGER = LoggerFactory.getLogger(ToCsv.class);
 
 	public static String toCsv(Runs runs) {
-		final ImmutableMap<Integer, Stats> everyFive = IntStream.rangeClosed(0, runs.getK()).filter(i -> i % 5 == 0)
+		final ImmutableMap<Integer, Stats> everyFive = IntStream.rangeClosed(0, runs.getMaxK()).filter(i -> i % 5 == 0)
 				.boxed().collect(ImmutableMap.toImmutableMap(i -> i, i -> runs.getMinimalMaxRegretStats().get(i)));
 
 		final NumberFormat formatter = NumberFormat.getNumberInstance(Locale.ENGLISH);

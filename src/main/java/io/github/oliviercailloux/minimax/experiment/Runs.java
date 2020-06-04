@@ -13,13 +13,11 @@ import javax.json.bind.annotation.JsonbTypeAdapter;
 import com.google.common.base.MoreObjects;
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.ImmutableSet;
-import com.google.common.collect.Iterables;
 import com.google.common.collect.MoreCollectors;
 import com.google.common.math.Stats;
 
 import io.github.oliviercailloux.minimax.elicitation.Oracle;
 import io.github.oliviercailloux.minimax.experiment.json.RunsAdapter;
-import io.github.oliviercailloux.minimax.regret.Regrets;
 
 @JsonbTypeAdapter(RunsAdapter.class)
 public class Runs {
@@ -30,20 +28,21 @@ public class Runs {
 	}
 
 	private final ImmutableList<Run> runs;
-	private final int k;
+	private final int maxK;
 
 	private Runs(List<Run> runs) {
 		checkArgument(!runs.isEmpty());
 		this.runs = ImmutableList.copyOf(runs);
-		final ImmutableSet<Integer> ks = runs.stream().map(Run::getK).collect(ImmutableSet.toImmutableSet());
+		maxK = runs.stream().mapToInt(Run::getK).max().getAsInt();
 		final ImmutableSet<Integer> ms = runs.stream().map(Run::getOracle).map(Oracle::getM)
 				.collect(ImmutableSet.toImmutableSet());
 		final ImmutableSet<Integer> ns = runs.stream().map(Run::getOracle).map(Oracle::getN)
 				.collect(ImmutableSet.toImmutableSet());
-		checkArgument(ks.size() == 1, "All runs should have the same number of questions.");
+		checkArgument(runs.stream().allMatch(
+				r -> r.getK() < maxK ? r.getMinimalMaxRegrets().get(r.getK()).getMinimalMaxRegretValue() == 0d : true),
+				"All runs should have either k questions or end with no regret.");
 		checkArgument(ms.size() == 1, "All runs should have the same number of alternatives.");
 		checkArgument(ns.size() == 1, "All runs should have the same number of voters.");
-		k = Iterables.getOnlyElement(ks);
 	}
 
 	/**
@@ -59,27 +58,20 @@ public class Runs {
 	 */
 	public ImmutableList<Stats> getMinimalMaxRegretStats() {
 		final ImmutableList.Builder<Stats> statsBuilder = ImmutableList.builder();
-		for (int i = 0; i < k + 1; ++i) {
+		for (int i = 0; i < maxK + 1; ++i) {
 			final int finali = i;
-			final ImmutableList<Double> allIthRegrets = runs.stream().map((r) -> r.getMinimalMaxRegrets().get(finali))
-					.map(Regrets::getMinimalMaxRegretValue).collect(ImmutableList.toImmutableList());
+			final ImmutableList<Double> allIthRegrets = runs.stream().map((r) -> r.getMinimalMaxRegrets())
+					.map(l -> (finali < l.size() ? l.get(finali).getMinimalMaxRegretValue() : 0d))
+					.collect(ImmutableList.toImmutableList());
 			statsBuilder.add(Stats.of(allIthRegrets));
 		}
 		return statsBuilder.build();
 	}
 
-	/**
-	 * @return a list of size k.
-	 */
-	public ImmutableList<Stats> getQuestionTimeStats() {
-		final ImmutableList.Builder<Stats> statsBuilder = ImmutableList.builder();
-		for (int i = 0; i < k; ++i) {
-			final int finali = i;
-			final ImmutableList<Integer> allIths = runs.stream().map((r) -> r.getQuestionTimesMs().get(finali))
-					.collect(ImmutableList.toImmutableList());
-			statsBuilder.add(Stats.of(allIths));
-		}
-		return statsBuilder.build();
+	public Stats getQuestionTimeStats() {
+		final ImmutableList<Integer> allTimes = runs.stream().flatMap((r) -> r.getQuestionTimesMs().stream())
+				.collect(ImmutableList.toImmutableList());
+		return Stats.of(allTimes);
 	}
 
 	public Stats getTotalTimeStats() {
@@ -100,8 +92,8 @@ public class Runs {
 		return runs.get(i);
 	}
 
-	public int getK() {
-		return k;
+	public int getMaxK() {
+		return maxK;
 	}
 
 	public int getM() {
