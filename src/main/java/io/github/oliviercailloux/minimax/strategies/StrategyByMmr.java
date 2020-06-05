@@ -44,7 +44,17 @@ import io.github.oliviercailloux.y2018.j_voting.Alternative;
 import io.github.oliviercailloux.y2018.j_voting.Voter;
 
 /**
+ * <p>
  * Uses the Regret to get the next question.
+ * </p>
+ * <p>
+ * It is possible to constrain this strategy for asking the first q questions
+ * only to voters (or only to committee), then the next q' questions only to
+ * committee (or to voters), and so on. BUT this constraint will be lifted if it
+ * is impossible to satisfy: for example, if the profile is entirely known and
+ * the constraint mandates to ask the next question to voters, this strategy
+ * will anyway ask a question to the committee.
+ * </p>
  **/
 public class StrategyByMmr implements Strategy {
 
@@ -183,14 +193,13 @@ public class StrategyByMmr implements Strategy {
 	@Override
 	public Question nextQuestion() {
 		final int m = helper.getAndCheckM();
-		if (m == 2) {
-			checkState(constraints.mayAskVoters());
-		}
-		if (!constraints.mayAskCommittee()) {
-			checkState(!helper.getKnowledge().isProfileComplete());
-		}
-		LOGGER.debug("Next question, allowing committee? {}; allowing voters? {}.", constraints.mayAskCommittee(),
-				constraints.mayAskVoters());
+
+		final boolean allowCommittee = (constraints.mayAskCommittee() || helper.getKnowledge().isProfileComplete())
+				&& m >= 3;
+		final boolean allowVoters = (constraints.mayAskVoters() || m == 2)
+				&& !helper.getKnowledge().isProfileComplete();
+
+		LOGGER.debug("Next question, allowing committee? {}; allowing voters? {}.", allowCommittee, allowVoters);
 
 		final ImmutableSet.Builder<Question> questionsBuilder = ImmutableSet.builder();
 
@@ -199,13 +208,13 @@ public class StrategyByMmr implements Strategy {
 					.asMultimap();
 			final Alternative xStar = helper.draw(mmrs.keySet());
 			final PairwiseMaxRegret pmr = helper.draw(mmrs.get(xStar).stream().collect(ImmutableSet.toImmutableSet()));
-			if (constraints.mayAskVoters() && !helper.getKnowledge().isProfileComplete()) {
+			if (allowVoters) {
 				final Alternative yBar = pmr.getY();
 				helper.getQuestionableVoters().stream().map(v -> getLimitedQuestion(xStar, yBar, v))
 						.forEach(q -> questionsBuilder.add(Question.toVoter(q)));
 			}
 
-			if (constraints.mayAskCommittee() && m >= 3) {
+			if (allowCommittee) {
 				final PSRWeights wBar = pmr.getWeights();
 				final PSRWeights wMin = getMinTauW(pmr);
 				final ImmutableSet<Integer> minSpreadRanks = StrategyHelper
@@ -214,10 +223,10 @@ public class StrategyByMmr implements Strategy {
 				questionsBuilder.add(Question.toCommittee(qC));
 			}
 		} else {
-			if (constraints.mayAskVoters()) {
+			if (allowVoters) {
 				helper.getPossibleVoterQuestions().stream().forEach(q -> questionsBuilder.add(Question.toVoter(q)));
 			}
-			if (constraints.mayAskCommittee()) {
+			if (allowCommittee) {
 				helper.getQuestionsAboutLambdaRangesWiderThanOrAll(0.1).stream()
 						.forEach(q -> questionsBuilder.add(Question.toCommittee(q)));
 			}

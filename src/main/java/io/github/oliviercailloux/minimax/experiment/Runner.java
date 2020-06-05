@@ -59,7 +59,7 @@ public class Runner {
 		final ImmutableList.Builder<Long> tBuilder = ImmutableList.builder();
 
 		try {
-			for (int i = 1; i <= k && !knowledge.isProfileComplete(); i++) {
+			for (int i = 1; i <= k; i++) {
 				final long startTime = System.currentTimeMillis();
 				final Question q = strategy.nextQuestion();
 				final PreferenceInformation a = oracle.getPreferenceInformation(q);

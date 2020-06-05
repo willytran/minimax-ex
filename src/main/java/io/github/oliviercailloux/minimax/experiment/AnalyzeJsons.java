@@ -16,6 +16,10 @@ public class AnalyzeJsons {
 	private static final Logger LOGGER = LoggerFactory.getLogger(AnalyzeJsons.class);
 
 	public static void main(String[] args) throws Exception {
+		findAndAnalyze();
+	}
+
+	public static void findAndAnalyze() throws Exception {
 		final Path inDir = Path.of("experiments/Small/");
 		final ImmutableSet<Path> jsonPaths;
 		try (Stream<Path> paths = Files.list(inDir)) {
@@ -25,7 +29,6 @@ public class AnalyzeJsons {
 		for (Path json : jsonPaths) {
 			analyze(json);
 		}
-//		debug(Path.of("run.json"));
 	}
 
 	public static void analyze(Path json) throws Exception {

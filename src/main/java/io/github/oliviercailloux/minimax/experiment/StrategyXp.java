@@ -13,6 +13,7 @@ import com.google.common.collect.ImmutableList;
 
 import io.github.oliviercailloux.minimax.elicitation.QuestionType;
 import io.github.oliviercailloux.minimax.experiment.json.JsonConverter;
+import io.github.oliviercailloux.minimax.experiment.other_formats.ToCsv;
 import io.github.oliviercailloux.minimax.strategies.StrategyByMmr;
 import io.github.oliviercailloux.minimax.strategies.StrategyFactory;
 
@@ -22,8 +23,8 @@ public class StrategyXp {
 
 	public static void main(String[] args) throws Exception {
 		final int m = 10;
-		final int n = 5;
-		final int k = 300;
+		final int n = 20;
+		final int k = 500;
 //		final StrategyFactory factory = StrategyFactory.limited();
 		final StrategyFactory factory = StrategyFactory.limited(ThreadLocalRandom.current().nextLong(), ImmutableList
 				.of(StrategyByMmr.QuestioningConstraint.of(QuestionType.VOTER_QUESTION, Integer.MAX_VALUE)));
@@ -36,7 +37,7 @@ public class StrategyXp {
 	 * Repeat (nbRuns times) a run experiment (thus: generate an oracle, ask k
 	 * questions).
 	 */
-	private static void runs(StrategyFactory factory, int m, int n, int k, int nbRuns) throws IOException {
+	public static void runs(StrategyFactory factory, int m, int n, int k, int nbRuns) throws IOException {
 		final Path outDir = Path.of("experiments/Strategy/");
 		Files.createDirectories(outDir);
 		final String prefixTemp = factory.getDescription() + ", m = " + m + ", n = " + n + ", k = " + k + ", ongoing";
@@ -48,11 +49,12 @@ public class StrategyXp {
 		for (int i = 0; i < nbRuns; ++i) {
 			final Run run = Runner.run(factory.get(), m, n, k);
 			LOGGER.info("Time (run {}): {}.", i, run.getTotalTime());
+			Files.writeString(Path.of("run " + i + ".json"), JsonConverter.toJson(run).toString());
 			runsBuilder.add(run);
 			final Runs runs = Runs.of(factory, runsBuilder.build());
 //			Runner.summarize(runs);
 			Files.writeString(tmpJson, JsonConverter.toJson(runs).toString());
-//			Files.writeString(tmpCsv, ToCsv.toCsv(runs));
+			Files.writeString(tmpCsv, ToCsv.toCsv(runs));
 		}
 
 		final String prefix = factory.getDescription() + ", m = " + m + ", n = " + n + ", k = " + k + ", nbRuns = "
