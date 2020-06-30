@@ -22,7 +22,6 @@ import org.slf4j.LoggerFactory;
 import com.google.common.base.MoreObjects;
 import com.google.common.base.VerifyException;
 import com.google.common.collect.ImmutableList;
-import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.ImmutableSet;
 import com.google.common.collect.ImmutableSetMultimap;
 import com.google.common.collect.ImmutableSortedMultiset;
@@ -151,7 +150,7 @@ public class StrategyByMmr implements Strategy {
 	private final DoubleBinaryOperator mmrOperator;
 	private boolean limited;
 
-	private ImmutableMap<Question, Double> questions;
+	private ImmutableSet<Question> questions;
 	private QuestioningConstraints constraints;
 
 	public static StrategyByMmr build() {
@@ -234,11 +233,11 @@ public class StrategyByMmr implements Strategy {
 		}
 		constraints.next();
 
-		questions = questionsBuilder.build().stream().collect(ImmutableMap.toImmutableMap(s -> s, this::getScore));
+		questions = questionsBuilder.build();
 		verify(!questions.isEmpty());
 
-		final ImmutableSet<Question> bestQuestions = StrategyHelper.getMinimalElements(questions.keySet().stream(),
-				questions::get);
+		final ImmutableSet<Question> bestQuestions = StrategyHelper.getMinimalElements(questions.stream(),
+				this::getScore);
 		LOGGER.debug("Best questions: {}.", bestQuestions);
 		return helper.draw(bestQuestions);
 	}
@@ -312,10 +311,6 @@ public class StrategyByMmr implements Strategy {
 	}
 
 	ImmutableSet<Question> getQuestions() {
-		return questions.keySet();
-	}
-
-	public ImmutableMap<Question, Double> getQuestionsWithScores() {
 		return questions;
 	}
 
