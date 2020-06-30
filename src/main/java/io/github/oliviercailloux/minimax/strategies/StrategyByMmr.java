@@ -315,6 +315,10 @@ public class StrategyByMmr implements Strategy {
 		return questions.keySet();
 	}
 
+	public ImmutableMap<Question, Double> getQuestionsWithScores() {
+		return questions;
+	}
+
 	private PSRWeights getMinTauW(PairwiseMaxRegret pmr) {
 		final ImmutableSortedMultiset<Integer> multiSetOfRanksOfX = ImmutableSortedMultiset
 				.copyOf(pmr.getRanksOfX().values());
