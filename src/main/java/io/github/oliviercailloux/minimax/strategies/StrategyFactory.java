@@ -1,5 +1,6 @@
 package io.github.oliviercailloux.minimax.strategies;
 
+import static com.google.common.base.Preconditions.checkArgument;
 import static com.google.common.base.Preconditions.checkNotNull;
 import static com.google.common.base.Preconditions.checkState;
 
@@ -34,6 +35,7 @@ public class StrategyFactory implements Supplier<Strategy> {
 
 	public static StrategyFactory fromJson(JsonObject json) {
 		final JsonString familyJson = json.getJsonString("family");
+		checkArgument(familyJson != null);
 		final StrategyType family = StrategyType.valueOf(familyJson.getString());
 		switch (family) {
 		case PESSIMISTIC:
