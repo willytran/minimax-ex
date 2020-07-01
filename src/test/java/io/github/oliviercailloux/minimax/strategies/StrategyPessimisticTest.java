@@ -10,6 +10,8 @@ import org.apfloat.Apint;
 import org.apfloat.Aprational;
 import org.junit.jupiter.api.Test;
 
+import com.google.common.collect.ImmutableSet;
+
 import io.github.oliviercailloux.minimax.elicitation.PrefKnowledge;
 import io.github.oliviercailloux.minimax.elicitation.Question;
 import io.github.oliviercailloux.minimax.elicitation.QuestionType;
@@ -43,11 +45,8 @@ public class StrategyPessimisticTest {
 		s.setKnowledge(k);
 		final Question q1 = Question.toVoter(new Voter(1), new Alternative(1), new Alternative(2));
 		final Question q2 = Question.toVoter(new Voter(1), new Alternative(2), new Alternative(1));
-		final Set<Question> q = new HashSet<>();
-		q.add(q1);
-		q.add(q2);
 		s.nextQuestion();
-		assertEquals(q, s.getQuestions());
+		assertEquals(ImmutableSet.of(q1, q2), s.getQuestions().keySet());
 	}
 
 	@Test
@@ -59,10 +58,7 @@ public class StrategyPessimisticTest {
 		s.nextQuestion();
 		final Question q1 = Question.toVoter(new Voter(2), new Alternative(1), new Alternative(2));
 		final Question q2 = Question.toVoter(new Voter(2), new Alternative(2), new Alternative(1));
-		final Set<Question> q = new HashSet<>();
-		q.add(q1);
-		q.add(q2);
-		assertEquals(q, s.getQuestions());
+		assertEquals(ImmutableSet.of(q1, q2), s.getQuestions().keySet());
 	}
 
 	@Test
@@ -72,13 +68,13 @@ public class StrategyPessimisticTest {
 		s.setKnowledge(k);
 		s.nextQuestion();
 		final Question q1 = Question.toVoter(new Voter(1), new Alternative(1), new Alternative(2));
-		final Question q3 = Question.toVoter(new Voter(2), new Alternative(1), new Alternative(2));
+		final Question q2 = Question.toVoter(new Voter(2), new Alternative(1), new Alternative(2));
 		final Set<Question> expected = new HashSet<>();
 		expected.add(q1);
-		expected.add(q3);
-		assertEquals(expected, s.getQuestions());
-		for (Question q : s.getQuestions()) {
-			assertEquals(0d, s.getScore(q), 0.0001);
+		expected.add(q2);
+		assertEquals(ImmutableSet.of(q1, q2), s.getQuestions().keySet());
+		for (Question q : s.getQuestions().keySet()) {
+			assertEquals(MmrLottery.given(0d, 0d), s.getQuestions().get(q));
 		}
 	}
 
@@ -98,13 +94,7 @@ public class StrategyPessimisticTest {
 		final Question q4 = Question.toVoter(new Voter(2), new Alternative(3), new Alternative(1));
 		final Aprational ap = new Aprational(new Apint(3), new Apint(2));
 		final Question q5 = Question.toCommittee(ap, 1);
-		final Set<Question> q = new HashSet<>();
-		q.add(q1);
-		q.add(q2);
-		q.add(q3);
-		q.add(q4);
-		q.add(q5);
-		assertEquals(q, s.getQuestions());
+		assertEquals(ImmutableSet.of(q1, q2, q3, q4, q5), s.getQuestions().keySet());
 	}
 
 	@Test
@@ -117,7 +107,7 @@ public class StrategyPessimisticTest {
 		s.setKnowledge(k);
 		s.nextQuestion();
 
-		for (Question qq : s.getQuestions()) {
+		for (Question qq : s.getQuestions().keySet()) {
 			if (qq.getType().equals(QuestionType.VOTER_QUESTION)) {
 				k.getProfile().get(qq.asQuestionVoter().getVoter()).asGraph().putEdge(
 						qq.asQuestionVoter().getFirstAlternative(), qq.asQuestionVoter().getSecondAlternative());

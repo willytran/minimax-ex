@@ -14,7 +14,7 @@ import com.google.common.collect.ImmutableList;
 import io.github.oliviercailloux.minimax.elicitation.QuestionType;
 import io.github.oliviercailloux.minimax.experiment.json.JsonConverter;
 import io.github.oliviercailloux.minimax.experiment.other_formats.ToCsv;
-import io.github.oliviercailloux.minimax.strategies.StrategyByMmr;
+import io.github.oliviercailloux.minimax.strategies.QuestioningConstraint;
 import io.github.oliviercailloux.minimax.strategies.StrategyFactory;
 
 public class StrategyXp {
@@ -27,7 +27,7 @@ public class StrategyXp {
 		final int k = 500;
 //		final StrategyFactory factory = StrategyFactory.limited();
 		final StrategyFactory factory = StrategyFactory.limited(ThreadLocalRandom.current().nextLong(), ImmutableList
-				.of(StrategyByMmr.QuestioningConstraint.of(QuestionType.VOTER_QUESTION, Integer.MAX_VALUE)));
+				.of(QuestioningConstraint.of(QuestionType.VOTER_QUESTION, Integer.MAX_VALUE)));
 //		final StrategyFactory factory = StrategyFactory.byMmrs(MmrOperator.MAX);
 //		final StrategyFactory factory = StrategyFactory.random();
 		runs(factory, m, n, k, 50);

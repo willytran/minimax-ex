@@ -13,8 +13,7 @@ import io.github.oliviercailloux.minimax.elicitation.Question;
 import io.github.oliviercailloux.minimax.elicitation.QuestionType;
 import io.github.oliviercailloux.minimax.experiment.Run;
 import io.github.oliviercailloux.minimax.experiment.Runs;
-import io.github.oliviercailloux.minimax.strategies.StrategyByMmr;
-import io.github.oliviercailloux.minimax.strategies.StrategyByMmr.QuestioningConstraint;
+import io.github.oliviercailloux.minimax.strategies.QuestioningConstraint;
 import io.github.oliviercailloux.minimax.strategies.StrategyFactory;
 import io.github.oliviercailloux.y2018.j_voting.Alternative;
 import io.github.oliviercailloux.y2018.j_voting.Voter;
@@ -35,9 +34,9 @@ public class Basics {
 	public static final Question q1 = Question.toVoter(v1, a1, a2);
 	public static final Question q2 = Question.toCommittee(new Aprational(new Apint(1), new Apint(2)), 1);
 	public static final Run run = Run.of(oracle, ImmutableList.of(10l, 18l), ImmutableList.of(q1, q2), 20l);
-	public static final QuestioningConstraint vConstraint = StrategyByMmr.QuestioningConstraint
+	public static final QuestioningConstraint vConstraint = QuestioningConstraint
 			.of(QuestionType.VOTER_QUESTION, 1);
-	public static final QuestioningConstraint cConstraint = StrategyByMmr.QuestioningConstraint
+	public static final QuestioningConstraint cConstraint = QuestioningConstraint
 			.of(QuestionType.COMMITTEE_QUESTION, Integer.MAX_VALUE);
 	public static final StrategyFactory factory = StrategyFactory.limited(100l,
 			ImmutableList.of(vConstraint, cConstraint));

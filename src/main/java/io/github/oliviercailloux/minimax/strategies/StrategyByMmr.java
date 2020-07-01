@@ -1,10 +1,10 @@
 package io.github.oliviercailloux.minimax.strategies;
 
 import static com.google.common.base.Preconditions.checkArgument;
-import static com.google.common.base.Preconditions.checkNotNull;
 import static com.google.common.base.Preconditions.checkState;
 import static com.google.common.base.Verify.verify;
 
+import java.util.Comparator;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Optional;
@@ -12,16 +12,12 @@ import java.util.Random;
 import java.util.function.DoubleBinaryOperator;
 import java.util.stream.IntStream;
 
-import javax.json.bind.annotation.JsonbCreator;
-import javax.json.bind.annotation.JsonbProperty;
-import javax.json.bind.annotation.JsonbPropertyOrder;
-
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import com.google.common.base.MoreObjects;
 import com.google.common.base.VerifyException;
 import com.google.common.collect.ImmutableList;
+import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.ImmutableSet;
 import com.google.common.collect.ImmutableSetMultimap;
 import com.google.common.collect.ImmutableSortedMultiset;
@@ -58,37 +54,7 @@ import io.github.oliviercailloux.y2018.j_voting.Voter;
  **/
 public class StrategyByMmr implements Strategy {
 
-	@JsonbPropertyOrder({ "kind", "number" })
-	public static class QuestioningConstraint {
-		@JsonbCreator
-		public static QuestioningConstraint of(@JsonbProperty("kind") QuestionType kind,
-				@JsonbProperty("number") int number) {
-			return new QuestioningConstraint(kind, number);
-		}
-
-		private final QuestionType kind;
-		private final int number;
-
-		private QuestioningConstraint(QuestionType kind, int number) {
-			this.kind = checkNotNull(kind);
-			checkArgument(number >= 1);
-			this.number = number;
-		}
-
-		public QuestionType getKind() {
-			return kind;
-		}
-
-		public int getNumber() {
-			return number;
-		}
-
-		@Override
-		public String toString() {
-			return MoreObjects.toStringHelper(this).add("kind", kind)
-					.add("number", number == Integer.MAX_VALUE ? "∞" : number).toString();
-		}
-	}
+	private static final Logger LOGGER = LoggerFactory.getLogger(StrategyByMmr.class);
 
 	private static class QuestioningConstraints {
 		public static QuestioningConstraints of(List<QuestioningConstraint> constraints) {
@@ -112,7 +78,7 @@ public class StrategyByMmr implements Strategy {
 		}
 
 		public boolean hasCurrentConstraint() {
-			if (!constraints.isEmpty() && constraints.get(constraints.size() - 1).number == Integer.MAX_VALUE) {
+			if (!constraints.isEmpty() && constraints.get(constraints.size() - 1).getNumber() == Integer.MAX_VALUE) {
 				return true;
 			}
 			final int nbConstraints = constraints.stream().mapToInt(QuestioningConstraint::getNumber).reduce(0,
@@ -145,32 +111,49 @@ public class StrategyByMmr implements Strategy {
 
 	}
 
-	private static final Logger LOGGER = LoggerFactory.getLogger(StrategyByMmr.class);
-	private final StrategyHelper helper;
-	private final DoubleBinaryOperator mmrOperator;
-	private boolean limited;
-
-	private ImmutableSet<Question> questions;
-	private QuestioningConstraints constraints;
-
 	public static StrategyByMmr build() {
-		return new StrategyByMmr(MmrOperator.MAX, false, ImmutableList.of());
+		return build(MmrOperator.MAX);
 	}
 
 	public static StrategyByMmr build(DoubleBinaryOperator mmrOperator) {
-		return new StrategyByMmr(mmrOperator, false, ImmutableList.of());
+		return new StrategyByMmr(Comparator.comparing(l -> mmrOperator.applyAsDouble(l.getMmrIfYes(), l.getMmrIfNo())),
+				false, ImmutableList.of());
+	}
+
+	public static StrategyByMmr build(DoubleBinaryOperator mmrOperator, List<QuestioningConstraint> constraints) {
+		return new StrategyByMmr(Comparator.comparing(l -> mmrOperator.applyAsDouble(l.getMmrIfYes(), l.getMmrIfNo())),
+				false, constraints);
+	}
+
+	private static StrategyByMmr build(DoubleBinaryOperator mmrOperator, boolean limited,
+			List<QuestioningConstraint> constraints) {
+		return new StrategyByMmr(Comparator.comparing(l -> mmrOperator.applyAsDouble(l.getMmrIfYes(), l.getMmrIfNo())),
+				limited, constraints);
+	}
+
+	public static StrategyByMmr limited(DoubleBinaryOperator mmrOperator, List<QuestioningConstraint> constraints) {
+		return build(mmrOperator, true, constraints);
 	}
 
 	public static StrategyByMmr limited(List<QuestioningConstraint> constraints) {
-		return new StrategyByMmr(MmrOperator.MAX, true, constraints);
+		return limited(MmrOperator.MAX, constraints);
 	}
 
-	private StrategyByMmr(DoubleBinaryOperator mmrOperator, boolean limited, List<QuestioningConstraint> constraints) {
+	private final StrategyHelper helper;
+	private boolean limited;
+	private ImmutableMap<Question, MmrLottery> questions;
+	private final QuestioningConstraints constraints;
+	private final Comparator<MmrLottery> lotteryComparator;
+
+	private StrategyByMmr(Comparator<MmrLottery> lotteryComparator, boolean limited,
+			List<QuestioningConstraint> constraints) {
 		helper = StrategyHelper.newInstance();
-		this.mmrOperator = checkNotNull(mmrOperator);
+		this.lotteryComparator = lotteryComparator;
+//		questionComparator = Comparator.comparing(this::toLottery, lotteryComparator);
 		this.limited = limited;
 		LOGGER.debug("Creating with constraints: {}.", constraints);
 		this.constraints = QuestioningConstraints.of(constraints);
+
 	}
 
 	public void setRandom(Random random) {
@@ -217,8 +200,9 @@ public class StrategyByMmr implements Strategy {
 			if (allowCommittee) {
 				final PSRWeights wBar = pmr.getWeights();
 				final PSRWeights wMin = getMinTauW(pmr);
-				final ImmutableSet<Integer> minSpreadRanks = StrategyHelper
-						.getMinimalElements(IntStream.rangeClosed(1, m - 2).boxed(), i -> getSpread(wBar, wMin, i));
+				final ImmutableMap<Integer, Double> valuedRanks = IntStream.rangeClosed(1, m - 2).boxed()
+						.collect(ImmutableMap.toImmutableMap(i -> i, i -> getSpread(wBar, wMin, i)));
+				final ImmutableSet<Integer> minSpreadRanks = StrategyHelper.getMinimalElements(valuedRanks);
 				final QuestionCommittee qC = helper.getQuestionAboutHalfRange(helper.draw(minSpreadRanks));
 				questionsBuilder.add(Question.toCommittee(qC));
 			}
@@ -233,11 +217,10 @@ public class StrategyByMmr implements Strategy {
 		}
 		constraints.next();
 
-		questions = questionsBuilder.build();
+		questions = questionsBuilder.build().stream().collect(ImmutableMap.toImmutableMap(q -> q, this::toLottery));
 		verify(!questions.isEmpty());
 
-		final ImmutableSet<Question> bestQuestions = StrategyHelper.getMinimalElements(questions.stream(),
-				this::getScore);
+		final ImmutableSet<Question> bestQuestions = StrategyHelper.getMinimalElements(questions, lotteryComparator);
 		LOGGER.debug("Best questions: {}.", bestQuestions);
 		return helper.draw(bestQuestions);
 	}
@@ -290,11 +273,11 @@ public class StrategyByMmr implements Strategy {
 		return QuestionVoter.given(voter, incomparablePair.nodeU(), incomparablePair.nodeV());
 	}
 
-	public double getScore(Question q) {
+	private MmrLottery toLottery(Question question) {
 		final double yesMMR;
 		{
 			final PrefKnowledge updatedKnowledge = PrefKnowledge.copyOf(helper.getKnowledge());
-			updatedKnowledge.update(q.getPositiveInformation());
+			updatedKnowledge.update(question.getPositiveInformation());
 			final RegretComputer rc = new RegretComputer(updatedKnowledge);
 			yesMMR = rc.getMinimalMaxRegrets().getMinimalMaxRegretValue();
 		}
@@ -302,15 +285,15 @@ public class StrategyByMmr implements Strategy {
 		final double noMMR;
 		{
 			final PrefKnowledge updatedKnowledge = PrefKnowledge.copyOf(helper.getKnowledge());
-			updatedKnowledge.update(q.getNegativeInformation());
+			updatedKnowledge.update(question.getNegativeInformation());
 			final RegretComputer rc = new RegretComputer(updatedKnowledge);
 			noMMR = rc.getMinimalMaxRegrets().getMinimalMaxRegretValue();
 		}
-
-		return mmrOperator.applyAsDouble(yesMMR, noMMR);
+		final MmrLottery lottery = MmrLottery.given(yesMMR, noMMR);
+		return lottery;
 	}
 
-	ImmutableSet<Question> getQuestions() {
+	ImmutableMap<Question, MmrLottery> getQuestions() {
 		return questions;
 	}
 

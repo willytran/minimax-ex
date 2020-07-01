@@ -24,7 +24,6 @@ import com.google.common.collect.ImmutableMap;
 import io.github.oliviercailloux.json.JsonbUtils;
 import io.github.oliviercailloux.json.PrintableJsonObject;
 import io.github.oliviercailloux.minimax.elicitation.QuestionType;
-import io.github.oliviercailloux.minimax.strategies.StrategyByMmr.QuestioningConstraint;
 
 /**
  * Immutable.
@@ -76,18 +75,18 @@ public class StrategyFactory implements Supplier<Strategy> {
 	}
 
 	public static StrategyFactory limitedCommitteeThenVoters(int nbQuestionsToCommittee) {
-		final QuestioningConstraint cConstraint = StrategyByMmr.QuestioningConstraint
+		final QuestioningConstraint cConstraint = QuestioningConstraint
 				.of(QuestionType.COMMITTEE_QUESTION, nbQuestionsToCommittee);
-		final QuestioningConstraint vConstraint = StrategyByMmr.QuestioningConstraint.of(QuestionType.VOTER_QUESTION,
+		final QuestioningConstraint vConstraint = QuestioningConstraint.of(QuestionType.VOTER_QUESTION,
 				Integer.MAX_VALUE);
 		final long seed = ThreadLocalRandom.current().nextLong();
 		return limited(seed, ImmutableList.of(cConstraint, vConstraint));
 	}
 
 	public static StrategyFactory limitedVotersThenCommittee(int nbQuestionsToVoters) {
-		final QuestioningConstraint vConstraint = StrategyByMmr.QuestioningConstraint.of(QuestionType.VOTER_QUESTION,
+		final QuestioningConstraint vConstraint = QuestioningConstraint.of(QuestionType.VOTER_QUESTION,
 				nbQuestionsToVoters);
-		final QuestioningConstraint cConstraint = StrategyByMmr.QuestioningConstraint
+		final QuestioningConstraint cConstraint = QuestioningConstraint
 				.of(QuestionType.COMMITTEE_QUESTION, Integer.MAX_VALUE);
 		final long seed = ThreadLocalRandom.current().nextLong();
 		return limited(seed, ImmutableList.of(vConstraint, cConstraint));
