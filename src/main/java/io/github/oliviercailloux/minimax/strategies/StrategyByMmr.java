@@ -9,7 +9,6 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Optional;
 import java.util.Random;
-import java.util.function.DoubleBinaryOperator;
 import java.util.stream.IntStream;
 
 import org.slf4j.Logger;
@@ -112,31 +111,28 @@ public class StrategyByMmr implements Strategy {
 	}
 
 	public static StrategyByMmr build() {
-		return build(MmrOperator.MAX);
+		return build(MmrLottery.MAX_COMPARATOR);
 	}
 
-	public static StrategyByMmr build(DoubleBinaryOperator mmrOperator) {
-		return new StrategyByMmr(Comparator.comparing(l -> mmrOperator.applyAsDouble(l.getMmrIfYes(), l.getMmrIfNo())),
-				false, ImmutableList.of());
+	public static StrategyByMmr build(Comparator<MmrLottery> comparator) {
+		return new StrategyByMmr(comparator, false, ImmutableList.of());
 	}
 
-	public static StrategyByMmr build(DoubleBinaryOperator mmrOperator, List<QuestioningConstraint> constraints) {
-		return new StrategyByMmr(Comparator.comparing(l -> mmrOperator.applyAsDouble(l.getMmrIfYes(), l.getMmrIfNo())),
-				false, constraints);
+	public static StrategyByMmr build(Comparator<MmrLottery> comparator, List<QuestioningConstraint> constraints) {
+		return new StrategyByMmr(comparator, false, constraints);
 	}
 
-	private static StrategyByMmr build(DoubleBinaryOperator mmrOperator, boolean limited,
+	public static StrategyByMmr build(Comparator<MmrLottery> comparator, boolean limited,
 			List<QuestioningConstraint> constraints) {
-		return new StrategyByMmr(Comparator.comparing(l -> mmrOperator.applyAsDouble(l.getMmrIfYes(), l.getMmrIfNo())),
-				limited, constraints);
+		return new StrategyByMmr(comparator, limited, constraints);
 	}
 
-	public static StrategyByMmr limited(DoubleBinaryOperator mmrOperator, List<QuestioningConstraint> constraints) {
-		return build(mmrOperator, true, constraints);
+	public static StrategyByMmr limited(Comparator<MmrLottery> comparator, List<QuestioningConstraint> constraints) {
+		return build(comparator, true, constraints);
 	}
 
 	public static StrategyByMmr limited(List<QuestioningConstraint> constraints) {
-		return limited(MmrOperator.MAX, constraints);
+		return limited(MmrLottery.MAX_COMPARATOR, constraints);
 	}
 
 	private final StrategyHelper helper;

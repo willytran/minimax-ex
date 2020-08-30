@@ -5,6 +5,7 @@ import static com.google.common.base.Preconditions.checkNotNull;
 import static com.google.common.base.Preconditions.checkState;
 
 import java.util.ArrayList;
+import java.util.Comparator;
 import java.util.List;
 import java.util.Random;
 import java.util.concurrent.ThreadLocalRandom;
@@ -38,7 +39,7 @@ public class StrategyFactory implements Supplier<Strategy> {
 		final StrategyType family = StrategyType.valueOf(familyJson.getString());
 		switch (family) {
 		case PESSIMISTIC:
-			return byMmrs(json.getJsonNumber("seed").longValue(), MmrOperator.valueOf(json.getString("mmrOperator")));
+			return byMmrs(json.getJsonNumber("seed").longValue(), MmrLottery.MAX_COMPARATOR);
 		case PESSIMISTIC_HEURISTIC:
 			@SuppressWarnings("serial")
 			final ArrayList<QuestioningConstraint> type = new ArrayList<>() {// nothing
@@ -54,19 +55,19 @@ public class StrategyFactory implements Supplier<Strategy> {
 
 	public static StrategyFactory pessimistic() {
 		final long seed = ThreadLocalRandom.current().nextLong();
-		return byMmrs(seed, MmrOperator.MAX);
+		return byMmrs(seed, MmrLottery.MAX_COMPARATOR);
 	}
 
-	public static StrategyFactory byMmrs(long seed, MmrOperator mmrOperator) {
+	public static StrategyFactory byMmrs(long seed, Comparator<MmrLottery> comparator) {
 		final Random random = new Random(seed);
 		final PrintableJsonObject json = JsonbUtils.toJsonObject(
-				ImmutableMap.of("family", StrategyType.PESSIMISTIC, "seed", seed, "mmrOperator", mmrOperator));
+				ImmutableMap.of("family", StrategyType.PESSIMISTIC, "seed", seed, "comparator", comparator));
 
 		return new StrategyFactory(() -> {
-			final StrategyByMmr strategy = StrategyByMmr.build(mmrOperator);
+			final StrategyByMmr strategy = StrategyByMmr.build(comparator);
 			strategy.setRandom(random);
 			return strategy;
-		}, json, mmrOperator.equals(MmrOperator.MAX) ? "Pessimistic" : "By MMR " + mmrOperator);
+		}, json, comparator.equals(MmrLottery.MAX_COMPARATOR) ? "Pessimistic" : "By MMR " + comparator);
 	}
 
 	public static StrategyFactory limited() {
@@ -75,8 +76,8 @@ public class StrategyFactory implements Supplier<Strategy> {
 	}
 
 	public static StrategyFactory limitedCommitteeThenVoters(int nbQuestionsToCommittee) {
-		final QuestioningConstraint cConstraint = QuestioningConstraint
-				.of(QuestionType.COMMITTEE_QUESTION, nbQuestionsToCommittee);
+		final QuestioningConstraint cConstraint = QuestioningConstraint.of(QuestionType.COMMITTEE_QUESTION,
+				nbQuestionsToCommittee);
 		final QuestioningConstraint vConstraint = QuestioningConstraint.of(QuestionType.VOTER_QUESTION,
 				Integer.MAX_VALUE);
 		final long seed = ThreadLocalRandom.current().nextLong();
@@ -86,8 +87,8 @@ public class StrategyFactory implements Supplier<Strategy> {
 	public static StrategyFactory limitedVotersThenCommittee(int nbQuestionsToVoters) {
 		final QuestioningConstraint vConstraint = QuestioningConstraint.of(QuestionType.VOTER_QUESTION,
 				nbQuestionsToVoters);
-		final QuestioningConstraint cConstraint = QuestioningConstraint
-				.of(QuestionType.COMMITTEE_QUESTION, Integer.MAX_VALUE);
+		final QuestioningConstraint cConstraint = QuestioningConstraint.of(QuestionType.COMMITTEE_QUESTION,
+				Integer.MAX_VALUE);
 		final long seed = ThreadLocalRandom.current().nextLong();
 		return limited(seed, ImmutableList.of(vConstraint, cConstraint));
 	}

@@ -1,12 +1,27 @@
 package io.github.oliviercailloux.minimax.strategies;
 
+import java.util.Comparator;
 import java.util.Objects;
+import java.util.function.DoubleBinaryOperator;
 
 import com.google.common.base.MoreObjects;
 
 public class MmrLottery {
+	public static final Comparator<MmrLottery> MAX_COMPARATOR = getMaxComparator();
+
 	public static MmrLottery given(double mmrIfYes, double mmrIfNo) {
 		return new MmrLottery(mmrIfYes, mmrIfNo);
+	}
+
+	private static Comparator<MmrLottery> getMaxComparator() {
+		final DoubleBinaryOperator max = ((mmr1, mmr2) -> (mmr1 >= mmr2) ? mmr1 : mmr2);
+		final DoubleBinaryOperator min = ((mmr1, mmr2) -> (mmr1 <= mmr2) ? mmr1 : mmr2);
+
+		final Comparator<MmrLottery> comparingMaxes = Comparator
+				.comparing(l -> max.applyAsDouble(l.getMmrIfYes(), l.getMmrIfNo()));
+		final Comparator<MmrLottery> comparingLexicographically = comparingMaxes
+				.thenComparing(l -> min.applyAsDouble(l.getMmrIfYes(), l.getMmrIfNo()));
+		return comparingLexicographically;
 	}
 
 	private double mmrIfYes;
