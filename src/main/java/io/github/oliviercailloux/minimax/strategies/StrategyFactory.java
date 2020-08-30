@@ -113,13 +113,6 @@ public class StrategyFactory implements Supplier<Strategy> {
 		}, json, "Limited" + constraintsDescription);
 	}
 
-	@Deprecated
-	public static StrategyFactory pessimisticHeuristic() {
-		final PrintableJsonObject json = JsonbUtils
-				.toJsonObject(ImmutableMap.of("family", StrategyType.PESSIMISTIC_HEURISTIC));
-		return new StrategyFactory(() -> StrategyPessimisticHeuristic.build(), json, "Limited old");
-	}
-
 	public static StrategyFactory random() {
 		final long seed = ThreadLocalRandom.current().nextLong();
 		final PrintableJsonObject json = JsonbUtils
@@ -131,17 +124,6 @@ public class StrategyFactory implements Supplier<Strategy> {
 			strategy.setRandom(random);
 			return strategy;
 		}, json, "Random");
-	}
-
-	@Deprecated
-	public static StrategyFactory twoPhases(int questionsToVoters, int questionsToCommittee, boolean committeeFirst) {
-		final PrintableJsonObject json = JsonbUtils
-				.toJsonObject(ImmutableMap.of("family", StrategyType.TWO_PHASES_HEURISTIC));
-
-		return new StrategyFactory(
-				() -> StrategyTwoPhasesHeuristic.build(questionsToVoters, questionsToCommittee, committeeFirst), json,
-				"Two phases " + "qV: " + questionsToVoters + "; qC: " + questionsToCommittee + "; committee first? "
-						+ committeeFirst);
 	}
 
 	private final Supplier<Strategy> supplier;

@@ -78,7 +78,7 @@ public class VariousXps {
 			System.out.println(qV);
 			head = "qC = " + qC + " then qV = " + qV;
 			try {
-				runXP(k, nbRuns, m, n, StrategyFactory.twoPhases(qV, qC, committeeFirst), head);
+				runXP(k, nbRuns, m, n, StrategyFactory.limitedVotersThenCommittee(qV), head);
 			} catch (IllegalStateException e) {
 				System.out.println("Complete at qV " + qV);
 				e.printStackTrace();
