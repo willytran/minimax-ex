@@ -97,32 +97,4 @@ public class StrategyPessimisticTest {
 		assertEquals(ImmutableSet.of(q1, q2, q3, q4, q5), s.getQuestions().keySet());
 	}
 
-	@Test
-	void testThreeAltsTwoVsAndScore() {
-		final PrefKnowledge k = PrefKnowledge.given(Generator.getAlternatives(3), Generator.getVoters(3));
-		k.getProfile().get(new Voter(1)).asGraph().putEdge(new Alternative(1), new Alternative(2));
-		k.getProfile().get(new Voter(1)).asGraph().putEdge(new Alternative(2), new Alternative(3));
-		k.getProfile().get(new Voter(2)).asGraph().putEdge(new Alternative(1), new Alternative(2));
-		StrategyByMmr s = StrategyByMmr.build();
-		s.setKnowledge(k);
-		s.nextQuestion();
-
-		for (Question qq : s.getQuestions().keySet()) {
-			if (qq.getType().equals(QuestionType.VOTER_QUESTION)) {
-				k.getProfile().get(qq.asQuestionVoter().getVoter()).asGraph().putEdge(
-						qq.asQuestionVoter().getFirstAlternative(), qq.asQuestionVoter().getSecondAlternative());
-				double yesRegret = new RegretComputer(k).getMinimalMaxRegrets().getMinimalMaxRegretValue();
-				k.getProfile().get(qq.asQuestionVoter().getVoter()).asGraph().removeEdge(
-						qq.asQuestionVoter().getFirstAlternative(), qq.asQuestionVoter().getSecondAlternative());
-
-				k.getProfile().get(qq.asQuestionVoter().getVoter()).asGraph().putEdge(
-						qq.asQuestionVoter().getSecondAlternative(), qq.asQuestionVoter().getFirstAlternative());
-				double noRegret = new RegretComputer(k).getMinimalMaxRegrets().getMinimalMaxRegretValue();
-				k.getProfile().get(qq.asQuestionVoter().getVoter()).asGraph().removeEdge(
-						qq.asQuestionVoter().getSecondAlternative(), qq.asQuestionVoter().getFirstAlternative());
-				assertEquals(Math.max(yesRegret, noRegret), s.getScore(qq), 0.001);
-			}
-		}
-	}
-
 }
