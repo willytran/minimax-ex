@@ -77,9 +77,9 @@
 			<version>2.0</version>
 		</dependency>
 		<dependency>
-			<groupId>io.github.oliviercailloux.y2018</groupId>
+			<groupId>io.github.oliviercailloux</groupId>
 			<artifactId>j-voting</artifactId>
-			<version>0.0.2-SNAPSHOT</version>
+			<version>0.0.3</version>
 			<exclusions>
 				<exclusion>
 					<groupId>javax.ws.rs</groupId>

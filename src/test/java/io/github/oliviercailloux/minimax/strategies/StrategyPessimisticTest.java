@@ -12,13 +12,11 @@ import org.junit.jupiter.api.Test;
 
 import com.google.common.collect.ImmutableSet;
 
+import io.github.oliviercailloux.j_voting.Alternative;
+import io.github.oliviercailloux.j_voting.Generator;
+import io.github.oliviercailloux.j_voting.Voter;
 import io.github.oliviercailloux.minimax.elicitation.PrefKnowledge;
 import io.github.oliviercailloux.minimax.elicitation.Question;
-import io.github.oliviercailloux.minimax.elicitation.QuestionType;
-import io.github.oliviercailloux.minimax.regret.RegretComputer;
-import io.github.oliviercailloux.y2018.j_voting.Alternative;
-import io.github.oliviercailloux.y2018.j_voting.Generator;
-import io.github.oliviercailloux.y2018.j_voting.Voter;
 
 public class StrategyPessimisticTest {
 
@@ -34,7 +32,7 @@ public class StrategyPessimisticTest {
 		final PrefKnowledge k = PrefKnowledge.given(Generator.getAlternatives(2), Generator.getVoters(1));
 		final StrategyByMmr s = StrategyByMmr.build();
 		s.setKnowledge(k);
-		k.getProfile().get(new Voter(1)).asGraph().putEdge(new Alternative(1), new Alternative(2));
+		k.getProfile().get(Voter.withId(1)).asGraph().putEdge(Alternative.withId(1), Alternative.withId(2));
 		assertThrows(IllegalStateException.class, () -> s.nextQuestion());
 	}
 
@@ -43,8 +41,8 @@ public class StrategyPessimisticTest {
 		final PrefKnowledge k = PrefKnowledge.given(Generator.getAlternatives(2), Generator.getVoters(1));
 		final StrategyByMmr s = StrategyByMmr.build();
 		s.setKnowledge(k);
-		final Question q1 = Question.toVoter(new Voter(1), new Alternative(1), new Alternative(2));
-		final Question q2 = Question.toVoter(new Voter(1), new Alternative(2), new Alternative(1));
+		final Question q1 = Question.toVoter(Voter.withId(1), Alternative.withId(1), Alternative.withId(2));
+		final Question q2 = Question.toVoter(Voter.withId(1), Alternative.withId(2), Alternative.withId(1));
 		s.nextQuestion();
 		assertEquals(ImmutableSet.of(q1, q2), s.getQuestions().keySet());
 	}
@@ -54,10 +52,10 @@ public class StrategyPessimisticTest {
 		final PrefKnowledge k = PrefKnowledge.given(Generator.getAlternatives(2), Generator.getVoters(2));
 		final StrategyByMmr s = StrategyByMmr.build();
 		s.setKnowledge(k);
-		k.getProfile().get(new Voter(1)).asGraph().putEdge(new Alternative(1), new Alternative(2));
+		k.getProfile().get(Voter.withId(1)).asGraph().putEdge(Alternative.withId(1), Alternative.withId(2));
 		s.nextQuestion();
-		final Question q1 = Question.toVoter(new Voter(2), new Alternative(1), new Alternative(2));
-		final Question q2 = Question.toVoter(new Voter(2), new Alternative(2), new Alternative(1));
+		final Question q1 = Question.toVoter(Voter.withId(2), Alternative.withId(1), Alternative.withId(2));
+		final Question q2 = Question.toVoter(Voter.withId(2), Alternative.withId(2), Alternative.withId(1));
 		assertEquals(ImmutableSet.of(q1, q2), s.getQuestions().keySet());
 	}
 
@@ -67,8 +65,8 @@ public class StrategyPessimisticTest {
 		final StrategyByMmr s = StrategyByMmr.build();
 		s.setKnowledge(k);
 		s.nextQuestion();
-		final Question q1 = Question.toVoter(new Voter(1), new Alternative(1), new Alternative(2));
-		final Question q2 = Question.toVoter(new Voter(2), new Alternative(1), new Alternative(2));
+		final Question q1 = Question.toVoter(Voter.withId(1), Alternative.withId(1), Alternative.withId(2));
+		final Question q2 = Question.toVoter(Voter.withId(2), Alternative.withId(1), Alternative.withId(2));
 		final Set<Question> expected = new HashSet<>();
 		expected.add(q1);
 		expected.add(q2);
@@ -81,17 +79,17 @@ public class StrategyPessimisticTest {
 	@Test
 	void testThreeAltsTwoVs() {
 		final PrefKnowledge k = PrefKnowledge.given(Generator.getAlternatives(3), Generator.getVoters(2));
-		k.getProfile().get(new Voter(1)).asGraph().putEdge(new Alternative(1), new Alternative(2));
-		k.getProfile().get(new Voter(1)).asGraph().putEdge(new Alternative(2), new Alternative(3));
-		k.getProfile().get(new Voter(2)).asGraph().putEdge(new Alternative(1), new Alternative(2));
-		k.getProfile().get(new Voter(1)).setGraphChanged();
+		k.getProfile().get(Voter.withId(1)).asGraph().putEdge(Alternative.withId(1), Alternative.withId(2));
+		k.getProfile().get(Voter.withId(1)).asGraph().putEdge(Alternative.withId(2), Alternative.withId(3));
+		k.getProfile().get(Voter.withId(2)).asGraph().putEdge(Alternative.withId(1), Alternative.withId(2));
+		k.getProfile().get(Voter.withId(1)).setGraphChanged();
 		StrategyByMmr s = StrategyByMmr.build();
 		s.setKnowledge(k);
 		s.nextQuestion();
-		final Question q1 = Question.toVoter(new Voter(2), new Alternative(3), new Alternative(2));
-		final Question q2 = Question.toVoter(new Voter(2), new Alternative(2), new Alternative(3));
-		final Question q3 = Question.toVoter(new Voter(2), new Alternative(1), new Alternative(3));
-		final Question q4 = Question.toVoter(new Voter(2), new Alternative(3), new Alternative(1));
+		final Question q1 = Question.toVoter(Voter.withId(2), Alternative.withId(3), Alternative.withId(2));
+		final Question q2 = Question.toVoter(Voter.withId(2), Alternative.withId(2), Alternative.withId(3));
+		final Question q3 = Question.toVoter(Voter.withId(2), Alternative.withId(1), Alternative.withId(3));
+		final Question q4 = Question.toVoter(Voter.withId(2), Alternative.withId(3), Alternative.withId(1));
 		final Aprational ap = new Aprational(new Apint(3), new Apint(2));
 		final Question q5 = Question.toCommittee(ap, 1);
 		assertEquals(ImmutableSet.of(q1, q2, q3, q4, q5), s.getQuestions().keySet());

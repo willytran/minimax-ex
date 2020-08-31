@@ -11,11 +11,11 @@ import com.google.common.collect.ImmutableSet;
 import com.google.common.collect.ImmutableSetMultimap;
 import com.google.common.graph.ImmutableGraph;
 
+import io.github.oliviercailloux.j_voting.Alternative;
+import io.github.oliviercailloux.j_voting.Voter;
 import io.github.oliviercailloux.minimax.elicitation.PrefKnowledge;
 import io.github.oliviercailloux.minimax.elicitation.Question;
 import io.github.oliviercailloux.minimax.elicitation.QuestionCommittee;
-import io.github.oliviercailloux.y2018.j_voting.Alternative;
-import io.github.oliviercailloux.y2018.j_voting.Voter;
 
 public class StrategyRandom implements Strategy {
 

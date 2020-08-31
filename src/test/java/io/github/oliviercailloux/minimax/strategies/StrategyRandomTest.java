@@ -14,13 +14,13 @@ import org.slf4j.LoggerFactory;
 
 import com.google.common.graph.MutableGraph;
 
+import io.github.oliviercailloux.j_voting.Alternative;
+import io.github.oliviercailloux.j_voting.Generator;
+import io.github.oliviercailloux.j_voting.Voter;
 import io.github.oliviercailloux.jlp.elements.ComparisonOperator;
 import io.github.oliviercailloux.minimax.elicitation.PrefKnowledge;
 import io.github.oliviercailloux.minimax.elicitation.Question;
 import io.github.oliviercailloux.minimax.elicitation.QuestionType;
-import io.github.oliviercailloux.y2018.j_voting.Alternative;
-import io.github.oliviercailloux.y2018.j_voting.Generator;
-import io.github.oliviercailloux.y2018.j_voting.Voter;
 
 class StrategyRandomTest {
 
@@ -41,7 +41,7 @@ class StrategyRandomTest {
 		s.setKnowledge(k);
 		final Random notRandom = new Random(0);
 		s.setRandom(notRandom);
-		k.getProfile().get(new Voter(1)).asGraph().putEdge(new Alternative(1), new Alternative(2));
+		k.getProfile().get(Voter.withId(1)).asGraph().putEdge(Alternative.withId(1), Alternative.withId(2));
 		assertThrows(IllegalStateException.class, () -> s.nextQuestion());
 	}
 
@@ -52,7 +52,7 @@ class StrategyRandomTest {
 		s.setKnowledge(k);
 		final Random notRandom = new Random(0);
 		s.setRandom(notRandom);
-		assertEquals(Question.toVoter(new Voter(1), new Alternative(1), new Alternative(2)), s.nextQuestion());
+		assertEquals(Question.toVoter(Voter.withId(1), Alternative.withId(1), Alternative.withId(2)), s.nextQuestion());
 	}
 
 	@Test
@@ -62,8 +62,8 @@ class StrategyRandomTest {
 		s.setKnowledge(k);
 		final Random notRandom = new Random(0);
 		s.setRandom(notRandom);
-		k.getProfile().get(new Voter(1)).asGraph().putEdge(new Alternative(1), new Alternative(2));
-		assertEquals(Question.toVoter(new Voter(2), new Alternative(1), new Alternative(2)), s.nextQuestion());
+		k.getProfile().get(Voter.withId(1)).asGraph().putEdge(Alternative.withId(1), Alternative.withId(2));
+		assertEquals(Question.toVoter(Voter.withId(2), Alternative.withId(1), Alternative.withId(2)), s.nextQuestion());
 	}
 
 	@Test
@@ -73,15 +73,15 @@ class StrategyRandomTest {
 		final Random notRandom = new Random(0);
 		s.setRandom(notRandom);
 		s.setKnowledge(k);
-		final MutableGraph<Alternative> g1 = k.getProfile().get(new Voter(1)).asGraph();
-		g1.putEdge(new Alternative(1), new Alternative(2));
-		g1.putEdge(new Alternative(2), new Alternative(3));
-		g1.putEdge(new Alternative(3), new Alternative(4));
+		final MutableGraph<Alternative> g1 = k.getProfile().get(Voter.withId(1)).asGraph();
+		g1.putEdge(Alternative.withId(1), Alternative.withId(2));
+		g1.putEdge(Alternative.withId(2), Alternative.withId(3));
+		g1.putEdge(Alternative.withId(3), Alternative.withId(4));
 
-		final MutableGraph<Alternative> g2 = k.getProfile().get(new Voter(2)).asGraph();
-		g2.putEdge(new Alternative(1), new Alternative(2));
-		g2.putEdge(new Alternative(2), new Alternative(3));
-		g2.putEdge(new Alternative(3), new Alternative(4));
+		final MutableGraph<Alternative> g2 = k.getProfile().get(Voter.withId(2)).asGraph();
+		g2.putEdge(Alternative.withId(1), Alternative.withId(2));
+		g2.putEdge(Alternative.withId(2), Alternative.withId(3));
+		g2.putEdge(Alternative.withId(3), Alternative.withId(4));
 		assertEquals(Question.toCommittee(new Aprational(new Apint(3), new Apint(2)), 2), s.nextQuestion());
 	}
 
@@ -92,12 +92,12 @@ class StrategyRandomTest {
 		final Random notRandom = new Random(0);
 		s.setRandom(notRandom);
 		s.setKnowledge(k);
-		final MutableGraph<Alternative> g1 = k.getProfile().get(new Voter(1)).asGraph();
-		g1.putEdge(new Alternative(1), new Alternative(2));
-		g1.putEdge(new Alternative(2), new Alternative(3));
-		final MutableGraph<Alternative> g2 = k.getProfile().get(new Voter(2)).asGraph();
-		g2.putEdge(new Alternative(1), new Alternative(2));
-		g2.putEdge(new Alternative(2), new Alternative(3));
+		final MutableGraph<Alternative> g1 = k.getProfile().get(Voter.withId(1)).asGraph();
+		g1.putEdge(Alternative.withId(1), Alternative.withId(2));
+		g1.putEdge(Alternative.withId(2), Alternative.withId(3));
+		final MutableGraph<Alternative> g2 = k.getProfile().get(Voter.withId(2)).asGraph();
+		g2.putEdge(Alternative.withId(1), Alternative.withId(2));
+		g2.putEdge(Alternative.withId(2), Alternative.withId(3));
 		assertEquals(Question.toCommittee(new Aprational(new Apint(3), new Apint(2)), 1), s.nextQuestion());
 	}
 
@@ -108,12 +108,12 @@ class StrategyRandomTest {
 		final Random notRandom = new Random(0);
 		s.setRandom(notRandom);
 		s.setKnowledge(k);
-		final MutableGraph<Alternative> g1 = k.getProfile().get(new Voter(1)).asGraph();
-		g1.putEdge(new Alternative(1), new Alternative(2));
-		g1.putEdge(new Alternative(2), new Alternative(3));
-		final MutableGraph<Alternative> g2 = k.getProfile().get(new Voter(2)).asGraph();
-		g2.putEdge(new Alternative(1), new Alternative(2));
-		g2.putEdge(new Alternative(2), new Alternative(3));
+		final MutableGraph<Alternative> g1 = k.getProfile().get(Voter.withId(1)).asGraph();
+		g1.putEdge(Alternative.withId(1), Alternative.withId(2));
+		g1.putEdge(Alternative.withId(2), Alternative.withId(3));
+		final MutableGraph<Alternative> g2 = k.getProfile().get(Voter.withId(2)).asGraph();
+		g2.putEdge(Alternative.withId(1), Alternative.withId(2));
+		g2.putEdge(Alternative.withId(2), Alternative.withId(3));
 		k.addConstraint(1, ComparisonOperator.EQ, new Apint(1));
 		assertTrue(k.isProfileComplete());
 		assertTrue(s.nextQuestion().getType() == QuestionType.COMMITTEE_QUESTION);
@@ -127,9 +127,9 @@ class StrategyRandomTest {
 		final Random notRandom = new Random(0);
 		s.setRandom(notRandom);
 		s.setKnowledge(k);
-		final MutableGraph<Alternative> g = k.getProfile().get(new Voter(1)).asGraph();
-		g.putEdge(new Alternative(1), new Alternative(2));
-		g.putEdge(new Alternative(2), new Alternative(3));
+		final MutableGraph<Alternative> g = k.getProfile().get(Voter.withId(1)).asGraph();
+		g.putEdge(Alternative.withId(1), Alternative.withId(2));
+		g.putEdge(Alternative.withId(2), Alternative.withId(3));
 		assertTrue(k.isProfileComplete());
 		assertTrue(s.nextQuestion().getType() == QuestionType.COMMITTEE_QUESTION);
 //		prof complete and next qst is committee

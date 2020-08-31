@@ -10,33 +10,33 @@ import org.junit.jupiter.api.Test;
 import com.google.common.graph.Graph;
 import com.google.common.graph.MutableGraph;
 
+import io.github.oliviercailloux.j_voting.Alternative;
+import io.github.oliviercailloux.j_voting.Voter;
 import io.github.oliviercailloux.minimax.elicitation.PrefKnowledge;
-import io.github.oliviercailloux.y2018.j_voting.Alternative;
-import io.github.oliviercailloux.y2018.j_voting.Voter;
 
 class SetOperationsTest {
 
 	@Test
 	void testRanksXpreferredY() throws Exception {
 		/** case 1: x>y put as much alts as possible above x **/
-		Voter v1 = new Voter(1);
+		Voter v1 = Voter.withId(1);
 		Set<Voter> voters = new HashSet<>();
 		voters.add(v1);
 
-		Alternative x = new Alternative(1);
-		Alternative y = new Alternative(2);
+		Alternative x = Alternative.withId(1);
+		Alternative y = Alternative.withId(2);
 
-		Alternative a = new Alternative(3);
-		Alternative u = new Alternative(4);
-		Alternative c = new Alternative(5);
-		Alternative b = new Alternative(6);
-		Alternative d = new Alternative(7);
-		Alternative f = new Alternative(8);
-		Alternative a1 = new Alternative(9);
-		Alternative b1 = new Alternative(10);
-		Alternative c1 = new Alternative(11);
-		Alternative d1 = new Alternative(12);
-		Alternative u1 = new Alternative(13);
+		Alternative a = Alternative.withId(3);
+		Alternative u = Alternative.withId(4);
+		Alternative c = Alternative.withId(5);
+		Alternative b = Alternative.withId(6);
+		Alternative d = Alternative.withId(7);
+		Alternative f = Alternative.withId(8);
+		Alternative a1 = Alternative.withId(9);
+		Alternative b1 = Alternative.withId(10);
+		Alternative c1 = Alternative.withId(11);
+		Alternative d1 = Alternative.withId(12);
+		Alternative u1 = Alternative.withId(13);
 
 		Set<Alternative> alt = new HashSet<>();
 		alt.add(a);
@@ -108,24 +108,24 @@ class SetOperationsTest {
 	@Test
 	void TestRanksYPreferredX() throws Exception {
 		/** case 2: y>x put as much alts as possible in between **/
-		Voter v1 = new Voter(1);
+		Voter v1 = Voter.withId(1);
 		Set<Voter> voters = new HashSet<>();
 		voters.add(v1);
 
-		Alternative x = new Alternative(1);
-		Alternative y = new Alternative(2);
+		Alternative x = Alternative.withId(1);
+		Alternative y = Alternative.withId(2);
 
-		Alternative a = new Alternative(3);
-		Alternative u = new Alternative(4);
-		Alternative c = new Alternative(5);
-		Alternative b = new Alternative(6);
-		Alternative d = new Alternative(7);
-		Alternative f = new Alternative(8);
-		Alternative a1 = new Alternative(9);
-		Alternative b1 = new Alternative(10);
-		Alternative c1 = new Alternative(11);
-		Alternative d1 = new Alternative(12);
-		Alternative u1 = new Alternative(13);
+		Alternative a = Alternative.withId(3);
+		Alternative u = Alternative.withId(4);
+		Alternative c = Alternative.withId(5);
+		Alternative b = Alternative.withId(6);
+		Alternative d = Alternative.withId(7);
+		Alternative f = Alternative.withId(8);
+		Alternative a1 = Alternative.withId(9);
+		Alternative b1 = Alternative.withId(10);
+		Alternative c1 = Alternative.withId(11);
+		Alternative d1 = Alternative.withId(12);
+		Alternative u1 = Alternative.withId(13);
 
 		Set<Alternative> alt = new HashSet<>();
 		alt.add(a);

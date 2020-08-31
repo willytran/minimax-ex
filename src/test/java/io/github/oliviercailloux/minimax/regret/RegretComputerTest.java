@@ -15,19 +15,19 @@ import com.google.common.collect.ImmutableSet;
 import com.google.common.collect.SetMultimap;
 import com.google.common.graph.MutableGraph;
 
+import io.github.oliviercailloux.j_voting.Alternative;
+import io.github.oliviercailloux.j_voting.Voter;
 import io.github.oliviercailloux.minimax.elicitation.PSRWeights;
 import io.github.oliviercailloux.minimax.elicitation.PrefKnowledge;
-import io.github.oliviercailloux.y2018.j_voting.Alternative;
-import io.github.oliviercailloux.y2018.j_voting.Voter;
 
 class RegretComputerTest {
 
 	@Test
 	void testPmrValues() {
-		final Alternative a = new Alternative(1);
-		final Alternative b = new Alternative(2);
-		final Voter v1 = new Voter(1);
-		final Voter v2 = new Voter(2);
+		final Alternative a = Alternative.withId(1);
+		final Alternative b = Alternative.withId(2);
+		final Voter v1 = Voter.withId(1);
+		final Voter v2 = Voter.withId(2);
 		final PrefKnowledge k = PrefKnowledge.given(ImmutableSet.of(a, b), ImmutableSet.of(v1, v2));
 		final RegretComputer regretComputer = new RegretComputer(k);
 
@@ -49,8 +49,8 @@ class RegretComputerTest {
 
 	@Test
 	void testEmptyKSizeOne() {
-		final Alternative a = new Alternative(1);
-		final Voter v1 = new Voter(1);
+		final Alternative a = Alternative.withId(1);
+		final Voter v1 = Voter.withId(1);
 		final PrefKnowledge k = PrefKnowledge.given(ImmutableSet.of(a), ImmutableSet.of(v1));
 		final RegretComputer regretComputer = new RegretComputer(k);
 		final ImmutableMap<Voter, Integer> allFirst = ImmutableMap.of(v1, 1);
@@ -62,10 +62,10 @@ class RegretComputerTest {
 
 	@Test
 	void testEmptyKSizeTwo() {
-		final Alternative a = new Alternative(1);
-		final Alternative b = new Alternative(2);
-		final Voter v1 = new Voter(1);
-		final Voter v2 = new Voter(2);
+		final Alternative a = Alternative.withId(1);
+		final Alternative b = Alternative.withId(2);
+		final Voter v1 = Voter.withId(1);
+		final Voter v2 = Voter.withId(2);
 		final PrefKnowledge k = PrefKnowledge.given(ImmutableSet.of(a, b), ImmutableSet.of(v1, v2));
 		final RegretComputer regretComputer = new RegretComputer(k);
 		final ImmutableMap<Voter, Integer> allSecond = ImmutableMap.of(v1, 2, v2, 2);
@@ -82,18 +82,18 @@ class RegretComputerTest {
 	@Test
 	void testMMR() throws Exception {
 		/** Test with complete knowledge about voters' preferences **/
-		Voter v1 = new Voter(1);
-		Voter v2 = new Voter(2);
-		Voter v3 = new Voter(3);
+		Voter v1 = Voter.withId(1);
+		Voter v2 = Voter.withId(2);
+		Voter v3 = Voter.withId(3);
 		Set<Voter> voters = new HashSet<>();
 		voters.add(v1);
 		voters.add(v2);
 		voters.add(v3);
 
-		Alternative a = new Alternative(1);
-		Alternative b = new Alternative(2);
-		Alternative c = new Alternative(3);
-		Alternative d = new Alternative(4);
+		Alternative a = Alternative.withId(1);
+		Alternative b = Alternative.withId(2);
+		Alternative c = Alternative.withId(3);
+		Alternative d = Alternative.withId(4);
 		Set<Alternative> alt = new HashSet<>();
 		alt.add(a);
 		alt.add(b);
@@ -132,24 +132,24 @@ class RegretComputerTest {
 	@Test
 	void testRanksXpreferredY() throws Exception {
 		/** case 1: x>y put as much alts as possible above x **/
-		Voter v1 = new Voter(1);
+		Voter v1 = Voter.withId(1);
 		Set<Voter> voters = new HashSet<>();
 		voters.add(v1);
 
-		Alternative x = new Alternative(1);
-		Alternative y = new Alternative(2);
+		Alternative x = Alternative.withId(1);
+		Alternative y = Alternative.withId(2);
 
-		Alternative a = new Alternative(3);
-		Alternative u = new Alternative(4);
-		Alternative c = new Alternative(5);
-		Alternative b = new Alternative(6);
-		Alternative d = new Alternative(7);
-		Alternative f = new Alternative(8);
-		Alternative a1 = new Alternative(9);
-		Alternative b1 = new Alternative(10);
-		Alternative c1 = new Alternative(11);
-		Alternative d1 = new Alternative(12);
-		Alternative u1 = new Alternative(13);
+		Alternative a = Alternative.withId(3);
+		Alternative u = Alternative.withId(4);
+		Alternative c = Alternative.withId(5);
+		Alternative b = Alternative.withId(6);
+		Alternative d = Alternative.withId(7);
+		Alternative f = Alternative.withId(8);
+		Alternative a1 = Alternative.withId(9);
+		Alternative b1 = Alternative.withId(10);
+		Alternative c1 = Alternative.withId(11);
+		Alternative d1 = Alternative.withId(12);
+		Alternative u1 = Alternative.withId(13);
 
 		Set<Alternative> alt = new HashSet<>();
 		alt.add(a);
@@ -193,19 +193,19 @@ class RegretComputerTest {
 	@Test
 	void testRanksXprefY() throws Exception {
 		/** case 1: x>y put as much alts as possible above x **/
-		Voter v1 = new Voter(1);
+		Voter v1 = Voter.withId(1);
 		Set<Voter> voters = new HashSet<>();
 		voters.add(v1);
 
-		Alternative x = new Alternative(1);
-		Alternative y = new Alternative(2);
+		Alternative x = Alternative.withId(1);
+		Alternative y = Alternative.withId(2);
 
-		Alternative a = new Alternative(3);
-		Alternative u = new Alternative(4);
-		Alternative c = new Alternative(5);
-		Alternative b = new Alternative(6);
-		Alternative d = new Alternative(7);
-		Alternative f = new Alternative(8);
+		Alternative a = Alternative.withId(3);
+		Alternative u = Alternative.withId(4);
+		Alternative c = Alternative.withId(5);
+		Alternative b = Alternative.withId(6);
+		Alternative d = Alternative.withId(7);
+		Alternative f = Alternative.withId(8);
 
 		Set<Alternative> alt = new HashSet<>();
 		alt.add(a);
@@ -238,24 +238,24 @@ class RegretComputerTest {
 	@Test
 	void TestRanksYPreferredX() throws Exception {
 		/** case 2: y>x put as much alts as possible in between **/
-		Voter v1 = new Voter(1);
+		Voter v1 = Voter.withId(1);
 		Set<Voter> voters = new HashSet<>();
 		voters.add(v1);
 
-		Alternative x = new Alternative(1);
-		Alternative y = new Alternative(2);
+		Alternative x = Alternative.withId(1);
+		Alternative y = Alternative.withId(2);
 
-		Alternative a = new Alternative(3);
-		Alternative u = new Alternative(4);
-		Alternative c = new Alternative(5);
-		Alternative b = new Alternative(6);
-		Alternative d = new Alternative(7);
-		Alternative f = new Alternative(8);
-		Alternative a1 = new Alternative(9);
-		Alternative b1 = new Alternative(10);
-		Alternative c1 = new Alternative(11);
-		Alternative d1 = new Alternative(12);
-		Alternative u1 = new Alternative(13);
+		Alternative a = Alternative.withId(3);
+		Alternative u = Alternative.withId(4);
+		Alternative c = Alternative.withId(5);
+		Alternative b = Alternative.withId(6);
+		Alternative d = Alternative.withId(7);
+		Alternative f = Alternative.withId(8);
+		Alternative a1 = Alternative.withId(9);
+		Alternative b1 = Alternative.withId(10);
+		Alternative c1 = Alternative.withId(11);
+		Alternative d1 = Alternative.withId(12);
+		Alternative u1 = Alternative.withId(13);
 
 		Set<Alternative> alt = new HashSet<>();
 		alt.add(a);
@@ -299,19 +299,19 @@ class RegretComputerTest {
 	@Test
 	void TestRanksYPrefX() throws Exception {
 		/** case 2: y>x put as much alts as possible in between **/
-		Voter v1 = new Voter(1);
+		Voter v1 = Voter.withId(1);
 		Set<Voter> voters = new HashSet<>();
 		voters.add(v1);
 
-		Alternative x = new Alternative(1);
-		Alternative y = new Alternative(2);
+		Alternative x = Alternative.withId(1);
+		Alternative y = Alternative.withId(2);
 
-		Alternative a = new Alternative(3);
-		Alternative u = new Alternative(4);
-		Alternative c = new Alternative(5);
-		Alternative b = new Alternative(6);
-		Alternative d = new Alternative(7);
-		Alternative f = new Alternative(8);
+		Alternative a = Alternative.withId(3);
+		Alternative u = Alternative.withId(4);
+		Alternative c = Alternative.withId(5);
+		Alternative b = Alternative.withId(6);
+		Alternative d = Alternative.withId(7);
+		Alternative f = Alternative.withId(8);
 
 		Set<Alternative> alt = new HashSet<>();
 		alt.add(a);
@@ -347,19 +347,19 @@ class RegretComputerTest {
 		 * case 3: assume y>x and go to case 2 (i.e. put as much alts as possible in
 		 * between)
 		 **/
-		Voter v1 = new Voter(1);
+		Voter v1 = Voter.withId(1);
 		Set<Voter> voters = new HashSet<>();
 		voters.add(v1);
 
-		Alternative x = new Alternative(1);
-		Alternative y = new Alternative(2);
+		Alternative x = Alternative.withId(1);
+		Alternative y = Alternative.withId(2);
 
-		Alternative a = new Alternative(3);
-		Alternative u = new Alternative(4);
-		Alternative c = new Alternative(5);
-		Alternative b = new Alternative(6);
-		Alternative d = new Alternative(7);
-		Alternative f = new Alternative(8);
+		Alternative a = Alternative.withId(3);
+		Alternative u = Alternative.withId(4);
+		Alternative c = Alternative.withId(5);
+		Alternative b = Alternative.withId(6);
+		Alternative d = Alternative.withId(7);
+		Alternative f = Alternative.withId(8);
 
 		Set<Alternative> alt = new HashSet<>();
 		alt.add(a);
@@ -397,24 +397,24 @@ class RegretComputerTest {
 //	@Test
 	void TestRanks() throws Exception {
 		/** case 2: y>x put as much alts as possible in between **/
-		Voter v1 = new Voter(1);
+		Voter v1 = Voter.withId(1);
 		Set<Voter> voters = new HashSet<>();
 		voters.add(v1);
 
-		Alternative x = new Alternative(1);
-		Alternative y = new Alternative(2);
+		Alternative x = Alternative.withId(1);
+		Alternative y = Alternative.withId(2);
 
-		Alternative a = new Alternative(3);
-		Alternative u = new Alternative(4);
-		Alternative c = new Alternative(5);
-		Alternative b = new Alternative(6);
-		Alternative d = new Alternative(7);
-		Alternative f = new Alternative(8);
-		Alternative a1 = new Alternative(9);
-		Alternative b1 = new Alternative(10);
-		Alternative c1 = new Alternative(11);
-		Alternative d1 = new Alternative(12);
-		Alternative u1 = new Alternative(13);
+		Alternative a = Alternative.withId(3);
+		Alternative u = Alternative.withId(4);
+		Alternative c = Alternative.withId(5);
+		Alternative b = Alternative.withId(6);
+		Alternative d = Alternative.withId(7);
+		Alternative f = Alternative.withId(8);
+		Alternative a1 = Alternative.withId(9);
+		Alternative b1 = Alternative.withId(10);
+		Alternative c1 = Alternative.withId(11);
+		Alternative d1 = Alternative.withId(12);
+		Alternative u1 = Alternative.withId(13);
 
 		Set<Alternative> alt = new HashSet<>();
 		alt.add(a);

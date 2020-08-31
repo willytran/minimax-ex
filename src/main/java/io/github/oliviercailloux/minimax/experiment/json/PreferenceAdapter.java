@@ -7,9 +7,9 @@ import javax.json.bind.adapter.JsonbAdapter;
 
 import com.google.common.collect.ImmutableList;
 
+import io.github.oliviercailloux.j_voting.Alternative;
+import io.github.oliviercailloux.j_voting.Voter;
 import io.github.oliviercailloux.j_voting.VoterStrictPreference;
-import io.github.oliviercailloux.y2018.j_voting.Alternative;
-import io.github.oliviercailloux.y2018.j_voting.Voter;
 
 public class PreferenceAdapter implements JsonbAdapter<VoterStrictPreference, JsonObject> {
 	@Override
@@ -21,7 +21,7 @@ public class PreferenceAdapter implements JsonbAdapter<VoterStrictPreference, Js
 	public VoterStrictPreference adaptFromJson(JsonObject obj) {
 		final JsonArray preference = obj.getJsonArray("preference");
 		final ImmutableList<Alternative> alternatives = preference.stream().map(v -> ((JsonNumber) v).intValue())
-				.map(Alternative::new).collect(ImmutableList.toImmutableList());
-		return VoterStrictPreference.given(new Voter(obj.getInt("voter")), alternatives);
+				.map(Alternative::withId).collect(ImmutableList.toImmutableList());
+		return VoterStrictPreference.given(Voter.withId(obj.getInt("voter")), alternatives);
 	}
 }

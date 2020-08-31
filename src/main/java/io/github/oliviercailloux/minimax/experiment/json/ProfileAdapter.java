@@ -7,8 +7,8 @@ import javax.json.bind.adapter.JsonbAdapter;
 
 import com.google.common.collect.ImmutableSet;
 
+import io.github.oliviercailloux.j_voting.Voter;
 import io.github.oliviercailloux.j_voting.VoterStrictPreference;
-import io.github.oliviercailloux.y2018.j_voting.Voter;
 
 public class ProfileAdapter implements JsonbAdapter<Map<Voter, VoterStrictPreference>, Set<VoterStrictPreference>> {
 	@Override

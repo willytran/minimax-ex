@@ -15,13 +15,13 @@ import com.google.common.collect.ImmutableSortedMultiset;
 import com.google.common.collect.SortedMultiset;
 import com.google.common.graph.ImmutableGraph;
 
+import io.github.oliviercailloux.j_voting.Alternative;
+import io.github.oliviercailloux.j_voting.Voter;
 import io.github.oliviercailloux.j_voting.VoterPartialPreference;
 import io.github.oliviercailloux.jlp.elements.SumTerms;
 import io.github.oliviercailloux.jlp.elements.SumTermsBuilder;
 import io.github.oliviercailloux.jlp.elements.Term;
 import io.github.oliviercailloux.minimax.elicitation.PrefKnowledge;
-import io.github.oliviercailloux.y2018.j_voting.Alternative;
-import io.github.oliviercailloux.y2018.j_voting.Voter;
 
 public class RegretComputer {
 	private final PrefKnowledge knowledge;

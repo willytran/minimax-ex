@@ -8,9 +8,6 @@ import com.google.common.graph.Graphs;
 import com.google.common.graph.ImmutableGraph;
 import com.google.common.graph.MutableGraph;
 
-import io.github.oliviercailloux.y2018.j_voting.Alternative;
-import io.github.oliviercailloux.y2018.j_voting.Voter;
-
 public class VoterPartialPreference {
 
 	public static VoterPartialPreference about(Voter voter, Set<Alternative> alternatives) {

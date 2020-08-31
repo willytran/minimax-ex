@@ -9,9 +9,8 @@ import org.junit.jupiter.api.Test;
 
 import com.google.common.collect.Range;
 
+import io.github.oliviercailloux.j_voting.Generator;
 import io.github.oliviercailloux.jlp.elements.ComparisonOperator;
-import io.github.oliviercailloux.minimax.elicitation.PrefKnowledge;
-import io.github.oliviercailloux.y2018.j_voting.Generator;
 
 class PreferenceKnowledgeTest {
 

@@ -10,10 +10,10 @@ import java.util.Objects;
 import com.google.common.base.MoreObjects;
 import com.google.common.collect.ImmutableMap;
 
+import io.github.oliviercailloux.j_voting.Alternative;
+import io.github.oliviercailloux.j_voting.Voter;
 import io.github.oliviercailloux.j_voting.VoterStrictPreference;
 import io.github.oliviercailloux.minimax.elicitation.PSRWeights;
-import io.github.oliviercailloux.y2018.j_voting.Alternative;
-import io.github.oliviercailloux.y2018.j_voting.Voter;
 
 /**
  * Immutable.

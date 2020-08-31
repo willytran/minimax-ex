@@ -9,10 +9,10 @@ import java.util.Map;
 
 import org.junit.jupiter.api.Test;
 
+import io.github.oliviercailloux.j_voting.Alternative;
+import io.github.oliviercailloux.j_voting.Voter;
 import io.github.oliviercailloux.j_voting.VoterStrictPreference;
 import io.github.oliviercailloux.minimax.elicitation.PSRWeights;
-import io.github.oliviercailloux.y2018.j_voting.Alternative;
-import io.github.oliviercailloux.y2018.j_voting.Voter;
 
 public class GeneratorTest {
 
@@ -31,7 +31,7 @@ public class GeneratorTest {
 
 		final List<Alternative> alt = new LinkedList<>();
 		for (int i = 1; i <= m; i++) {
-			alt.add(new Alternative(i));
+			alt.add(Alternative.withId(i));
 		}
 
 		assertEquals(n, rv.size());

@@ -2,6 +2,7 @@ package io.github.oliviercailloux.minimax.experiment.json;
 
 import java.util.Map;
 
+import io.github.oliviercailloux.j_voting.Voter;
 import io.github.oliviercailloux.j_voting.VoterStrictPreference;
 import io.github.oliviercailloux.json.JsonbUtils;
 import io.github.oliviercailloux.json.PrintableJsonObject;
@@ -10,7 +11,6 @@ import io.github.oliviercailloux.minimax.elicitation.Oracle;
 import io.github.oliviercailloux.minimax.elicitation.PSRWeights;
 import io.github.oliviercailloux.minimax.experiment.Run;
 import io.github.oliviercailloux.minimax.experiment.Runs;
-import io.github.oliviercailloux.y2018.j_voting.Voter;
 
 public class JsonConverter {
 	public static PrintableJsonObject toJson(Voter voter) {

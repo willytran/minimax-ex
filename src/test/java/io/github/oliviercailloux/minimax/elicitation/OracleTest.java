@@ -10,19 +10,19 @@ import com.google.common.collect.ImmutableList;
 import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.ImmutableSet;
 
+import io.github.oliviercailloux.j_voting.Alternative;
+import io.github.oliviercailloux.j_voting.Voter;
 import io.github.oliviercailloux.j_voting.VoterStrictPreference;
 import io.github.oliviercailloux.jlp.elements.ComparisonOperator;
-import io.github.oliviercailloux.y2018.j_voting.Alternative;
-import io.github.oliviercailloux.y2018.j_voting.Voter;
 
 class OracleTest {
 
 	@Test
 	void test() {
-		final Voter v1 = new Voter(1);
-		final Voter v2 = new Voter(2);
-		final Alternative a1 = new Alternative(1);
-		final Alternative a2 = new Alternative(2);
+		final Voter v1 = Voter.withId(1);
+		final Voter v2 = Voter.withId(2);
+		final Alternative a1 = Alternative.withId(1);
+		final Alternative a2 = Alternative.withId(2);
 		final ImmutableList<Alternative> a1List = ImmutableList.of(a1);
 		final ImmutableList<Alternative> a2List = ImmutableList.of(a2);
 		final VoterStrictPreference v1PrefA1 = VoterStrictPreference.given(v1, a1List);
@@ -42,10 +42,10 @@ class OracleTest {
 
 	@Test
 	void testJustConvex() throws Exception {
-		final Voter v1 = new Voter(1);
-		final Alternative a1 = new Alternative(1);
-		final Alternative a2 = new Alternative(2);
-		final Alternative a3 = new Alternative(3);
+		final Voter v1 = Voter.withId(1);
+		final Alternative a1 = Alternative.withId(1);
+		final Alternative a2 = Alternative.withId(2);
+		final Alternative a3 = Alternative.withId(3);
 		final ImmutableList<Alternative> pref1 = ImmutableList.of(a1, a2, a3);
 		final Oracle oracle = Oracle.build(ImmutableMap.of(v1, VoterStrictPreference.given(v1, pref1)),
 				PSRWeights.given(ImmutableList.of(1d, 0.5d, 0d)));

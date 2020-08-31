@@ -13,11 +13,11 @@ import java.util.Random;
 
 import com.google.common.collect.Lists;
 
+import io.github.oliviercailloux.j_voting.Alternative;
+import io.github.oliviercailloux.j_voting.Voter;
 import io.github.oliviercailloux.j_voting.VoterStrictPreference;
 import io.github.oliviercailloux.minimax.elicitation.Oracle;
 import io.github.oliviercailloux.minimax.elicitation.PSRWeights;
-import io.github.oliviercailloux.y2018.j_voting.Alternative;
-import io.github.oliviercailloux.y2018.j_voting.Voter;
 
 public class Generator {
 
@@ -52,11 +52,11 @@ public class Generator {
 
 		List<Alternative> availableRanks = new LinkedList<>();
 		for (int i = 1; i <= nbAlternatives; i++) {
-			availableRanks.add(new Alternative(i));
+			availableRanks.add(Alternative.withId(i));
 		}
 
 		for (int i = 1; i <= nbVoters; ++i) {
-			Voter v = new Voter(i);
+			Voter v = Voter.withId(i);
 			List<Alternative> linearOrder = Lists.newArrayList(availableRanks);
 			Collections.shuffle(linearOrder);
 			VoterStrictPreference pref = VoterStrictPreference.given(v, linearOrder);

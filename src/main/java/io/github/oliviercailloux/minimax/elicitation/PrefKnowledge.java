@@ -16,10 +16,10 @@ import com.google.common.collect.ImmutableSet;
 import com.google.common.collect.Range;
 import com.google.common.graph.Graph;
 
+import io.github.oliviercailloux.j_voting.Alternative;
+import io.github.oliviercailloux.j_voting.Voter;
 import io.github.oliviercailloux.j_voting.VoterPartialPreference;
 import io.github.oliviercailloux.jlp.elements.ComparisonOperator;
-import io.github.oliviercailloux.y2018.j_voting.Alternative;
-import io.github.oliviercailloux.y2018.j_voting.Voter;
 
 public class PrefKnowledge {
 	public static PrefKnowledge given(Set<Alternative> alternatives, Set<Voter> voters) {
@@ -199,7 +199,7 @@ public class PrefKnowledge {
 		sb.append("Constraints on weights: \n" + cow.rangesAsString() + "\n");
 		sb.append("Preference profile \n");
 		for (int i = 1; i <= partialProfile.size(); i++) {
-			sb.append("Voter " + i + " " + partialProfile.get(new Voter(i)) + "\n");
+			sb.append("Voter " + i + " " + partialProfile.get(Voter.withId(i)) + "\n");
 		}
 		return sb.toString();
 	}

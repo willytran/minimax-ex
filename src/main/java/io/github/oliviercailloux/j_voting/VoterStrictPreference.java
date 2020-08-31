@@ -16,9 +16,7 @@ import com.google.common.base.MoreObjects;
 import io.github.oliviercailloux.minimax.elicitation.QuestionVoter;
 import io.github.oliviercailloux.minimax.elicitation.VoterPreferenceInformation;
 import io.github.oliviercailloux.minimax.experiment.json.VoterAdapter;
-import io.github.oliviercailloux.y2018.j_voting.Alternative;
 import io.github.oliviercailloux.y2018.j_voting.StrictPreference;
-import io.github.oliviercailloux.y2018.j_voting.Voter;
 
 /**
  * Immutable.

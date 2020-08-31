@@ -6,7 +6,7 @@ import javax.json.bind.adapter.JsonbAdapter;
 
 import com.google.common.collect.ImmutableList;
 
-import io.github.oliviercailloux.y2018.j_voting.Alternative;
+import io.github.oliviercailloux.j_voting.Alternative;
 import io.github.oliviercailloux.y2018.j_voting.StrictPreference;
 
 public class StrictPreferenceAdapter implements JsonbAdapter<StrictPreference, List<Integer>> {
@@ -19,6 +19,6 @@ public class StrictPreferenceAdapter implements JsonbAdapter<StrictPreference, L
 
 	@Override
 	public StrictPreference adaptFromJson(List<Integer> obj) {
-		return new StrictPreference(obj.stream().map(Alternative::new).collect(ImmutableList.toImmutableList()));
+		return new StrictPreference(obj.stream().map(Alternative::withId).collect(ImmutableList.toImmutableList()));
 	}
 }

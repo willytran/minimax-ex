@@ -20,8 +20,8 @@ import com.google.common.collect.MultimapBuilder.SetMultimapBuilder;
 import com.google.common.collect.Multimaps;
 import com.google.common.collect.SetMultimap;
 
+import io.github.oliviercailloux.j_voting.Alternative;
 import io.github.oliviercailloux.minimax.elicitation.ConstraintsOnWeights;
-import io.github.oliviercailloux.y2018.j_voting.Alternative;
 
 /**
  *

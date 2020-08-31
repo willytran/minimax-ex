@@ -3,7 +3,6 @@ package io.github.oliviercailloux.j_voting;
 import com.google.common.graph.MutableGraph;
 
 import io.github.oliviercailloux.minimax.utils.ForwardingMutableGraph;
-import io.github.oliviercailloux.y2018.j_voting.Alternative;
 
 public class PrefGraph extends ForwardingMutableGraph<Alternative> implements MutableGraph<Alternative> {
 
