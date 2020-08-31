@@ -7,10 +7,6 @@ import com.google.common.graph.EndpointPair;
 import com.google.common.graph.MutableGraph;
 
 public class ForwardingMutableGraph<N> implements MutableGraph<N> {
-	public static <N> ForwardingMutableGraph<N> using(MutableGraph<N> delegate) {
-		return new ForwardingMutableGraph<>(delegate);
-	}
-
 	private MutableGraph<N> delegate;
 
 	protected ForwardingMutableGraph(MutableGraph<N> delegate) {
@@ -115,5 +111,20 @@ public class ForwardingMutableGraph<N> implements MutableGraph<N> {
 	@Override
 	public boolean removeEdge(EndpointPair<N> endpoints) {
 		return delegate.removeEdge(endpoints);
+	}
+
+	@Override
+	public ElementOrder<N> incidentEdgeOrder() {
+		return delegate.incidentEdgeOrder();
+	}
+
+	@Override
+	public boolean equals(Object o2) {
+		return delegate.equals(o2);
+	}
+
+	@Override
+	public int hashCode() {
+		return delegate.hashCode();
 	}
 }
