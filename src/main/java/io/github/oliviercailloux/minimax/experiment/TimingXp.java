@@ -12,24 +12,25 @@ public class TimingXp {
 	private static final Logger LOGGER = LoggerFactory.getLogger(TimingXp.class);
 
 	public static void main(String[] args) throws Exception {
-		final StrategyFactory pessimisticFactory = StrategyFactory.pessimistic();
-		/** (5, 5, 1), Saucisson: 0.77 ± 0.03 sec. */
-		/** (5, 5, 30), Saucisson: 18.2 ± 1.1 sec. */
+		final StrategyFactory factory = StrategyFactory.pessimistic();
+		/** (Pessimistic, 5, 5, 1), Saucisson: 0.77 ± 0.03 sec. */
+		/** (Pessimistic, 5, 5, 30), Saucisson: 18.2 ± 1.1 sec. */
+		/** (Pessimistic, 5, 5, 30), BriBri: 13.7 ± 2.9 sec. */
 		final int m = 5;
 		final int n = 5;
-		final int k = 30;
+		final int k = 10;
 		/** Warm up the VM. */
 		for (int i = 0; i < 1; ++i) {
-			final Run run = Runner.run(pessimisticFactory.get(), m, n, k);
-			LOGGER.info("Time: {}.", run.getTotalTimeMs());
+			final Run run = Runner.run(factory.get(), m, n, k);
+			LOGGER.info("Time warm up: {}.", run.getTotalTimeMs());
 		}
 		final ImmutableList.Builder<Run> runsBuilder = ImmutableList.builder();
 		for (int i = 0; i < 5; ++i) {
-			final Run run = Runner.run(pessimisticFactory.get(), m, n, k);
-			LOGGER.info("Time: {}.", run.getTotalTimeMs());
+			final Run run = Runner.run(factory.get(), m, n, k);
+			LOGGER.info("Time run {}: {}.", i, run.getTotalTimeMs());
 			runsBuilder.add(run);
 		}
-		final Runs runs = Runs.of(pessimisticFactory, runsBuilder.build());
+		final Runs runs = Runs.of(factory, runsBuilder.build());
 		LOGGER.info("Timing statistics for finding an average question: {}.", runs.getQuestionTimeStats());
 		LOGGER.info("Timing statistics for finding all questions: {}.", runs.getTotalTimeStats());
 	}
