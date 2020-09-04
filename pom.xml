@@ -9,9 +9,6 @@
 	</parent>
 	<artifactId>minimax</artifactId>
 	<version>0.0.1-SNAPSHOT</version>
-	<properties>
-		<jmockit.version>1.23</jmockit.version>
-	</properties>
 	<build>
 		<plugins>
 			<plugin>
@@ -20,7 +17,6 @@
 				<configuration>
 					<argLine>
 						-Djava.library.path=lib
-						-javaagent:${settings.localRepository}/org/jmockit/jmockit/${jmockit.version}/jmockit-${jmockit.version}.jar
 					</argLine>
 				</configuration>
 			</plugin>

@@ -18,7 +18,7 @@ public class TimingXp {
 		/** (Pessimistic, 5, 5, 30), BriBri: 13.7 ± 2.9 sec. */
 		final int m = 5;
 		final int n = 5;
-		final int k = 10;
+		final int k = 30;
 		/** Warm up the VM. */
 		for (int i = 0; i < 1; ++i) {
 			final Run run = Runner.run(factory.get(), m, n, k);
