@@ -63,7 +63,7 @@ public class PSRWeights {
 	}
 
 	public ImmutableList<Double> getWeights() {
-		return this.weights;
+		return weights;
 	}
 
 	/**
