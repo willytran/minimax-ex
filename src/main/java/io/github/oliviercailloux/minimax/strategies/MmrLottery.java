@@ -8,6 +8,8 @@ import com.google.common.base.MoreObjects;
 
 public class MmrLottery {
 	public static final Comparator<MmrLottery> MAX_COMPARATOR = getMaxComparator();
+	
+	public static final Comparator<MmrLottery> MIN_COMPARATOR = getMinComparator();
 
 	public static MmrLottery given(double mmrIfYes, double mmrIfNo) {
 		return new MmrLottery(mmrIfYes, mmrIfNo);
@@ -24,6 +26,17 @@ public class MmrLottery {
 		return comparingLexicographically;
 	}
 
+	private static Comparator<MmrLottery> getMinComparator() {
+		final DoubleBinaryOperator max = ((mmr1, mmr2) -> (mmr1 >= mmr2) ? mmr1 : mmr2);
+		final DoubleBinaryOperator min = ((mmr1, mmr2) -> (mmr1 <= mmr2) ? mmr1 : mmr2);
+
+		final Comparator<MmrLottery> comparingMins = Comparator
+				.comparing(l -> min.applyAsDouble(l.getMmrIfYes(), l.getMmrIfNo()));
+		final Comparator<MmrLottery> comparingLexicographically = comparingMins
+				.thenComparing(l -> max.applyAsDouble(l.getMmrIfYes(), l.getMmrIfNo()));
+		return comparingLexicographically;
+	}
+	
 	private double mmrIfYes;
 	private double mmrIfNo;
 
