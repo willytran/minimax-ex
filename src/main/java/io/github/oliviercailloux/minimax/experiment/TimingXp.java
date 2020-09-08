@@ -21,12 +21,12 @@ public class TimingXp {
 		final int k = 30;
 		/** Warm up the VM. */
 		for (int i = 0; i < 1; ++i) {
-			final Run run = Runner.run(factory.get(), m, n, k);
+			final Run run = Runner.run(factory, m, n, k);
 			LOGGER.info("Time warm up: {}.", run.getTotalTimeMs());
 		}
 		final ImmutableList.Builder<Run> runsBuilder = ImmutableList.builder();
 		for (int i = 0; i < 5; ++i) {
-			final Run run = Runner.run(factory.get(), m, n, k);
+			final Run run = Runner.run(factory, m, n, k);
 			LOGGER.info("Time run {}: {}.", i, run.getTotalTimeMs());
 			runsBuilder.add(run);
 		}

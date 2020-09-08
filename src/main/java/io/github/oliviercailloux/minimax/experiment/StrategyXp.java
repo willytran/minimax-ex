@@ -48,7 +48,7 @@ public class StrategyXp {
 		final ImmutableList.Builder<Run> runsBuilder = ImmutableList.builder();
 		LOGGER.info("Started '{}'.", factory.getDescription());
 		for (int i = 0; i < nbRuns; ++i) {
-			final Run run = Runner.run(factory.get(), m, n, k);
+			final Run run = Runner.run(factory, m, n, k);
 			LOGGER.info("Time (run {}): {}.", i, run.getTotalTime());
 			Files.writeString(Path.of("run " + i + ".json"), JsonConverter.toJson(run).toString());
 			runsBuilder.add(run);

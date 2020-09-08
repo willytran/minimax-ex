@@ -128,7 +128,7 @@ public class VariousXps {
 			throws IOException {
 		final ImmutableList.Builder<Run> builder = ImmutableList.builder();
 		for (int i = 0; i < nbRuns; ++i) {
-			final Run run = Runner.run(factory.get(), m, n, nbQuestions);
+			final Run run = Runner.run(factory, m, n, nbQuestions);
 			builder.add(run);
 			System.out.println("Run " + (i + 1) + " of " + nbRuns);
 			System.out.println("mean avg time: " + Stats.of(run.getQuestionTimesMs()).mean() + " ms");
