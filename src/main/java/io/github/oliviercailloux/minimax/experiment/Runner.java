@@ -20,6 +20,7 @@ import io.github.oliviercailloux.minimax.elicitation.PreferenceInformation;
 import io.github.oliviercailloux.minimax.elicitation.Question;
 import io.github.oliviercailloux.minimax.experiment.json.JsonConverter;
 import io.github.oliviercailloux.minimax.strategies.Strategy;
+import io.github.oliviercailloux.minimax.strategies.StrategyFactory;
 import io.github.oliviercailloux.minimax.utils.Generator;
 
 public class Runner {
@@ -41,16 +42,17 @@ public class Runner {
 	 * Creates a new random oracle; returns a single run of asking k questions with
 	 * the given strategy.
 	 *
-	 * @param strategy should be freshly instanciated
 	 * @throws IOException
 	 */
-	public static Run run(Strategy strategy, int m, int n, int k) throws IOException {
+	public static Run run(StrategyFactory strategyFactory, int m, int n, int k) throws IOException {
 		final Oracle oracle;
 		if (overridingOracle == null) {
 			oracle = Oracle.build(Generator.genProfile(m, n), Generator.genWeights(m));
 		} else {
 			oracle = overridingOracle;
 		}
+
+		final Strategy strategy = strategyFactory.get();
 
 		final PrefKnowledge knowledge = PrefKnowledge.given(oracle.getAlternatives(), oracle.getProfile().keySet());
 		strategy.setKnowledge(knowledge);
