@@ -7,6 +7,14 @@ import java.util.function.DoubleBinaryOperator;
 import com.google.common.base.MoreObjects;
 
 public class MmrLottery {
+	
+	/**
+	 * MAX_COMPARATOR considers a question Q1 greater than a question Q2 if
+	 * (maxQ1>maxQ2) or (maxQ1=maxQ2 & minQ1>minQ2)
+	 *  
+	 * Thus, the “smallest” question is the best one as we seek to minimize regret.
+	 *
+	 */
 	public static final Comparator<MmrLottery> MAX_COMPARATOR = getMaxComparator();
 	
 	public static final Comparator<MmrLottery> MIN_COMPARATOR = getMinComparator();
