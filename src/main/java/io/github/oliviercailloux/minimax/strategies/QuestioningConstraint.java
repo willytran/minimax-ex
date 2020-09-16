@@ -24,7 +24,7 @@ public class QuestioningConstraint {
 
 	private QuestioningConstraint(QuestionType kind, int number) {
 		this.kind = checkNotNull(kind);
-		checkArgument(number >= 1);
+		checkArgument(number >= 0); //previously >=1, is it what we want?
 		this.number = number;
 	}
 
