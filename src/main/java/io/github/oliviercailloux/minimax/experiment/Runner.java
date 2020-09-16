@@ -79,6 +79,11 @@ public class Runner {
 		return Run.of(oracle, tBuilder.build(), qBuilder.build(), endTime);
 	}
 
+	public static Run run(StrategyFactory strategyFactory, Oracle oracle, int k) throws IOException {
+		overridingOracle = oracle;
+		return run(strategyFactory, oracle.getM(), oracle.getN(), k);
+	}
+
 	public static void show(Run run) {
 		for (int i = 0; i < run.getK(); ++i) {
 			LOGGER.info("Regret after {} questions: {}.", i,
