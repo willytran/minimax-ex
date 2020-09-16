@@ -1,9 +1,0 @@
-language: java
-git:
-  depth: 1
-jdk:
-  - openjdk11
-cache:
-  directories:
-    - "$HOME/.m2"
-
