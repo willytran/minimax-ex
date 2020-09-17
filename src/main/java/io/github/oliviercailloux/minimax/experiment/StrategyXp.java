@@ -25,36 +25,29 @@ public class StrategyXp {
 	private static final Logger LOGGER = LoggerFactory.getLogger(StrategyXp.class);
 
 	public static void main(String[] args) throws Exception {
-		final int m = 5;
-		final int n = 10;
-		final int k = 150;
+		int m = 5;
+		int n = 10;
+		int k = 150;
 		final long seed = ThreadLocalRandom.current().nextLong();
-//		final StrategyFactory factory = StrategyFactory.limited();
-//		final StrategyFactory factory = StrategyFactory.limited(seed,
-//				ImmutableList.of(QuestioningConstraint.of(QuestionType.VOTER_QUESTION, Integer.MAX_VALUE)));
 
-//		for(int i=150; i<=k; i+=50) {
-//			final StrategyFactory factoryVotFirst = StrategyFactory.limitedVotersThenCommittee(i);
-//			final StrategyFactory factoryComFirst = StrategyFactory.limitedCommitteeThenVoters(i);
-//			runs(factoryVotFirst, m, n, k, 5);
-//			runs(factoryComFirst, m, n, k, 5);
-//		}
-//		
-//		final StrategyFactory factoryVotFirst = StrategyFactory.limitedVotersThenCommittee(k-25);
-//		final StrategyFactory factoryComFirst = StrategyFactory.limitedCommitteeThenVoters(25);
-//		runs(factoryVotFirst, m, n, k, 5);
-//		runs(factoryComFirst, m, n, k, 5);
-
-//		final StrategyFactory factory = StrategyFactory.random();
-		final ImmutableList<StrategyFactory> factoryList = ImmutableList.of(StrategyFactory.random(),
+		final ImmutableList<StrategyFactory> factoryListT1 = ImmutableList.of(StrategyFactory.random(),
 				StrategyFactory.pessimistic(), StrategyFactory.limited());
-		runs(factoryList, m, n, k, 25);
+		runs(factoryListT1, m, n, k, 25);
+
+		m = 10;
+		n = 20;
+		k = 250;
+		for (int i = 0; i < 55; i += 6) {
+			final ImmutableList<StrategyFactory> factoryListT3 = ImmutableList
+					.of(StrategyFactory.limitedCommitteeThenVoters(i), StrategyFactory.limitedVotersThenCommittee(k-i));
+			runs(factoryListT3, m, n, k, 10);
+		}
 
 	}
 
 	/**
 	 * Repeat (nbRuns times) a run experiment (thus: generate an oracle, ask k
-	 * questions).
+	 * questions for each strategy).
 	 */
 	public static void runs(ImmutableList<StrategyFactory> factoryList, int m, int n, int k, int nbRuns)
 			throws IOException {
@@ -72,7 +65,7 @@ public class StrategyXp {
 		final ImmutableMap<StrategyFactory, Path> tmpCsvMap = tmpCsvMapBuilder.build();
 
 		final ImmutableList.Builder<Run> runsBuilder = ImmutableList.builder();
-		// LOGGER.info("Started '{}'.", factory.getDescription());
+		
 		for (int i = 0; i < nbRuns; ++i) {
 			final Oracle oracle = Oracle.build(Generator.genProfile(m, n), Generator.genWeights(m));
 			for (StrategyFactory factory : factoryList) {
