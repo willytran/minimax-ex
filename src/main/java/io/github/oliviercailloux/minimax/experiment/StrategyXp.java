@@ -33,10 +33,7 @@ public class StrategyXp {
 		final ImmutableList<StrategyFactory> factoryListT1 = ImmutableList.of(StrategyFactory.random(),
 				StrategyFactory.pessimistic(), StrategyFactory.limited());
 		runs(factoryListT1, m, n, k, 25);
-
-		m = 10;
-		n = 20;
-		k = 250;
+		
 		for (int i = 0; i < 55; i += 6) {
 			final ImmutableList<StrategyFactory> factoryListT3 = ImmutableList
 					.of(StrategyFactory.limitedCommitteeThenVoters(i), StrategyFactory.limitedVotersThenCommittee(k-i));
@@ -55,16 +52,18 @@ public class StrategyXp {
 		Files.createDirectories(outDir);
 		final ImmutableMap.Builder<StrategyFactory, Path> tmpJsonMapBuilder = ImmutableMap.builder();
 		final ImmutableMap.Builder<StrategyFactory, Path> tmpCsvMapBuilder = ImmutableMap.builder();
+		final ImmutableMap.Builder<StrategyFactory, ImmutableList.Builder<Run>> tmpRunsBuilders = ImmutableMap.builder();
 		for (StrategyFactory factory : factoryList) {
-			final String prefixTemp = factory.getDescription() + ", m = " + m + ", n = " + n + ", k = " + k
+			final String prefixTemp = "m = " + m + ", n = " + n + ", k = " + k+ ", "+ factory.getDescription()
 					+ ", ongoing";
 			tmpJsonMapBuilder.put(factory, outDir.resolve(prefixTemp + ".json"));
 			tmpCsvMapBuilder.put(factory, outDir.resolve(prefixTemp + ".csv"));
+			tmpRunsBuilders.put(factory, ImmutableList.builder());
 		}
 		final ImmutableMap<StrategyFactory, Path> tmpJsonMap = tmpJsonMapBuilder.build();
 		final ImmutableMap<StrategyFactory, Path> tmpCsvMap = tmpCsvMapBuilder.build();
-
-		final ImmutableList.Builder<Run> runsBuilder = ImmutableList.builder();
+		final ImmutableMap<StrategyFactory, ImmutableList.Builder<Run>> runsBuilders = tmpRunsBuilders.build();
+		
 		
 		for (int i = 0; i < nbRuns; ++i) {
 			final Oracle oracle = Oracle.build(Generator.genProfile(m, n), Generator.genWeights(m));
@@ -72,8 +71,8 @@ public class StrategyXp {
 				final Run run = Runner.run(factory, oracle, k);
 				LOGGER.info("Strategy {} - Time (run {}): {}.", factory.getDescription(), i, run.getTotalTime());
 				Files.writeString(Path.of("run " + i + ".json"), JsonConverter.toJson(run).toString());
-				runsBuilder.add(run);
-				final Runs runs = Runs.of(factory, runsBuilder.build());
+				runsBuilders.get(factory).add(run);
+				final Runs runs = Runs.of(factory, runsBuilders.get(factory).build());
 //				Runner.summarize(runs);
 				Files.writeString(tmpJsonMap.get(factory), JsonConverter.toJson(runs).toString());
 				Files.writeString(tmpCsvMap.get(factory), ToCsv.toCsv(runs));
@@ -81,8 +80,8 @@ public class StrategyXp {
 		}
 
 		for (StrategyFactory factory : factoryList) {
-			final String prefix = factory.getDescription() + ", m = " + m + ", n = " + n + ", k = " + k + ", nbRuns = "
-					+ nbRuns;
+			final String prefix = "m = " + m + ", n = " + n + ", k = " + k + ", nbRuns = "
+					+ nbRuns + ", "+ factory.getDescription();
 			final Path outJson = outDir.resolve(prefix + ".json");
 			final Path outCsv = outDir.resolve(prefix + ".csv");
 			Files.move(tmpJsonMap.get(factory), outJson, StandardCopyOption.REPLACE_EXISTING);
