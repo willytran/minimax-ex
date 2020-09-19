@@ -107,7 +107,7 @@ public class StrategyFactory implements Supplier<Strategy> {
 		final String prefix = ", constrained to [";
 		final String suffix = "]";
 		final String constraintsDescription = constraints.stream()
-				.map(c -> (c.getNumber() == Integer.MAX_VALUE ? "∞" : c.getNumber())
+				.map(c -> (c.getNumber() == Integer.MAX_VALUE ? "-" : c.getNumber())
 						+ (c.getKind() == QuestionType.COMMITTEE_QUESTION ? "c" : "v"))
 				.collect(Collectors.joining(", ", prefix, suffix));
 
