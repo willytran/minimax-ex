@@ -30,10 +30,13 @@ public class StrategyXp {
 		int k = 150;
 		final long seed = ThreadLocalRandom.current().nextLong();
 
-		final ImmutableList<StrategyFactory> factoryListT1 = ImmutableList.of(StrategyFactory.random(),
-				StrategyFactory.pessimistic(), StrategyFactory.limited());
-		runs(factoryListT1, m, n, k, 25);
+//		final ImmutableList<StrategyFactory> factoryListT1 = ImmutableList.of(StrategyFactory.random(),
+//				StrategyFactory.pessimistic(), StrategyFactory.limited());
+//		runs(factoryListT1, m, n, k, 25);
 		
+		m = 10;
+		n = 20;
+		k = 250;
 		for (int i = 0; i < 55; i += 6) {
 			final ImmutableList<StrategyFactory> factoryListT3 = ImmutableList
 					.of(StrategyFactory.limitedCommitteeThenVoters(i), StrategyFactory.limitedVotersThenCommittee(k-i));
