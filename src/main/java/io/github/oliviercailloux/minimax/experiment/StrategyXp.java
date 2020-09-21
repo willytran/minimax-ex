@@ -37,7 +37,7 @@ public class StrategyXp {
 		m = 10;
 		n = 20;
 		k = 250;
-		for (int i = 0; i < 55; i += 6) {
+		for (int i = 3; i <= 24; i += 3) {
 			final ImmutableList<StrategyFactory> factoryListT3 = ImmutableList
 					.of(StrategyFactory.limitedCommitteeThenVoters(i), StrategyFactory.limitedVotersThenCommittee(k-i));
 			runs(factoryListT3, m, n, k, 10);
@@ -70,6 +70,7 @@ public class StrategyXp {
 		
 		for (int i = 0; i < nbRuns; ++i) {
 			final Oracle oracle = Oracle.build(Generator.genProfile(m, n), Generator.genWeights(m));
+//			final Oracle oracle = JsonConverter.toOracle("oracle-crashed.json");
 			for (StrategyFactory factory : factoryList) {
 				final Run run = Runner.run(factory, oracle, k);
 				LOGGER.info("Strategy {} - Time (run {}): {}.", factory.getDescription(), i, run.getTotalTime());
