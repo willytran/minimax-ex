@@ -1,0 +1,1617 @@
+{
+    "oracle": {
+        "profile": [
+            {
+                "voter": 1,
+                "preference": [
+                    5,
+                    3,
+                    1,
+                    4,
+                    2
+                ]
+            },
+            {
+                "voter": 2,
+                "preference": [
+                    3,
+                    1,
+                    2,
+                    4,
+                    5
+                ]
+            },
+            {
+                "voter": 3,
+                "preference": [
+                    5,
+                    4,
+                    1,
+                    3,
+                    2
+                ]
+            },
+            {
+                "voter": 4,
+                "preference": [
+                    2,
+                    3,
+                    4,
+                    5,
+                    1
+                ]
+            },
+            {
+                "voter": 5,
+                "preference": [
+                    5,
+                    1,
+                    2,
+                    3,
+                    4
+                ]
+            },
+            {
+                "voter": 6,
+                "preference": [
+                    4,
+                    1,
+                    5,
+                    2,
+                    3
+                ]
+            },
+            {
+                "voter": 7,
+                "preference": [
+                    3,
+                    2,
+                    1,
+                    4,
+                    5
+                ]
+            },
+            {
+                "voter": 8,
+                "preference": [
+                    5,
+                    3,
+                    1,
+                    4,
+                    2
+                ]
+            },
+            {
+                "voter": 9,
+                "preference": [
+                    2,
+                    4,
+                    5,
+                    3,
+                    1
+                ]
+            },
+            {
+                "voter": 10,
+                "preference": [
+                    3,
+                    4,
+                    5,
+                    1,
+                    2
+                ]
+            }
+        ],
+        "weights": [
+            1.0,
+            0.6344305072341585,
+            0.3989705696099556,
+            0.18559262850968353,
+            0.0
+        ]
+    },
+    "questions": [
+        {
+            "toVoter": {
+                "voter": 8,
+                "alternatives": [
+                    3,
+                    5
+                ]
+            }
+        },
+        {
+            "toVoter": {
+                "voter": 8,
+                "alternatives": [
+                    1,
+                    5
+                ]
+            }
+        },
+        {
+            "toVoter": {
+                "voter": 8,
+                "alternatives": [
+                    4,
+                    5
+                ]
+            }
+        },
+        {
+            "toVoter": {
+                "voter": 8,
+                "alternatives": [
+                    2,
+                    5
+                ]
+            }
+        },
+        {
+            "toVoter": {
+                "voter": 6,
+                "alternatives": [
+                    2,
+                    5
+                ]
+            }
+        },
+        {
+            "toVoter": {
+                "voter": 6,
+                "alternatives": [
+                    4,
+                    5
+                ]
+            }
+        },
+        {
+            "toVoter": {
+                "voter": 6,
+                "alternatives": [
+                    1,
+                    5
+                ]
+            }
+        },
+        {
+            "toVoter": {
+                "voter": 6,
+                "alternatives": [
+                    3,
+                    5
+                ]
+            }
+        },
+        {
+            "toVoter": {
+                "voter": 6,
+                "alternatives": [
+                    1,
+                    4
+                ]
+            }
+        },
+        {
+            "toVoter": {
+                "voter": 2,
+                "alternatives": [
+                    4,
+                    5
+                ]
+            }
+        },
+        {
+            "toVoter": {
+                "voter": 2,
+                "alternatives": [
+                    1,
+                    4
+                ]
+            }
+        },
+        {
+            "toVoter": {
+                "voter": 2,
+                "alternatives": [
+                    2,
+                    4
+                ]
+            }
+        },
+        {
+            "toVoter": {
+                "voter": 2,
+                "alternatives": [
+                    1,
+                    2
+                ]
+            }
+        },
+        {
+            "toVoter": {
+                "voter": 2,
+                "alternatives": [
+                    1,
+                    3
+                ]
+            }
+        },
+        {
+            "toVoter": {
+                "voter": 10,
+                "alternatives": [
+                    1,
+                    5
+                ]
+            }
+        },
+        {
+            "toVoter": {
+                "voter": 10,
+                "alternatives": [
+                    4,
+                    5
+                ]
+            }
+        },
+        {
+            "toVoter": {
+                "voter": 8,
+                "alternatives": [
+                    3,
+                    4
+                ]
+            }
+        },
+        {
+            "toVoter": {
+                "voter": 10,
+                "alternatives": [
+                    1,
+                    3
+                ]
+            }
+        },
+        {
+            "toVoter": {
+                "voter": 10,
+                "alternatives": [
+                    3,
+                    4
+                ]
+            }
+        },
+        {
+            "toVoter": {
+                "voter": 8,
+                "alternatives": [
+                    2,
+                    3
+                ]
+            }
+        },
+        {
+            "toVoter": {
+                "voter": 10,
+                "alternatives": [
+                    2,
+                    3
+                ]
+            }
+        },
+        {
+            "toVoter": {
+                "voter": 3,
+                "alternatives": [
+                    1,
+                    3
+                ]
+            }
+        },
+        {
+            "toVoter": {
+                "voter": 9,
+                "alternatives": [
+                    1,
+                    3
+                ]
+            }
+        },
+        {
+            "toVoter": {
+                "voter": 9,
+                "alternatives": [
+                    3,
+                    4
+                ]
+            }
+        },
+        {
+            "toVoter": {
+                "voter": 10,
+                "alternatives": [
+                    2,
+                    4
+                ]
+            }
+        },
+        {
+            "toVoter": {
+                "voter": 9,
+                "alternatives": [
+                    4,
+                    5
+                ]
+            }
+        },
+        {
+            "toVoter": {
+                "voter": 1,
+                "alternatives": [
+                    3,
+                    4
+                ]
+            }
+        },
+        {
+            "toVoter": {
+                "voter": 9,
+                "alternatives": [
+                    3,
+                    5
+                ]
+            }
+        },
+        {
+            "toVoter": {
+                "voter": 1,
+                "alternatives": [
+                    3,
+                    5
+                ]
+            }
+        },
+        {
+            "toVoter": {
+                "voter": 9,
+                "alternatives": [
+                    2,
+                    4
+                ]
+            }
+        },
+        {
+            "toVoter": {
+                "voter": 8,
+                "alternatives": [
+                    1,
+                    3
+                ]
+            }
+        },
+        {
+            "toVoter": {
+                "voter": 1,
+                "alternatives": [
+                    2,
+                    3
+                ]
+            }
+        },
+        {
+            "toVoter": {
+                "voter": 3,
+                "alternatives": [
+                    3,
+                    5
+                ]
+            }
+        },
+        {
+            "toVoter": {
+                "voter": 5,
+                "alternatives": [
+                    3,
+                    5
+                ]
+            }
+        },
+        {
+            "toVoter": {
+                "voter": 4,
+                "alternatives": [
+                    3,
+                    5
+                ]
+            }
+        },
+        {
+            "toVoter": {
+                "voter": 4,
+                "alternatives": [
+                    3,
+                    4
+                ]
+            }
+        },
+        {
+            "toVoter": {
+                "voter": 4,
+                "alternatives": [
+                    1,
+                    3
+                ]
+            }
+        },
+        {
+            "toVoter": {
+                "voter": 4,
+                "alternatives": [
+                    2,
+                    3
+                ]
+            }
+        },
+        {
+            "toVoter": {
+                "voter": 5,
+                "alternatives": [
+                    4,
+                    5
+                ]
+            }
+        },
+        {
+            "toVoter": {
+                "voter": 1,
+                "alternatives": [
+                    1,
+                    5
+                ]
+            }
+        },
+        {
+            "toVoter": {
+                "voter": 5,
+                "alternatives": [
+                    2,
+                    5
+                ]
+            }
+        },
+        {
+            "toCommittee": {
+                "lambda": {
+                    "numerator": 11,
+                    "denominator": 2
+                },
+                "rank": 1
+            }
+        },
+        {
+            "toCommittee": {
+                "lambda": {
+                    "numerator": 13,
+                    "denominator": 4
+                },
+                "rank": 1
+            }
+        },
+        {
+            "toVoter": {
+                "voter": 3,
+                "alternatives": [
+                    2,
+                    5
+                ]
+            }
+        },
+        {
+            "toVoter": {
+                "voter": 3,
+                "alternatives": [
+                    4,
+                    5
+                ]
+            }
+        },
+        {
+            "toVoter": {
+                "voter": 7,
+                "alternatives": [
+                    3,
+                    5
+                ]
+            }
+        },
+        {
+            "toVoter": {
+                "voter": 7,
+                "alternatives": [
+                    3,
+                    4
+                ]
+            }
+        },
+        {
+            "toVoter": {
+                "voter": 7,
+                "alternatives": [
+                    1,
+                    3
+                ]
+            }
+        },
+        {
+            "toVoter": {
+                "voter": 5,
+                "alternatives": [
+                    1,
+                    5
+                ]
+            }
+        },
+        {
+            "toCommittee": {
+                "lambda": {
+                    "numerator": 17,
+                    "denominator": 8
+                },
+                "rank": 1
+            }
+        },
+        {
+            "toVoter": {
+                "voter": 3,
+                "alternatives": [
+                    1,
+                    5
+                ]
+            }
+        },
+        {
+            "toVoter": {
+                "voter": 1,
+                "alternatives": [
+                    1,
+                    3
+                ]
+            }
+        },
+        {
+            "toVoter": {
+                "voter": 7,
+                "alternatives": [
+                    2,
+                    3
+                ]
+            }
+        },
+        {
+            "toVoter": {
+                "voter": 7,
+                "alternatives": [
+                    4,
+                    5
+                ]
+            }
+        },
+        {
+            "toVoter": {
+                "voter": 5,
+                "alternatives": [
+                    1,
+                    3
+                ]
+            }
+        },
+        {
+            "toVoter": {
+                "voter": 3,
+                "alternatives": [
+                    2,
+                    3
+                ]
+            }
+        },
+        {
+            "toVoter": {
+                "voter": 3,
+                "alternatives": [
+                    3,
+                    4
+                ]
+            }
+        },
+        {
+            "toVoter": {
+                "voter": 7,
+                "alternatives": [
+                    2,
+                    5
+                ]
+            }
+        },
+        {
+            "toVoter": {
+                "voter": 5,
+                "alternatives": [
+                    3,
+                    4
+                ]
+            }
+        },
+        {
+            "toCommittee": {
+                "lambda": {
+                    "numerator": 11,
+                    "denominator": 2
+                },
+                "rank": 3
+            }
+        },
+        {
+            "toVoter": {
+                "voter": 10,
+                "alternatives": [
+                    2,
+                    5
+                ]
+            }
+        },
+        {
+            "toVoter": {
+                "voter": 4,
+                "alternatives": [
+                    4,
+                    5
+                ]
+            }
+        },
+        {
+            "toVoter": {
+                "voter": 5,
+                "alternatives": [
+                    2,
+                    3
+                ]
+            }
+        },
+        {
+            "toCommittee": {
+                "lambda": {
+                    "numerator": 25,
+                    "denominator": 16
+                },
+                "rank": 1
+            }
+        },
+        {
+            "toVoter": {
+                "voter": 4,
+                "alternatives": [
+                    1,
+                    5
+                ]
+            }
+        },
+        {
+            "toVoter": {
+                "voter": 6,
+                "alternatives": [
+                    2,
+                    3
+                ]
+            }
+        },
+        {
+            "toVoter": {
+                "voter": 7,
+                "alternatives": [
+                    1,
+                    5
+                ]
+            }
+        },
+        {
+            "toCommittee": {
+                "lambda": {
+                    "numerator": 13,
+                    "denominator": 4
+                },
+                "rank": 3
+            }
+        },
+        {
+            "toCommittee": {
+                "lambda": {
+                    "numerator": 17,
+                    "denominator": 8
+                },
+                "rank": 3
+            }
+        },
+        {
+            "toCommittee": {
+                "lambda": {
+                    "numerator": 41,
+                    "denominator": 32
+                },
+                "rank": 1
+            }
+        },
+        {
+            "toCommittee": {
+                "lambda": {
+                    "numerator": 25,
+                    "denominator": 16
+                },
+                "rank": 3
+            }
+        },
+        {
+            "toCommittee": {
+                "lambda": {
+                    "numerator": 91,
+                    "denominator": 64
+                },
+                "rank": 1
+            }
+        },
+        {
+            "toCommittee": {
+                "lambda": {
+                    "numerator": 11,
+                    "denominator": 2
+                },
+                "rank": 2
+            }
+        },
+        {
+            "toCommittee": {
+                "lambda": {
+                    "numerator": 41,
+                    "denominator": 32
+                },
+                "rank": 3
+            }
+        },
+        {
+            "toCommittee": {
+                "lambda": {
+                    "numerator": 191,
+                    "denominator": 128
+                },
+                "rank": 1
+            }
+        },
+        {
+            "toCommittee": {
+                "lambda": {
+                    "numerator": 13,
+                    "denominator": 4
+                },
+                "rank": 2
+            }
+        },
+        {
+            "toVoter": {
+                "voter": 1,
+                "alternatives": [
+                    1,
+                    2
+                ]
+            }
+        },
+        {
+            "toVoter": {
+                "voter": 1,
+                "alternatives": [
+                    1,
+                    4
+                ]
+            }
+        },
+        {
+            "toCommittee": {
+                "lambda": {
+                    "numerator": 73,
+                    "denominator": 64
+                },
+                "rank": 3
+            }
+        },
+        {
+            "toVoter": {
+                "voter": 1,
+                "alternatives": [
+                    2,
+                    4
+                ]
+            }
+        },
+        {
+            "toVoter": {
+                "voter": 3,
+                "alternatives": [
+                    1,
+                    4
+                ]
+            }
+        },
+        {
+            "toCommittee": {
+                "lambda": {
+                    "numerator": 155,
+                    "denominator": 128
+                },
+                "rank": 3
+            }
+        },
+        {
+            "toVoter": {
+                "voter": 5,
+                "alternatives": [
+                    1,
+                    2
+                ]
+            }
+        },
+        {
+            "toVoter": {
+                "voter": 7,
+                "alternatives": [
+                    1,
+                    2
+                ]
+            }
+        },
+        {
+            "toCommittee": {
+                "lambda": {
+                    "numerator": 301,
+                    "denominator": 256
+                },
+                "rank": 3
+            }
+        },
+        {
+            "toCommittee": {
+                "lambda": {
+                    "numerator": 391,
+                    "denominator": 256
+                },
+                "rank": 1
+            }
+        },
+        {
+            "toCommittee": {
+                "lambda": {
+                    "numerator": 791,
+                    "denominator": 512
+                },
+                "rank": 1
+            }
+        },
+        {
+            "toCommittee": {
+                "lambda": {
+                    "numerator": 593,
+                    "denominator": 512
+                },
+                "rank": 3
+            }
+        },
+        {
+            "toVoter": {
+                "voter": 7,
+                "alternatives": [
+                    1,
+                    4
+                ]
+            }
+        },
+        {
+            "toCommittee": {
+                "lambda": {
+                    "numerator": 1591,
+                    "denominator": 1024
+                },
+                "rank": 1
+            }
+        },
+        {
+            "toVoter": {
+                "voter": 8,
+                "alternatives": [
+                    1,
+                    2
+                ]
+            }
+        },
+        {
+            "toVoter": {
+                "voter": 8,
+                "alternatives": [
+                    1,
+                    4
+                ]
+            }
+        },
+        {
+            "toCommittee": {
+                "lambda": {
+                    "numerator": 1177,
+                    "denominator": 1024
+                },
+                "rank": 3
+            }
+        },
+        {
+            "toVoter": {
+                "voter": 8,
+                "alternatives": [
+                    2,
+                    4
+                ]
+            }
+        },
+        {
+            "toCommittee": {
+                "lambda": {
+                    "numerator": 3173,
+                    "denominator": 2048
+                },
+                "rank": 1
+            }
+        },
+        {
+            "toCommittee": {
+                "lambda": {
+                    "numerator": 17,
+                    "denominator": 8
+                },
+                "rank": 2
+            }
+        },
+        {
+            "toVoter": {
+                "voter": 10,
+                "alternatives": [
+                    1,
+                    2
+                ]
+            }
+        },
+        {
+            "toCommittee": {
+                "lambda": {
+                    "numerator": 6355,
+                    "denominator": 4096
+                },
+                "rank": 1
+            }
+        },
+        {
+            "toCommittee": {
+                "lambda": {
+                    "numerator": 12719,
+                    "denominator": 8192
+                },
+                "rank": 1
+            }
+        },
+        {
+            "toCommittee": {
+                "lambda": {
+                    "numerator": 25429,
+                    "denominator": 16384
+                },
+                "rank": 1
+            }
+        },
+        {
+            "toCommittee": {
+                "lambda": {
+                    "numerator": 50867,
+                    "denominator": 32768
+                },
+                "rank": 1
+            }
+        },
+        {
+            "toCommittee": {
+                "lambda": {
+                    "numerator": 2363,
+                    "denominator": 2048
+                },
+                "rank": 3
+            }
+        },
+        {
+            "toCommittee": {
+                "lambda": {
+                    "numerator": 101743,
+                    "denominator": 65536
+                },
+                "rank": 1
+            }
+        },
+        {
+            "toCommittee": {
+                "lambda": {
+                    "numerator": 203495,
+                    "denominator": 131072
+                },
+                "rank": 1
+            }
+        },
+        {
+            "toCommittee": {
+                "lambda": {
+                    "numerator": 25,
+                    "denominator": 16
+                },
+                "rank": 2
+            }
+        },
+        {
+            "toCommittee": {
+                "lambda": {
+                    "numerator": 406999,
+                    "denominator": 262144
+                },
+                "rank": 1
+            }
+        },
+        {
+            "toCommittee": {
+                "lambda": {
+                    "numerator": 41,
+                    "denominator": 32
+                },
+                "rank": 2
+            }
+        },
+        {
+            "toCommittee": {
+                "lambda": {
+                    "numerator": 4717,
+                    "denominator": 4096
+                },
+                "rank": 3
+            }
+        },
+        {
+            "toCommittee": {
+                "lambda": {
+                    "numerator": 73,
+                    "denominator": 64
+                },
+                "rank": 2
+            }
+        },
+        {
+            "toCommittee": {
+                "lambda": {
+                    "numerator": 813989,
+                    "denominator": 524288
+                },
+                "rank": 1
+            }
+        },
+        {
+            "toCommittee": {
+                "lambda": {
+                    "numerator": 1627987,
+                    "denominator": 1048576
+                },
+                "rank": 1
+            }
+        },
+        {
+            "toCommittee": {
+                "lambda": {
+                    "numerator": 9425,
+                    "denominator": 8192
+                },
+                "rank": 3
+            }
+        },
+        {
+            "toCommittee": {
+                "lambda": {
+                    "numerator": 18841,
+                    "denominator": 16384
+                },
+                "rank": 3
+            }
+        },
+        {
+            "toCommittee": {
+                "lambda": {
+                    "numerator": 37673,
+                    "denominator": 32768
+                },
+                "rank": 3
+            }
+        },
+        {
+            "toCommittee": {
+                "lambda": {
+                    "numerator": 137,
+                    "denominator": 128
+                },
+                "rank": 2
+            }
+        },
+        {
+            "toCommittee": {
+                "lambda": {
+                    "numerator": 283,
+                    "denominator": 256
+                },
+                "rank": 2
+            }
+        },
+        {
+            "toCommittee": {
+                "lambda": {
+                    "numerator": 557,
+                    "denominator": 512
+                },
+                "rank": 2
+            }
+        },
+        {
+            "toCommittee": {
+                "lambda": {
+                    "numerator": 1123,
+                    "denominator": 1024
+                },
+                "rank": 2
+            }
+        },
+        {
+            "toCommittee": {
+                "lambda": {
+                    "numerator": 2255,
+                    "denominator": 2048
+                },
+                "rank": 2
+            }
+        },
+        {
+            "toCommittee": {
+                "lambda": {
+                    "numerator": 4519,
+                    "denominator": 4096
+                },
+                "rank": 2
+            }
+        },
+        {
+            "toCommittee": {
+                "lambda": {
+                    "numerator": 75355,
+                    "denominator": 65536
+                },
+                "rank": 3
+            }
+        },
+        {
+            "toCommittee": {
+                "lambda": {
+                    "numerator": 9047,
+                    "denominator": 8192
+                },
+                "rank": 2
+            }
+        },
+        {
+            "toCommittee": {
+                "lambda": {
+                    "numerator": 18085,
+                    "denominator": 16384
+                },
+                "rank": 2
+            }
+        },
+        {
+            "toCommittee": {
+                "lambda": {
+                    "numerator": 150701,
+                    "denominator": 131072
+                },
+                "rank": 3
+            }
+        },
+        {
+            "toCommittee": {
+                "lambda": {
+                    "numerator": 301393,
+                    "denominator": 262144
+                },
+                "rank": 3
+            }
+        },
+        {
+            "toCommittee": {
+                "lambda": {
+                    "numerator": 3255983,
+                    "denominator": 2097152
+                },
+                "rank": 1
+            }
+        },
+        {
+            "toCommittee": {
+                "lambda": {
+                    "numerator": 36161,
+                    "denominator": 32768
+                },
+                "rank": 2
+            }
+        },
+        {
+            "toCommittee": {
+                "lambda": {
+                    "numerator": 6511975,
+                    "denominator": 4194304
+                },
+                "rank": 1
+            }
+        },
+        {
+            "toCommittee": {
+                "lambda": {
+                    "numerator": 602777,
+                    "denominator": 524288
+                },
+                "rank": 3
+            }
+        },
+        {
+            "toCommittee": {
+                "lambda": {
+                    "numerator": 72313,
+                    "denominator": 65536
+                },
+                "rank": 2
+            }
+        },
+        {
+            "toCommittee": {
+                "lambda": {
+                    "numerator": 13023959,
+                    "denominator": 8388608
+                },
+                "rank": 1
+            }
+        },
+        {
+            "toCommittee": {
+                "lambda": {
+                    "numerator": 26047909,
+                    "denominator": 16777216
+                },
+                "rank": 1
+            }
+        },
+        {
+            "toCommittee": {
+                "lambda": {
+                    "numerator": 52095809,
+                    "denominator": 33554432
+                },
+                "rank": 1
+            }
+        },
+        {
+            "toCommittee": {
+                "lambda": {
+                    "numerator": 104191627,
+                    "denominator": 67108864
+                },
+                "rank": 1
+            }
+        },
+        {
+            "toCommittee": {
+                "lambda": {
+                    "numerator": 1205563,
+                    "denominator": 1048576
+                },
+                "rank": 3
+            }
+        },
+        {
+            "toCommittee": {
+                "lambda": {
+                    "numerator": 208383245,
+                    "denominator": 134217728
+                },
+                "rank": 1
+            }
+        },
+        {
+            "toCommittee": {
+                "lambda": {
+                    "numerator": 416766499,
+                    "denominator": 268435456
+                },
+                "rank": 1
+            }
+        },
+        {
+            "toCommittee": {
+                "lambda": {
+                    "numerator": 833532989,
+                    "denominator": 536870912
+                },
+                "rank": 1
+            }
+        },
+        {
+            "toCommittee": {
+                "lambda": {
+                    "numerator": 2411117,
+                    "denominator": 2097152
+                },
+                "rank": 3
+            }
+        },
+        {
+            "toCommittee": {
+                "lambda": {
+                    "numerator": 1667065987,
+                    "denominator": 1073741824
+                },
+                "rank": 1
+            }
+        },
+        {
+            "toCommittee": {
+                "lambda": {
+                    "numerator": 144635,
+                    "denominator": 131072
+                },
+                "rank": 2
+            }
+        },
+        {
+            "toCommittee": {
+                "lambda": {
+                    "numerator": 2147483647,
+                    "denominator": 2147483647
+                },
+                "rank": 1
+            }
+        },
+        {
+            "toCommittee": {
+                "lambda": {
+                    "numerator": 2147483647,
+                    "denominator": 2147483647
+                },
+                "rank": 1
+            }
+        },
+        {
+            "toCommittee": {
+                "lambda": {
+                    "numerator": 2147483647,
+                    "denominator": 2147483647
+                },
+                "rank": 1
+            }
+        },
+        {
+            "toCommittee": {
+                "lambda": {
+                    "numerator": 2147483647,
+                    "denominator": 2147483647
+                },
+                "rank": 1
+            }
+        },
+        {
+            "toCommittee": {
+                "lambda": {
+                    "numerator": 289279,
+                    "denominator": 262144
+                },
+                "rank": 2
+            }
+        },
+        {
+            "toCommittee": {
+                "lambda": {
+                    "numerator": 2147483647,
+                    "denominator": 2147483647
+                },
+                "rank": 1
+            }
+        },
+        {
+            "toCommittee": {
+                "lambda": {
+                    "numerator": 4822243,
+                    "denominator": 4194304
+                },
+                "rank": 3
+            }
+        },
+        {
+            "toCommittee": {
+                "lambda": {
+                    "numerator": 2147483647,
+                    "denominator": 2147483647
+                },
+                "rank": 1
+            }
+        },
+        {
+            "toCommittee": {
+                "lambda": {
+                    "numerator": 9644477,
+                    "denominator": 8388608
+                },
+                "rank": 3
+            }
+        }
+    ],
+    "timesMs": [
+        124,
+        126,
+        167,
+        131,
+        127,
+        127,
+        129,
+        131,
+        129,
+        131,
+        137,
+        128,
+        127,
+        130,
+        118,
+        120,
+        119,
+        203,
+        246,
+        131,
+        127,
+        124,
+        123,
+        123,
+        122,
+        123,
+        121,
+        121,
+        126,
+        122,
+        109,
+        109,
+        109,
+        211,
+        252,
+        124,
+        118,
+        116,
+        116,
+        114,
+        117,
+        117,
+        122,
+        137,
+        134,
+        135,
+        134,
+        134,
+        136,
+        337,
+        216,
+        152,
+        145,
+        146,
+        149,
+        144,
+        141,
+        142,
+        141,
+        143,
+        149,
+        211,
+        302,
+        204,
+        159,
+        141,
+        126,
+        121,
+        127,
+        130,
+        134,
+        98,
+        103,
+        104,
+        106,
+        209,
+        261,
+        146,
+        121,
+        126,
+        114,
+        96,
+        98,
+        87,
+        86,
+        88,
+        91,
+        92,
+        93,
+        83,
+        196,
+        203,
+        128,
+        94,
+        83,
+        79,
+        82,
+        40,
+        42,
+        42,
+        44,
+        45,
+        44,
+        45,
+        47,
+        46,
+        48,
+        47,
+        51,
+        53,
+        51,
+        50,
+        50,
+        125,
+        112,
+        131,
+        96,
+        61,
+        60,
+        59,
+        58,
+        59,
+        59,
+        60,
+        60,
+        61,
+        61,
+        62,
+        63,
+        68,
+        64,
+        69,
+        67,
+        168,
+        187,
+        84,
+        76,
+        73,
+        72,
+        73,
+        72,
+        73,
+        74,
+        74,
+        75,
+        76,
+        75,
+        76,
+        162,
+        197
+    ]
+}
