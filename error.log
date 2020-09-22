@@ -1,0 +1,31 @@
+11:11:49.346 [io.github.oliviercailloux.minimax.experiment.StrategyXp.main()] INFO  i.g.o.minimax.experiment.StrategyXp - Strategy Limited, constrained to [42c, -v] - Time (run 0): PT12M18.829S.
+11:17:43.360 [io.github.oliviercailloux.minimax.experiment.StrategyXp.main()] INFO  i.g.o.minimax.experiment.StrategyXp - Strategy Limited, constrained to [208v, -c] - Time (run 0): PT5M29.913S.
+11:30:10.218 [io.github.oliviercailloux.minimax.experiment.StrategyXp.main()] INFO  i.g.o.minimax.experiment.StrategyXp - Strategy Limited, constrained to [42c, -v] - Time (run 1): PT12M15.656S.
+[WARNING]
+io.github.oliviercailloux.jlp.solve.SolverException
+    at io.github.oliviercailloux.jlp.or_tools.OrToolsSolver.transformResultStatus (OrToolsSolver.java:208)
+    at io.github.oliviercailloux.jlp.or_tools.OrToolsSolver.solve (OrToolsSolver.java:103)
+    at io.github.oliviercailloux.minimax.elicitation.ConstraintsOnWeights.optimize (ConstraintsOnWeights.java:228)
+    at io.github.oliviercailloux.minimax.elicitation.ConstraintsOnWeights.minimize (ConstraintsOnWeights.java:202)
+    at io.github.oliviercailloux.minimax.strategies.StrategyByMmr.getMinTauW (StrategyByMmr.java:306)
+    at io.github.oliviercailloux.minimax.strategies.StrategyByMmr.nextQuestion (StrategyByMmr.java:198)
+    at io.github.oliviercailloux.minimax.experiment.Runner.run (Runner.java:66)
+    at io.github.oliviercailloux.minimax.experiment.Runner.run (Runner.java:84)
+    at io.github.oliviercailloux.minimax.experiment.StrategyXp.runs (StrategyXp.java:74)
+    at io.github.oliviercailloux.minimax.experiment.StrategyXp.main (StrategyXp.java:43)
+    at org.codehaus.mojo.exec.ExecJavaMojo$1.run (ExecJavaMojo.java:254)
+    at java.lang.Thread.run (Thread.java:834)
+[INFO] ------------------------------------------------------------------------
+[INFO] BUILD FAILURE
+[INFO] ------------------------------------------------------------------------
+[INFO] Total time:  21:15 h
+[INFO] Finished at: 2020-09-20T11:36:12+02:00
+[INFO] ------------------------------------------------------------------------
+[ERROR] Failed to execute goal org.codehaus.mojo:exec-maven-plugin:3.0.0:java (default-cli) on project minimax: An exception occured while executing the Java class. null: SolverException -> [Help 1]
+[ERROR]
+[ERROR] To see the full stack trace of the errors, re-run Maven with the -e switch.
+[ERROR] Re-run Maven using the -X switch to enable full debug logging.
+[ERROR]
+[ERROR] For more information about the errors and possible solutions, please read the following articles:
+[ERROR] [Help 1] http://cwiki.apache.org/confluence/display/MAVEN/MojoExecutionException
+
