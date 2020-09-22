@@ -13,10 +13,8 @@ import com.google.common.collect.ImmutableList;
 import com.google.common.collect.ImmutableMap;
 
 import io.github.oliviercailloux.minimax.elicitation.Oracle;
-import io.github.oliviercailloux.minimax.elicitation.QuestionType;
 import io.github.oliviercailloux.minimax.experiment.json.JsonConverter;
 import io.github.oliviercailloux.minimax.experiment.other_formats.ToCsv;
-import io.github.oliviercailloux.minimax.strategies.QuestioningConstraint;
 import io.github.oliviercailloux.minimax.strategies.StrategyFactory;
 import io.github.oliviercailloux.minimax.utils.Generator;
 
@@ -25,23 +23,16 @@ public class StrategyXp {
 	private static final Logger LOGGER = LoggerFactory.getLogger(StrategyXp.class);
 
 	public static void main(String[] args) throws Exception {
-		int m = 5;
-		int n = 10;
-		int k = 150;
 		final long seed = ThreadLocalRandom.current().nextLong();
 
-//		final ImmutableList<StrategyFactory> factoryListT1 = ImmutableList.of(StrategyFactory.random(),
-//				StrategyFactory.pessimistic(), StrategyFactory.limited());
-//		runs(factoryListT1, m, n, k, 25);
+		final int m = 10;
+		final int n = 20;
+		final int k = 250;
+		final int runs = 25;
 		
-		m = 10;
-		n = 20;
-		k = 250;
-		for (int i = 3; i <= 24; i += 3) {
-			final ImmutableList<StrategyFactory> factoryListT3 = ImmutableList
-					.of(StrategyFactory.limitedCommitteeThenVoters(i), StrategyFactory.limitedVotersThenCommittee(k-i));
-			runs(factoryListT3, m, n, k, 10);
-		}
+		final ImmutableList<StrategyFactory> factoryListT3 = ImmutableList.of(StrategyFactory.limited(),
+				StrategyFactory.limitedCommitteeThenVoters(25), StrategyFactory.limitedCommitteeThenVoters(75));
+		runs(factoryListT3, m, n, k, runs);
 
 	}
 
@@ -55,9 +46,10 @@ public class StrategyXp {
 		Files.createDirectories(outDir);
 		final ImmutableMap.Builder<StrategyFactory, Path> tmpJsonMapBuilder = ImmutableMap.builder();
 		final ImmutableMap.Builder<StrategyFactory, Path> tmpCsvMapBuilder = ImmutableMap.builder();
-		final ImmutableMap.Builder<StrategyFactory, ImmutableList.Builder<Run>> tmpRunsBuilders = ImmutableMap.builder();
+		final ImmutableMap.Builder<StrategyFactory, ImmutableList.Builder<Run>> tmpRunsBuilders = ImmutableMap
+				.builder();
 		for (StrategyFactory factory : factoryList) {
-			final String prefixTemp = "m = " + m + ", n = " + n + ", k = " + k+ ", "+ factory.getDescription()
+			final String prefixTemp = "m = " + m + ", n = " + n + ", k = " + k + ", " + factory.getDescription()
 					+ ", ongoing";
 			tmpJsonMapBuilder.put(factory, outDir.resolve(prefixTemp + ".json"));
 			tmpCsvMapBuilder.put(factory, outDir.resolve(prefixTemp + ".csv"));
@@ -66,8 +58,7 @@ public class StrategyXp {
 		final ImmutableMap<StrategyFactory, Path> tmpJsonMap = tmpJsonMapBuilder.build();
 		final ImmutableMap<StrategyFactory, Path> tmpCsvMap = tmpCsvMapBuilder.build();
 		final ImmutableMap<StrategyFactory, ImmutableList.Builder<Run>> runsBuilders = tmpRunsBuilders.build();
-		
-		
+
 		for (int i = 0; i < nbRuns; ++i) {
 			final Oracle oracle = Oracle.build(Generator.genProfile(m, n), Generator.genWeights(m));
 //			final Oracle oracle = JsonConverter.toOracle("oracle-crashed.json");
@@ -84,8 +75,8 @@ public class StrategyXp {
 		}
 
 		for (StrategyFactory factory : factoryList) {
-			final String prefix = "m = " + m + ", n = " + n + ", k = " + k + ", nbRuns = "
-					+ nbRuns + ", "+ factory.getDescription();
+			final String prefix = "m = " + m + ", n = " + n + ", k = " + k + ", nbRuns = " + nbRuns + ", "
+					+ factory.getDescription();
 			final Path outJson = outDir.resolve(prefix + ".json");
 			final Path outCsv = outDir.resolve(prefix + ".csv");
 			Files.move(tmpJsonMap.get(factory), outJson, StandardCopyOption.REPLACE_EXISTING);
