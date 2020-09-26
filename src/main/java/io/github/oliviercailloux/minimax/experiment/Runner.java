@@ -45,13 +45,11 @@ public class Runner {
 	 * @throws IOException
 	 */
 	public static Run run(StrategyFactory strategyFactory, int m, int n, int k) throws IOException {
-		final Oracle oracle;
-		if (overridingOracle == null) {
-			oracle = Oracle.build(Generator.genProfile(m, n), Generator.genWeights(m));
-		} else {
-			oracle = overridingOracle;
-		}
+		final Oracle oracle = Oracle.build(Generator.genProfile(m, n), Generator.genWeights(m));
+		return run(strategyFactory, oracle, k);
+	}
 
+	public static Run run(StrategyFactory strategyFactory, Oracle oracle, int k) throws IOException {
 		final Strategy strategy = strategyFactory.get();
 
 		final PrefKnowledge knowledge = PrefKnowledge.given(oracle.getAlternatives(), oracle.getProfile().keySet());
@@ -77,11 +75,6 @@ public class Runner {
 		final long endTime = System.currentTimeMillis();
 
 		return Run.of(oracle, tBuilder.build(), qBuilder.build(), endTime);
-	}
-
-	public static Run run(StrategyFactory strategyFactory, Oracle oracle, int k) throws IOException {
-		overridingOracle = oracle;
-		return run(strategyFactory, oracle.getM(), oracle.getN(), k);
 	}
 
 	public static void show(Run run) {
