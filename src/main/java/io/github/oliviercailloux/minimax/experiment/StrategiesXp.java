@@ -4,7 +4,6 @@ import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.StandardCopyOption;
-import java.util.concurrent.ThreadLocalRandom;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -23,8 +22,6 @@ public class StrategiesXp {
 	private static final Logger LOGGER = LoggerFactory.getLogger(StrategiesXp.class);
 
 	public static void main(String[] args) throws Exception {
-		final long seed = ThreadLocalRandom.current().nextLong();
-
 		final int m = 10;
 		final int n = 10;
 		final int k = 250;
