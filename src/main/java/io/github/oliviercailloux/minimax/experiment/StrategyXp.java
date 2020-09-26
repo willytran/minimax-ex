@@ -24,14 +24,14 @@ public class StrategyXp {
 	public static void main(String[] args) throws Exception {
 		final int m = 10;
 		final int n = 20;
-		final int k = 500;
+		final int k = 1;
 		final long seed = ThreadLocalRandom.current().nextLong();
 //		final StrategyFactory factory = StrategyFactory.limited();
 		final StrategyFactory factory = StrategyFactory.limited(seed,
 				ImmutableList.of(QuestioningConstraint.of(QuestionType.VOTER_QUESTION, Integer.MAX_VALUE)));
 //		final StrategyFactory factory = StrategyFactory.byMmrs(seed, MmrLottery.MAX_COMPARATOR);
 //		final StrategyFactory factory = StrategyFactory.random();
-		runs(factory, m, n, k, 50);
+		runs(factory, m, n, k, 1);
 	}
 
 	/**
@@ -39,7 +39,7 @@ public class StrategyXp {
 	 * questions).
 	 */
 	public static void runs(StrategyFactory factory, int m, int n, int k, int nbRuns) throws IOException {
-		final Path outDir = Path.of("experiments/Strategy/");
+		final Path outDir = Path.of("experiments/");
 		Files.createDirectories(outDir);
 		final String prefixTemp = factory.getDescription() + ", m = " + m + ", n = " + n + ", k = " + k + ", ongoing";
 		final Path tmpJson = outDir.resolve(prefixTemp + ".json");
@@ -55,7 +55,7 @@ public class StrategyXp {
 			final Runs runs = Runs.of(factory, runsBuilder.build());
 //			Runner.summarize(runs);
 			Files.writeString(tmpJson, JsonConverter.toJson(runs).toString());
-			Files.writeString(tmpCsv, ToCsv.toCsv(runs));
+			Files.writeString(tmpCsv, ToCsv.toCsv(runs, 1));
 		}
 
 		final String prefix = factory.getDescription() + ", m = " + m + ", n = " + n + ", k = " + k + ", nbRuns = "

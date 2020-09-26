@@ -67,7 +67,7 @@ public class StrategiesXp {
 				final Runs runs = Runs.of(factory, runsBuilders.get(factory).build());
 //				Runner.summarize(runs);
 				Files.writeString(tmpJsonMap.get(factory), JsonConverter.toJson(runs).toString());
-				Files.writeString(tmpCsvMap.get(factory), ToCsv.toCsv(runs));
+				Files.writeString(tmpCsvMap.get(factory), ToCsv.toCsv(runs, 5));
 			}
 		}
 

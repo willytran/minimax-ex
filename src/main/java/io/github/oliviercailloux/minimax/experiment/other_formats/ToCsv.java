@@ -1,5 +1,7 @@
 package io.github.oliviercailloux.minimax.experiment.other_formats;
 
+import static com.google.common.base.Preconditions.checkArgument;
+
 import java.io.StringWriter;
 import java.text.NumberFormat;
 import java.util.Locale;
@@ -20,9 +22,11 @@ public class ToCsv {
 	@SuppressWarnings("unused")
 	private static final Logger LOGGER = LoggerFactory.getLogger(ToCsv.class);
 
-	public static String toCsv(Runs runs) {
-		final ImmutableMap<Integer, Stats> everyFive = IntStream.rangeClosed(0, runs.getMaxK()).filter(i -> i % 5 == 0)
-				.boxed().collect(ImmutableMap.toImmutableMap(i -> i, i -> runs.getMinimalMaxRegretStats().get(i)));
+	public static String toCsv(Runs runs, int modulo) {
+		checkArgument(modulo >= 1);
+		final ImmutableMap<Integer, Stats> everyFive = IntStream.rangeClosed(0, runs.getMaxK())
+				.filter(i -> i % modulo == 0).boxed()
+				.collect(ImmutableMap.toImmutableMap(i -> i, i -> runs.getMinimalMaxRegretStats().get(i)));
 
 		final NumberFormat formatter = NumberFormat.getNumberInstance(Locale.ENGLISH);
 		formatter.setMaximumFractionDigits(2);
