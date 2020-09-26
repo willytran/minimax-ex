@@ -28,10 +28,9 @@ public class Generator {
 		Random r = new Random();
 		double[] differences = new double[nbAlternatives - 1];
 		double sum = 0;
-		double p = (1/(double)(nbAlternatives - 1));
+		double p = (1 / (double) (nbAlternatives - 1));
 		for (int i = 1; i < nbAlternatives - 1; i++) {
-			differences[i] = r.nextDouble() < p ? 0.9 + (r.nextDouble() * 0.1)
-					: (r.nextDouble() * 0.1);;
+			differences[i] = r.nextDouble() < p ? 0.9 + (r.nextDouble() * 0.1) : (r.nextDouble() * 0.1);
 			sum += differences[i];
 		}
 		for (int i = 0; i < nbAlternatives - 1; i++) {
