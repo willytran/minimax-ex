@@ -26,12 +26,12 @@ public class StrategiesXp {
 		final long seed = ThreadLocalRandom.current().nextLong();
 
 		final int m = 10;
-		final int n = 20;
+		final int n = 10;
 		final int k = 250;
 		final int runs = 25;
-		
+
 		final ImmutableList<StrategyFactory> factoryListT3 = ImmutableList.of(StrategyFactory.limited(),
-				StrategyFactory.limitedCommitteeThenVoters(25), StrategyFactory.limitedCommitteeThenVoters(75));
+				StrategyFactory.limitedCommitteeThenVoters(25));
 		runs(factoryListT3, m, n, k, runs);
 
 	}
