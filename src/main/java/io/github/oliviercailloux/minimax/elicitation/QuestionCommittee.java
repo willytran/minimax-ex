@@ -3,6 +3,7 @@ package io.github.oliviercailloux.minimax.elicitation;
 import static com.google.common.base.Preconditions.checkArgument;
 import static java.util.Objects.requireNonNull;
 
+import java.util.Comparator;
 import java.util.Objects;
 
 import javax.json.bind.annotation.JsonbCreator;
@@ -28,12 +29,15 @@ import io.github.oliviercailloux.minimax.experiment.json.AprationalAdapter;
  *
  */
 @JsonbPropertyOrder({ "lambda", "rank" })
-public class QuestionCommittee {
+public class QuestionCommittee implements Comparable<QuestionCommittee> {
 
 	@JsonbCreator
 	public static QuestionCommittee given(@JsonbProperty("lambda") Aprational lambda, @JsonbProperty("rank") int rank) {
 		return new QuestionCommittee(lambda, rank);
 	}
+
+	public static final Comparator<QuestionCommittee> BY_RANK_THEN_LAMBDA = Comparator
+			.comparing(QuestionCommittee::getRank).thenComparing(QuestionCommittee::getLambda);
 
 	private final Aprational lambda;
 	private final int rank;
@@ -70,6 +74,11 @@ public class QuestionCommittee {
 	@JsonbTransient
 	public CommitteePreferenceInformation getNegativeInformation() {
 		return CommitteePreferenceInformation.given(rank, ComparisonOperator.LE, lambda);
+	}
+
+	@Override
+	public int compareTo(QuestionCommittee q2) {
+		return BY_RANK_THEN_LAMBDA.compare(this, q2);
 	}
 
 	@Override

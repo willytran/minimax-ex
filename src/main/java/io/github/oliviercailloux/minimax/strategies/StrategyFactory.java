@@ -89,6 +89,7 @@ public class StrategyFactory implements Supplier<Strategy> {
 	}
 
 	public static StrategyFactory limited(long seed, List<QuestioningConstraint> constraints) {
+		LOGGER.info("Using seed {}.", seed);
 		final Random random = new Random(seed);
 
 		final PrintableJsonObject json = JsonbUtils.toJsonObject(ImmutableMap.of("family",

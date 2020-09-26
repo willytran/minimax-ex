@@ -4,17 +4,14 @@ import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.StandardCopyOption;
-import java.util.concurrent.ThreadLocalRandom;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import com.google.common.collect.ImmutableList;
 
-import io.github.oliviercailloux.minimax.elicitation.QuestionType;
 import io.github.oliviercailloux.minimax.experiment.json.JsonConverter;
 import io.github.oliviercailloux.minimax.experiment.other_formats.ToCsv;
-import io.github.oliviercailloux.minimax.strategies.QuestioningConstraint;
 import io.github.oliviercailloux.minimax.strategies.StrategyFactory;
 
 public class StrategyXp {
@@ -24,14 +21,14 @@ public class StrategyXp {
 	public static void main(String[] args) throws Exception {
 		final int m = 10;
 		final int n = 20;
-		final int k = 1;
-		final long seed = ThreadLocalRandom.current().nextLong();
-//		final StrategyFactory factory = StrategyFactory.limited();
-		final StrategyFactory factory = StrategyFactory.limited(seed,
-				ImmutableList.of(QuestioningConstraint.of(QuestionType.VOTER_QUESTION, Integer.MAX_VALUE)));
+		final int k = 10;
+//		final long seed = ThreadLocalRandom.current().nextLong();
+		final StrategyFactory factory = StrategyFactory.limited();
+//		final StrategyFactory factory = StrategyFactory.limited(seed,
+//				ImmutableList.of(QuestioningConstraint.of(QuestionType.VOTER_QUESTION, Integer.MAX_VALUE)));
 //		final StrategyFactory factory = StrategyFactory.byMmrs(seed, MmrLottery.MAX_COMPARATOR);
 //		final StrategyFactory factory = StrategyFactory.random();
-		runs(factory, m, n, k, 1);
+		runs(factory, m, n, k, 2);
 	}
 
 	/**

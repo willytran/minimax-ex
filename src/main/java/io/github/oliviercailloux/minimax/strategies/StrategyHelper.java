@@ -5,7 +5,10 @@ import static com.google.common.base.Preconditions.checkNotNull;
 import static com.google.common.base.Preconditions.checkState;
 import static com.google.common.base.Verify.verify;
 
+import java.util.Collection;
 import java.util.Comparator;
+import java.util.Iterator;
+import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 import java.util.Random;
@@ -17,11 +20,13 @@ import java.util.stream.Stream;
 import org.apfloat.Apint;
 import org.apfloat.Aprational;
 import org.apfloat.AprationalMath;
+import org.checkerframework.checker.nullness.qual.Nullable;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import com.google.common.collect.ImmutableSet;
 import com.google.common.collect.ImmutableSetMultimap;
+import com.google.common.collect.Iterators;
 import com.google.common.collect.Range;
 import com.google.common.graph.EndpointPair;
 import com.google.common.graph.Graph;
@@ -66,6 +71,21 @@ public class StrategyHelper {
 		return minKeys;
 	}
 
+	public static <E> boolean isStrictlyIncreasing(Iterable<E> collection, Comparator<E> comparator) {
+		final Iterator<E> it = collection.iterator();
+		@Nullable
+		E e1 = Iterators.getNext(it, null);
+		while (it.hasNext()) {
+			final E e2 = it.next();
+			if (comparator.compare(e1, e2) >= 0) {
+				return false;
+			}
+			e1 = e2;
+		}
+
+		return true;
+	}
+
 	public static StrategyHelper newInstance() {
 		return new StrategyHelper();
 	}
@@ -83,8 +103,15 @@ public class StrategyHelper {
 		return knowledge;
 	}
 
+	/**
+	 * @param knowledge must give the alternatives and voters in sorted order
+	 *
+	 * @see #drawFromStrictlyIncreasing(List, Comparator)
+	 */
 	public void setKnowledge(PrefKnowledge knowledge) {
 		checkArgument(checkNotNull(knowledge).getAlternatives().size() >= 2);
+		checkArgument(isStrictlyIncreasing(knowledge.getAlternatives(), Alternative.BY_ID));
+		checkArgument(isStrictlyIncreasing(knowledge.getVoters(), Voter.BY_ID));
 		this.knowledge = knowledge;
 	}
 
@@ -118,10 +145,27 @@ public class StrategyHelper {
 		return getRandom().nextInt(size);
 	}
 
-	public <E> E draw(ImmutableSet<E> candidates) {
+	/**
+	 * Ordering matters, for stability of the drawing.
+	 */
+	public <E> E drawFromStrictlyIncreasing(List<E> candidates, Comparator<E> comparator) {
 		checkArgument(!candidates.isEmpty());
 		final int i = getRandom().nextInt(candidates.size());
-		return candidates.asList().get(i);
+		assert isStrictlyIncreasing(candidates, comparator) : candidates;
+		return candidates.get(i);
+	}
+
+	/**
+	 * @param comparator should be consistent with equals
+	 */
+	public <E> E sortAndDraw(Collection<E> candidates, Comparator<E> comparator) {
+		checkArgument(!candidates.isEmpty());
+		final int i = getRandom().nextInt(candidates.size());
+		final Iterator<E> it = candidates.stream().sorted(comparator).iterator();
+		return Iterators.get(it, i);
+//		final ArrayList<E> sort = new ArrayList<>(candidates);
+//		Collections.sort(sort, comparator);
+//		return sort.get(i);
 	}
 
 	public ImmutableSet<Voter> getQuestionableVoters() {

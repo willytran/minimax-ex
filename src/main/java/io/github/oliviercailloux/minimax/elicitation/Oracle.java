@@ -4,6 +4,7 @@ import static com.google.common.base.Preconditions.checkArgument;
 import static com.google.common.base.Preconditions.checkNotNull;
 
 import java.util.Comparator;
+import java.util.List;
 import java.util.Map;
 import java.util.Objects;
 import java.util.Set;
@@ -13,6 +14,9 @@ import javax.json.bind.annotation.JsonbProperty;
 import javax.json.bind.annotation.JsonbPropertyOrder;
 import javax.json.bind.annotation.JsonbTransient;
 import javax.json.bind.annotation.JsonbTypeAdapter;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import com.google.common.base.MoreObjects;
 import com.google.common.base.VerifyException;
@@ -36,11 +40,20 @@ import io.github.oliviercailloux.minimax.experiment.json.WeightsAdapter;
  */
 @JsonbPropertyOrder({ "profile", "weights" })
 public class Oracle {
+	@SuppressWarnings("unused")
+	private static final Logger LOGGER = LoggerFactory.getLogger(Oracle.class);
 
+	/**
+	 * @param profile is a list so that JsonB will keep read ordering. Should
+	 *                contain no duplicate.
+	 */
 	@JsonbCreator
-	public static Oracle build(@JsonbProperty("profile") Set<VoterStrictPreference> profile,
+	public static Oracle build(@JsonbProperty("profile") List<VoterStrictPreference> profile,
 			@JsonbProperty("weights") PSRWeights weights) {
-		return new Oracle(profile, weights);
+		LOGGER.debug("Received profiles: {}, weights: {}.", profile, weights);
+		final ImmutableSet<VoterStrictPreference> profileSet = ImmutableSet.copyOf(profile);
+		checkArgument(profile.size() == profileSet.size());
+		return new Oracle(profileSet, weights);
 	}
 
 	public static Oracle build(Map<Voter, VoterStrictPreference> profile, PSRWeights weights) {
