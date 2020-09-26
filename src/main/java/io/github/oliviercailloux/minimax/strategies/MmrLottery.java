@@ -7,16 +7,16 @@ import java.util.function.DoubleBinaryOperator;
 import com.google.common.base.MoreObjects;
 
 public class MmrLottery {
-	
+
 	/**
-	 * MAX_COMPARATOR considers a question Q1 greater than a question Q2 if
-	 * (maxQ1>maxQ2) or (maxQ1=maxQ2 & minQ1>minQ2)
-	 *  
+	 * MAX_COMPARATOR is pessimistic. It considers a question Q1 greater than a
+	 * question Q2 if (maxQ1>maxQ2) or (maxQ1=maxQ2 & minQ1>minQ2)
+	 *
 	 * Thus, the “smallest” question is the best one as we seek to minimize regret.
 	 *
 	 */
 	public static final Comparator<MmrLottery> MAX_COMPARATOR = getMaxComparator();
-	
+
 	public static final Comparator<MmrLottery> MIN_COMPARATOR = getMinComparator();
 
 	public static MmrLottery given(double mmrIfYes, double mmrIfNo) {
@@ -31,7 +31,19 @@ public class MmrLottery {
 				.comparing(l -> max.applyAsDouble(l.getMmrIfYes(), l.getMmrIfNo()));
 		final Comparator<MmrLottery> comparingLexicographically = comparingMaxes
 				.thenComparing(l -> min.applyAsDouble(l.getMmrIfYes(), l.getMmrIfNo()));
-		return comparingLexicographically;
+
+		return new Comparator<>() {
+
+			@Override
+			public int compare(MmrLottery l1, MmrLottery l2) {
+				return comparingLexicographically.compare(l1, l2);
+			}
+
+			@Override
+			public String toString() {
+				return "MAX";
+			}
+		};
 	}
 
 	private static Comparator<MmrLottery> getMinComparator() {
@@ -42,11 +54,23 @@ public class MmrLottery {
 				.comparing(l -> min.applyAsDouble(l.getMmrIfYes(), l.getMmrIfNo()));
 		final Comparator<MmrLottery> comparingLexicographically = comparingMins
 				.thenComparing(l -> max.applyAsDouble(l.getMmrIfYes(), l.getMmrIfNo()));
-		return comparingLexicographically;
+
+		return new Comparator<>() {
+
+			@Override
+			public int compare(MmrLottery l1, MmrLottery l2) {
+				return comparingLexicographically.compare(l1, l2);
+			}
+
+			@Override
+			public String toString() {
+				return "MIN";
+			}
+		};
 	}
-	
-	private double mmrIfYes;
-	private double mmrIfNo;
+
+	private final double mmrIfYes;
+	private final double mmrIfNo;
 
 	private MmrLottery(double mmrIfYes, double mmrIfNo) {
 		this.mmrIfYes = mmrIfYes;
