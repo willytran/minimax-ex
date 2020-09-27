@@ -53,16 +53,6 @@ public class StrategyFactory implements Supplier<Strategy> {
 		}
 	}
 
-	public static StrategyFactory pessimistic() {
-		final long seed = ThreadLocalRandom.current().nextLong();
-		return byMmrs(seed, MmrLottery.MAX_COMPARATOR);
-	}
-	
-	public static StrategyFactory optimistic() {
-		final long seed = ThreadLocalRandom.current().nextLong();
-		return byMmrs(seed, MmrLottery.MIN_COMPARATOR);
-	}
-
 	public static StrategyFactory byMmrs(long seed, Comparator<MmrLottery> comparator) {
 		final Random random = new Random(seed);
 		final PrintableJsonObject json = JsonbUtils.toJsonObject(
@@ -72,7 +62,7 @@ public class StrategyFactory implements Supplier<Strategy> {
 			final StrategyByMmr strategy = StrategyByMmr.build(comparator);
 			strategy.setRandom(random);
 			return strategy;
-		}, json, comparator.equals(MmrLottery.MAX_COMPARATOR) ? "Pessimistic" : (comparator.equals(MmrLottery.MIN_COMPARATOR) ? "Optimistic":"By MMR " + comparator));
+		}, json, "By MMR " + comparator);
 	}
 
 	public static StrategyFactory limited() {
@@ -99,6 +89,7 @@ public class StrategyFactory implements Supplier<Strategy> {
 	}
 
 	public static StrategyFactory limited(long seed, List<QuestioningConstraint> constraints) {
+		LOGGER.info("Using seed {}.", seed);
 		final Random random = new Random(seed);
 
 		final PrintableJsonObject json = JsonbUtils.toJsonObject(ImmutableMap.of("family",
@@ -107,7 +98,7 @@ public class StrategyFactory implements Supplier<Strategy> {
 		final String prefix = ", constrained to [";
 		final String suffix = "]";
 		final String constraintsDescription = constraints.stream()
-				.map(c -> (c.getNumber() == Integer.MAX_VALUE ? "-" : c.getNumber())
+				.map(c -> (c.getNumber() == Integer.MAX_VALUE ? "∞" : c.getNumber())
 						+ (c.getKind() == QuestionType.COMMITTEE_QUESTION ? "c" : "v"))
 				.collect(Collectors.joining(", ", prefix, suffix));
 

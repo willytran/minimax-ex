@@ -32,7 +32,7 @@ import io.github.oliviercailloux.minimax.experiment.json.VoterAdapter;
  *
  */
 @JsonbPropertyOrder({ "voter", "alternatives" })
-public class QuestionVoter {
+public class QuestionVoter implements Comparable<QuestionVoter> {
 
 	@JsonbCreator
 	public static QuestionVoter given(@JsonbProperty("voter") Voter voter,
@@ -45,6 +45,10 @@ public class QuestionVoter {
 	public static QuestionVoter given(Voter voter, Alternative a, Alternative b) {
 		return new QuestionVoter(voter, a, b);
 	}
+
+	public static final Comparator<QuestionVoter> BY_VOTER_THEN_ALTERNATIVES = Comparator
+			.comparing(QuestionVoter::getVoter).thenComparing(QuestionVoter::getFirstAlternative, Alternative.BY_ID)
+			.thenComparing(QuestionVoter::getSecondAlternative, Alternative.BY_ID);
 
 	@JsonbTypeAdapter(VoterAdapter.class)
 	private final Voter voter;
@@ -83,6 +87,11 @@ public class QuestionVoter {
 	@JsonbTransient
 	public VoterPreferenceInformation getNegativeInformation() {
 		return VoterPreferenceInformation.given(voter, b, a);
+	}
+
+	@Override
+	public int compareTo(QuestionVoter q2) {
+		return BY_VOTER_THEN_ALTERNATIVES.compare(this, q2);
 	}
 
 	@Override

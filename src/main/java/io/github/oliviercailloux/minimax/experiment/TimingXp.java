@@ -1,10 +1,13 @@
 package io.github.oliviercailloux.minimax.experiment;
 
+import java.util.concurrent.ThreadLocalRandom;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import com.google.common.collect.ImmutableList;
 
+import io.github.oliviercailloux.minimax.strategies.MmrLottery;
 import io.github.oliviercailloux.minimax.strategies.StrategyFactory;
 
 public class TimingXp {
@@ -12,7 +15,8 @@ public class TimingXp {
 	private static final Logger LOGGER = LoggerFactory.getLogger(TimingXp.class);
 
 	public static void main(String[] args) throws Exception {
-		final StrategyFactory factory = StrategyFactory.pessimistic();
+		final long seed = ThreadLocalRandom.current().nextLong();
+		final StrategyFactory factory = StrategyFactory.byMmrs(seed, MmrLottery.MAX_COMPARATOR);
 		/** (Pessimistic, 5, 5, 1), Saucisson: 0.77 ± 0.03 sec. */
 		/** (Pessimistic, 5, 5, 30), Saucisson: 18.2 ± 1.1 sec. */
 		/** (Pessimistic, 5, 5, 30), BriBri: 13.7 ± 2.9 sec. */

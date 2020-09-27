@@ -4,6 +4,8 @@ import static com.google.common.base.Preconditions.checkArgument;
 import static com.google.common.base.Preconditions.checkState;
 import static com.google.common.base.Verify.verify;
 
+import java.util.ArrayList;
+import java.util.Collections;
 import java.util.Comparator;
 import java.util.Iterator;
 import java.util.List;
@@ -185,8 +187,12 @@ public class StrategyByMmr implements Strategy {
 		if (limited) {
 			final ImmutableSetMultimap<Alternative, PairwiseMaxRegret> mmrs = helper.getMinimalMaxRegrets()
 					.asMultimap();
-			final Alternative xStar = helper.draw(mmrs.keySet());
-			final PairwiseMaxRegret pmr = helper.draw(mmrs.get(xStar).stream().collect(ImmutableSet.toImmutableSet()));
+
+			final Alternative xStar = helper.drawFromStrictlyIncreasing(mmrs.keySet().asList(), Alternative.BY_ID);
+			final ImmutableSet<PairwiseMaxRegret> pmrs = mmrs.get(xStar).stream()
+					.collect(ImmutableSet.toImmutableSet());
+			final PairwiseMaxRegret pmr = helper.drawFromStrictlyIncreasing(pmrs.asList(),
+					PairwiseMaxRegret.BY_ALTERNATIVES);
 			if (allowVoters) {
 				final Alternative yBar = pmr.getY();
 				helper.getQuestionableVoters().stream().map(v -> getLimitedQuestion(xStar, yBar, v))
@@ -199,7 +205,8 @@ public class StrategyByMmr implements Strategy {
 				final ImmutableMap<Integer, Double> valuedRanks = IntStream.rangeClosed(1, m - 2).boxed()
 						.collect(ImmutableMap.toImmutableMap(i -> i, i -> getSpread(wBar, wMin, i)));
 				final ImmutableSet<Integer> minSpreadRanks = StrategyHelper.getMinimalElements(valuedRanks);
-				final QuestionCommittee qC = helper.getQuestionAboutHalfRange(helper.draw(minSpreadRanks));
+				final QuestionCommittee qC = helper.getQuestionAboutHalfRange(
+						helper.drawFromStrictlyIncreasing(minSpreadRanks.asList(), Comparator.naturalOrder()));
 				questionsBuilder.add(Question.toCommittee(qC));
 			}
 		} else {
@@ -218,7 +225,7 @@ public class StrategyByMmr implements Strategy {
 
 		final ImmutableSet<Question> bestQuestions = StrategyHelper.getMinimalElements(questions, lotteryComparator);
 		LOGGER.debug("Best questions: {}.", bestQuestions);
-		return helper.draw(bestQuestions);
+		return helper.drawFromStrictlyIncreasing(bestQuestions.asList(), Comparator.naturalOrder());
 	}
 
 	private double getSpread(PSRWeights wBar, PSRWeights wMin, int i) {
@@ -233,7 +240,7 @@ public class StrategyByMmr implements Strategy {
 			if (xStar.equals(yBar)) {
 				verify(helper.getMinimalMaxRegrets().getMinimalMaxRegretValue() == 0d);
 				/** We do not care which question we ask. */
-				question = helper.getPossibleVoterQuestions().iterator().next();
+				question = helper.getPossibleVoterQuestions().stream().sorted().findFirst().get();
 			} else {
 				question = QuestionVoter.given(voter, xStar, yBar);
 			}
@@ -250,9 +257,14 @@ public class StrategyByMmr implements Strategy {
 				throw new VerifyException(String.valueOf(xStar.equals(yBar))
 						+ " Should reach here only when profile is complete or some weights are known to be equal, which we suppose will not happen.");
 			}
+			final Comparator<EndpointPair<Alternative>> comparingPair = Comparator.comparing(EndpointPair::source,
+					Alternative.BY_ID);
+			final Comparator<EndpointPair<Alternative>> c2 = comparingPair.thenComparing(EndpointPair::target,
+					Alternative.BY_ID);
 			question = getQuestionAboutIncomparableTo(voter, graph, tryFirst)
 					.or(() -> getQuestionAboutIncomparableTo(voter, graph, trySecond))
-					.orElseGet(() -> getQuestionAbout(voter, helper.draw(StrategyHelper.getIncomparablePairs(graph))));
+					.orElseGet(() -> getQuestionAbout(voter, helper
+							.drawFromStrictlyIncreasing(StrategyHelper.getIncomparablePairs(graph).asList(), c2)));
 		}
 		return question;
 	}
@@ -262,7 +274,8 @@ public class StrategyByMmr implements Strategy {
 		final ImmutableSet<Alternative> incomparables = StrategyHelper.getIncomparables(graph, a)
 				.collect(ImmutableSet.toImmutableSet());
 		return incomparables.isEmpty() ? Optional.empty()
-				: Optional.of(QuestionVoter.given(voter, a, helper.draw(incomparables)));
+				: Optional.of(QuestionVoter.given(voter, a,
+						helper.drawFromStrictlyIncreasing(incomparables.asList(), Alternative.BY_ID)));
 	}
 
 	private QuestionVoter getQuestionAbout(Voter voter, EndpointPair<Alternative> incomparablePair) {

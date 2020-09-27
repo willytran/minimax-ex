@@ -4,6 +4,7 @@ import static com.google.common.base.Preconditions.checkNotNull;
 import static com.google.common.base.Preconditions.checkState;
 import static com.google.common.base.Verify.verify;
 
+import java.util.Comparator;
 import java.util.Objects;
 
 import org.apfloat.Aprational;
@@ -22,7 +23,7 @@ import io.github.oliviercailloux.j_voting.Voter;
  * @author Olivier Cailloux
  *
  */
-public class Question {
+public class Question implements Comparable<Question> {
 
 	public static Question toVoter(Voter voter, Alternative a, Alternative b) {
 		return new Question(QuestionVoter.given(voter, a, b));
@@ -40,6 +41,11 @@ public class Question {
 		return new Question(question);
 	}
 
+	public static Comparator<Question> TO_VOTER_FIRST = Comparator.naturalOrder();
+	private static final Comparator<Question> BY_TYPE = Comparator.comparing(Question::getType);
+	private static final Comparator<Question> BY_QUESTION_COMMITTEE = Comparator
+			.comparing(Question::asQuestionCommittee);
+	private static final Comparator<Question> BY_QUESTION_VOTER = Comparator.comparing(Question::asQuestionVoter);
 	private final QuestionVoter qv;
 	private final QuestionCommittee qc;
 
@@ -103,6 +109,23 @@ public class Question {
 			throw new VerifyError();
 		}
 		return information;
+	}
+
+	@Override
+	public int compareTo(Question q2) {
+		final int compareTypes = BY_TYPE.compare(this, q2);
+		if (compareTypes != 0) {
+			return compareTypes;
+		}
+
+		switch (getType()) {
+		case VOTER_QUESTION:
+			return BY_QUESTION_VOTER.compare(this, q2);
+		case COMMITTEE_QUESTION:
+			return BY_QUESTION_COMMITTEE.compare(this, q2);
+		default:
+			throw new VerifyException();
+		}
 	}
 
 	@Override

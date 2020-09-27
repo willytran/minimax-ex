@@ -60,14 +60,14 @@ public class StrategyRandom implements Strategy {
 
 		final Question question;
 		if (askVoters) {
-			final Voter voter = helper.draw(questionableVoters);
+			final Voter voter = helper.drawFromStrictlyIncreasing(questionableVoters.asList(), Voter.BY_ID);
 			final ImmutableGraph<Alternative> graph = helper.getKnowledge().getPartialPreference(voter)
 					.asTransitiveGraph();
 			final ImmutableSetMultimap<Alternative, Alternative> incomparables = graph.nodes().stream()
 					.collect(ImmutableSetMultimap.flatteningToImmutableSetMultimap(a -> a,
 							a -> StrategyHelper.getIncomparables(graph, a)));
-			final Alternative a = helper.draw(incomparables.keySet());
-			final Alternative b = helper.draw(incomparables.get(a));
+			final Alternative a = helper.drawFromStrictlyIncreasing(incomparables.keySet().asList(), Alternative.BY_ID);
+			final Alternative b = helper.drawFromStrictlyIncreasing(incomparables.get(a).asList(), Alternative.BY_ID);
 			question = Question.toVoter(voter, a, b);
 		} else {
 			verify(m >= 3);
