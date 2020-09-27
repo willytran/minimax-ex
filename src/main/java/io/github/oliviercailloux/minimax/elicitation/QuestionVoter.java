@@ -47,8 +47,8 @@ public class QuestionVoter implements Comparable<QuestionVoter> {
 	}
 
 	public static final Comparator<QuestionVoter> BY_VOTER_THEN_ALTERNATIVES = Comparator
-			.comparing(QuestionVoter::getVoter).thenComparing(QuestionVoter::getFirstAlternative, Alternative.BY_ID)
-			.thenComparing(QuestionVoter::getSecondAlternative, Alternative.BY_ID);
+			.comparing(QuestionVoter::getVoter).thenComparing(QuestionVoter::getFirstAlternative)
+			.thenComparing(QuestionVoter::getSecondAlternative);
 
 	@JsonbTypeAdapter(VoterAdapter.class)
 	private final Voter voter;

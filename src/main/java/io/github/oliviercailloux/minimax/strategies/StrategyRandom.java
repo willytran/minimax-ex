@@ -2,6 +2,7 @@ package io.github.oliviercailloux.minimax.strategies;
 
 import static com.google.common.base.Verify.verify;
 
+import java.util.Comparator;
 import java.util.Random;
 
 import org.slf4j.Logger;
@@ -66,8 +67,10 @@ public class StrategyRandom implements Strategy {
 			final ImmutableSetMultimap<Alternative, Alternative> incomparables = graph.nodes().stream()
 					.collect(ImmutableSetMultimap.flatteningToImmutableSetMultimap(a -> a,
 							a -> StrategyHelper.getIncomparables(graph, a)));
-			final Alternative a = helper.drawFromStrictlyIncreasing(incomparables.keySet().asList(), Alternative.BY_ID);
-			final Alternative b = helper.drawFromStrictlyIncreasing(incomparables.get(a).asList(), Alternative.BY_ID);
+			final Alternative a = helper.drawFromStrictlyIncreasing(incomparables.keySet().asList(),
+					Comparator.naturalOrder());
+			final Alternative b = helper.drawFromStrictlyIncreasing(incomparables.get(a).asList(),
+					Comparator.naturalOrder());
 			question = Question.toVoter(voter, a, b);
 		} else {
 			verify(m >= 3);

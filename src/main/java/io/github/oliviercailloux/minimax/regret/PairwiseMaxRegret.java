@@ -49,9 +49,8 @@ public class PairwiseMaxRegret {
 
 	public static final Comparator<PairwiseMaxRegret> BY_VALUE = Comparator
 			.comparingDouble(PairwiseMaxRegret::getPmrValue);
-	public static final Comparator<PairwiseMaxRegret> BY_ALTERNATIVES = Comparator
-	.comparing(PairwiseMaxRegret::getX, Alternative.BY_ID)
-	.thenComparing(PairwiseMaxRegret::getY, Alternative.BY_ID);
+	public static final Comparator<PairwiseMaxRegret> BY_ALTERNATIVES = Comparator.comparing(PairwiseMaxRegret::getX)
+			.thenComparing(PairwiseMaxRegret::getY);
 	/**
 	 * Useful when the pmr has been optained by computing, for example, (3 − 2) w1 +
 	 * (4 − 1) w2, and this differs slightly from (3 w1 + 4 w2) − (2 w1 + 1 w2).

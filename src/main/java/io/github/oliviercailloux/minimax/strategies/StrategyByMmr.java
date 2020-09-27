@@ -4,8 +4,6 @@ import static com.google.common.base.Preconditions.checkArgument;
 import static com.google.common.base.Preconditions.checkState;
 import static com.google.common.base.Verify.verify;
 
-import java.util.ArrayList;
-import java.util.Collections;
 import java.util.Comparator;
 import java.util.Iterator;
 import java.util.List;
@@ -188,7 +186,8 @@ public class StrategyByMmr implements Strategy {
 			final ImmutableSetMultimap<Alternative, PairwiseMaxRegret> mmrs = helper.getMinimalMaxRegrets()
 					.asMultimap();
 
-			final Alternative xStar = helper.drawFromStrictlyIncreasing(mmrs.keySet().asList(), Alternative.BY_ID);
+			final Alternative xStar = helper.drawFromStrictlyIncreasing(mmrs.keySet().asList(),
+					Comparator.naturalOrder());
 			final ImmutableSet<PairwiseMaxRegret> pmrs = mmrs.get(xStar).stream()
 					.collect(ImmutableSet.toImmutableSet());
 			final PairwiseMaxRegret pmr = helper.drawFromStrictlyIncreasing(pmrs.asList(),
@@ -257,10 +256,8 @@ public class StrategyByMmr implements Strategy {
 				throw new VerifyException(String.valueOf(xStar.equals(yBar))
 						+ " Should reach here only when profile is complete or some weights are known to be equal, which we suppose will not happen.");
 			}
-			final Comparator<EndpointPair<Alternative>> comparingPair = Comparator.comparing(EndpointPair::source,
-					Alternative.BY_ID);
-			final Comparator<EndpointPair<Alternative>> c2 = comparingPair.thenComparing(EndpointPair::target,
-					Alternative.BY_ID);
+			final Comparator<EndpointPair<Alternative>> comparingPair = Comparator.comparing(EndpointPair::source);
+			final Comparator<EndpointPair<Alternative>> c2 = comparingPair.thenComparing(EndpointPair::target);
 			question = getQuestionAboutIncomparableTo(voter, graph, tryFirst)
 					.or(() -> getQuestionAboutIncomparableTo(voter, graph, trySecond))
 					.orElseGet(() -> getQuestionAbout(voter, helper
@@ -275,7 +272,7 @@ public class StrategyByMmr implements Strategy {
 				.collect(ImmutableSet.toImmutableSet());
 		return incomparables.isEmpty() ? Optional.empty()
 				: Optional.of(QuestionVoter.given(voter, a,
-						helper.drawFromStrictlyIncreasing(incomparables.asList(), Alternative.BY_ID)));
+						helper.drawFromStrictlyIncreasing(incomparables.asList(), Comparator.naturalOrder())));
 	}
 
 	private QuestionVoter getQuestionAbout(Voter voter, EndpointPair<Alternative> incomparablePair) {

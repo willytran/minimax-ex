@@ -110,8 +110,8 @@ public class StrategyHelper {
 	 */
 	public void setKnowledge(PrefKnowledge knowledge) {
 		checkArgument(checkNotNull(knowledge).getAlternatives().size() >= 2);
-		checkArgument(isStrictlyIncreasing(knowledge.getAlternatives(), Alternative.BY_ID));
-		checkArgument(isStrictlyIncreasing(knowledge.getVoters(), Voter.BY_ID));
+		checkArgument(isStrictlyIncreasing(knowledge.getAlternatives(), Comparator.naturalOrder()));
+		checkArgument(isStrictlyIncreasing(knowledge.getVoters(), Comparator.naturalOrder()));
 		this.knowledge = knowledge;
 	}
 
