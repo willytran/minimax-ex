@@ -23,12 +23,12 @@ public class StrategiesXp {
 
 	public static void main(String[] args) throws Exception {
 		final int m = 10;
-		final int n = 10;
+		final int n = 20;
 		final int k = 250;
 		final int runs = 25;
 
-		final ImmutableList<StrategyFactory> factoryListT3 = ImmutableList.of(StrategyFactory.limited(),
-				StrategyFactory.limitedCommitteeThenVoters(25));
+		final ImmutableList<StrategyFactory> factoryListT3 = ImmutableList
+				.of(StrategyFactory.limitedCommitteeThenVoters(25));
 		runs(factoryListT3, m, n, k, runs);
 
 	}
