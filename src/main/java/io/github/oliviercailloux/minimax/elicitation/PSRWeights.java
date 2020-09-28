@@ -54,13 +54,15 @@ public class PSRWeights {
 				throw new IllegalArgumentException("At " + i);
 			}
 		}
-		final int i = weights.size() - 2;
-		final double wi1 = weights.get(i);
-		final double wi2 = weights.get(i + 1);
-		final double wi3 = 0d;
-		/** We want: wi1 − wi2 ≥ wi2. */
-		if ((wi1 - wi2) < (wi2 - wi3)) {
-			throw new IllegalArgumentException("At " + i);
+		if (weights.size() >= 2) {
+			final int i = weights.size() - 2;
+			final double wi1 = weights.get(i);
+			final double wi2 = weights.get(i + 1);
+			final double wi3 = 0d;
+			/** We want: wi1 − wi2 ≥ wi2. */
+			if ((wi1 - wi2) < (wi2 - wi3)) {
+				throw new IllegalArgumentException("At " + i);
+			}
 		}
 	}
 
