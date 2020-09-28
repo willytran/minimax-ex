@@ -1,5 +1,6 @@
 package io.github.oliviercailloux.minimax.experiment.json;
 
+import java.util.List;
 import java.util.Map;
 
 import io.github.oliviercailloux.j_voting.Voter;
@@ -39,6 +40,10 @@ public class JsonConverter {
 
 	public static PrintableJsonObject toJson(Oracle oracle) {
 		return JsonbUtils.toJsonObject(oracle, new ProfileAdapter(), new PreferenceAdapter());
+	}
+
+	public static PrintableJsonObject toJson(List<Oracle> oracles) {
+		return JsonbUtils.toJsonObject(oracles, new ProfileAdapter(), new PreferenceAdapter());
 	}
 
 	public static Oracle toOracle(String json) {
