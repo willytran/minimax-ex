@@ -19,7 +19,7 @@ public class VariousXps {
 	public void exportOracles(int m, int n, int count) throws IOException {
 		final ImmutableList.Builder<Oracle> builder = ImmutableList.<Oracle>builder();
 		for (int i = 0; i < count; ++i) {
-			final Oracle oracle = Oracle.build(Generator.genProfile(m, n), Generator.genWeights(m));
+			final Oracle oracle = Oracle.build(Generator.genProfile(m, n), Generator.genWeightsEquallySpread(m));
 			builder.add(oracle);
 		}
 		final ImmutableList<Oracle> oracles = builder.build();
