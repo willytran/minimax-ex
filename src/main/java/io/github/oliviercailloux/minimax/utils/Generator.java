@@ -10,9 +10,7 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 import java.util.Random;
-
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import java.util.function.Supplier;
 
 import com.google.common.collect.Lists;
 
@@ -23,18 +21,30 @@ import io.github.oliviercailloux.minimax.elicitation.Oracle;
 import io.github.oliviercailloux.minimax.elicitation.PSRWeights;
 
 public class Generator {
-	@SuppressWarnings("unused")
-	private static final Logger LOGGER = LoggerFactory.getLogger(Generator.class);
+
+	public static PSRWeights genWeightsEquallySpread(int nbAlternatives) {
+		final Random r = new Random();
+		final Supplier<Double> differenceSupplier = () -> r.nextDouble();
+
+		return genWeights(nbAlternatives, differenceSupplier);
+	}
 
 	public static PSRWeights genWeights(int nbAlternatives) {
+		final Random r = new Random();
+		final double p = (1 / (double) (nbAlternatives - 1));
+		final Supplier<Double> differenceSupplier = () -> r.nextDouble() < p ? 0.9 + (r.nextDouble() * 0.1)
+				: (r.nextDouble() * 0.1);
+
+		return genWeights(nbAlternatives, differenceSupplier);
+	}
+
+	private static PSRWeights genWeights(int nbAlternatives, Supplier<Double> differenceSupplier) {
 		List<Double> weights = new LinkedList<>();
 		weights.add(1d);
-		Random r = new Random();
 		double[] differences = new double[nbAlternatives - 1];
 		double sum = 0;
-		double p = (1 / (double) (nbAlternatives - 1));
 		for (int i = 1; i < nbAlternatives - 1; i++) {
-			differences[i] = r.nextDouble() < p ? 0.9 + (r.nextDouble() * 0.1) : (r.nextDouble() * 0.1);
+			differences[i] = differenceSupplier.get();
 			sum += differences[i];
 		}
 		for (int i = 0; i < nbAlternatives - 1; i++) {
@@ -47,9 +57,9 @@ public class Generator {
 			double curr = (previous - difference);
 			if (previous < difference) {
 				/**
-				 * Because of imprecision when normalizing, we could end up in the negative. In
-				 * this case, we check that this is only the result of a small imprecision error
-				 * (not some bigger logical error), and round to zero.
+				 * Because of imprecision when normalizing, we could end up negative. In this
+				 * case, we check that this is only the result of a small imprecision error (not
+				 * some bigger logical error), and round to zero.
 				 */
 				verify(curr > -1e10);
 				weights.add(0d);
