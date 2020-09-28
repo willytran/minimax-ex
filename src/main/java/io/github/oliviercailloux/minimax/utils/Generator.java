@@ -3,16 +3,21 @@ package io.github.oliviercailloux.minimax.utils;
 import static com.google.common.base.Preconditions.checkArgument;
 import static com.google.common.base.Verify.verify;
 
-import java.util.Arrays;
+import java.util.ArrayList;
 import java.util.Collections;
+import java.util.Comparator;
 import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 import java.util.Random;
 import java.util.function.Supplier;
+import java.util.stream.Collectors;
+import java.util.stream.IntStream;
 
+import com.google.common.collect.ImmutableList;
 import com.google.common.collect.Lists;
+import com.google.common.math.DoubleMath;
 
 import io.github.oliviercailloux.j_voting.Alternative;
 import io.github.oliviercailloux.j_voting.Voter;
@@ -39,21 +44,28 @@ public class Generator {
 	}
 
 	private static PSRWeights genWeights(int nbAlternatives, Supplier<Double> differenceSupplier) {
-		List<Double> weights = new LinkedList<>();
-		weights.add(1d);
-		double[] differences = new double[nbAlternatives - 1];
-		double sum = 0;
-		for (int i = 1; i < nbAlternatives - 1; i++) {
-			differences[i] = differenceSupplier.get();
-			sum += differences[i];
+		final ImmutableList.Builder<Double> weightsBuilder = ImmutableList.<Double>builder();
+		if (nbAlternatives == 0) {
+			return PSRWeights.given(weightsBuilder.build());
 		}
-		for (int i = 0; i < nbAlternatives - 1; i++) {
-			differences[i] = differences[i] / sum;
+
+		weightsBuilder.add(1d);
+		if (nbAlternatives == 1) {
+			return PSRWeights.given(weightsBuilder.build());
 		}
-		Arrays.sort(differences);
+
+		final ImmutableList<Double> differences = IntStream.range(0, nbAlternatives - 1)
+				.mapToObj(i -> differenceSupplier.get()).collect(ImmutableList.toImmutableList());
+
+		final double sum = differences.stream().mapToDouble(d -> d).sum();
+		verify(sum > 0d);
+		final List<Double> normalizedDifferences = differences.stream().map(d -> d / sum)
+				.collect(Collectors.toCollection(ArrayList::new));
+
+		Collections.sort(normalizedDifferences, Comparator.reverseOrder());
+
 		double previous = 1d;
-		for (int i = nbAlternatives - 2; i > 0; i--) {
-			final double difference = differences[i];
+		for (double difference : normalizedDifferences.subList(0, normalizedDifferences.size() - 1)) {
 			double curr = (previous - difference);
 			if (previous < difference) {
 				/**
@@ -62,14 +74,17 @@ public class Generator {
 				 * some bigger logical error), and round to zero.
 				 */
 				verify(curr > -1e10);
-				weights.add(0d);
+				weightsBuilder.add(0d);
 			} else {
-				weights.add(curr);
+				weightsBuilder.add(curr);
 			}
 			previous = curr;
 		}
-		weights.add(0d);
-		return PSRWeights.given(weights);
+
+		final Double lastDifference = normalizedDifferences.get(normalizedDifferences.size() - 1);
+		verify(DoubleMath.fuzzyEquals(previous, lastDifference, 1e10));
+		weightsBuilder.add(0d);
+		return PSRWeights.given(weightsBuilder.build());
 	}
 
 	public static Map<Voter, VoterStrictPreference> genProfile(int nbAlternatives, int nbVoters) {
