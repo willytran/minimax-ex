@@ -6,6 +6,8 @@ import java.util.List;
 import java.util.Objects;
 
 import org.apfloat.Aprational;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import com.google.common.base.MoreObjects;
 import com.google.common.base.Preconditions;
@@ -22,6 +24,9 @@ import io.github.oliviercailloux.jlp.elements.ComparisonOperator;
  *
  */
 public class PSRWeights {
+
+	@SuppressWarnings("unused")
+	private static final Logger LOGGER = LoggerFactory.getLogger(PSRWeights.class);
 
 	private static final double UPPER_BOUND = 1d;
 	private static final double LOWER_BOUND = 0d;
@@ -41,14 +46,21 @@ public class PSRWeights {
 	}
 
 	private void checkConvex() {
-		double wi1, wi2, wi3;
 		for (int i = 0; i < weights.size() - 2; i++) {
-			wi1 = weights.get(i);
-			wi2 = weights.get(i + 1);
-			wi3 = weights.get(i + 2);
+			final double wi1 = weights.get(i);
+			final double wi2 = weights.get(i + 1);
+			final double wi3 = weights.get(i + 2);
 			if ((wi1 - wi2) < (wi2 - wi3)) {
 				throw new IllegalArgumentException("At " + i);
 			}
+		}
+		final int i = weights.size() - 2;
+		final double wi1 = weights.get(i);
+		final double wi2 = weights.get(i + 1);
+		final double wi3 = 0d;
+		/** We want: wi1 − wi2 ≥ wi2. */
+		if ((wi1 - wi2) < (wi2 - wi3)) {
+			throw new IllegalArgumentException("At " + i);
 		}
 	}
 

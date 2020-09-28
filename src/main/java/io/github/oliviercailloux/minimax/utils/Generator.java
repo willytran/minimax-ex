@@ -11,6 +11,9 @@ import java.util.List;
 import java.util.Map;
 import java.util.Random;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import com.google.common.collect.Lists;
 
 import io.github.oliviercailloux.j_voting.Alternative;
@@ -20,11 +23,12 @@ import io.github.oliviercailloux.minimax.elicitation.Oracle;
 import io.github.oliviercailloux.minimax.elicitation.PSRWeights;
 
 public class Generator {
+	@SuppressWarnings("unused")
+	private static final Logger LOGGER = LoggerFactory.getLogger(Generator.class);
 
 	public static PSRWeights genWeights(int nbAlternatives) {
 		List<Double> weights = new LinkedList<>();
 		weights.add(1d);
-		double previous = 1d;
 		Random r = new Random();
 		double[] differences = new double[nbAlternatives - 1];
 		double sum = 0;
@@ -37,9 +41,21 @@ public class Generator {
 			differences[i] = differences[i] / sum;
 		}
 		Arrays.sort(differences);
+		double previous = 1d;
 		for (int i = nbAlternatives - 2; i > 0; i--) {
-			double curr = (previous - differences[i]);
-			weights.add(curr);
+			final double difference = differences[i];
+			double curr = (previous - difference);
+			if (previous < difference) {
+				/**
+				 * Because of imprecision when normalizing, we could end up in the negative. In
+				 * this case, we check that this is only the result of a small imprecision error
+				 * (not some bigger logical error), and round to zero.
+				 */
+				verify(curr > -1e10);
+				weights.add(0d);
+			} else {
+				weights.add(curr);
+			}
 			previous = curr;
 		}
 		weights.add(0d);
