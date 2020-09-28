@@ -1,5 +1,7 @@
 package io.github.oliviercailloux.minimax.experiment.json;
 
+import java.lang.reflect.Type;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
@@ -48,6 +50,14 @@ public class JsonConverter {
 
 	public static Oracle toOracle(String json) {
 		return JsonbUtils.fromJson(json, Oracle.class, new ProfileAdapter(), new PreferenceAdapter(),
+				new WeightsAdapter());
+	}
+
+	public static List<Oracle> toOracles(String json) {
+		@SuppressWarnings("all")
+		final Type superclass = new ArrayList<Oracle>() {
+		}.getClass().getGenericSuperclass();
+		return JsonbUtils.fromJson(json, superclass, new ProfileAdapter(), new PreferenceAdapter(),
 				new WeightsAdapter());
 	}
 
