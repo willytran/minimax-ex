@@ -256,8 +256,8 @@ public class StrategyByMmr implements Strategy {
 				throw new VerifyException(String.valueOf(xStar.equals(yBar))
 						+ " Should reach here only when profile is complete or some weights are known to be equal, which we suppose will not happen.");
 			}
-			final Comparator<EndpointPair<Alternative>> comparingPair = Comparator.comparing(EndpointPair::source);
-			final Comparator<EndpointPair<Alternative>> c2 = comparingPair.thenComparing(EndpointPair::target);
+			final Comparator<EndpointPair<Alternative>> comparingPair = Comparator.comparing(EndpointPair::nodeU);
+			final Comparator<EndpointPair<Alternative>> c2 = comparingPair.thenComparing(EndpointPair::nodeV);
 			question = getQuestionAboutIncomparableTo(voter, graph, tryFirst)
 					.or(() -> getQuestionAboutIncomparableTo(voter, graph, trySecond))
 					.orElseGet(() -> getQuestionAbout(voter, helper
