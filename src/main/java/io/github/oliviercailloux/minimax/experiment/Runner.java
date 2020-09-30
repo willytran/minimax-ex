@@ -106,4 +106,9 @@ public class Runner {
 				+ FORMATTER.format(stats.max()) + "]±" + FORMATTER.format(stats.populationStandardDeviation());
 	}
 
+	public static String asStringEstimator(Stats stats) {
+		return "[" + FORMATTER.format(stats.min()) + "; " + FORMATTER.format(stats.mean()) + "; "
+				+ FORMATTER.format(stats.max()) + "]±" + FORMATTER.format(stats.sampleStandardDeviation());
+	}
+
 }
