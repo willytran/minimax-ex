@@ -32,7 +32,6 @@ public class ReproduceXp {
 			LOGGER.info("Questions: {}.", runAgain.getQuestions());
 			verify(run.getQuestions().equals(runAgain.getQuestions()),
 					String.format("Mismatch with %s, %d.", oracle, k));
-
 		}
 	}
 
