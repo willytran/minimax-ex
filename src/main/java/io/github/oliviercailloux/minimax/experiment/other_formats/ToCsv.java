@@ -24,7 +24,7 @@ public class ToCsv {
 
 	public static String toCsv(Runs runs, int modulo) {
 		checkArgument(modulo >= 1);
-		final ImmutableMap<Integer, Stats> everyFive = IntStream.rangeClosed(0, runs.getMaxK())
+		final ImmutableMap<Integer, Stats> everyFive = IntStream.rangeClosed(0, runs.getK())
 				.filter(i -> i % modulo == 0).boxed()
 				.collect(ImmutableMap.toImmutableMap(i -> i, i -> runs.getMinimalMaxRegretStats().get(i)));
 

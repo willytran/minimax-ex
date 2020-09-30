@@ -47,7 +47,7 @@ public class VariousXps {
 		final List<Oracle> oracles = JsonConverter.toOracles(Files.readString(json));
 
 		final Runs runs = runs(factory, oracles.get(0), k, 50);
-		final Stats stats = runs.getMinimalMaxRegretStats().get(runs.getMaxK());
+		final Stats stats = runs.getMinimalMaxRegretStats().get(runs.getK());
 		final String descr = Runner.asStringEstimator(stats);
 		LOGGER.info("Got final estimator: {}.", descr);
 

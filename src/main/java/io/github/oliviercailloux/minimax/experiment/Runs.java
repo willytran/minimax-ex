@@ -35,21 +35,17 @@ public class Runs {
 	private final StrategyFactory factory;
 	private final ImmutableList<Run> runs;
 	@JsonbTransient
-	private final int maxK;
+	private final int k;
 
 	private Runs(StrategyFactory factory, List<Run> runs) {
 		this.factory = checkNotNull(factory);
 		checkArgument(!runs.isEmpty());
 		this.runs = ImmutableList.copyOf(runs);
-		maxK = runs.stream().mapToInt(Run::getK).max().getAsInt();
+		k = runs.stream().map(Run::getK).distinct().collect(MoreCollectors.onlyElement());
 		final ImmutableSet<Integer> ms = runs.stream().map(Run::getOracle).map(Oracle::getM)
 				.collect(ImmutableSet.toImmutableSet());
 		final ImmutableSet<Integer> ns = runs.stream().map(Run::getOracle).map(Oracle::getN)
 				.collect(ImmutableSet.toImmutableSet());
-		checkArgument(
-				runs.stream().allMatch(
-						r -> r.getK() < maxK ? r.getRegrets(r.getK()).getMinimalMaxRegretValue() == 0d : true),
-				"All runs should have either k questions or end with no regret.");
 		checkArgument(ms.size() == 1, "All runs should have the same number of alternatives.");
 		checkArgument(ns.size() == 1, "All runs should have the same number of voters.");
 	}
@@ -73,11 +69,10 @@ public class Runs {
 	@JsonbTransient
 	public ImmutableList<Stats> getMinimalMaxRegretStats() {
 		final ImmutableList.Builder<Stats> statsBuilder = ImmutableList.builder();
-		for (int i = 0; i < maxK + 1; ++i) {
+		for (int i = 0; i < k + 1; ++i) {
 			final int finali = i;
 			final ImmutableList<Double> allIthRegrets = runs.stream().map((r) -> r.getMinimalMaxRegrets())
-					.map(l -> (finali < l.size() ? l.get(finali).getMinimalMaxRegretValue() : 0d))
-					.collect(ImmutableList.toImmutableList());
+					.map(l -> l.get(finali).getMinimalMaxRegretValue()).collect(ImmutableList.toImmutableList());
 			statsBuilder.add(Stats.of(allIthRegrets));
 		}
 		return statsBuilder.build();
@@ -111,8 +106,8 @@ public class Runs {
 		return runs.get(i);
 	}
 
-	public int getMaxK() {
-		return maxK;
+	public int getK() {
+		return k;
 	}
 
 	@JsonbTransient

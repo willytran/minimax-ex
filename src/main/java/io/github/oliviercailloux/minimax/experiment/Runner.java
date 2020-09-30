@@ -95,7 +95,7 @@ public class Runner {
 	}
 
 	public static void summarize(Runs runs) {
-		final ImmutableMap<Integer, String> everyFive = IntStream.rangeClosed(0, runs.getMaxK()).filter(i -> i % 5 == 0)
+		final ImmutableMap<Integer, String> everyFive = IntStream.rangeClosed(0, runs.getK()).filter(i -> i % 5 == 0)
 				.boxed()
 				.collect(ImmutableMap.toImmutableMap(i -> i, i -> asString(runs.getMinimalMaxRegretStats().get(i))));
 		LOGGER.info("Regrets: {}.", everyFive);
