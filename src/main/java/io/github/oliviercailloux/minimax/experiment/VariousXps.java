@@ -15,9 +15,16 @@ import com.google.common.math.Stats;
 
 import io.github.oliviercailloux.json.PrintableJsonObject;
 import io.github.oliviercailloux.minimax.elicitation.Oracle;
+import io.github.oliviercailloux.minimax.elicitation.PrefKnowledge;
+import io.github.oliviercailloux.minimax.elicitation.PreferenceInformation;
+import io.github.oliviercailloux.minimax.elicitation.Question;
+import io.github.oliviercailloux.minimax.elicitation.QuestionType;
 import io.github.oliviercailloux.minimax.experiment.json.JsonConverter;
 import io.github.oliviercailloux.minimax.experiment.other_formats.ToCsv;
+import io.github.oliviercailloux.minimax.strategies.QuestioningConstraint;
+import io.github.oliviercailloux.minimax.strategies.StrategyByMmr;
 import io.github.oliviercailloux.minimax.strategies.StrategyFactory;
+import io.github.oliviercailloux.minimax.strategies.StrategyHelper;
 import io.github.oliviercailloux.minimax.utils.Generator;
 
 public class VariousXps {
@@ -26,11 +33,36 @@ public class VariousXps {
 
 	public static void main(String[] args) throws Exception {
 		final VariousXps variousXps = new VariousXps();
-//		variousXps.exportOracles(5, 5, 100);
-		variousXps.runWithOracle1();
+		for (int n = 5; n < 20; ++n) {
+			variousXps.exportOracles(20, n, 100);
+		}
+//		variousXps.tiesWithOracle1();
 	}
 
 	public Runs runWithOracle1() throws IOException {
+		final int m = 5;
+		final int n = 5;
+		final int k = 20;
+		final long seed = ThreadLocalRandom.current().nextLong();
+//		final StrategyFactory factory = StrategyFactory.limited(seed, ImmutableList.of());
+		final StrategyFactory factory = StrategyFactory.limited(seed,
+				ImmutableList.of(QuestioningConstraint.of(QuestionType.VOTER_QUESTION, Integer.MAX_VALUE)));
+		// final StrategyFactory factory = StrategyFactory.byMmrs(seed,
+		// MmrLottery.MAX_COMPARATOR);
+		// final StrategyFactory factory = StrategyFactory.random();
+
+		final Path json = Path.of("experiments/Oracles/", String.format("Oracles m = %d, n = %d, 100.json", m, n));
+		final List<Oracle> oracles = JsonConverter.toOracles(Files.readString(json));
+
+		final Runs runs = runs(factory, oracles.get(0), k, 50);
+		final Stats stats = runs.getMinimalMaxRegretStats().get(runs.getK());
+		final String descr = Runner.asStringEstimator(stats);
+		LOGGER.info("Got final estimator: {}.", descr);
+
+		return runs;
+	}
+
+	public void tiesWithOracle1() throws IOException {
 		final int m = 5;
 		final int n = 5;
 		final int k = 20;
@@ -45,13 +77,11 @@ public class VariousXps {
 
 		final Path json = Path.of("experiments/Oracles/", String.format("Oracles m = %d, n = %d, 100.json", m, n));
 		final List<Oracle> oracles = JsonConverter.toOracles(Files.readString(json));
+		final Oracle oracle = oracles.get(0);
 
-		final Runs runs = runs(factory, oracles.get(0), k, 50);
-		final Stats stats = runs.getMinimalMaxRegretStats().get(runs.getK());
-		final String descr = Runner.asStringEstimator(stats);
-		LOGGER.info("Got final estimator: {}.", descr);
-
-		return runs;
+		for (int i = 0; i < 5; ++i) {
+			runShowTies((StrategyByMmr) factory.get(), oracle, k);
+		}
 	}
 
 	public void exportOracles(int m, int n, int count) throws IOException {
@@ -95,5 +125,30 @@ public class VariousXps {
 		Files.move(tmpCsv, outCsv, StandardCopyOption.REPLACE_EXISTING);
 
 		return Runs.of(factory, runsBuilder.build());
+	}
+
+	public void runShowTies(StrategyByMmr strategy, Oracle oracle, int k) {
+		LOGGER.info("Running with {}, {}.", oracle, k);
+		final PrefKnowledge knowledge = PrefKnowledge.given(oracle.getAlternatives(), oracle.getProfile().keySet());
+		strategy.setKnowledge(knowledge);
+
+		final ImmutableList.Builder<Question> qBuilder = ImmutableList.builder();
+		final ImmutableList.Builder<Integer> tiesBuilder = ImmutableList.builder();
+
+		for (int i = 1; i <= k; i++) {
+			final Question q = strategy.nextQuestion();
+			final PreferenceInformation a = oracle.getPreferenceInformation(q);
+			knowledge.update(a);
+			LOGGER.debug("Asked {}.", q);
+			qBuilder.add(q);
+			final int countTies = StrategyHelper
+					.getMinimalElements(strategy.getLastQuestions(), strategy.getLotteryComparator()).size();
+			tiesBuilder.add(countTies);
+		}
+
+		final ImmutableList<Question> questions = qBuilder.build();
+		final ImmutableList<Integer> ties = tiesBuilder.build();
+		LOGGER.debug("Questions:{}.", questions);
+		LOGGER.info("Ties: {}.", ties);
 	}
 }

@@ -1,8 +1,5 @@
 package io.github.oliviercailloux.minimax.experiment;
 
-import java.io.IOException;
-import java.nio.file.Files;
-import java.nio.file.Path;
 import java.text.NumberFormat;
 import java.util.Locale;
 import java.util.stream.IntStream;
@@ -18,7 +15,6 @@ import io.github.oliviercailloux.minimax.elicitation.Oracle;
 import io.github.oliviercailloux.minimax.elicitation.PrefKnowledge;
 import io.github.oliviercailloux.minimax.elicitation.PreferenceInformation;
 import io.github.oliviercailloux.minimax.elicitation.Question;
-import io.github.oliviercailloux.minimax.experiment.json.JsonConverter;
 import io.github.oliviercailloux.minimax.strategies.Strategy;
 import io.github.oliviercailloux.minimax.strategies.StrategyFactory;
 import io.github.oliviercailloux.minimax.utils.Generator;
@@ -41,15 +37,13 @@ public class Runner {
 	/**
 	 * Creates a new random oracle; returns a single run of asking k questions with
 	 * the given strategy.
-	 *
-	 * @throws IOException
 	 */
-	public static Run run(StrategyFactory strategyFactory, int m, int n, int k) throws IOException {
+	public static Run run(StrategyFactory strategyFactory, int m, int n, int k) {
 		final Oracle oracle = Oracle.build(Generator.genProfile(m, n), Generator.genWeights(m));
 		return run(strategyFactory, oracle, k);
 	}
 
-	public static Run run(StrategyFactory strategyFactory, Oracle oracle, int k) throws IOException {
+	public static Run run(StrategyFactory strategyFactory, Oracle oracle, int k) {
 		final Strategy strategy = strategyFactory.get();
 
 		final PrefKnowledge knowledge = PrefKnowledge.given(oracle.getAlternatives(), oracle.getProfile().keySet());
@@ -58,19 +52,14 @@ public class Runner {
 		final ImmutableList.Builder<Question> qBuilder = ImmutableList.builder();
 		final ImmutableList.Builder<Long> tBuilder = ImmutableList.builder();
 
-		try {
-			for (int i = 1; i <= k; i++) {
-				final long startTime = System.currentTimeMillis();
-				final Question q = strategy.nextQuestion();
-				final PreferenceInformation a = oracle.getPreferenceInformation(q);
-				knowledge.update(a);
-				LOGGER.debug("Asked {}.", q);
-				qBuilder.add(q);
-				tBuilder.add(startTime);
-			}
-		} catch (Exception e) {
-			Files.writeString(Path.of("oracle-crashed.json"), JsonConverter.toJson(oracle).toString());
-			throw e;
+		for (int i = 1; i <= k; i++) {
+			final long startTime = System.currentTimeMillis();
+			final Question q = strategy.nextQuestion();
+			final PreferenceInformation a = oracle.getPreferenceInformation(q);
+			knowledge.update(a);
+			LOGGER.debug("Asked {}.", q);
+			qBuilder.add(q);
+			tBuilder.add(startTime);
 		}
 		final long endTime = System.currentTimeMillis();
 
