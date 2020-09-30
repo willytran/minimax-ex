@@ -44,7 +44,7 @@ public class StrategyPessimisticTest {
 		final Question q1 = Question.toVoter(Voter.withId(1), Alternative.withId(1), Alternative.withId(2));
 		final Question q2 = Question.toVoter(Voter.withId(1), Alternative.withId(2), Alternative.withId(1));
 		s.nextQuestion();
-		assertEquals(ImmutableSet.of(q1, q2), s.getQuestions().keySet());
+		assertEquals(ImmutableSet.of(q1, q2), s.getLastQuestions().keySet());
 	}
 
 	@Test
@@ -56,7 +56,7 @@ public class StrategyPessimisticTest {
 		s.nextQuestion();
 		final Question q1 = Question.toVoter(Voter.withId(2), Alternative.withId(1), Alternative.withId(2));
 		final Question q2 = Question.toVoter(Voter.withId(2), Alternative.withId(2), Alternative.withId(1));
-		assertEquals(ImmutableSet.of(q1, q2), s.getQuestions().keySet());
+		assertEquals(ImmutableSet.of(q1, q2), s.getLastQuestions().keySet());
 	}
 
 	@Test
@@ -70,9 +70,9 @@ public class StrategyPessimisticTest {
 		final Set<Question> expected = new HashSet<>();
 		expected.add(q1);
 		expected.add(q2);
-		assertEquals(ImmutableSet.of(q1, q2), s.getQuestions().keySet());
-		for (Question q : s.getQuestions().keySet()) {
-			assertEquals(MmrLottery.given(0d, 0d), s.getQuestions().get(q));
+		assertEquals(ImmutableSet.of(q1, q2), s.getLastQuestions().keySet());
+		for (Question q : s.getLastQuestions().keySet()) {
+			assertEquals(MmrLottery.given(0d, 0d), s.getLastQuestions().get(q));
 		}
 	}
 
@@ -92,7 +92,7 @@ public class StrategyPessimisticTest {
 		final Question q4 = Question.toVoter(Voter.withId(2), Alternative.withId(3), Alternative.withId(1));
 		final Aprational ap = new Aprational(new Apint(3), new Apint(2));
 		final Question q5 = Question.toCommittee(ap, 1);
-		assertEquals(ImmutableSet.of(q1, q2, q3, q4, q5), s.getQuestions().keySet());
+		assertEquals(ImmutableSet.of(q1, q2, q3, q4, q5), s.getLastQuestions().keySet());
 	}
 
 }

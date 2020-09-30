@@ -1,6 +1,7 @@
 package io.github.oliviercailloux.minimax.strategies;
 
 import static com.google.common.base.Preconditions.checkArgument;
+import static com.google.common.base.Preconditions.checkNotNull;
 import static com.google.common.base.Preconditions.checkState;
 import static com.google.common.base.Verify.verify;
 
@@ -137,19 +138,23 @@ public class StrategyByMmr implements Strategy {
 
 	private final StrategyHelper helper;
 	private boolean limited;
-	private ImmutableMap<Question, MmrLottery> questions;
 	private final QuestioningConstraints constraints;
 	private final Comparator<MmrLottery> lotteryComparator;
+
+	private ImmutableMap<Question, MmrLottery> questions;
 
 	private StrategyByMmr(Comparator<MmrLottery> lotteryComparator, boolean limited,
 			List<QuestioningConstraint> constraints) {
 		helper = StrategyHelper.newInstance();
-		this.lotteryComparator = lotteryComparator;
-//		questionComparator = Comparator.comparing(this::toLottery, lotteryComparator);
 		this.limited = limited;
-		LOGGER.debug("Creating with constraints: {}.", constraints);
 		this.constraints = QuestioningConstraints.of(constraints);
+		this.lotteryComparator = checkNotNull(lotteryComparator);
+		questions = null;
+		LOGGER.debug("Creating with constraints: {}.", constraints);
+	}
 
+	public Comparator<MmrLottery> getLotteryComparator() {
+		return lotteryComparator;
 	}
 
 	public void setRandom(Random random) {
@@ -227,12 +232,17 @@ public class StrategyByMmr implements Strategy {
 		return helper.drawFromStrictlyIncreasing(bestQuestions.asList(), Comparator.naturalOrder());
 	}
 
+	public ImmutableMap<Question, MmrLottery> getLastQuestions() {
+		checkState(questions != null);
+		return questions;
+	}
+
 	private double getSpread(PSRWeights wBar, PSRWeights wMin, int i) {
 		return IntStream.rangeClosed(0, 2).boxed()
 				.mapToDouble(k -> Math.abs(wBar.getWeightAtRank(i + k) - wMin.getWeightAtRank(i + k))).sum();
 	}
 
-	public QuestionVoter getLimitedQuestion(Alternative xStar, Alternative yBar, Voter voter) {
+	private QuestionVoter getLimitedQuestion(Alternative xStar, Alternative yBar, Voter voter) {
 		final ImmutableGraph<Alternative> graph = helper.getKnowledge().getPartialPreference(voter).asTransitiveGraph();
 		final QuestionVoter question;
 		if (!graph.adjacentNodes(xStar).contains(yBar)) {
@@ -260,8 +270,8 @@ public class StrategyByMmr implements Strategy {
 			final Comparator<EndpointPair<Alternative>> c2 = comparingPair.thenComparing(EndpointPair::nodeV);
 			question = getQuestionAboutIncomparableTo(voter, graph, tryFirst)
 					.or(() -> getQuestionAboutIncomparableTo(voter, graph, trySecond))
-					.orElseGet(() -> getQuestionAbout(voter, helper
-							.drawFromStrictlyIncreasing(StrategyHelper.getIncomparablePairs(graph).asList(), c2)));
+					.orElseGet(() -> getQuestionAbout(voter,
+							helper.sortAndDraw(StrategyHelper.getIncomparablePairs(graph).asList(), c2)));
 		}
 		return question;
 	}
@@ -272,7 +282,7 @@ public class StrategyByMmr implements Strategy {
 				.collect(ImmutableSet.toImmutableSet());
 		return incomparables.isEmpty() ? Optional.empty()
 				: Optional.of(QuestionVoter.given(voter, a,
-						helper.drawFromStrictlyIncreasing(incomparables.asList(), Comparator.naturalOrder())));
+						helper.sortAndDraw(incomparables.asList(), Comparator.naturalOrder())));
 	}
 
 	private QuestionVoter getQuestionAbout(Voter voter, EndpointPair<Alternative> incomparablePair) {
@@ -297,10 +307,6 @@ public class StrategyByMmr implements Strategy {
 		}
 		final MmrLottery lottery = MmrLottery.given(yesMMR, noMMR);
 		return lottery;
-	}
-
-	ImmutableMap<Question, MmrLottery> getQuestions() {
-		return questions;
 	}
 
 	private PSRWeights getMinTauW(PairwiseMaxRegret pmr) {

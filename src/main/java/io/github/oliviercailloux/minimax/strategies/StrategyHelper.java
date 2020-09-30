@@ -150,8 +150,8 @@ public class StrategyHelper {
 	 */
 	public <E> E drawFromStrictlyIncreasing(List<E> candidates, Comparator<E> comparator) {
 		checkArgument(!candidates.isEmpty());
-		final int i = getRandom().nextInt(candidates.size());
 		assert isStrictlyIncreasing(candidates, comparator) : candidates;
+		final int i = getRandom().nextInt(candidates.size());
 		return candidates.get(i);
 	}
 
