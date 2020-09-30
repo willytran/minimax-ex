@@ -5,11 +5,13 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.StandardCopyOption;
 import java.util.List;
+import java.util.concurrent.ThreadLocalRandom;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import com.google.common.collect.ImmutableList;
+import com.google.common.math.Stats;
 
 import io.github.oliviercailloux.json.PrintableJsonObject;
 import io.github.oliviercailloux.minimax.elicitation.Oracle;
@@ -25,24 +27,31 @@ public class VariousXps {
 	public static void main(String[] args) throws Exception {
 		final VariousXps variousXps = new VariousXps();
 //		variousXps.exportOracles(5, 5, 100);
-		variousXps.proceed();
+		variousXps.runWithOracle1();
 	}
 
-	private void proceed() throws IOException {
+	public Runs runWithOracle1() throws IOException {
 		final int m = 5;
 		final int n = 5;
-		final int k = 25;
-//		final long seed = ThreadLocalRandom.current().nextLong();
-		final StrategyFactory factory = StrategyFactory.limited();
-//		final StrategyFactory factory = StrategyFactory.limited(seed,
-//				ImmutableList.of(QuestioningConstraint.of(QuestionType.VOTER_QUESTION, Integer.MAX_VALUE)));
-//		final StrategyFactory factory = StrategyFactory.byMmrs(seed, MmrLottery.MAX_COMPARATOR);
-//		final StrategyFactory factory = StrategyFactory.random();
+		final int k = 20;
+		final long seed = ThreadLocalRandom.current().nextLong();
+		final StrategyFactory factory = StrategyFactory.limited(seed, ImmutableList.of());
+		// final StrategyFactory factory = StrategyFactory.limited(seed,
+		// ImmutableList.of(QuestioningConstraint.of(QuestionType.VOTER_QUESTION,
+		// Integer.MAX_VALUE)));
+		// final StrategyFactory factory = StrategyFactory.byMmrs(seed,
+		// MmrLottery.MAX_COMPARATOR);
+		// final StrategyFactory factory = StrategyFactory.random();
 
 		final Path json = Path.of("experiments/Oracles/", String.format("Oracles m = %d, n = %d, 100.json", m, n));
 		final List<Oracle> oracles = JsonConverter.toOracles(Files.readString(json));
 
-		runs(factory, oracles.get(0), k, 5);
+		final Runs runs = runs(factory, oracles.get(0), k, 50);
+		final Stats stats = runs.getMinimalMaxRegretStats().get(runs.getMaxK());
+		final String descr = Runner.asStringEstimator(stats);
+		LOGGER.info("Got final estimator: {}.", descr);
+
+		return runs;
 	}
 
 	public void exportOracles(int m, int n, int count) throws IOException {
@@ -58,7 +67,7 @@ public class VariousXps {
 				json.toString());
 	}
 
-	public void runs(StrategyFactory factory, Oracle oracle, int k, int nbRuns) throws IOException {
+	public Runs runs(StrategyFactory factory, Oracle oracle, int k, int nbRuns) throws IOException {
 		final Path outDir = Path.of("experiments/");
 		Files.createDirectories(outDir);
 		final String prefixDescription = factory.getDescription() + ", m = " + oracle.getM() + ", n = " + oracle.getN()
@@ -72,7 +81,6 @@ public class VariousXps {
 		for (int i = 0; i < nbRuns; ++i) {
 			final Run run = Runner.run(factory, oracle, k);
 			LOGGER.info("Time (run {}): {}.", i, run.getTotalTime());
-			Files.writeString(Path.of("run " + i + ".json"), JsonConverter.toJson(run).toString());
 			runsBuilder.add(run);
 			final Runs runs = Runs.of(factory, runsBuilder.build());
 			// Runner.summarize(runs);
@@ -85,5 +93,7 @@ public class VariousXps {
 		final Path outCsv = outDir.resolve(prefix + ".csv");
 		Files.move(tmpJson, outJson, StandardCopyOption.REPLACE_EXISTING);
 		Files.move(tmpCsv, outCsv, StandardCopyOption.REPLACE_EXISTING);
+
+		return Runs.of(factory, runsBuilder.build());
 	}
 }
