@@ -45,10 +45,10 @@ public class VariousXps {
 
 	public static void main(String[] args) throws Exception {
 		final VariousXps variousXps = new VariousXps();
-//		variousXps.exportOracles(30, 5, 100);
+		variousXps.exportOracles(10, 20, 100);
 //		variousXps.tiesWithOracle1();
-//		variousXps.runWithOracle1();
-		variousXps.runOneStrategyWithOracle1();
+		variousXps.runWithOracle1();
+//		variousXps.runOneStrategyWithOracle1();
 //		variousXps.analyzeQuestions();
 //		variousXps.summarizeXps();
 	}
@@ -73,9 +73,9 @@ public class VariousXps {
 	}
 
 	public void runWithOracle1() throws IOException {
-		final int m = 10;
+		final int m = 6;
 		final int n = 20;
-		final int k = 300;
+		final int k = 200;
 		final ThreadLocalRandom random = ThreadLocalRandom.current();
 		final ImmutableList.Builder<StrategyFactory> factoriesBuilder = ImmutableList.<StrategyFactory>builder();
 		factoriesBuilder.add(StrategyFactory.limited(random.nextLong(), ImmutableList.of()));
@@ -126,14 +126,14 @@ public class VariousXps {
 	public void exportOracles(int m, int n, int count) throws IOException {
 		final ImmutableList.Builder<Oracle> builder = ImmutableList.<Oracle>builder();
 		for (int i = 0; i < count; ++i) {
-			final Oracle oracle = Oracle.build(Generator.genProfile(m, n), Generator.genWeightsWithUniformDistribution(m));
+			final Oracle oracle = Oracle.build(Generator.genProfile(m, n),
+					Generator.genWeightsWithUnbalancedDistribution(m));
 			builder.add(oracle);
 		}
 		final ImmutableList<Oracle> oracles = builder.build();
 		final PrintableJsonObject json = JsonConverter.toJson(oracles);
-		Files.writeString(
-				Path.of("experiments/Oracles/", String.format("Oracles m = %d, n = %d, %d.json", m, n, count)),
-				json.toString());
+		Files.writeString(Path.of("experiments/Oracles/",
+				String.format("Oracles m = %d, n = %d, %d, unbalanced.json", m, n, count)), json.toString());
 	}
 
 	public Runs runs(StrategyFactory factory, Oracle oracle, int k, int nbRuns) throws IOException {
