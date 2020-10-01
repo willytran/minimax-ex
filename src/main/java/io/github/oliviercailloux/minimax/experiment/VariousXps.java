@@ -33,33 +33,39 @@ public class VariousXps {
 
 	public static void main(String[] args) throws Exception {
 		final VariousXps variousXps = new VariousXps();
-		for (int n = 5; n < 20; ++n) {
-			variousXps.exportOracles(20, n, 100);
-		}
+//		variousXps.exportOracles(30, 5, 100);
 //		variousXps.tiesWithOracle1();
+		variousXps.runWithOracle1();
+//		variousXps.analyzeQuestions();
 	}
 
-	public Runs runWithOracle1() throws IOException {
-		final int m = 5;
-		final int n = 5;
-		final int k = 20;
-		final long seed = ThreadLocalRandom.current().nextLong();
-//		final StrategyFactory factory = StrategyFactory.limited(seed, ImmutableList.of());
-		final StrategyFactory factory = StrategyFactory.limited(seed,
-				ImmutableList.of(QuestioningConstraint.of(QuestionType.VOTER_QUESTION, Integer.MAX_VALUE)));
-		// final StrategyFactory factory = StrategyFactory.byMmrs(seed,
-		// MmrLottery.MAX_COMPARATOR);
-		// final StrategyFactory factory = StrategyFactory.random();
+	public void runWithOracle1() throws IOException {
+		final int m = 6;
+		final int n = 6;
+		final int k = 30;
+		final ThreadLocalRandom random = ThreadLocalRandom.current();
+		final ImmutableList.Builder<StrategyFactory> factoriesBuilder = ImmutableList.<StrategyFactory>builder();
+		factoriesBuilder.add(StrategyFactory.limited(random.nextLong(), ImmutableList.of()));
+		for (int qC = 2; qC < k; qC += 2) {
+			final int qV = k - qC;
+			factoriesBuilder.add(StrategyFactory.limited(random.nextLong(),
+					ImmutableList.of(QuestioningConstraint.of(QuestionType.COMMITTEE_QUESTION, qC),
+							QuestioningConstraint.of(QuestionType.VOTER_QUESTION, qV))));
+			factoriesBuilder.add(StrategyFactory.limited(random.nextLong(),
+					ImmutableList.of(QuestioningConstraint.of(QuestionType.VOTER_QUESTION, qV),
+							QuestioningConstraint.of(QuestionType.COMMITTEE_QUESTION, qC))));
+		}
 
 		final Path json = Path.of("experiments/Oracles/", String.format("Oracles m = %d, n = %d, 100.json", m, n));
 		final List<Oracle> oracles = JsonConverter.toOracles(Files.readString(json));
+		final Oracle oracle = oracles.get(0);
 
-		final Runs runs = runs(factory, oracles.get(0), k, 50);
-		final Stats stats = runs.getMinimalMaxRegretStats().get(runs.getK());
-		final String descr = Runner.asStringEstimator(stats);
-		LOGGER.info("Got final estimator: {}.", descr);
-
-		return runs;
+		for (StrategyFactory factory : factoriesBuilder.build()) {
+			final Runs runs = runs(factory, oracle, k, 50);
+			final Stats stats = runs.getMinimalMaxRegretStats().get(runs.getK());
+			final String descr = Runner.asStringEstimator(stats);
+			LOGGER.info("Got final estimator: {}.", descr);
+		}
 	}
 
 	public void tiesWithOracle1() throws IOException {
@@ -150,5 +156,19 @@ public class VariousXps {
 		final ImmutableList<Integer> ties = tiesBuilder.build();
 		LOGGER.debug("Questions:{}.", questions);
 		LOGGER.info("Ties: {}.", ties);
+	}
+
+	public void analyzeQuestions() throws Exception {
+		final int m = 7;
+		final int n = 7;
+		final int k = 30;
+		final int nbRuns = 50;
+		final Path json = Path.of(String.format(
+				"experiments/Limited, constrained to [], m = %d, n = %d, k = %d, nbRuns = %d.json", m, n, k, nbRuns));
+		final Runs runs = JsonConverter.toRuns(Files.readString(json));
+		for (Run run : runs.getRuns()) {
+			LOGGER.info("Run: {} qC, {} qV, mmr {}.", run.getNbQCommittee(), run.getNbQVoters(),
+					run.getMinimalMaxRegrets().get(k).getMinimalMaxRegretValue());
+		}
 	}
 }
