@@ -46,7 +46,7 @@ public class Runner {
 	 * the given strategy.
 	 */
 	public static Run run(StrategyFactory strategyFactory, int m, int n, int k) {
-		final Oracle oracle = Oracle.build(Generator.genProfile(m, n), Generator.genWeights(m));
+		final Oracle oracle = Oracle.build(Generator.genProfile(m, n), Generator.genWeightsWithUnbalancedDistribution(m));
 		return run(strategyFactory, oracle, k);
 	}
 

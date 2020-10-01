@@ -20,7 +20,7 @@ public class PSRWeightsTest {
 		Aprational a = new Aprational(new Apint(2), new Apint(3));
 		QuestionCommittee qc = QuestionCommittee.given(a, 1);
 		ComparisonOperator answ;
-		PSRWeights weights = Generator.genWeights(7);
+		PSRWeights weights = Generator.genWeightsWithUnbalancedDistribution(7);
 		double left = (weights.getWeightAtRank(1) - weights.getWeightAtRank(2));
 		double right = a.doubleValue() * (weights.getWeightAtRank(2) - weights.getWeightAtRank(3));
 		if (left > right) {

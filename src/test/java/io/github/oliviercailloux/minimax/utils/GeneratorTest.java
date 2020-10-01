@@ -19,7 +19,7 @@ public class GeneratorTest {
 	@Test
 	public void testGenWeights() {
 		int m = 9;
-		final PSRWeights weights = Generator.genWeights(m);
+		final PSRWeights weights = Generator.genWeightsWithUnbalancedDistribution(m);
 		assertEquals(m, weights.getWeights().size());
 	}
 

@@ -57,7 +57,7 @@ public class StrategiesXp {
 		final ImmutableMap<StrategyFactory, ImmutableList.Builder<Run>> runsBuilders = tmpRunsBuilders.build();
 
 		for (int i = 0; i < nbRuns; ++i) {
-			final Oracle oracle = Oracle.build(Generator.genProfile(m, n), Generator.genWeights(m));
+			final Oracle oracle = Oracle.build(Generator.genProfile(m, n), Generator.genWeightsWithUnbalancedDistribution(m));
 			for (StrategyFactory factory : factoryList) {
 //				final Run run = Runner.run(factory, oracle, k);
 				final Run run = Runner.runWeights(factory, oracle, k);

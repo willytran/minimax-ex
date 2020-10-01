@@ -27,14 +27,14 @@ import io.github.oliviercailloux.minimax.elicitation.PSRWeights;
 
 public class Generator {
 
-	public static PSRWeights genWeightsEquallySpread(int nbAlternatives) {
+	public static PSRWeights genWeightsWithUniformDistribution(int nbAlternatives) {
 		final Random r = new Random();
 		final Supplier<Double> differenceSupplier = () -> r.nextDouble();
 
 		return genWeights(nbAlternatives, differenceSupplier);
 	}
 
-	public static PSRWeights genWeights(int nbAlternatives) {
+	public static PSRWeights genWeightsWithUnbalancedDistribution(int nbAlternatives) {
 		final Random r = new Random();
 		final double p = (1 / (double) (nbAlternatives - 1));
 		final Supplier<Double> differenceSupplier = () -> r.nextDouble() < p ? 0.9 + (r.nextDouble() * 0.1)
@@ -110,6 +110,6 @@ public class Generator {
 	}
 
 	public static Oracle generateOracle(int nbAlternatives, int nbVoters) {
-		return Oracle.build(genProfile(nbAlternatives, nbVoters), genWeights(nbAlternatives));
+		return Oracle.build(genProfile(nbAlternatives, nbVoters), genWeightsWithUnbalancedDistribution(nbAlternatives));
 	}
 }
