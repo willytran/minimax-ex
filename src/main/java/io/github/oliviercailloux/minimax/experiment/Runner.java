@@ -1,9 +1,13 @@
 package io.github.oliviercailloux.minimax.experiment;
 
+import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Path;
 import java.text.NumberFormat;
 import java.util.Locale;
 import java.util.stream.IntStream;
 
+import org.apfloat.Aprational;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -11,10 +15,13 @@ import com.google.common.collect.ImmutableList;
 import com.google.common.collect.ImmutableMap;
 import com.google.common.math.Stats;
 
+import io.github.oliviercailloux.jlp.elements.ComparisonOperator;
 import io.github.oliviercailloux.minimax.elicitation.Oracle;
+import io.github.oliviercailloux.minimax.elicitation.PSRWeights;
 import io.github.oliviercailloux.minimax.elicitation.PrefKnowledge;
 import io.github.oliviercailloux.minimax.elicitation.PreferenceInformation;
 import io.github.oliviercailloux.minimax.elicitation.Question;
+import io.github.oliviercailloux.minimax.experiment.json.JsonConverter;
 import io.github.oliviercailloux.minimax.strategies.Strategy;
 import io.github.oliviercailloux.minimax.strategies.StrategyFactory;
 import io.github.oliviercailloux.minimax.utils.Generator;
@@ -41,6 +48,52 @@ public class Runner {
 	public static Run run(StrategyFactory strategyFactory, int m, int n, int k) {
 		final Oracle oracle = Oracle.build(Generator.genProfile(m, n), Generator.genWeights(m));
 		return run(strategyFactory, oracle, k);
+	}
+
+	public static Run runWeights(StrategyFactory strategyFactory, Oracle oracle, int k) throws IOException {
+		final Strategy strategy = strategyFactory.get();
+
+		final PrefKnowledge knowledge = PrefKnowledge.given(oracle.getAlternatives(), oracle.getProfile().keySet());
+		PSRWeights p = oracle.getWeights();
+		for (int i = 1; i <= oracle.getM() - 2; i++) {
+			double n = (p.getWeightAtRank(i) - p.getWeightAtRank(i + 1));
+			double d = (p.getWeightAtRank(i + 1) - p.getWeightAtRank(i + 2));
+			if (d < 1e-6) {
+				knowledge.addConstraint(i, ComparisonOperator.EQ, new Aprational(oracle.getN() - 1));
+			} else {
+				Aprational lambda = new Aprational(n / d);
+				if (lambda.compareTo(new Aprational(oracle.getN() - 1)) == 1 || lambda.compareTo(Aprational.ZERO) < 1) {
+					knowledge.addConstraint(i, ComparisonOperator.EQ, new Aprational(oracle.getN() - 1));
+				} else {
+					knowledge.addConstraint(i, ComparisonOperator.EQ, lambda);
+				}
+			}
+		}
+		for (int i = 1; i <= oracle.getM() - 2; i++) {
+			LOGGER.info("Range of lambda " + i + ": " + knowledge.getLambdaRange(i).toString());
+		}
+		strategy.setKnowledge(knowledge);
+
+		final ImmutableList.Builder<Question> qBuilder = ImmutableList.builder();
+		final ImmutableList.Builder<Long> tBuilder = ImmutableList.builder();
+
+		try {
+			for (int i = 1; i <= k; i++) {
+				final long startTime = System.currentTimeMillis();
+				final Question q = strategy.nextQuestion();
+				final PreferenceInformation a = oracle.getPreferenceInformation(q);
+				knowledge.update(a);
+				LOGGER.debug("Asked {}.", q);
+				qBuilder.add(q);
+				tBuilder.add(startTime);
+			}
+		} catch (Exception e) {
+			Files.writeString(Path.of("oracle-crashed.json"), JsonConverter.toJson(oracle).toString());
+			throw e;
+		}
+		final long endTime = System.currentTimeMillis();
+
+		return Run.of(oracle, tBuilder.build(), qBuilder.build(), endTime);
 	}
 
 	public static Run run(StrategyFactory strategyFactory, Oracle oracle, int k) {
