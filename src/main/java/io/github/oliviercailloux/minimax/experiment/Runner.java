@@ -96,8 +96,9 @@ public class Runner {
 	}
 
 	public static String asStringEstimator(Stats stats) {
+		final String dev = stats.count() >= 2 ? "±" + FORMATTER.format(stats.sampleStandardDeviation()) : "";
 		return "[" + FORMATTER.format(stats.min()) + "; " + FORMATTER.format(stats.mean()) + "; "
-				+ FORMATTER.format(stats.max()) + "]±" + FORMATTER.format(stats.sampleStandardDeviation());
+				+ FORMATTER.format(stats.max()) + "]" + dev;
 	}
 
 }
