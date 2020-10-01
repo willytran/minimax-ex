@@ -48,12 +48,12 @@ public class VariousXps {
 //		variousXps.exportOracles(30, 5, 100);
 //		variousXps.tiesWithOracle1();
 //		variousXps.runWithOracle1();
-		variousXps.runOnceWithOracle1();
+		variousXps.runOneStrategyWithOracle1();
 //		variousXps.analyzeQuestions();
 //		variousXps.summarizeXps();
 	}
 
-	public void runOnceWithOracle1() throws IOException {
+	public void runOneStrategyWithOracle1() throws IOException {
 		final int m = 6;
 		final int n = 6;
 		final int k = 30;
@@ -73,9 +73,9 @@ public class VariousXps {
 	}
 
 	public void runWithOracle1() throws IOException {
-		final int m = 6;
-		final int n = 6;
-		final int k = 30;
+		final int m = 10;
+		final int n = 20;
+		final int k = 300;
 		final ThreadLocalRandom random = ThreadLocalRandom.current();
 		final ImmutableList.Builder<StrategyFactory> factoriesBuilder = ImmutableList.<StrategyFactory>builder();
 		factoriesBuilder.add(StrategyFactory.limited(random.nextLong(), ImmutableList.of()));
