@@ -229,6 +229,7 @@ public class StrategyByMmr implements Strategy {
 
 		final ImmutableSet<Question> bestQuestions = StrategyHelper.getMinimalElements(questions, lotteryComparator);
 		LOGGER.debug("Best questions: {}.", bestQuestions);
+		bestQuestions.stream().forEach(q -> LOGGER.info(q.toString()+ " MMR: "+ questions.get(q)));
 		return helper.drawFromStrictlyIncreasing(bestQuestions.asList(), Comparator.naturalOrder());
 	}
 

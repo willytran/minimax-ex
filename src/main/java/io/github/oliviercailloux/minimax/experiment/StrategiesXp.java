@@ -22,13 +22,13 @@ public class StrategiesXp {
 	private static final Logger LOGGER = LoggerFactory.getLogger(StrategiesXp.class);
 
 	public static void main(String[] args) throws Exception {
-		final int m = 10;
-		final int n = 20;
-		final int k = 250;
-		final int runs = 25;
+		final int m = 5;
+		final int n = 5;
+		final int k = 100;
+		final int runs = 1;
 
 		final ImmutableList<StrategyFactory> factoryListT3 = ImmutableList
-				.of(StrategyFactory.limitedCommitteeThenVoters(25));
+				.of(StrategyFactory.limited());
 		runs(factoryListT3, m, n, k, runs);
 
 	}
@@ -58,9 +58,9 @@ public class StrategiesXp {
 
 		for (int i = 0; i < nbRuns; ++i) {
 			final Oracle oracle = Oracle.build(Generator.genProfile(m, n), Generator.genWeights(m));
-//			final Oracle oracle = JsonConverter.toOracle("oracle-crashed.json");
 			for (StrategyFactory factory : factoryList) {
-				final Run run = Runner.run(factory, oracle, k);
+//				final Run run = Runner.run(factory, oracle, k);
+				final Run run = Runner.runWeights(factory, oracle, k);
 				LOGGER.info("Strategy {} - Time (run {}): {}.", factory.getDescription(), i, run.getTotalTime());
 				Files.writeString(Path.of("run " + i + ".json"), JsonConverter.toJson(run).toString());
 				runsBuilders.get(factory).add(run);
