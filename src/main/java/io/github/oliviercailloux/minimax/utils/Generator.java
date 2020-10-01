@@ -15,6 +15,9 @@ import java.util.function.Supplier;
 import java.util.stream.Collectors;
 import java.util.stream.IntStream;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.Lists;
 import com.google.common.math.DoubleMath;
@@ -26,6 +29,32 @@ import io.github.oliviercailloux.minimax.elicitation.Oracle;
 import io.github.oliviercailloux.minimax.elicitation.PSRWeights;
 
 public class Generator {
+	@SuppressWarnings("unused")
+	private static final Logger LOGGER = LoggerFactory.getLogger(Generator.class);
+
+	public static PSRWeights genWeightsEquallySpread(int nbAlternatives) {
+		final Supplier<Double> differenceSupplier = () -> 1d;
+
+		return genWeights(nbAlternatives, differenceSupplier);
+	}
+
+	/**
+	 * Each difference is twice the next one.
+	 */
+	public static PSRWeights genWeightsGeometric(int nbAlternatives) {
+		final Supplier<Double> differenceSupplier = new Supplier<>() {
+			double current = Math.pow(2d, nbAlternatives - 1);
+
+			@Override
+			public Double get() {
+				final double actual = current;
+				current /= 2d;
+				return actual;
+			}
+		};
+
+		return genWeights(nbAlternatives, differenceSupplier);
+	}
 
 	public static PSRWeights genWeightsWithUniformDistribution(int nbAlternatives) {
 		final Random r = new Random();
@@ -84,7 +113,9 @@ public class Generator {
 		final Double lastDifference = normalizedDifferences.get(normalizedDifferences.size() - 1);
 		verify(DoubleMath.fuzzyEquals(previous, lastDifference, 1e10));
 		weightsBuilder.add(0d);
-		return PSRWeights.given(weightsBuilder.build());
+		final ImmutableList<Double> weights = weightsBuilder.build();
+		LOGGER.info("Generated {}.", weights);
+		return PSRWeights.given(weights);
 	}
 
 	public static Map<Voter, VoterStrictPreference> genProfile(int nbAlternatives, int nbVoters) {
