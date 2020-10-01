@@ -52,9 +52,9 @@ public class VariousXps {
 	}
 
 	public void runOnceWithOracle1() throws IOException {
-		final int m = 10;
-		final int n = 20;
-		final int k = 300;
+		final int m = 6;
+		final int n = 6;
+		final int k = 30;
 		final ThreadLocalRandom random = ThreadLocalRandom.current();
 		final long seed = random.nextLong();
 		final StrategyFactory factory = StrategyFactory.limited(seed,
@@ -64,7 +64,7 @@ public class VariousXps {
 		final List<Oracle> oracles = JsonConverter.toOracles(Files.readString(json));
 		final Oracle oracle = oracles.get(0);
 
-		final Runs runs = runs(factory, oracle, k, 1);
+		final Runs runs = runs(factory, oracle, k, 50);
 		final Stats stats = runs.getMinimalMaxRegretStats().get(runs.getK());
 		final String descr = Runner.asStringEstimator(stats);
 		LOGGER.info("Got final estimator: {}.", descr);

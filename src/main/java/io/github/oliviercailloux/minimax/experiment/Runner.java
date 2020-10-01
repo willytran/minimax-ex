@@ -119,6 +119,29 @@ public class Runner {
 		return Run.of(oracle, tBuilder.build(), qBuilder.build(), endTime);
 	}
 
+	public static Run run(Strategy strategy, Oracle oracle, PrefKnowledge startingKnowledge, int k) {
+//		final PrefKnowledge knowledge = PrefKnowledge.given(oracle.getAlternatives(), oracle.getProfile().keySet());
+		strategy.setKnowledge(startingKnowledge);
+		/** Rename for clarity. */
+		final PrefKnowledge knowledge = startingKnowledge;
+
+		final ImmutableList.Builder<Question> qBuilder = ImmutableList.builder();
+		final ImmutableList.Builder<Long> tBuilder = ImmutableList.builder();
+
+		for (int i = 1; i <= k; i++) {
+			final long startTime = System.currentTimeMillis();
+			final Question q = strategy.nextQuestion();
+			final PreferenceInformation a = oracle.getPreferenceInformation(q);
+			knowledge.update(a);
+			LOGGER.debug("Asked {}.", q);
+			qBuilder.add(q);
+			tBuilder.add(startTime);
+		}
+		final long endTime = System.currentTimeMillis();
+
+		return Run.of(oracle, tBuilder.build(), qBuilder.build(), endTime);
+	}
+
 	public static void show(Run run) {
 		for (int i = 0; i < run.getK(); ++i) {
 			LOGGER.info("Regret after {} questions: {}.", i,
