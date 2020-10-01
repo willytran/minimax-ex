@@ -1,17 +1,29 @@
 package io.github.oliviercailloux.minimax.experiment;
 
+import static com.google.common.base.Preconditions.checkState;
+import static com.google.common.base.Verify.verify;
+
 import java.io.IOException;
+import java.io.StringWriter;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.StandardCopyOption;
 import java.util.List;
 import java.util.concurrent.ThreadLocalRandom;
+import java.util.stream.IntStream;
+import java.util.stream.Stream;
+
+import javax.annotation.Nullable;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import com.google.common.collect.ImmutableList;
+import com.google.common.collect.ImmutableSet;
+import com.google.common.collect.Iterables;
 import com.google.common.math.Stats;
+import com.univocity.parsers.csv.CsvWriter;
+import com.univocity.parsers.csv.CsvWriterSettings;
 
 import io.github.oliviercailloux.json.PrintableJsonObject;
 import io.github.oliviercailloux.minimax.elicitation.Oracle;
@@ -35,8 +47,29 @@ public class VariousXps {
 		final VariousXps variousXps = new VariousXps();
 //		variousXps.exportOracles(30, 5, 100);
 //		variousXps.tiesWithOracle1();
-		variousXps.runWithOracle1();
+//		variousXps.runWithOracle1();
+		variousXps.runOnceWithOracle1();
 //		variousXps.analyzeQuestions();
+//		variousXps.summarizeXps();
+	}
+
+	public void runOnceWithOracle1() throws IOException {
+		final int m = 6;
+		final int n = 6;
+		final int k = 30;
+		final ThreadLocalRandom random = ThreadLocalRandom.current();
+		final long seed = random.nextLong();
+		final StrategyFactory factory = StrategyFactory.limited(seed,
+				ImmutableList.of(QuestioningConstraint.of(QuestionType.VOTER_QUESTION, Integer.MAX_VALUE)));
+
+		final Path json = Path.of("experiments/Oracles/", String.format("Oracles m = %d, n = %d, 100.json", m, n));
+		final List<Oracle> oracles = JsonConverter.toOracles(Files.readString(json));
+		final Oracle oracle = oracles.get(0);
+
+		final Runs runs = runs(factory, oracle, k, 50);
+		final Stats stats = runs.getMinimalMaxRegretStats().get(runs.getK());
+		final String descr = Runner.asStringEstimator(stats);
+		LOGGER.info("Got final estimator: {}.", descr);
 	}
 
 	public void runWithOracle1() throws IOException {
@@ -170,5 +203,85 @@ public class VariousXps {
 			LOGGER.info("Run: {} qC, {} qV, mmr {}.", run.getNbQCommittee(), run.getNbQVoters(),
 					run.getMinimalMaxRegrets().get(k).getMinimalMaxRegretValue());
 		}
+	}
+
+	public void summarizeXps() throws Exception {
+		final int m = 6;
+		final int n = 6;
+		final int k = 30;
+
+//		final ImmutableList.Builder<String> inputsBuilder = ImmutableList.builder();
+//		inputsBuilder.add(
+//				String.format("Limited, constrained to [], m = %d, n = %d, k = %d, nbRuns = %d.json", m, n, k, nbRuns));
+//		inputsBuilder.add(String.format("Limited, constrained to [∞v], m = %d, n = %d, k = %d, nbRuns = %d.json", m, n,
+//				k, nbRuns));
+//		for (int qC = 2; qC < k; qC += 2) {
+//			final int qV = k - qC;
+//			inputsBuilder
+//					.add(String.format("Limited, constrained to [%dc, %dv], m = %d, n = %d, k = %d, nbRuns = %d.json",
+//							qC, qV, m, n, k, nbRuns));
+//			inputsBuilder
+//					.add(String.format("Limited, constrained to [%dv, %dc], m = %d, n = %d, k = %d, nbRuns = %d.json",
+//							qV, qC, m, n, k, nbRuns));
+//		}
+//		final ImmutableList<String> inputs = inputsBuilder.build();
+//		for (String input : inputs) {
+//			final Path path = Path.of(String.format("experiments/m = %d, n = %d", m, n), input);
+//		}
+
+		final Stream<Path> list = Files.list(Path.of(String.format("experiments/m = %d, n = %d", m, n)))
+//		final Stream<Path> list = Files.list(Path.of("experiments/Test"))
+				.filter(p -> p.getFileName().toString().endsWith(".json"));
+		final ImmutableSet<Path> inputPaths = list.collect(ImmutableSet.toImmutableSet());
+		checkState(!inputPaths.isEmpty());
+		final ImmutableSet<String> inputNames = inputPaths.stream().map(Path::toString)
+				.collect(ImmutableSet.toImmutableSet());
+
+		final int smallestLength = inputNames.stream().mapToInt(String::length).min().orElse(0);
+		/**
+		 * Consider the greatest possible one without counting .json, thus five less, so
+		 * that it gets necessarily counted as the suffix (which does not happen
+		 * otherwise in case of a single file).
+		 */
+		final int greatestCommonPrefixLength = IntStream.range(0, smallestLength + 1 - 5)
+				.filter(i -> inputNames.stream().map(s -> s.substring(0, i)).distinct().count() == 1).max().getAsInt();
+		/**
+		 * Subtlety: the prefix could end with part of the suffix, in which case they
+		 * might be counted twice. This happens for example if the set of names is {aac,
+		 * aacbc} (or just {aac}). In that case, we shouldn’t attempt to substract both
+		 * the prefix and the suffix from aac. Thus the max length for the suffix must
+		 * be small enough.
+		 */
+		final int greatestCommonSuffixLength = IntStream.range(0, smallestLength + 1 - greatestCommonPrefixLength)
+				.filter(i -> inputNames.stream().map(s -> s.substring(s.length() - i, s.length())).distinct()
+						.count() == 1)
+				.max().getAsInt();
+
+		final StringWriter output = new StringWriter();
+		final CsvWriter writer = new CsvWriter(output, new CsvWriterSettings());
+		final String kHeader = String.format("k = %d", k);
+		writer.writeHeaders("Strategy", kHeader);
+
+		for (Path path : inputPaths) {
+//			Pattern.compile("Limited, constrained to [(<nbX>2)(<x>c), 28v], m = 6, n = 6, k = 30, nbRuns = 50.json");
+			final Runs runs = JsonConverter.toRuns(Files.readString(path));
+			verify(runs.getK() == k);
+			final Stats stats = runs.getMinimalMaxRegretStats().get(k);
+			final String estimator = Runner.asStringEstimator(stats);
+			final String fullFileName = path.toString();
+			writer.addValue("Strategy", fullFileName.substring(greatestCommonPrefixLength,
+					fullFileName.length() - greatestCommonSuffixLength));
+			writer.addValue(kHeader, estimator);
+			writer.writeValuesToRow();
+		}
+		writer.close();
+
+		final @Nullable String first = Iterables.getFirst(inputNames, "");
+		final String commonPrefix = first.substring(0, greatestCommonPrefixLength);
+		final String commonPrefixLastPart = Path.of(commonPrefix).getFileName().toString();
+		final String commonSuffix = first.substring(first.length() - greatestCommonSuffixLength, first.length());
+		final String suspension = "…";
+		Files.writeString(Path.of(String.format("Summary %s%s%s.csv", commonPrefixLastPart, suspension, commonSuffix)),
+				output.toString());
 	}
 }
