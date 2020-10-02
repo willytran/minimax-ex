@@ -10,6 +10,7 @@ import java.nio.file.Path;
 import java.nio.file.StandardCopyOption;
 import java.util.List;
 import java.util.concurrent.ThreadLocalRandom;
+import java.util.function.Function;
 import java.util.stream.IntStream;
 import java.util.stream.Stream;
 
@@ -19,6 +20,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import com.google.common.collect.ImmutableList;
+import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.ImmutableSet;
 import com.google.common.collect.Iterables;
 import com.google.common.collect.MoreCollectors;
@@ -46,14 +48,14 @@ public class VariousXps {
 
 	public static void main(String[] args) throws Exception {
 		final VariousXps variousXps = new VariousXps();
-		variousXps.runWithRandomOracles();
-//		variousXps.showLoss();
+//		variousXps.runWithRandomOracles();
+//		variousXps.showFinalStats();
 //		variousXps.exportOracles(10, 20, 100);
 //		variousXps.tiesWithOracle1();
 //		variousXps.runWithOracle1();
 //		variousXps.runOneStrategyWithOracle1();
 //		variousXps.analyzeQuestions();
-//		variousXps.summarizeXps();
+		variousXps.summarizeXps();
 	}
 
 	public void runWithRandomOracles() throws IOException {
@@ -234,15 +236,16 @@ public class VariousXps {
 		}
 	}
 
-	public void showLoss() throws Exception {
+	public void showFinalStats() throws Exception {
 		final int m = 6;
 		final int n = 6;
 		final int k = 30;
 		final int nbRuns = 50;
-		final Path json = Path
-				.of(String.format("experiments/Elitist, m = %d, n = %d, k = %d, nbRuns = %d.json", m, n, k, nbRuns));
+		final Path json = Path.of("experiments", String
+				.format("Limited, constrained to [∞v], m = %d, n = %d, k = %d, nbRuns = %d.json", m, n, k, nbRuns));
 		final Runs runs = JsonConverter.toRuns(Files.readString(json));
-		LOGGER.info("Losses after k: {}.", Runner.asStringEstimator(runs.getLossesStats().get(k)));
+		LOGGER.info("Loss after k: {}.", Runner.asStringEstimator(runs.getLossesStats().get(k)));
+		LOGGER.info("MMR after k: {}.", Runner.asStringEstimator(runs.getMinimalMaxRegretStats().get(k)));
 	}
 
 	public void summarizeXps() throws Exception {
@@ -269,8 +272,8 @@ public class VariousXps {
 //			final Path path = Path.of(String.format("experiments/m = %d, n = %d", m, n), input);
 //		}
 
-		final Stream<Path> list = Files.list(Path.of(String.format("experiments/m = %d, n = %d", m, n)))
-//		final Stream<Path> list = Files.list(Path.of("experiments/Test"))
+		final Stream<Path> list = Files.list(Path.of("experiments", String.format("m = %d, n = %d", m, n)))
+//		final Stream<Path> list = Files.list(Path.of("experiments", "Geometric"))
 				.filter(p -> p.getFileName().toString().endsWith(".json"));
 		final ImmutableSet<Path> inputPaths = list.collect(ImmutableSet.toImmutableSet());
 		checkState(!inputPaths.isEmpty());
@@ -299,19 +302,25 @@ public class VariousXps {
 
 		final StringWriter output = new StringWriter();
 		final CsvWriter writer = new CsvWriter(output, new CsvWriterSettings());
-		final String kHeader = String.format("k = %d", k);
-		writer.writeHeaders("Strategy", kHeader);
+		final ImmutableMap<String, Function<Runs, Stats>> providers = ImmutableMap.of(String.format("MMR @ k = %d", k),
+				(Runs r) -> r.getMinimalMaxRegretStats().get(k), String.format("Loss @ k = %d", k),
+				(Runs r) -> r.getLossesStats().get(k));
+		final ImmutableList<String> headers = Stream.concat(Stream.of("Strategy"), providers.keySet().stream())
+				.collect(ImmutableList.toImmutableList());
+		writer.writeHeaders(headers);
 
 		for (Path path : inputPaths) {
 //			Pattern.compile("Limited, constrained to [(<nbX>2)(<x>c), 28v], m = 6, n = 6, k = 30, nbRuns = 50.json");
 			final Runs runs = JsonConverter.toRuns(Files.readString(path));
 			verify(runs.getK() == k);
-			final Stats stats = runs.getMinimalMaxRegretStats().get(k);
-			final String estimator = Runner.asStringEstimator(stats);
 			final String fullFileName = path.toString();
 			writer.addValue("Strategy", fullFileName.substring(greatestCommonPrefixLength,
 					fullFileName.length() - greatestCommonSuffixLength));
-			writer.addValue(kHeader, estimator);
+			for (String header : providers.keySet()) {
+				final Stats stats = providers.get(header).apply(runs);
+				final String estimator = Runner.asStringEstimator(stats);
+				writer.addValue(header, estimator);
+			}
 			writer.writeValuesToRow();
 		}
 		writer.close();
@@ -320,8 +329,7 @@ public class VariousXps {
 		final String commonPrefix = first.substring(0, greatestCommonPrefixLength);
 		final String commonPrefixLastPart = Path.of(commonPrefix).getFileName().toString();
 		final String commonSuffix = first.substring(first.length() - greatestCommonSuffixLength, first.length());
-		final String suspension = "…";
-		Files.writeString(Path.of(String.format("Summary %s%s%s.csv", commonPrefixLastPart, suspension, commonSuffix)),
+		Files.writeString(Path.of(String.format("Summary %s%s%s.csv", commonPrefixLastPart, "…", commonSuffix)),
 				output.toString());
 	}
 }
