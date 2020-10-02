@@ -250,20 +250,6 @@ public class VariousXps {
 		LOGGER.info("MMR after k: {}.", Runner.asStringEstimator(runs.getMinimalMaxRegretStats().get(k)));
 	}
 
-	public void summarizeXp() throws Exception {
-		final int m = 6;
-		final int n = 6;
-		final int k = 30;
-		final int nbRuns = 50;
-		final int modulo = 1;
-		final String inputName = String.format("Limited, constrained to [∞v], m = %d, n = %d, k = %d, nbRuns = %d", m,
-				n, k, nbRuns);
-		final Path input = Path.of("experiments", "Geometric", inputName + ".json");
-		final Runs runs = JsonConverter.toRuns(Files.readString(input));
-		final String csv = ToCsv.toCsv(runs, modulo);
-		Files.writeString(Path.of("Summary - " + inputName + ".csv"), csv);
-	}
-
 	public void summarizeXps() throws Exception {
 		final int m = 6;
 		final int n = 6;
