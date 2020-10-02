@@ -329,7 +329,8 @@ public class VariousXps {
 		final String commonPrefix = first.substring(0, greatestCommonPrefixLength);
 		final String commonPrefixLastPart = Path.of(commonPrefix).getFileName().toString();
 		final String commonSuffix = first.substring(first.length() - greatestCommonSuffixLength, first.length());
-		Files.writeString(Path.of(String.format("Summary %s%s%s.csv", commonPrefixLastPart, "…", commonSuffix)),
-				output.toString());
+		final Path outputFile = Path.of(String.format("Summary %s%s%s.csv", commonPrefixLastPart, "…", commonSuffix));
+		Files.writeString(outputFile, output.toString());
+		LOGGER.info("Written {}.", outputFile);
 	}
 }
