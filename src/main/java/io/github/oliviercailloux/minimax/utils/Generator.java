@@ -114,7 +114,7 @@ public class Generator {
 		verify(DoubleMath.fuzzyEquals(previous, lastDifference, 1e10));
 		weightsBuilder.add(0d);
 		final ImmutableList<Double> weights = weightsBuilder.build();
-		LOGGER.info("Generated {}.", weights);
+		LOGGER.debug("Generated {}.", weights);
 		return PSRWeights.given(weights);
 	}
 

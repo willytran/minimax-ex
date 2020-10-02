@@ -78,6 +78,20 @@ public class Runs {
 		return statsBuilder.build();
 	}
 
+	/**
+	 * @return a list of size k + 1.
+	 */
+	@JsonbTransient
+	public ImmutableList<Stats> getLossesStats() {
+		final ImmutableList.Builder<Stats> statsBuilder = ImmutableList.builder();
+		for (int i = 0; i < k + 1; ++i) {
+			final int finali = i;
+			final Stats iThStats = runs.stream().map(r -> r.getLoss(finali)).collect(Stats.toStats());
+			statsBuilder.add(iThStats);
+		}
+		return statsBuilder.build();
+	}
+
 	@JsonbTransient
 	public Stats getQuestionTimeStats() {
 		final ImmutableList<Integer> allTimes = runs.stream().flatMap((r) -> r.getQuestionTimesMs().stream())

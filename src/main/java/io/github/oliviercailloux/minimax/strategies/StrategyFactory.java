@@ -73,11 +73,16 @@ public class StrategyFactory implements Supplier<Strategy> {
 	}
 
 	public static StrategyFactory limitedCommitteeThenVoters(int nbQuestionsToCommittee) {
-		final QuestioningConstraint cConstraint = QuestioningConstraint.of(QuestionType.COMMITTEE_QUESTION,
-				nbQuestionsToCommittee);
+		final long seed = ThreadLocalRandom.current().nextLong();
 		final QuestioningConstraint vConstraint = QuestioningConstraint.of(QuestionType.VOTER_QUESTION,
 				Integer.MAX_VALUE);
-		final long seed = ThreadLocalRandom.current().nextLong();
+
+		if (nbQuestionsToCommittee == 0) {
+			return limited(seed, ImmutableList.of(vConstraint));
+		}
+
+		final QuestioningConstraint cConstraint = QuestioningConstraint.of(QuestionType.COMMITTEE_QUESTION,
+				nbQuestionsToCommittee);
 		return limited(seed, ImmutableList.of(cConstraint, vConstraint));
 	}
 

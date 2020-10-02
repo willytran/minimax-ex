@@ -46,7 +46,8 @@ public class VariousXps {
 
 	public static void main(String[] args) throws Exception {
 		final VariousXps variousXps = new VariousXps();
-		variousXps.runElitist();
+		variousXps.runWithRandomOracles();
+//		variousXps.showLoss();
 //		variousXps.exportOracles(10, 20, 100);
 //		variousXps.tiesWithOracle1();
 //		variousXps.runWithOracle1();
@@ -55,14 +56,15 @@ public class VariousXps {
 //		variousXps.summarizeXps();
 	}
 
-	public void runElitist() throws IOException {
+	public void runWithRandomOracles() throws IOException {
 		final int m = 6;
 		final int n = 6;
 		final int k = 30;
-		final StrategyFactory factory = StrategyFactory.elitist();
+//		final StrategyFactory factory = StrategyFactory.elitist();
+		final StrategyFactory factory = StrategyFactory.limitedCommitteeThenVoters(0);
 
-		final ImmutableList<Oracle> oracles = IntStream.range(0, 50)
-				.mapToObj(i -> Oracle.build(Generator.genProfile(m, n), Generator.genWeightsGeometric(m)))
+		final ImmutableList<Oracle> oracles = Stream
+				.generate(() -> Oracle.build(Generator.genProfile(m, n), Generator.genWeightsGeometric(m))).limit(50)
 				.collect(ImmutableList.toImmutableList());
 
 		final Runs runs = runs(factory, oracles, k);
@@ -154,7 +156,7 @@ public class VariousXps {
 	}
 
 	public Runs runs(StrategyFactory factory, Oracle oracle, int k, int nbRuns) throws IOException {
-		final ImmutableList<Oracle> oracles = IntStream.range(0, nbRuns).mapToObj(i -> oracle)
+		final ImmutableList<Oracle> oracles = Stream.generate(() -> oracle).limit(nbRuns)
 				.collect(ImmutableList.toImmutableList());
 		return runs(factory, oracles, k);
 	}
@@ -230,6 +232,17 @@ public class VariousXps {
 			LOGGER.info("Run: {} qC, {} qV, mmr {}.", run.getNbQCommittee(), run.getNbQVoters(),
 					run.getMinimalMaxRegrets().get(k).getMinimalMaxRegretValue());
 		}
+	}
+
+	public void showLoss() throws Exception {
+		final int m = 6;
+		final int n = 6;
+		final int k = 30;
+		final int nbRuns = 50;
+		final Path json = Path
+				.of(String.format("experiments/Elitist, m = %d, n = %d, k = %d, nbRuns = %d.json", m, n, k, nbRuns));
+		final Runs runs = JsonConverter.toRuns(Files.readString(json));
+		LOGGER.info("Losses after k: {}.", Runner.asStringEstimator(runs.getLossesStats().get(k)));
 	}
 
 	public void summarizeXps() throws Exception {
