@@ -46,7 +46,8 @@ public class Runner {
 	 * the given strategy.
 	 */
 	public static Run run(StrategyFactory strategyFactory, int m, int n, int k) {
-		final Oracle oracle = Oracle.build(Generator.genProfile(m, n), Generator.genWeightsWithUnbalancedDistribution(m));
+		final Oracle oracle = Oracle.build(Generator.genProfile(m, n),
+				Generator.genWeightsWithUnbalancedDistribution(m));
 		return run(strategyFactory, oracle, k);
 	}
 
@@ -55,6 +56,12 @@ public class Runner {
 
 		final PrefKnowledge knowledge = PrefKnowledge.given(oracle.getAlternatives(), oracle.getProfile().keySet());
 		PSRWeights p = oracle.getWeights();
+		/**
+		 * We’d need to find l, u so that we can say that λ ∈ [l, u] thus such that l ≤
+		 * n/d ≤ u. Thus, if 11/1000 ≤ n = 0.0117334 ≤ 12/1000 and 25/1000 ≤ d =
+		 * 0.0251189 ≤ 26/1000, we know that 11/26 ≤ n/d ≤ 12/25, and thus a suitable l
+		 * is 11/26.
+		 */
 		for (int i = 1; i <= oracle.getM() - 2; i++) {
 			double n = (p.getWeightAtRank(i) - p.getWeightAtRank(i + 1));
 			double d = (p.getWeightAtRank(i + 1) - p.getWeightAtRank(i + 2));

@@ -26,9 +26,9 @@ import io.github.oliviercailloux.minimax.elicitation.ConstraintsOnWeights;
 /**
  *
  * <p>
- * Because of imprecision with floating computations, computed PMR values can be
- * distinct when they really should be equal. To illustrate, observe that 2 ×
- * 0.15d = 0.3d but 0.1d + 0.2d ≠ 0.3d (see https://floating-point-gui.de/).
+ * Because of imprecision with floating point computations, computed PMR values
+ * can be distinct when they really should be equal. To illustrate, observe that
+ * 2 × 0.15d = 0.3d but 0.1d + 0.2d ≠ 0.3d (see https://floating-point-gui.de/).
  * Write <i>d_i</i> the difference between <i>w_i</i> and <i>w_{i+1}</i>. We
  * could perhaps have a regret equal to twice <i>d2</i> = 2 × 0.15d and another
  * regret equal to <i>d1</i> + <i>d3</i> = 0.2 + 0.1, which would lead to the

@@ -7,6 +7,7 @@ import static com.google.common.base.Verify.verify;
 import java.time.Duration;
 import java.util.List;
 import java.util.Objects;
+import java.util.stream.IntStream;
 
 import javax.json.bind.annotation.JsonbCreator;
 import javax.json.bind.annotation.JsonbProperty;
@@ -18,9 +19,12 @@ import org.slf4j.LoggerFactory;
 
 import com.google.common.base.MoreObjects;
 import com.google.common.collect.ImmutableList;
+import com.google.common.collect.ImmutableSet;
 import com.google.common.collect.Iterators;
 import com.google.common.collect.PeekingIterator;
+import com.google.common.math.Stats;
 
+import io.github.oliviercailloux.j_voting.Alternative;
 import io.github.oliviercailloux.minimax.elicitation.Oracle;
 import io.github.oliviercailloux.minimax.elicitation.PrefKnowledge;
 import io.github.oliviercailloux.minimax.elicitation.Question;
@@ -141,7 +145,7 @@ public class Run {
 
 	/**
 	 * Returns the regrets after having asked i questions.
-	 * 
+	 *
 	 * @param i ≤ k
 	 */
 	@JsonbTransient
@@ -179,6 +183,31 @@ public class Run {
 			regrets = builder.build();
 		}
 		return regrets;
+	}
+
+	public double getLoss(int i) {
+		getMinimalMaxRegrets();
+		final ImmutableSet<Alternative> chosen = regrets.get(i).asMultimap().keySet();
+		final ImmutableList<Double> allLosses = chosen.stream().map(x -> oracle.getBestScore() - oracle.getScore(x))
+				.collect(ImmutableList.toImmutableList());
+		verify(allLosses.stream().allMatch(l -> l >= 0d));
+		return Stats.meanOf(allLosses);
+	}
+
+	/**
+	 * The loss is the “effective regret”: defining x as an alternative we
+	 * recommend, the loss when choosing x is the score of x minus the score of y,
+	 * considering the effective preference data (the oracle), and not merely what
+	 * we know about it.
+	 *
+	 * We can in principle recommend more than one alternative (in case of tied
+	 * MMR). The loss is the average of the losses when choosing each of the
+	 * recommended alternatives.
+	 *
+	 * @return a list of size k + 1.
+	 */
+	public ImmutableList<Double> getLosses() {
+		return IntStream.rangeClosed(0, getK()).mapToObj(this::getLoss).collect(ImmutableList.toImmutableList());
 	}
 
 	@Override

@@ -21,6 +21,7 @@ import org.slf4j.LoggerFactory;
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.ImmutableSet;
 import com.google.common.collect.Iterables;
+import com.google.common.collect.MoreCollectors;
 import com.google.common.math.Stats;
 import com.univocity.parsers.csv.CsvWriter;
 import com.univocity.parsers.csv.CsvWriterSettings;
@@ -45,20 +46,36 @@ public class VariousXps {
 
 	public static void main(String[] args) throws Exception {
 		final VariousXps variousXps = new VariousXps();
-		variousXps.exportOracles(10, 20, 100);
+		variousXps.runElitist();
+//		variousXps.exportOracles(10, 20, 100);
 //		variousXps.tiesWithOracle1();
-		variousXps.runWithOracle1();
+//		variousXps.runWithOracle1();
 //		variousXps.runOneStrategyWithOracle1();
 //		variousXps.analyzeQuestions();
 //		variousXps.summarizeXps();
+	}
+
+	public void runElitist() throws IOException {
+		final int m = 6;
+		final int n = 6;
+		final int k = 30;
+		final StrategyFactory factory = StrategyFactory.elitist();
+
+		final ImmutableList<Oracle> oracles = IntStream.range(0, 50)
+				.mapToObj(i -> Oracle.build(Generator.genProfile(m, n), Generator.genWeightsGeometric(m)))
+				.collect(ImmutableList.toImmutableList());
+
+		final Runs runs = runs(factory, oracles, k);
+		final Stats stats = runs.getMinimalMaxRegretStats().get(runs.getK());
+		final String descr = Runner.asStringEstimator(stats);
+		LOGGER.info("Got final estimator: {}.", descr);
 	}
 
 	public void runOneStrategyWithOracle1() throws IOException {
 		final int m = 6;
 		final int n = 6;
 		final int k = 30;
-		final ThreadLocalRandom random = ThreadLocalRandom.current();
-		final long seed = random.nextLong();
+		final long seed = ThreadLocalRandom.current().nextLong();
 		final StrategyFactory factory = StrategyFactory.limited(seed,
 				ImmutableList.of(QuestioningConstraint.of(QuestionType.VOTER_QUESTION, Integer.MAX_VALUE)));
 
@@ -137,10 +154,19 @@ public class VariousXps {
 	}
 
 	public Runs runs(StrategyFactory factory, Oracle oracle, int k, int nbRuns) throws IOException {
+		final ImmutableList<Oracle> oracles = IntStream.range(0, nbRuns).mapToObj(i -> oracle)
+				.collect(ImmutableList.toImmutableList());
+		return runs(factory, oracles, k);
+	}
+
+	public Runs runs(StrategyFactory factory, ImmutableList<Oracle> oracles, int k) throws IOException {
+		final int m = oracles.stream().map(Oracle::getM).distinct().collect(MoreCollectors.onlyElement());
+		final int n = oracles.stream().map(Oracle::getN).distinct().collect(MoreCollectors.onlyElement());
+		final int nbRuns = oracles.size();
+
 		final Path outDir = Path.of("experiments/");
 		Files.createDirectories(outDir);
-		final String prefixDescription = factory.getDescription() + ", m = " + oracle.getM() + ", n = " + oracle.getN()
-				+ ", k = " + k;
+		final String prefixDescription = factory.getDescription() + ", m = " + m + ", n = " + n + ", k = " + k;
 		final String prefixTemp = prefixDescription + ", ongoing";
 		final Path tmpJson = outDir.resolve(prefixTemp + ".json");
 		final Path tmpCsv = outDir.resolve(prefixTemp + ".csv");
@@ -148,6 +174,7 @@ public class VariousXps {
 		final ImmutableList.Builder<Run> runsBuilder = ImmutableList.builder();
 		LOGGER.info("Started '{}'.", factory.getDescription());
 		for (int i = 0; i < nbRuns; ++i) {
+			final Oracle oracle = oracles.get(i);
 			final Run run = Runner.run(factory, oracle, k);
 			LOGGER.info("Time (run {}): {}.", i, run.getTotalTime());
 			runsBuilder.add(run);

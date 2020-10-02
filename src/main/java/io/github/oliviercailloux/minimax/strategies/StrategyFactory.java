@@ -46,6 +46,8 @@ public class StrategyFactory implements Supplier<Strategy> {
 			};
 			return limited(json.getJsonNumber("seed").longValue(), JsonbUtils
 					.fromJson(json.getJsonArray("constraints").toString(), type.getClass().getGenericSuperclass()));
+		case ELITIST:
+			return elitist();
 		case RANDOM:
 		case TWO_PHASES_HEURISTIC:
 		default:
@@ -107,6 +109,15 @@ public class StrategyFactory implements Supplier<Strategy> {
 			strategy.setRandom(random);
 			return strategy;
 		}, json, "Limited" + constraintsDescription);
+	}
+
+	public static StrategyFactory elitist() {
+		final PrintableJsonObject json = JsonbUtils.toJsonObject(ImmutableMap.of("family", StrategyType.ELITIST));
+
+		return new StrategyFactory(() -> {
+			final StrategyElitist strategy = StrategyElitist.newInstance();
+			return strategy;
+		}, json, "Elitist");
 	}
 
 	public static StrategyFactory random() {

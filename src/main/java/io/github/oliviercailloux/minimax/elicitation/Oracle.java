@@ -20,6 +20,7 @@ import org.slf4j.LoggerFactory;
 
 import com.google.common.base.MoreObjects;
 import com.google.common.base.VerifyException;
+import com.google.common.collect.ImmutableCollection;
 import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.ImmutableSet;
 import com.google.common.collect.ImmutableSortedSet;
@@ -127,6 +128,15 @@ public class Oracle {
 	@JsonbTransient
 	public int getN() {
 		return profile.size();
+	}
+
+	public double getScore(Alternative x) {
+		final ImmutableCollection<VoterStrictPreference> preferences = profile.values();
+		return preferences.stream().mapToDouble(p -> weights.getWeightAtRank(p.getAlternativeRank(x))).sum();
+	}
+
+	public double getBestScore() {
+		return alternatives.stream().mapToDouble(this::getScore).max().getAsDouble();
 	}
 
 	@Override

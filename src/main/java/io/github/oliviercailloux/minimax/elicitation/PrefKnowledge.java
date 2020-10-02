@@ -123,7 +123,7 @@ public class PrefKnowledge {
 			providedRange = Range.atMost(lambda);
 			break;
 		default:
-			throw new AssertionError();
+			throw new VerifyException();
 		}
 		final Range<Aprational> existingRange = lambdaRanges.get(rank);
 		checkArgument(existingRange.isConnected(providedRange),
