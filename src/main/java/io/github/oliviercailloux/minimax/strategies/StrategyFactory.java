@@ -126,13 +126,21 @@ public class StrategyFactory implements Supplier<Strategy> {
 	}
 
 	public static StrategyFactory random() {
+		return random(false);
+	}
+
+	public static StrategyFactory randomToVoters() {
+		return random(true);
+	}
+
+	private static StrategyFactory random(boolean toVoters) {
 		final long seed = ThreadLocalRandom.current().nextLong();
 		final PrintableJsonObject json = JsonbUtils
 				.toJsonObject(ImmutableMap.of("family", StrategyType.RANDOM, "seed", seed));
 
 		final Random random = new Random(seed);
 		return new StrategyFactory(() -> {
-			final StrategyRandom strategy = StrategyRandom.newInstance();
+			final StrategyRandom strategy = toVoters ? StrategyRandom.onlyVoters() : StrategyRandom.newInstance();
 			strategy.setRandom(random);
 			return strategy;
 		}, json, "Random");

@@ -52,10 +52,10 @@ public class VariousXps {
 //		variousXps.showFinalStats();
 //		variousXps.exportOracles(10, 20, 100);
 //		variousXps.tiesWithOracle1();
-//		variousXps.runWithOracle1();
+		variousXps.runWithOracle1();
 //		variousXps.runOneStrategyWithOracle1();
 //		variousXps.analyzeQuestions();
-		variousXps.summarizeXps();
+//		variousXps.summarizeXps();
 	}
 
 	public void runWithRandomOracles() throws IOException {
@@ -95,20 +95,22 @@ public class VariousXps {
 
 	public void runWithOracle1() throws IOException {
 		final int m = 6;
-		final int n = 20;
-		final int k = 200;
-		final ThreadLocalRandom random = ThreadLocalRandom.current();
+		final int n = 6;
+		final int k = 30;
 		final ImmutableList.Builder<StrategyFactory> factoriesBuilder = ImmutableList.<StrategyFactory>builder();
-		factoriesBuilder.add(StrategyFactory.limited(random.nextLong(), ImmutableList.of()));
-		for (int qC = 2; qC < k; qC += 2) {
-			final int qV = k - qC;
-			factoriesBuilder.add(StrategyFactory.limited(random.nextLong(),
-					ImmutableList.of(QuestioningConstraint.of(QuestionType.COMMITTEE_QUESTION, qC),
-							QuestioningConstraint.of(QuestionType.VOTER_QUESTION, qV))));
-			factoriesBuilder.add(StrategyFactory.limited(random.nextLong(),
-					ImmutableList.of(QuestioningConstraint.of(QuestionType.VOTER_QUESTION, qV),
-							QuestioningConstraint.of(QuestionType.COMMITTEE_QUESTION, qC))));
-		}
+//		factoriesBuilder.add(StrategyFactory.limitedCommitteeThenVoters(0));
+		factoriesBuilder.add(StrategyFactory.randomToVoters());
+//		final ThreadLocalRandom random = ThreadLocalRandom.current();
+//		factoriesBuilder.add(StrategyFactory.limited(random.nextLong(), ImmutableList.of()));
+//		for (int qC = 2; qC < k; qC += 2) {
+//			final int qV = k - qC;
+//			factoriesBuilder.add(StrategyFactory.limited(random.nextLong(),
+//					ImmutableList.of(QuestioningConstraint.of(QuestionType.COMMITTEE_QUESTION, qC),
+//							QuestioningConstraint.of(QuestionType.VOTER_QUESTION, qV))));
+//			factoriesBuilder.add(StrategyFactory.limited(random.nextLong(),
+//					ImmutableList.of(QuestioningConstraint.of(QuestionType.VOTER_QUESTION, qV),
+//							QuestioningConstraint.of(QuestionType.COMMITTEE_QUESTION, qC))));
+//		}
 
 		final Path json = Path.of("experiments/Oracles/", String.format("Oracles m = %d, n = %d, 100.json", m, n));
 		final List<Oracle> oracles = JsonConverter.toOracles(Files.readString(json));

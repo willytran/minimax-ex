@@ -81,10 +81,8 @@ public class StrategyRandom implements Strategy {
 			final ImmutableSetMultimap<Alternative, Alternative> incomparables = graph.nodes().stream()
 					.collect(ImmutableSetMultimap.flatteningToImmutableSetMultimap(a -> a,
 							a -> StrategyHelper.getIncomparables(graph, a)));
-			final Alternative a = helper.drawFromStrictlyIncreasing(incomparables.keySet().asList(),
-					Comparator.naturalOrder());
-			final Alternative b = helper.drawFromStrictlyIncreasing(incomparables.get(a).asList(),
-					Comparator.naturalOrder());
+			final Alternative a = helper.sortAndDraw(incomparables.keySet().asList(), Comparator.naturalOrder());
+			final Alternative b = helper.sortAndDraw(incomparables.get(a).asList(), Comparator.naturalOrder());
 			question = Question.toVoter(voter, a, b);
 		} else {
 			verify(m >= 3);
