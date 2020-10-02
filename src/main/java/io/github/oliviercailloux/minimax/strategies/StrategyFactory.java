@@ -132,7 +132,7 @@ public class StrategyFactory implements Supplier<Strategy> {
 
 		final Random random = new Random(seed);
 		return new StrategyFactory(() -> {
-			final StrategyRandom strategy = StrategyRandom.build();
+			final StrategyRandom strategy = StrategyRandom.newInstance();
 			strategy.setRandom(random);
 			return strategy;
 		}, json, "Random");

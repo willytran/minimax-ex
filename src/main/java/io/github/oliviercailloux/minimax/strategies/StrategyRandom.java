@@ -10,6 +10,7 @@ import org.slf4j.LoggerFactory;
 
 import com.google.common.collect.ImmutableSet;
 import com.google.common.collect.ImmutableSetMultimap;
+import com.google.common.collect.UnmodifiableIterator;
 import com.google.common.graph.ImmutableGraph;
 
 import io.github.oliviercailloux.j_voting.Alternative;
@@ -23,14 +24,20 @@ public class StrategyRandom implements Strategy {
 	@SuppressWarnings("unused")
 	private static final Logger LOGGER = LoggerFactory.getLogger(StrategyRandom.class);
 
-	public static StrategyRandom build() {
-		return new StrategyRandom();
+	public static StrategyRandom newInstance() {
+		return new StrategyRandom(false);
+	}
+
+	public static StrategyRandom onlyVoters() {
+		return new StrategyRandom(true);
 	}
 
 	private final StrategyHelper helper;
+	private final boolean onlyVoters;
 
-	private StrategyRandom() {
+	private StrategyRandom(boolean onlyVoters) {
 		helper = StrategyHelper.newInstance();
+		this.onlyVoters = onlyVoters;
 	}
 
 	public void setRandom(Random random) {
@@ -47,6 +54,13 @@ public class StrategyRandom implements Strategy {
 		final int m = helper.getAndCheckM();
 
 		final ImmutableSet<Voter> questionableVoters = helper.getQuestionableVoters();
+		if (questionableVoters.isEmpty() && onlyVoters) {
+			LOGGER.debug("Asking a dummy question to voter.");
+			final UnmodifiableIterator<Alternative> iterator = helper.getKnowledge().getAlternatives().iterator();
+			return Question.toVoter(helper.getKnowledge().getVoters().iterator().next(), iterator.next(),
+					iterator.next());
+		}
+
 		final boolean askVoters;
 		if (questionableVoters.isEmpty()) {
 			verify(m > 2);
