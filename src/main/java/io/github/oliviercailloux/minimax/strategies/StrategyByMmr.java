@@ -20,7 +20,6 @@ import com.google.common.collect.ImmutableList;
 import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.ImmutableSet;
 import com.google.common.collect.ImmutableSetMultimap;
-import com.google.common.collect.ImmutableSortedMultiset;
 import com.google.common.collect.UnmodifiableIterator;
 import com.google.common.graph.EndpointPair;
 import com.google.common.graph.Graph;
@@ -29,12 +28,9 @@ import com.google.common.math.IntMath;
 
 import io.github.oliviercailloux.j_voting.Alternative;
 import io.github.oliviercailloux.j_voting.Voter;
-import io.github.oliviercailloux.jlp.elements.SumTerms;
-import io.github.oliviercailloux.minimax.elicitation.ConstraintsOnWeights;
 import io.github.oliviercailloux.minimax.elicitation.PSRWeights;
 import io.github.oliviercailloux.minimax.elicitation.PrefKnowledge;
 import io.github.oliviercailloux.minimax.elicitation.Question;
-import io.github.oliviercailloux.minimax.elicitation.QuestionCommittee;
 import io.github.oliviercailloux.minimax.elicitation.QuestionType;
 import io.github.oliviercailloux.minimax.elicitation.QuestionVoter;
 import io.github.oliviercailloux.minimax.regret.PairwiseMaxRegret;
@@ -215,14 +211,16 @@ public class StrategyByMmr implements Strategy {
 			}
 
 			if (allowCommittee) {
-				final PSRWeights wBar = pmr.getWeights();
-				final PSRWeights wMin = getMinTauW(pmr);
-				final ImmutableMap<Integer, Double> valuedRanks = IntStream.rangeClosed(1, m - 2).boxed()
-						.collect(ImmutableMap.toImmutableMap(i -> i, i -> getSpread(wBar, wMin, i)));
-				final ImmutableSet<Integer> minSpreadRanks = StrategyHelper.getMinimalElements(valuedRanks);
-				final QuestionCommittee qC = helper.getQuestionAboutHalfRange(
-						helper.drawFromStrictlyIncreasing(minSpreadRanks.asList(), Comparator.naturalOrder()));
-				questionsBuilder.add(Question.toCommittee(qC));
+//				final PSRWeights wBar = pmr.getWeights();
+//				final PSRWeights wMin = helper.getMinTauW(pmr);
+//				final ImmutableMap<Integer, Double> valuedRanks = IntStream.rangeClosed(1, m - 2).boxed()
+//						.collect(ImmutableMap.toImmutableMap(i -> i, i -> getSpread(wBar, wMin, i)));
+//				final ImmutableSet<Integer> minSpreadRanks = StrategyHelper.getMinimalElements(valuedRanks);
+//				final QuestionCommittee qC = helper.getQuestionAboutHalfRange(
+//						helper.drawFromStrictlyIncreasing(minSpreadRanks.asList(), Comparator.naturalOrder()));
+//				questionsBuilder.add(Question.toCommittee(qC));
+				IntStream.rangeClosed(1, m - 2).boxed()
+						.forEach(i -> questionsBuilder.add(Question.toCommittee(helper.getQuestionAboutHalfRange(i))));
 			}
 		} else {
 			if (allowVoters) {
@@ -238,9 +236,19 @@ public class StrategyByMmr implements Strategy {
 		questions = questionsBuilder.build().stream().collect(ImmutableMap.toImmutableMap(q -> q, this::toLottery));
 		verify(!questions.isEmpty());
 
-		final ImmutableSet<Question> bestQuestions = StrategyHelper.getMinimalElements(questions, lotteryComparator);
+		final Comparator<Question> questionsComparator = Comparator.comparing(q -> adjustLottery(q, questions.get(q)),
+				lotteryComparator);
+		final ImmutableSet<Question> bestQuestions = StrategyHelper.getMinimalElements(questions.keySet(),
+				questionsComparator);
+		final ImmutableMap<Question, MmrLottery> sortedQuestions = questions.keySet().stream()
+				.sorted(questionsComparator).collect(ImmutableMap.toImmutableMap(q -> q, questions::get));
 		LOGGER.debug("Best questions: {}.", bestQuestions);
-		return helper.drawFromStrictlyIncreasing(bestQuestions.asList(), Comparator.naturalOrder());
+		final Question winner = helper.drawFromStrictlyIncreasing(bestQuestions.asList(), Comparator.naturalOrder());
+		if (winner.getType() == QuestionType.COMMITTEE_QUESTION) {
+			LOGGER.info("Questioning committee: {}, best lotteries: {}.", winner.asQuestionCommittee(),
+					sortedQuestions.entrySet().stream().limit(6).collect(ImmutableList.toImmutableList()));
+		}
+		return winner;
 	}
 
 	public ImmutableMap<Question, MmrLottery> getLastQuestions() {
@@ -320,18 +328,23 @@ public class StrategyByMmr implements Strategy {
 		return lottery;
 	}
 
-	private PSRWeights getMinTauW(PairwiseMaxRegret pmr) {
-		final ImmutableSortedMultiset<Integer> multiSetOfRanksOfX = ImmutableSortedMultiset
-				.copyOf(pmr.getRanksOfX().values());
-		final ImmutableSortedMultiset<Integer> multiSetOfRanksOfY = ImmutableSortedMultiset
-				.copyOf(pmr.getRanksOfY().values());
-
-		final RegretComputer regretComputer = helper.getRegretComputer();
-
-		final SumTerms sumTerms = regretComputer.getTermScoreYMinusScoreX(multiSetOfRanksOfY, multiSetOfRanksOfX);
-		final ConstraintsOnWeights cow = helper.getKnowledge().getConstraintsOnWeights();
-		cow.minimize(sumTerms);
-		return cow.getLastSolution();
+	private MmrLottery adjustLottery(Question question, MmrLottery lottery) {
+		final MmrLottery output;
+		switch (question.getType()) {
+		case COMMITTEE_QUESTION:
+			if (lottery.getMmrIfYes() <= lottery.getMmrIfNo()) {
+				output = MmrLottery.given(lottery.getMmrIfYes() * 1.2d, lottery.getMmrIfNo());
+			} else {
+				output = MmrLottery.given(lottery.getMmrIfYes(), lottery.getMmrIfNo() * 1.2d);
+			}
+			break;
+		case VOTER_QUESTION:
+			output = lottery;
+			break;
+		default:
+			throw new VerifyException();
+		}
+		return output;
 	}
 
 }

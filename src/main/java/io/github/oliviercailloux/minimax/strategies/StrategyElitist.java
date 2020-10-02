@@ -1,22 +1,33 @@
 package io.github.oliviercailloux.minimax.strategies;
 
 import static com.google.common.base.Preconditions.checkState;
-import static com.google.common.base.Verify.verify;
 
 import java.util.Comparator;
 import java.util.Set;
+import java.util.stream.IntStream;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import com.google.common.collect.ImmutableCollection;
-import com.google.common.graph.EndpointPair;
+import com.google.common.collect.ImmutableMap;
+import com.google.common.collect.ImmutableSet;
+import com.google.common.collect.ImmutableSetMultimap;
 import com.google.common.graph.ImmutableGraph;
 
 import io.github.oliviercailloux.j_voting.Alternative;
 import io.github.oliviercailloux.j_voting.VoterPartialPreference;
+import io.github.oliviercailloux.minimax.elicitation.PSRWeights;
 import io.github.oliviercailloux.minimax.elicitation.PrefKnowledge;
 import io.github.oliviercailloux.minimax.elicitation.Question;
+import io.github.oliviercailloux.minimax.elicitation.QuestionCommittee;
 import io.github.oliviercailloux.minimax.elicitation.QuestionVoter;
+import io.github.oliviercailloux.minimax.regret.PairwiseMaxRegret;
 
 public class StrategyElitist implements Strategy {
+	@SuppressWarnings("unused")
+	private static final Logger LOGGER = LoggerFactory.getLogger(StrategyElitist.class);
+
 	public static StrategyElitist newInstance() {
 		return new StrategyElitist();
 	}
@@ -51,19 +62,27 @@ public class StrategyElitist implements Strategy {
 			}
 		}
 
-		final Comparator<EndpointPair<Alternative>> comparingPair = Comparator.comparing(EndpointPair::nodeU);
-		final Comparator<EndpointPair<Alternative>> c2 = comparingPair.thenComparing(EndpointPair::nodeV);
-		for (VoterPartialPreference pref : prefs) {
-			final ImmutableGraph<Alternative> graph = pref.asTransitiveGraph();
-			if (graph.edges().size() < m * (m - 1) / 2) {
-				final EndpointPair<Alternative> pair = helper.sortAndDraw(StrategyHelper.getIncomparablePairs(graph),
-						c2);
-				return Question.toVoter(pref.getVoter(), pair.nodeU(), pair.nodeV());
-			}
-			verify(graph.edges().size() == m * (m - 1) / 2);
-		}
+		/** To fix: this repeats the strategy by mmr. */
+		final ImmutableSetMultimap<Alternative, PairwiseMaxRegret> mmrs = helper.getMinimalMaxRegrets().asMultimap();
 
-		verify(helper.getKnowledge().isProfileComplete());
-		return Question.toCommittee(helper.getQuestionAboutHalfRange(1));
+		final Alternative xStar = helper.drawFromStrictlyIncreasing(mmrs.keySet().asList(), Comparator.naturalOrder());
+		final ImmutableSet<PairwiseMaxRegret> pmrs = mmrs.get(xStar).stream().collect(ImmutableSet.toImmutableSet());
+		final PairwiseMaxRegret pmr = helper.drawFromStrictlyIncreasing(pmrs.asList(),
+				PairwiseMaxRegret.BY_ALTERNATIVES);
+
+		final PSRWeights wBar = pmr.getWeights();
+		final PSRWeights wMin = helper.getMinTauW(pmr);
+		final ImmutableMap<Integer, Double> valuedRanks = IntStream.rangeClosed(1, m - 2).boxed()
+				.collect(ImmutableMap.toImmutableMap(i -> i, i -> getSpread(wBar, wMin, i)));
+		final ImmutableSet<Integer> minSpreadRanks = StrategyHelper.getMinimalElements(valuedRanks);
+		final QuestionCommittee qC = helper.getQuestionAboutHalfRange(
+				helper.drawFromStrictlyIncreasing(minSpreadRanks.asList(), Comparator.naturalOrder()));
+		LOGGER.info("Questioning committee: {}.", qC);
+		return Question.toCommittee(qC);
+	}
+
+	private double getSpread(PSRWeights wBar, PSRWeights wMin, int i) {
+		return IntStream.rangeClosed(0, 2).boxed()
+				.mapToDouble(k -> Math.abs(wBar.getWeightAtRank(i + k) - wMin.getWeightAtRank(i + k))).sum();
 	}
 }

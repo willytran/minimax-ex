@@ -26,6 +26,7 @@ import org.slf4j.LoggerFactory;
 
 import com.google.common.collect.ImmutableSet;
 import com.google.common.collect.ImmutableSetMultimap;
+import com.google.common.collect.ImmutableSortedMultiset;
 import com.google.common.collect.Iterators;
 import com.google.common.collect.Range;
 import com.google.common.graph.EndpointPair;
@@ -33,9 +34,13 @@ import com.google.common.graph.Graph;
 
 import io.github.oliviercailloux.j_voting.Alternative;
 import io.github.oliviercailloux.j_voting.Voter;
+import io.github.oliviercailloux.jlp.elements.SumTerms;
+import io.github.oliviercailloux.minimax.elicitation.ConstraintsOnWeights;
+import io.github.oliviercailloux.minimax.elicitation.PSRWeights;
 import io.github.oliviercailloux.minimax.elicitation.PrefKnowledge;
 import io.github.oliviercailloux.minimax.elicitation.QuestionCommittee;
 import io.github.oliviercailloux.minimax.elicitation.QuestionVoter;
+import io.github.oliviercailloux.minimax.regret.PairwiseMaxRegret;
 import io.github.oliviercailloux.minimax.regret.RegretComputer;
 import io.github.oliviercailloux.minimax.regret.Regrets;
 
@@ -69,6 +74,15 @@ public class StrategyHelper {
 		final ImmutableSet<K> minKeys = minValueOpt.isEmpty() ? ImmutableSet.of() : keysByValue.get(minValueOpt.get());
 		verify(minKeys.isEmpty() == keysByValue.isEmpty());
 		return minKeys;
+	}
+
+	public static <K> ImmutableSet<K> getMinimalElements(Set<K> elements, Comparator<K> comparator) {
+		final ImmutableSet<K> sorted = elements.stream().sorted(comparator).collect(ImmutableSet.toImmutableSet());
+		if (sorted.isEmpty()) {
+			return sorted;
+		}
+		final K min = sorted.iterator().next();
+		return sorted.stream().filter(e -> comparator.compare(e, min) == 0).collect(ImmutableSet.toImmutableSet());
 	}
 
 	public static <E> boolean isStrictlyIncreasing(Iterable<E> collection, Comparator<E> comparator) {
@@ -225,6 +239,9 @@ public class StrategyHelper {
 		return questions;
 	}
 
+	/**
+	 * @param rank 1 ≤ rank ≤ m − 2
+	 */
 	public QuestionCommittee getQuestionAboutHalfRange(int rank) {
 		final Range<Aprational> lambdaRange = getKnowledge().getLambdaRange(rank);
 		final Aprational avg = AprationalMath.sum(lambdaRange.lowerEndpoint(), lambdaRange.upperEndpoint())
@@ -238,5 +255,19 @@ public class StrategyHelper {
 
 	public Regrets getMinimalMaxRegrets() {
 		return getRegretComputer().getMinimalMaxRegrets();
+	}
+
+	public PSRWeights getMinTauW(PairwiseMaxRegret pmr) {
+		final ImmutableSortedMultiset<Integer> multiSetOfRanksOfX = ImmutableSortedMultiset
+				.copyOf(pmr.getRanksOfX().values());
+		final ImmutableSortedMultiset<Integer> multiSetOfRanksOfY = ImmutableSortedMultiset
+				.copyOf(pmr.getRanksOfY().values());
+
+		final RegretComputer regretComputer = getRegretComputer();
+
+		final SumTerms sumTerms = regretComputer.getTermScoreYMinusScoreX(multiSetOfRanksOfY, multiSetOfRanksOfX);
+		final ConstraintsOnWeights cow = getKnowledge().getConstraintsOnWeights();
+		cow.minimize(sumTerms);
+		return cow.getLastSolution();
 	}
 }

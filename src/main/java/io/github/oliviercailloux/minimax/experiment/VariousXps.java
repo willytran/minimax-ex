@@ -33,10 +33,8 @@ import io.github.oliviercailloux.minimax.elicitation.Oracle;
 import io.github.oliviercailloux.minimax.elicitation.PrefKnowledge;
 import io.github.oliviercailloux.minimax.elicitation.PreferenceInformation;
 import io.github.oliviercailloux.minimax.elicitation.Question;
-import io.github.oliviercailloux.minimax.elicitation.QuestionType;
 import io.github.oliviercailloux.minimax.experiment.json.JsonConverter;
 import io.github.oliviercailloux.minimax.experiment.other_formats.ToCsv;
-import io.github.oliviercailloux.minimax.strategies.QuestioningConstraint;
 import io.github.oliviercailloux.minimax.strategies.StrategyByMmr;
 import io.github.oliviercailloux.minimax.strategies.StrategyFactory;
 import io.github.oliviercailloux.minimax.strategies.StrategyHelper;
@@ -52,10 +50,10 @@ public class VariousXps {
 //		variousXps.showFinalStats();
 //		variousXps.exportOracles(10, 20, 100);
 //		variousXps.tiesWithOracle1();
-//		variousXps.runWithOracle1();
+		variousXps.runWithOracle1();
 //		variousXps.runOneStrategyWithOracle1();
 //		variousXps.analyzeQuestions();
-		variousXps.summarizeXp();
+//		variousXps.summarizeXps();
 	}
 
 	public void runWithRandomOracles() throws IOException {
@@ -63,11 +61,13 @@ public class VariousXps {
 		final int n = 6;
 		final int k = 30;
 //		final StrategyFactory factory = StrategyFactory.elitist();
-		final StrategyFactory factory = StrategyFactory.limitedCommitteeThenVoters(0);
+//		final StrategyFactory factory = StrategyFactory.limitedCommitteeThenVoters(0);
+		final StrategyFactory factory = StrategyFactory.limited();
 
 		final ImmutableList<Oracle> oracles = Stream
-				.generate(() -> Oracle.build(Generator.genProfile(m, n), Generator.genWeightsGeometric(m))).limit(50)
-				.collect(ImmutableList.toImmutableList());
+				.generate(
+						() -> Oracle.build(Generator.genProfile(m, n), Generator.genWeightsWithUniformDistribution(m)))
+				.limit(50).collect(ImmutableList.toImmutableList());
 
 		final Runs runs = runs(factory, oracles, k);
 		final Stats stats = runs.getMinimalMaxRegretStats().get(runs.getK());
@@ -79,9 +79,10 @@ public class VariousXps {
 		final int m = 6;
 		final int n = 6;
 		final int k = 30;
-		final long seed = ThreadLocalRandom.current().nextLong();
-		final StrategyFactory factory = StrategyFactory.limited(seed,
-				ImmutableList.of(QuestioningConstraint.of(QuestionType.VOTER_QUESTION, Integer.MAX_VALUE)));
+//		final long seed = ThreadLocalRandom.current().nextLong();
+//		final StrategyFactory factory = StrategyFactory.limited(seed,
+//				ImmutableList.of(QuestioningConstraint.of(QuestionType.VOTER_QUESTION, Integer.MAX_VALUE)));
+		final StrategyFactory factory = StrategyFactory.limited();
 
 		final Path json = Path.of("experiments/Oracles/", String.format("Oracles m = %d, n = %d, 100.json", m, n));
 		final List<Oracle> oracles = JsonConverter.toOracles(Files.readString(json));
@@ -95,22 +96,19 @@ public class VariousXps {
 
 	public void runWithOracle1() throws IOException {
 		final int m = 6;
-		final int n = 6;
-		final int k = 30;
+		final int n = 20;
+		final int k = 200;
 		final ImmutableList.Builder<StrategyFactory> factoriesBuilder = ImmutableList.<StrategyFactory>builder();
-//		factoriesBuilder.add(StrategyFactory.limitedCommitteeThenVoters(0));
-		factoriesBuilder.add(StrategyFactory.randomToVoters());
-//		final ThreadLocalRandom random = ThreadLocalRandom.current();
-//		factoriesBuilder.add(StrategyFactory.limited(random.nextLong(), ImmutableList.of()));
-//		for (int qC = 2; qC < k; qC += 2) {
-//			final int qV = k - qC;
-//			factoriesBuilder.add(StrategyFactory.limited(random.nextLong(),
-//					ImmutableList.of(QuestioningConstraint.of(QuestionType.COMMITTEE_QUESTION, qC),
-//							QuestioningConstraint.of(QuestionType.VOTER_QUESTION, qV))));
-//			factoriesBuilder.add(StrategyFactory.limited(random.nextLong(),
-//					ImmutableList.of(QuestioningConstraint.of(QuestionType.VOTER_QUESTION, qV),
-//							QuestioningConstraint.of(QuestionType.COMMITTEE_QUESTION, qC))));
-//		}
+		factoriesBuilder.add(StrategyFactory.limitedCommitteeThenVoters(0));
+		factoriesBuilder.add(StrategyFactory.limited());
+//		factoriesBuilder.add(StrategyFactory.elitist());
+		final ThreadLocalRandom random = ThreadLocalRandom.current();
+		factoriesBuilder.add(StrategyFactory.limited(random.nextLong(), ImmutableList.of()));
+		for (int qC = 2; qC < k; qC += 2) {
+			final int qV = k - qC;
+			factoriesBuilder.add(StrategyFactory.limitedCommitteeThenVoters(qC));
+			factoriesBuilder.add(StrategyFactory.limitedVotersThenCommittee(qV));
+		}
 
 		final Path json = Path.of("experiments/Oracles/", String.format("Oracles m = %d, n = %d, 100.json", m, n));
 		final List<Oracle> oracles = JsonConverter.toOracles(Files.readString(json));

@@ -40,14 +40,16 @@ public class ToCsv {
 				writer.addValue("MMR min", formatter.format(stat.min()));
 				writer.addValue("MMR avg", formatter.format(stat.mean()));
 				writer.addValue("MMR max", formatter.format(stat.max()));
-				writer.addValue("MMR σ (est.)", formatter.format(stat.sampleStandardDeviation()));
+				final String dev = stat.count() >= 2 ? formatter.format(stat.sampleStandardDeviation()) : "";
+				writer.addValue("MMR σ (est.)", dev);
 			}
 			{
 				final Stats stat = runs.getLossesStats().get(k);
 				writer.addValue("Loss min", formatter.format(stat.min()));
 				writer.addValue("Loss avg", formatter.format(stat.mean()));
 				writer.addValue("Loss max", formatter.format(stat.max()));
-				writer.addValue("Loss σ (est.)", formatter.format(stat.sampleStandardDeviation()));
+				final String dev = stat.count() >= 2 ? formatter.format(stat.sampleStandardDeviation()) : "";
+				writer.addValue("Loss σ (est.)", dev);
 			}
 			writer.writeValuesToRow();
 		}
