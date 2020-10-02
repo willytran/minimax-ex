@@ -21,6 +21,7 @@ import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.ImmutableSet;
 import com.google.common.collect.ImmutableSetMultimap;
 import com.google.common.collect.ImmutableSortedMultiset;
+import com.google.common.collect.UnmodifiableIterator;
 import com.google.common.graph.EndpointPair;
 import com.google.common.graph.Graph;
 import com.google.common.graph.ImmutableGraph;
@@ -177,13 +178,23 @@ public class StrategyByMmr implements Strategy {
 	@Override
 	public Question nextQuestion() {
 		final int m = helper.getAndCheckM();
+		if (m == 2) {
+			verify(constraints.mayAskVoters());
+		}
 
-		final boolean allowCommittee = (constraints.mayAskCommittee() || helper.getKnowledge().isProfileComplete())
-				&& m >= 3;
+		final boolean allowCommittee = constraints.mayAskCommittee() && m >= 3;
 		final boolean allowVoters = (constraints.mayAskVoters() || m == 2)
 				&& !helper.getKnowledge().isProfileComplete();
 
 		LOGGER.debug("Next question, allowing committee? {}; allowing voters? {}.", allowCommittee, allowVoters);
+		verify(allowCommittee || allowVoters);
+
+		if (helper.getKnowledge().isProfileComplete() && !allowCommittee) {
+			LOGGER.debug("Asking a dummy question to voter.");
+			final UnmodifiableIterator<Alternative> iterator = helper.getKnowledge().getAlternatives().iterator();
+			return Question.toVoter(helper.getKnowledge().getVoters().iterator().next(), iterator.next(),
+					iterator.next());
+		}
 
 		final ImmutableSet.Builder<Question> questionsBuilder = ImmutableSet.builder();
 
