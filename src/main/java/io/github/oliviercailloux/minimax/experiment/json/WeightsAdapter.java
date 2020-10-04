@@ -7,6 +7,8 @@ import javax.json.bind.adapter.JsonbAdapter;
 import io.github.oliviercailloux.minimax.elicitation.PSRWeights;
 
 public class WeightsAdapter implements JsonbAdapter<PSRWeights, List<Double>> {
+	public static final WeightsAdapter INSTANCE = new WeightsAdapter();
+
 	@Override
 	public List<Double> adaptToJson(PSRWeights obj) {
 		return obj.getWeights();

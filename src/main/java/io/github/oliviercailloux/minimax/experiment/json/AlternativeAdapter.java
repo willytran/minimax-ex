@@ -5,6 +5,8 @@ import javax.json.bind.adapter.JsonbAdapter;
 import io.github.oliviercailloux.j_voting.Alternative;
 
 public class AlternativeAdapter implements JsonbAdapter<Alternative, Integer> {
+	public static final AlternativeAdapter INSTANCE = new AlternativeAdapter();
+
 	@Override
 	public Integer adaptToJson(Alternative obj) {
 		return obj.getId();

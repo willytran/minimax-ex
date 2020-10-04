@@ -56,9 +56,10 @@ public class StrategyFactory implements Supplier<Strategy> {
 		case ELITIST:
 			return elitist();
 		case RANDOM:
+			return random(json.getJsonNumber("seed").longValue(), json.getBoolean("toVoters", false));
 		case TWO_PHASES_HEURISTIC:
 		default:
-			throw new UnsupportedOperationException();
+			throw new UnsupportedOperationException("" + family);
 		}
 	}
 
@@ -139,17 +140,18 @@ public class StrategyFactory implements Supplier<Strategy> {
 	}
 
 	public static StrategyFactory random() {
-		return random(false);
+		final long seed = ThreadLocalRandom.current().nextLong();
+		return random(seed, false);
 	}
 
 	public static StrategyFactory randomToVoters() {
-		return random(true);
+		final long seed = ThreadLocalRandom.current().nextLong();
+		return random(seed, true);
 	}
 
-	private static StrategyFactory random(boolean toVoters) {
-		final long seed = ThreadLocalRandom.current().nextLong();
+	private static StrategyFactory random(long seed, boolean toVoters) {
 		final PrintableJsonObject json = JsonbUtils
-				.toJsonObject(ImmutableMap.of("family", StrategyType.RANDOM, "seed", seed));
+				.toJsonObject(ImmutableMap.of("family", StrategyType.RANDOM, "seed", seed, "toVoters", toVoters));
 
 		final Random random = new Random(seed);
 		return new StrategyFactory(() -> {

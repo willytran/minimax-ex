@@ -17,9 +17,13 @@ public class ProfileAdapter implements JsonbAdapter<Map<Voter, VoterStrictPrefer
 	@SuppressWarnings("unused")
 	private static final Logger LOGGER = LoggerFactory.getLogger(ProfileAdapter.class);
 
+	public static final ProfileAdapter INSTANCE = new ProfileAdapter();
+
+	private ProfileAdapter() {
+	}
+
 	@Override
 	public Set<VoterStrictPreference> adaptToJson(Map<Voter, VoterStrictPreference> obj) {
-		LOGGER.debug("Received {}.", obj);
 		return ImmutableSet.copyOf(obj.values());
 	}
 

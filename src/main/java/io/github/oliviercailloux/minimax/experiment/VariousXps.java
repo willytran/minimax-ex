@@ -35,7 +35,6 @@ import io.github.oliviercailloux.minimax.elicitation.PreferenceInformation;
 import io.github.oliviercailloux.minimax.elicitation.Question;
 import io.github.oliviercailloux.minimax.experiment.json.JsonConverter;
 import io.github.oliviercailloux.minimax.experiment.other_formats.ToCsv;
-import io.github.oliviercailloux.minimax.strategies.MmrLottery;
 import io.github.oliviercailloux.minimax.strategies.StrategyByMmr;
 import io.github.oliviercailloux.minimax.strategies.StrategyFactory;
 import io.github.oliviercailloux.minimax.strategies.StrategyHelper;
@@ -61,15 +60,15 @@ public class VariousXps {
 		final int n = 6;
 		final int k = 50;
 //		final StrategyFactory factory = StrategyFactory.limitedCommitteeThenVoters(0);
-		final long seed = ThreadLocalRandom.current().nextLong();
-//		final StrategyFactory factory = StrategyFactory.limited();
-		final StrategyFactory factory = StrategyFactory.limited(seed, MmrLottery.MIN_COMPARATOR, ImmutableList.of());
+//		final long seed = ThreadLocalRandom.current().nextLong();
+		final StrategyFactory factory = StrategyFactory.limited();
+//		final StrategyFactory factory = StrategyFactory.limited(seed, MmrLottery.MIN_COMPARATOR, ImmutableList.of());
 //		final StrategyFactory factory = StrategyFactory.elitist();
 
 		final ImmutableList<Oracle> oracles = Stream
 				.generate(
 						() -> Oracle.build(Generator.genProfile(m, n), Generator.genWeightsWithUniformDistribution(m)))
-				.limit(50).collect(ImmutableList.toImmutableList());
+				.limit(200).collect(ImmutableList.toImmutableList());
 
 		final Runs runs = runs(factory, oracles, k);
 		final Stats stats = runs.getMinimalMaxRegretStats().get(runs.getK());
@@ -81,10 +80,10 @@ public class VariousXps {
 		final int m = 6;
 		final int n = 6;
 		final int k = 50;
-		final long seed = ThreadLocalRandom.current().nextLong();
 		final ImmutableList.Builder<StrategyFactory> factoriesBuilder = ImmutableList.<StrategyFactory>builder();
-		factoriesBuilder.add(StrategyFactory.limited(seed, MmrLottery.MIN_COMPARATOR, ImmutableList.of()));
-//		factoriesBuilder.add(StrategyFactory.limitedCommitteeThenVoters(0));
+//		final long seed = ThreadLocalRandom.current().nextLong();
+//		factoriesBuilder.add(StrategyFactory.limited(seed, MmrLottery.MIN_COMPARATOR, ImmutableList.of()));
+		factoriesBuilder.add(StrategyFactory.limitedCommitteeThenVoters(0));
 //		factoriesBuilder.add(StrategyFactory.elitist());
 //		for (int qC = 2; qC < k; qC += 2) {
 //			final int qV = k - qC;
@@ -161,13 +160,17 @@ public class VariousXps {
 		LOGGER.info("Started '{}'.", factory.getDescription());
 		for (int i = 0; i < nbRuns; ++i) {
 			final Oracle oracle = oracles.get(i);
+			LOGGER.info("Before run.");
 			final Run run = Runner.run(factory, oracle, k);
 			LOGGER.info("Time (run {}): {}.", i, run.getTotalTime());
 			runsBuilder.add(run);
 			final Runs runs = Runs.of(factory, runsBuilder.build());
+			LOGGER.info("Runs.");
 			// Runner.summarize(runs);
 			Files.writeString(tmpJson, JsonConverter.toJson(runs).toString());
+			LOGGER.info("Written json.");
 			Files.writeString(tmpCsv, ToCsv.toCsv(runs, 1));
+			LOGGER.info("Written csv.");
 		}
 
 		final String prefix = prefixDescription + ", nbRuns = " + nbRuns;
@@ -209,8 +212,8 @@ public class VariousXps {
 		final int n = 6;
 		final int k = 50;
 		final int nbRuns = 50;
-		final Path json = Path.of("experiments",
-				String.format("Limited, constrained to [], m = %d, n = %d, k = %d, nbRuns = %d.json", m, n, k, nbRuns));
+		final Path json = Path.of("experiments", String
+				.format("Limited MAX, constrained to [], m = %d, n = %d, k = %d, nbRuns = %d.json", m, n, k, nbRuns));
 		final Runs runs = JsonConverter.toRuns(Files.readString(json));
 		for (Run run : runs.getRuns()) {
 			LOGGER.info("Run: {} qC, {} qV, mmr {}.", run.getNbQCommittee(), run.getNbQVoters(),

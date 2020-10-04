@@ -10,6 +10,9 @@ import java.util.Set;
 import java.util.SortedMap;
 import java.util.function.Function;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import com.google.common.base.MoreObjects;
 import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.ImmutableSet;
@@ -57,6 +60,8 @@ import io.github.oliviercailloux.minimax.elicitation.ConstraintsOnWeights;
  *
  */
 public class Regrets {
+	@SuppressWarnings("unused")
+	private static final Logger LOGGER = LoggerFactory.getLogger(Regrets.class);
 
 	public static Regrets given(SetMultimap<Alternative, PairwiseMaxRegret> regrets) {
 		return new Regrets(regrets);
@@ -73,12 +78,14 @@ public class Regrets {
 	 * level of the regret, iterating from lowest to highest regret.
 	 */
 	private ImmutableMap<Alternative, SetMultimap<Double, PairwiseMaxRegret>> regretsSorted;
+	private double value0;
 
 	private Regrets(SetMultimap<Alternative, PairwiseMaxRegret> regrets) {
 		this.regrets = ImmutableSetMultimap.copyOf(regrets);
 		checkArgument(!regrets.isEmpty());
 		checkArgument(regrets.entries().stream().allMatch((e) -> e.getValue().getX().equals(e.getKey())));
 		regretsSorted = null;
+		value0 = Double.NaN;
 	}
 
 	public ImmutableSetMultimap<Alternative, PairwiseMaxRegret> asMultimap() {
@@ -139,6 +146,10 @@ public class Regrets {
 	public double getMinimalMaxRegretValue(double epsilon) {
 		checkArgument(epsilon >= 0d);
 		checkArgument(Double.isFinite(epsilon));
+		if (epsilon == 0d && !Double.isNaN(value0)) {
+			return value0;
+		}
+
 		final double m = regrets.keySet().stream().map(this::getMaxRegret).min(Comparator.naturalOrder()).get();
 		final double mIncreased = regrets.keySet().stream().map(this::getMaxRegret).filter((v) -> v <= m + epsilon)
 				.max(Comparator.naturalOrder()).get();
@@ -146,6 +157,11 @@ public class Regrets {
 				.allMatch((v) -> v <= mIncreased || v >= mIncreased + epsilon),
 				"Using an epsilon for considering regret values as equal, but some are separated by more than epsilon but ≤ 2 epsilon. "
 						+ regretsSorted.values());
+
+		if (epsilon == 0d) {
+			verify(m == mIncreased);
+			value0 = m;
+		}
 		return mIncreased;
 	}
 

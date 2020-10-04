@@ -112,4 +112,20 @@ public class JsonConverterTests {
 		assertEquals(r1.getQuestions(), r1Actual.getQuestions());
 		assertEquals(expected, actual);
 	}
+
+	/**
+	 * Just a timing experiment involving a somewhat bigger file.
+	 */
+	@Test
+	void testBig() throws Exception {
+		final String source = Files.readString(
+				Path.of(getClass().getResource("Random to voters, m = 6, n = 6, k = 30, nbRuns = 50.json").toURI()));
+		LOGGER.info("Reading.");
+		final Runs input = JsonConverter.toRuns(source);
+		LOGGER.info("Read.");
+		LOGGER.info("Writing.");
+		final PrintableJsonObject json = JsonConverter.toJson(input);
+		LOGGER.info("Written.");
+		assertEquals(source, json.toString());
+	}
 }

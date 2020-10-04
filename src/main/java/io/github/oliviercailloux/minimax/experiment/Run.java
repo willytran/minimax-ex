@@ -77,6 +77,7 @@ public class Run {
 	private final ImmutableList<Integer> durationsMs;
 	@JsonbTransient
 	private ImmutableList<Regrets> regrets;
+	private ImmutableList<Double> losses;
 
 	private Run(Oracle oracle, List<Question> questions, List<Integer> durationsMs) {
 		checkArgument(!questions.isEmpty());
@@ -89,6 +90,7 @@ public class Run {
 		verify((getNbQVoters() + getNbQCommittee()) == questions.size());
 		getQuestionTimesMs();
 		getTotalTimeMs();
+		losses = null;
 	}
 
 	public Oracle getOracle() {
@@ -176,13 +178,16 @@ public class Run {
 		return regrets;
 	}
 
-	public double getLoss(int i) {
-		getMinimalMaxRegrets();
+	private double computeLoss(int i) {
 		final ImmutableSet<Alternative> chosen = regrets.get(i).asMultimap().keySet();
 		final ImmutableList<Double> allLosses = chosen.stream().map(x -> oracle.getBestScore() - oracle.getScore(x))
 				.collect(ImmutableList.toImmutableList());
 		verify(allLosses.stream().allMatch(l -> l >= 0d));
 		return Stats.meanOf(allLosses);
+	}
+
+	public double getLoss(int i) {
+		return getLosses().get(i);
 	}
 
 	/**
@@ -199,7 +204,12 @@ public class Run {
 	 */
 	@JsonbTransient
 	public ImmutableList<Double> getLosses() {
-		return IntStream.rangeClosed(0, getK()).mapToObj(this::getLoss).collect(ImmutableList.toImmutableList());
+		if (losses != null) {
+			return losses;
+		}
+		getMinimalMaxRegrets();
+		losses = IntStream.rangeClosed(0, getK()).mapToObj(this::computeLoss).collect(ImmutableList.toImmutableList());
+		return losses;
 	}
 
 	@Override

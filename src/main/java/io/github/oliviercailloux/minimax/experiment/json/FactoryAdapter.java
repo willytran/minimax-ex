@@ -12,6 +12,8 @@ public class FactoryAdapter implements JsonbAdapter<StrategyFactory, JsonObject>
 	@SuppressWarnings("unused")
 	private static final Logger LOGGER = LoggerFactory.getLogger(FactoryAdapter.class);
 
+	public static final FactoryAdapter INSTANCE = new FactoryAdapter();
+
 	@Override
 	public JsonObject adaptToJson(StrategyFactory obj) {
 		return obj.toJson();

@@ -12,6 +12,8 @@ import io.github.oliviercailloux.j_voting.Voter;
 import io.github.oliviercailloux.j_voting.VoterStrictPreference;
 
 public class PreferenceAdapter implements JsonbAdapter<VoterStrictPreference, JsonObject> {
+	public static final PreferenceAdapter INSTANCE = new PreferenceAdapter();
+
 	@Override
 	public JsonObject adaptToJson(VoterStrictPreference obj) {
 		return JsonConverter.toJson(obj);

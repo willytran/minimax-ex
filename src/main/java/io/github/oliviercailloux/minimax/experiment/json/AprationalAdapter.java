@@ -8,6 +8,8 @@ import org.apfloat.Apint;
 import org.apfloat.Aprational;
 
 public class AprationalAdapter implements JsonbAdapter<Aprational, JsonObject> {
+	public static final AprationalAdapter INSTANCE = new AprationalAdapter();
+
 	@Override
 	public JsonObject adaptToJson(Aprational obj) {
 		return Json.createObjectBuilder().add("numerator", obj.numerator().intValue())
