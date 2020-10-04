@@ -15,7 +15,7 @@ class ConstrainedStrategyTests {
 		final PrefKnowledge k = PrefKnowledge.given(Generator.getAlternatives(3), Generator.getVoters(1));
 		final StrategyFactory factory = StrategyFactory.limitedCommitteeThenVoters(10);
 		final Strategy twoPhase = factory.get();
-		assertEquals("Limited, constrained to [10c, ∞v]", factory.getDescription());
+		assertEquals("Limited MAX, constrained to [10c, ∞v]", factory.getDescription());
 		twoPhase.setKnowledge(k);
 		for (int i = 0; i < 10; ++i) {
 			assertEquals(QuestionType.COMMITTEE_QUESTION, twoPhase.nextQuestion().getType(), "" + i);

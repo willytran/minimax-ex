@@ -1,7 +1,8 @@
 {
     "factory": {
-        "family": "PESSIMISTIC_HEURISTIC",
+        "family": "LIMITED",
         "seed": 100,
+        "comparator": "MAX",
         "constraints": [
             {
                 "kind": "VOTER_QUESTION",
