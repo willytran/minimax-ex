@@ -47,12 +47,12 @@ public class VariousXps {
 
 	public static void main(String[] args) throws Exception {
 		final VariousXps variousXps = new VariousXps();
-//		variousXps.runWithRandomOracles();
+		variousXps.runWithRandomOracles();
 //		variousXps.showFinalStats();
 //		variousXps.exportOracles(10, 20, 100);
 //		variousXps.tiesWithOracle1();
 //		variousXps.runWithOracle0();
-		variousXps.analyzeQuestions();
+//		variousXps.analyzeQuestions();
 //		variousXps.summarizeXps();
 	}
 
@@ -61,7 +61,9 @@ public class VariousXps {
 		final int n = 6;
 		final int k = 50;
 //		final StrategyFactory factory = StrategyFactory.limitedCommitteeThenVoters(0);
-		final StrategyFactory factory = StrategyFactory.limited();
+		final long seed = ThreadLocalRandom.current().nextLong();
+//		final StrategyFactory factory = StrategyFactory.limited();
+		final StrategyFactory factory = StrategyFactory.limited(seed, MmrLottery.MIN_COMPARATOR, ImmutableList.of());
 //		final StrategyFactory factory = StrategyFactory.elitist();
 
 		final ImmutableList<Oracle> oracles = Stream
@@ -82,7 +84,7 @@ public class VariousXps {
 		final long seed = ThreadLocalRandom.current().nextLong();
 		final ImmutableList.Builder<StrategyFactory> factoriesBuilder = ImmutableList.<StrategyFactory>builder();
 		factoriesBuilder.add(StrategyFactory.limited(seed, MmrLottery.MIN_COMPARATOR, ImmutableList.of()));
-		factoriesBuilder.add(StrategyFactory.limitedCommitteeThenVoters(0));
+//		factoriesBuilder.add(StrategyFactory.limitedCommitteeThenVoters(0));
 //		factoriesBuilder.add(StrategyFactory.elitist());
 //		for (int qC = 2; qC < k; qC += 2) {
 //			final int qV = k - qC;
