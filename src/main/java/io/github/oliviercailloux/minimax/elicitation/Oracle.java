@@ -135,6 +135,7 @@ public class Oracle {
 		return preferences.stream().mapToDouble(p -> weights.getWeightAtRank(p.getAlternativeRank(x))).sum();
 	}
 
+	@JsonbTransient
 	public double getBestScore() {
 		return alternatives.stream().mapToDouble(this::getScore).max().getAsDouble();
 	}
