@@ -96,11 +96,17 @@ public class StrategyFactory implements Supplier<Strategy> {
 	}
 
 	public static StrategyFactory limited(long seed, List<QuestioningConstraint> constraints) {
+		return limited(seed, MmrLottery.MAX_COMPARATOR, constraints);
+	}
+
+	public static StrategyFactory limited(long seed, ComparatorWithDescription<MmrLottery> comparator,
+			List<QuestioningConstraint> constraints) {
 		LOGGER.info("Using seed {}.", seed);
 		final Random random = new Random(seed);
 
-		final PrintableJsonObject json = JsonbUtils.toJsonObject(ImmutableMap.of("family",
-				StrategyType.PESSIMISTIC_HEURISTIC, "seed", seed, "constraints", constraints));
+		final String comparatorDescription = comparator.toString();
+		final PrintableJsonObject json = JsonbUtils.toJsonObject(ImmutableMap.of("family", StrategyType.LIMITED, "seed",
+				seed, "comparator", comparatorDescription, "constraints", constraints));
 
 		final String prefix = ", constrained to [";
 		final String suffix = "]";
@@ -110,10 +116,10 @@ public class StrategyFactory implements Supplier<Strategy> {
 				.collect(Collectors.joining(", ", prefix, suffix));
 
 		return new StrategyFactory(() -> {
-			final StrategyByMmr strategy = StrategyByMmr.limited(constraints);
+			final StrategyByMmr strategy = StrategyByMmr.limited(comparator, constraints);
 			strategy.setRandom(random);
 			return strategy;
-		}, json, "Limited" + constraintsDescription);
+		}, json, "Limited " + comparator.toString() + constraintsDescription);
 	}
 
 	public static StrategyFactory elitist() {

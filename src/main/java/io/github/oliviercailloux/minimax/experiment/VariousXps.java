@@ -35,6 +35,7 @@ import io.github.oliviercailloux.minimax.elicitation.PreferenceInformation;
 import io.github.oliviercailloux.minimax.elicitation.Question;
 import io.github.oliviercailloux.minimax.experiment.json.JsonConverter;
 import io.github.oliviercailloux.minimax.experiment.other_formats.ToCsv;
+import io.github.oliviercailloux.minimax.strategies.MmrLottery;
 import io.github.oliviercailloux.minimax.strategies.StrategyByMmr;
 import io.github.oliviercailloux.minimax.strategies.StrategyFactory;
 import io.github.oliviercailloux.minimax.strategies.StrategyHelper;
@@ -75,11 +76,12 @@ public class VariousXps {
 	}
 
 	public void runWithOracle0() throws IOException {
-		final int m = 10;
-		final int n = 20;
-		final int k = 300;
+		final int m = 6;
+		final int n = 6;
+		final int k = 50;
+		final long seed = ThreadLocalRandom.current().nextLong();
 		final ImmutableList.Builder<StrategyFactory> factoriesBuilder = ImmutableList.<StrategyFactory>builder();
-		factoriesBuilder.add(StrategyFactory.limited());
+		factoriesBuilder.add(StrategyFactory.limited(seed, MmrLottery.MIN_COMPARATOR, ImmutableList.of()));
 		factoriesBuilder.add(StrategyFactory.limitedCommitteeThenVoters(0));
 //		factoriesBuilder.add(StrategyFactory.elitist());
 //		for (int qC = 2; qC < k; qC += 2) {
