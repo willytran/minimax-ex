@@ -50,19 +50,18 @@ public class VariousXps {
 //		variousXps.showFinalStats();
 //		variousXps.exportOracles(10, 20, 100);
 //		variousXps.tiesWithOracle1();
-		variousXps.runWithOracle1();
-//		variousXps.runOneStrategyWithOracle1();
-//		variousXps.analyzeQuestions();
+//		variousXps.runWithOracle0();
+		variousXps.analyzeQuestions();
 //		variousXps.summarizeXps();
 	}
 
 	public void runWithRandomOracles() throws IOException {
 		final int m = 6;
 		final int n = 6;
-		final int k = 30;
-//		final StrategyFactory factory = StrategyFactory.elitist();
+		final int k = 50;
 //		final StrategyFactory factory = StrategyFactory.limitedCommitteeThenVoters(0);
 		final StrategyFactory factory = StrategyFactory.limited();
+//		final StrategyFactory factory = StrategyFactory.elitist();
 
 		final ImmutableList<Oracle> oracles = Stream
 				.generate(
@@ -75,40 +74,19 @@ public class VariousXps {
 		LOGGER.info("Got final estimator: {}.", descr);
 	}
 
-	public void runOneStrategyWithOracle1() throws IOException {
-		final int m = 6;
-		final int n = 6;
-		final int k = 30;
-//		final long seed = ThreadLocalRandom.current().nextLong();
-//		final StrategyFactory factory = StrategyFactory.limited(seed,
-//				ImmutableList.of(QuestioningConstraint.of(QuestionType.VOTER_QUESTION, Integer.MAX_VALUE)));
-		final StrategyFactory factory = StrategyFactory.limited();
-
-		final Path json = Path.of("experiments/Oracles/", String.format("Oracles m = %d, n = %d, 100.json", m, n));
-		final List<Oracle> oracles = JsonConverter.toOracles(Files.readString(json));
-		final Oracle oracle = oracles.get(0);
-
-		final Runs runs = runs(factory, oracle, k, 50);
-		final Stats stats = runs.getMinimalMaxRegretStats().get(runs.getK());
-		final String descr = Runner.asStringEstimator(stats);
-		LOGGER.info("Got final estimator: {}.", descr);
-	}
-
-	public void runWithOracle1() throws IOException {
-		final int m = 6;
+	public void runWithOracle0() throws IOException {
+		final int m = 10;
 		final int n = 20;
-		final int k = 200;
+		final int k = 300;
 		final ImmutableList.Builder<StrategyFactory> factoriesBuilder = ImmutableList.<StrategyFactory>builder();
-		factoriesBuilder.add(StrategyFactory.limitedCommitteeThenVoters(0));
 		factoriesBuilder.add(StrategyFactory.limited());
+		factoriesBuilder.add(StrategyFactory.limitedCommitteeThenVoters(0));
 //		factoriesBuilder.add(StrategyFactory.elitist());
-		final ThreadLocalRandom random = ThreadLocalRandom.current();
-		factoriesBuilder.add(StrategyFactory.limited(random.nextLong(), ImmutableList.of()));
-		for (int qC = 2; qC < k; qC += 2) {
-			final int qV = k - qC;
-			factoriesBuilder.add(StrategyFactory.limitedCommitteeThenVoters(qC));
-			factoriesBuilder.add(StrategyFactory.limitedVotersThenCommittee(qV));
-		}
+//		for (int qC = 2; qC < k; qC += 2) {
+//			final int qV = k - qC;
+//			factoriesBuilder.add(StrategyFactory.limitedCommitteeThenVoters(qC));
+//			factoriesBuilder.add(StrategyFactory.limitedVotersThenCommittee(qV));
+//		}
 
 		final Path json = Path.of("experiments/Oracles/", String.format("Oracles m = %d, n = %d, 100.json", m, n));
 		final List<Oracle> oracles = JsonConverter.toOracles(Files.readString(json));
@@ -223,17 +201,18 @@ public class VariousXps {
 	}
 
 	public void analyzeQuestions() throws Exception {
-		final int m = 7;
-		final int n = 7;
-		final int k = 30;
+		final int m = 6;
+		final int n = 6;
+		final int k = 50;
 		final int nbRuns = 50;
-		final Path json = Path.of(String.format(
-				"experiments/Limited, constrained to [], m = %d, n = %d, k = %d, nbRuns = %d.json", m, n, k, nbRuns));
+		final Path json = Path.of("experiments",
+				String.format("Limited, constrained to [], m = %d, n = %d, k = %d, nbRuns = %d.json", m, n, k, nbRuns));
 		final Runs runs = JsonConverter.toRuns(Files.readString(json));
 		for (Run run : runs.getRuns()) {
 			LOGGER.info("Run: {} qC, {} qV, mmr {}.", run.getNbQCommittee(), run.getNbQVoters(),
 					run.getMinimalMaxRegrets().get(k).getMinimalMaxRegretValue());
 		}
+		LOGGER.info("Stats nb qc: {}.", Stats.of(runs.getRuns().stream().mapToInt(Run::getNbQCommittee)));
 	}
 
 	public void showFinalStats() throws Exception {
