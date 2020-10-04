@@ -37,9 +37,6 @@ public class StrategyElitistTests {
 		knowledge.update(PreferenceInformation.aboutVoter(Voter.withId(2), a1, a2));
 		knowledge.update(PreferenceInformation.aboutVoter(Voter.withId(2), a1, a3));
 		knowledge.update(PreferenceInformation.aboutVoter(Voter.withId(2), a1, a4));
-		assertEquals(Question.toVoter(v2, a2, a4), strategy.nextQuestion());
-		knowledge.update(PreferenceInformation.aboutVoter(Voter.withId(2), a2, a3));
-		knowledge.update(PreferenceInformation.aboutVoter(Voter.withId(2), a3, a4));
 		assertTrue(strategy.nextQuestion().getType() == QuestionType.COMMITTEE_QUESTION);
 	}
 }
