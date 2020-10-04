@@ -1,12 +1,33 @@
 package io.github.oliviercailloux.minimax.strategies;
 
+import static com.google.common.base.Preconditions.checkNotNull;
+
 import java.util.Comparator;
 import java.util.Objects;
-import java.util.function.DoubleBinaryOperator;
 
 import com.google.common.base.MoreObjects;
 
 public class MmrLottery {
+
+	private static class ComparatorWithDescription<T> implements Comparator<T> {
+		private final Comparator<T> delegate;
+		private final String description;
+
+		private ComparatorWithDescription(Comparator<T> delegate, String description) {
+			this.delegate = checkNotNull(delegate);
+			this.description = checkNotNull(description);
+		}
+
+		@Override
+		public int compare(T l1, T l2) {
+			return delegate.compare(l1, l2);
+		}
+
+		@Override
+		public String toString() {
+			return description;
+		}
+	}
 
 	/**
 	 * MAX_COMPARATOR is pessimistic. It considers a question Q1 greater than a
@@ -24,49 +45,18 @@ public class MmrLottery {
 	}
 
 	private static Comparator<MmrLottery> getMaxComparator() {
-		final DoubleBinaryOperator max = ((mmr1, mmr2) -> (mmr1 >= mmr2) ? mmr1 : mmr2);
-		final DoubleBinaryOperator min = ((mmr1, mmr2) -> (mmr1 <= mmr2) ? mmr1 : mmr2);
-
-		final Comparator<MmrLottery> comparingMaxes = Comparator
-				.comparing(l -> max.applyAsDouble(l.getMmrIfYes(), l.getMmrIfNo()));
-		final Comparator<MmrLottery> comparingLexicographically = comparingMaxes
-				.thenComparing(l -> min.applyAsDouble(l.getMmrIfYes(), l.getMmrIfNo()));
-
-		return new Comparator<>() {
-
-			@Override
-			public int compare(MmrLottery l1, MmrLottery l2) {
-				return comparingLexicographically.compare(l1, l2);
-			}
-
-			@Override
-			public String toString() {
-				return "MAX";
-			}
-		};
+		/**
+		 * Comparing using pure lexicographic reasoning results in (1.0, 2.0) being
+		 * considered lower than (0.0, 2.0+1e-16), which we do not want (I have seen a
+		 * similar situation with max MMRs differing only at the 17th decimal).
+		 */
+		return new ComparatorWithDescription<>(
+				Comparator.comparingDouble(l -> l.getWorstMmr() + (l.getBestMmr() / 1e6d)), "MAX");
 	}
 
 	private static Comparator<MmrLottery> getMinComparator() {
-		final DoubleBinaryOperator max = ((mmr1, mmr2) -> (mmr1 >= mmr2) ? mmr1 : mmr2);
-		final DoubleBinaryOperator min = ((mmr1, mmr2) -> (mmr1 <= mmr2) ? mmr1 : mmr2);
-
-		final Comparator<MmrLottery> comparingMins = Comparator
-				.comparing(l -> min.applyAsDouble(l.getMmrIfYes(), l.getMmrIfNo()));
-		final Comparator<MmrLottery> comparingLexicographically = comparingMins
-				.thenComparing(l -> max.applyAsDouble(l.getMmrIfYes(), l.getMmrIfNo()));
-
-		return new Comparator<>() {
-
-			@Override
-			public int compare(MmrLottery l1, MmrLottery l2) {
-				return comparingLexicographically.compare(l1, l2);
-			}
-
-			@Override
-			public String toString() {
-				return "MIN";
-			}
-		};
+		return new ComparatorWithDescription<>(
+				Comparator.comparingDouble(l -> l.getBestMmr() + (l.getWorstMmr() / 1e6d)), "MIN");
 	}
 
 	private final double mmrIfYes;
@@ -83,6 +73,20 @@ public class MmrLottery {
 
 	public double getMmrIfNo() {
 		return mmrIfNo;
+	}
+
+	/**
+	 * @return a maximal MMR among the two.
+	 */
+	public double getWorstMmr() {
+		return mmrIfYes >= mmrIfNo ? mmrIfYes : mmrIfNo;
+	}
+
+	/**
+	 * @return a minimal MMR among the two.
+	 */
+	public double getBestMmr() {
+		return mmrIfYes <= mmrIfNo ? mmrIfYes : mmrIfNo;
 	}
 
 	@Override
