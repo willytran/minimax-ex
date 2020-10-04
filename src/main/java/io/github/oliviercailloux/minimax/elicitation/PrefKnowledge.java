@@ -66,6 +66,10 @@ public class PrefKnowledge {
 				 * then what counts is the number of times the alternative reaches the rank i,
 				 * and if ex-æquo, they are resolved using the further weight constraints for
 				 * lower ranks. Thus, it is unnecessary to distinguish weights greater than n−1.
+				 *
+				 * To be more precise, it is useful to distinguish such great differences when
+				 * giving those weights a cardinal (utilitaristic) interpretation. But this
+				 * interval seems like a reasonable approximation.
 				 */
 				lambdaRanges.put(rank, Range.closed(new Apint(1), new Apint(n)));
 			}
