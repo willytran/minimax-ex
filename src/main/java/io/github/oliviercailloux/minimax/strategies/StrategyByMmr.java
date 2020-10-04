@@ -28,7 +28,6 @@ import com.google.common.math.IntMath;
 
 import io.github.oliviercailloux.j_voting.Alternative;
 import io.github.oliviercailloux.j_voting.Voter;
-import io.github.oliviercailloux.minimax.elicitation.PSRWeights;
 import io.github.oliviercailloux.minimax.elicitation.PrefKnowledge;
 import io.github.oliviercailloux.minimax.elicitation.Question;
 import io.github.oliviercailloux.minimax.elicitation.QuestionType;
@@ -212,14 +211,6 @@ public class StrategyByMmr implements Strategy {
 			}
 
 			if (allowCommittee) {
-//				final PSRWeights wBar = pmr.getWeights();
-//				final PSRWeights wMin = helper.getMinTauW(pmr);
-//				final ImmutableMap<Integer, Double> valuedRanks = IntStream.rangeClosed(1, m - 2).boxed()
-//						.collect(ImmutableMap.toImmutableMap(i -> i, i -> getSpread(wBar, wMin, i)));
-//				final ImmutableSet<Integer> minSpreadRanks = StrategyHelper.getMinimalElements(valuedRanks);
-//				final QuestionCommittee qC = helper.getQuestionAboutHalfRange(
-//						helper.drawFromStrictlyIncreasing(minSpreadRanks.asList(), Comparator.naturalOrder()));
-//				questionsBuilder.add(Question.toCommittee(qC));
 				IntStream.rangeClosed(1, m - 2).boxed()
 						.forEach(i -> questionsBuilder.add(Question.toCommittee(helper.getQuestionAboutHalfRange(i))));
 			}
@@ -255,11 +246,6 @@ public class StrategyByMmr implements Strategy {
 	public ImmutableMap<Question, MmrLottery> getLastQuestions() {
 		checkState(questions != null);
 		return questions;
-	}
-
-	private double getSpread(PSRWeights wBar, PSRWeights wMin, int i) {
-		return IntStream.rangeClosed(0, 2).boxed()
-				.mapToDouble(k -> Math.abs(wBar.getWeightAtRank(i + k) - wMin.getWeightAtRank(i + k))).sum();
 	}
 
 	private QuestionVoter getLimitedQuestion(Alternative xStar, Alternative yBar, Voter voter) {
