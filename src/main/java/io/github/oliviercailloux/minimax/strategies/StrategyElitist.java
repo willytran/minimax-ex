@@ -1,6 +1,7 @@
 package io.github.oliviercailloux.minimax.strategies;
 
 import static com.google.common.base.Preconditions.checkState;
+import static com.google.common.base.Verify.verify;
 
 import java.util.Comparator;
 import java.util.Set;
@@ -10,9 +11,9 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import com.google.common.collect.ImmutableCollection;
+import com.google.common.collect.ImmutableList;
 import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.ImmutableSet;
-import com.google.common.collect.ImmutableSetMultimap;
 import com.google.common.graph.ImmutableGraph;
 
 import io.github.oliviercailloux.j_voting.Alternative;
@@ -20,9 +21,9 @@ import io.github.oliviercailloux.j_voting.VoterPartialPreference;
 import io.github.oliviercailloux.minimax.elicitation.PSRWeights;
 import io.github.oliviercailloux.minimax.elicitation.PrefKnowledge;
 import io.github.oliviercailloux.minimax.elicitation.Question;
-import io.github.oliviercailloux.minimax.elicitation.QuestionCommittee;
+import io.github.oliviercailloux.minimax.elicitation.QuestionType;
 import io.github.oliviercailloux.minimax.elicitation.QuestionVoter;
-import io.github.oliviercailloux.minimax.regret.PairwiseMaxRegret;
+import io.github.oliviercailloux.minimax.regret.RegretComputer;
 
 public class StrategyElitist implements Strategy {
 	@SuppressWarnings("unused")
@@ -63,26 +64,48 @@ public class StrategyElitist implements Strategy {
 		}
 
 		/** To fix: this repeats the strategy by mmr. */
-		final ImmutableSetMultimap<Alternative, PairwiseMaxRegret> mmrs = helper.getMinimalMaxRegrets().asMultimap();
+		final ImmutableSet.Builder<Question> questionsBuilder = ImmutableSet.builder();
+		IntStream.rangeClosed(1, m - 2).boxed()
+				.forEach(i -> questionsBuilder.add(Question.toCommittee(helper.getQuestionAboutHalfRange(i))));
+		final ImmutableMap<Question, MmrLottery> questions = questionsBuilder.build().stream()
+				.collect(ImmutableMap.toImmutableMap(q -> q, this::toLottery));
+		final Comparator<Question> questionsComparator = Comparator.comparing(questions::get,
+				MmrLottery.MAX_COMPARATOR);
+		final ImmutableSet<Question> bestQuestions = StrategyHelper.getMinimalElements(questions.keySet(),
+				questionsComparator);
+		final ImmutableMap<Question, MmrLottery> sortedQuestions = questions.keySet().stream()
+				.sorted(questionsComparator).collect(ImmutableMap.toImmutableMap(q -> q, questions::get));
+		LOGGER.debug("Best questions: {}.", bestQuestions);
+		final Question winner = helper.sortAndDraw(bestQuestions.asList(), Comparator.naturalOrder());
+		verify(winner.getType() == QuestionType.COMMITTEE_QUESTION);
+		LOGGER.info("Questioning committee: {}, best lotteries: {}.", winner.asQuestionCommittee(),
+				sortedQuestions.entrySet().stream().limit(6).collect(ImmutableList.toImmutableList()));
 
-		final Alternative xStar = helper.drawFromStrictlyIncreasing(mmrs.keySet().asList(), Comparator.naturalOrder());
-		final ImmutableSet<PairwiseMaxRegret> pmrs = mmrs.get(xStar).stream().collect(ImmutableSet.toImmutableSet());
-		final PairwiseMaxRegret pmr = helper.drawFromStrictlyIncreasing(pmrs.asList(),
-				PairwiseMaxRegret.BY_ALTERNATIVES);
-
-		final PSRWeights wBar = pmr.getWeights();
-		final PSRWeights wMin = helper.getMinTauW(pmr);
-		final ImmutableMap<Integer, Double> valuedRanks = IntStream.rangeClosed(1, m - 2).boxed()
-				.collect(ImmutableMap.toImmutableMap(i -> i, i -> getSpread(wBar, wMin, i)));
-		final ImmutableSet<Integer> minSpreadRanks = StrategyHelper.getMinimalElements(valuedRanks);
-		final QuestionCommittee qC = helper.getQuestionAboutHalfRange(
-				helper.drawFromStrictlyIncreasing(minSpreadRanks.asList(), Comparator.naturalOrder()));
-		LOGGER.info("Questioning committee: {}.", qC);
-		return Question.toCommittee(qC);
+		return winner;
 	}
 
 	private double getSpread(PSRWeights wBar, PSRWeights wMin, int i) {
 		return IntStream.rangeClosed(0, 2).boxed()
 				.mapToDouble(k -> Math.abs(wBar.getWeightAtRank(i + k) - wMin.getWeightAtRank(i + k))).sum();
+	}
+
+	private MmrLottery toLottery(Question question) {
+		final double yesMMR;
+		{
+			final PrefKnowledge updatedKnowledge = PrefKnowledge.copyOf(helper.getKnowledge());
+			updatedKnowledge.update(question.getPositiveInformation());
+			final RegretComputer rc = new RegretComputer(updatedKnowledge);
+			yesMMR = rc.getMinimalMaxRegrets().getMinimalMaxRegretValue();
+		}
+
+		final double noMMR;
+		{
+			final PrefKnowledge updatedKnowledge = PrefKnowledge.copyOf(helper.getKnowledge());
+			updatedKnowledge.update(question.getNegativeInformation());
+			final RegretComputer rc = new RegretComputer(updatedKnowledge);
+			noMMR = rc.getMinimalMaxRegrets().getMinimalMaxRegretValue();
+		}
+		final MmrLottery lottery = MmrLottery.given(yesMMR, noMMR);
+		return lottery;
 	}
 }
