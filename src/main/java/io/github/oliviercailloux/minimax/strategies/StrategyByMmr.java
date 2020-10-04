@@ -183,7 +183,6 @@ public class StrategyByMmr implements Strategy {
 				&& !helper.getKnowledge().isProfileComplete();
 
 		LOGGER.debug("Next question, allowing committee? {}; allowing voters? {}.", allowCommittee, allowVoters);
-		verify(allowCommittee || allowVoters);
 
 		if (helper.getKnowledge().isProfileComplete() && !allowCommittee) {
 			LOGGER.debug("Asking a dummy question to voter.");
@@ -191,6 +190,8 @@ public class StrategyByMmr implements Strategy {
 			return Question.toVoter(helper.getKnowledge().getVoters().iterator().next(), iterator.next(),
 					iterator.next());
 		}
+
+		verify(allowCommittee || allowVoters);
 
 		final ImmutableSet.Builder<Question> questionsBuilder = ImmutableSet.builder();
 
@@ -243,7 +244,7 @@ public class StrategyByMmr implements Strategy {
 		final ImmutableMap<Question, MmrLottery> sortedQuestions = questions.keySet().stream()
 				.sorted(questionsComparator).collect(ImmutableMap.toImmutableMap(q -> q, questions::get));
 		LOGGER.debug("Best questions: {}.", bestQuestions);
-		final Question winner = helper.drawFromStrictlyIncreasing(bestQuestions.asList(), Comparator.naturalOrder());
+		final Question winner = helper.sortAndDraw(bestQuestions.asList(), Comparator.naturalOrder());
 		if (winner.getType() == QuestionType.COMMITTEE_QUESTION) {
 			LOGGER.info("Questioning committee: {}, best lotteries: {}.", winner.asQuestionCommittee(),
 					sortedQuestions.entrySet().stream().limit(6).collect(ImmutableList.toImmutableList()));
