@@ -4,6 +4,7 @@ import java.util.Comparator;
 import java.util.Objects;
 
 import com.google.common.base.MoreObjects;
+import com.google.common.base.VerifyException;
 
 public class MmrLottery {
 
@@ -17,6 +18,17 @@ public class MmrLottery {
 	public static final ComparatorWithDescription<MmrLottery> MAX_COMPARATOR = getMaxComparator();
 
 	public static final ComparatorWithDescription<MmrLottery> MIN_COMPARATOR = getMinComparator();
+
+	public static ComparatorWithDescription<MmrLottery> comparatorFromDescription(String description) {
+		switch (description) {
+		case "MAX":
+			return MAX_COMPARATOR;
+		case "MIN":
+			return MIN_COMPARATOR;
+		default:
+			throw new VerifyException();
+		}
+	}
 
 	public static MmrLottery given(double mmrIfYes, double mmrIfNo) {
 		return new MmrLottery(mmrIfYes, mmrIfNo);
