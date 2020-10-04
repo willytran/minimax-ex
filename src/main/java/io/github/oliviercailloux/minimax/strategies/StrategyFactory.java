@@ -36,16 +36,23 @@ public class StrategyFactory implements Supplier<Strategy> {
 	public static StrategyFactory fromJson(JsonObject json) {
 		final JsonString familyJson = json.getJsonString("family");
 		checkArgument(familyJson != null);
+
+		@SuppressWarnings("serial")
+		final ArrayList<QuestioningConstraint> typeQc = new ArrayList<>() {// nothing
+		};
+
 		final StrategyType family = StrategyType.valueOf(familyJson.getString());
 		switch (family) {
 		case PESSIMISTIC:
 			return byMmrs(json.getJsonNumber("seed").longValue(), MmrLottery.MAX_COMPARATOR);
 		case PESSIMISTIC_HEURISTIC:
-			@SuppressWarnings("serial")
-			final ArrayList<QuestioningConstraint> type = new ArrayList<>() {// nothing
-			};
 			return limited(json.getJsonNumber("seed").longValue(), JsonbUtils
-					.fromJson(json.getJsonArray("constraints").toString(), type.getClass().getGenericSuperclass()));
+					.fromJson(json.getJsonArray("constraints").toString(), typeQc.getClass().getGenericSuperclass()));
+		case LIMITED:
+			final String comparatorDescription = json.getString("comparator");
+			return limited(json.getJsonNumber("seed").longValue(),
+					MmrLottery.comparatorFromDescription(comparatorDescription), JsonbUtils.fromJson(
+							json.getJsonArray("constraints").toString(), typeQc.getClass().getGenericSuperclass()));
 		case ELITIST:
 			return elitist();
 		case RANDOM:
