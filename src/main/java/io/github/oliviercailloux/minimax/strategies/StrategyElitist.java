@@ -84,11 +84,6 @@ public class StrategyElitist implements Strategy {
 		return winner;
 	}
 
-	private double getSpread(PSRWeights wBar, PSRWeights wMin, int i) {
-		return IntStream.rangeClosed(0, 2).boxed()
-				.mapToDouble(k -> Math.abs(wBar.getWeightAtRank(i + k) - wMin.getWeightAtRank(i + k))).sum();
-	}
-
 	private MmrLottery toLottery(Question question) {
 		final double yesMMR;
 		{
