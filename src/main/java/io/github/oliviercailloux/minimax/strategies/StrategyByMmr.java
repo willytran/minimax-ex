@@ -334,9 +334,9 @@ public class StrategyByMmr implements Strategy {
 		switch (question.getType()) {
 		case COMMITTEE_QUESTION:
 			if (lottery.getMmrIfYes() <= lottery.getMmrIfNo()) {
-				output = MmrLottery.given(lottery.getMmrIfYes() * 1.2d, lottery.getMmrIfNo());
+				output = MmrLottery.given(lottery.getMmrIfYes() * 1.2d + 1e-6, lottery.getMmrIfNo());
 			} else {
-				output = MmrLottery.given(lottery.getMmrIfYes(), lottery.getMmrIfNo() * 1.2d);
+				output = MmrLottery.given(lottery.getMmrIfYes(), lottery.getMmrIfNo() * 1.2d + 1e-6);
 			}
 			break;
 		case VOTER_QUESTION:
