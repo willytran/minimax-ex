@@ -197,6 +197,7 @@ public class Run {
 	 *
 	 * @return a list of size k + 1.
 	 */
+	@JsonbTransient
 	public ImmutableList<Double> getLosses() {
 		return IntStream.rangeClosed(0, getK()).mapToObj(this::getLoss).collect(ImmutableList.toImmutableList());
 	}
