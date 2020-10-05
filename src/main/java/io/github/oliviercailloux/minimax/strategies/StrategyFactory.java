@@ -51,8 +51,10 @@ public class StrategyFactory implements Supplier<Strategy> {
 		case LIMITED:
 			final String comparatorDescription = json.getString("comparator");
 			return limited(json.getJsonNumber("seed").longValue(),
-					MmrLottery.comparatorFromDescription(comparatorDescription), JsonbUtils.fromJson(
-							json.getJsonArray("constraints").toString(), typeQc.getClass().getGenericSuperclass()));
+					MmrLottery.comparatorFromDescription(comparatorDescription),
+					JsonbUtils.fromJson(json.getJsonArray("constraints").toString(),
+							typeQc.getClass().getGenericSuperclass()),
+					json.getJsonNumber("penalty").doubleValue());
 		case ELITIST:
 			return elitist();
 		case RANDOM:
@@ -105,30 +107,30 @@ public class StrategyFactory implements Supplier<Strategy> {
 	}
 
 	public static StrategyFactory limited(long seed, List<QuestioningConstraint> constraints) {
-		return limited(seed, MmrLottery.MAX_COMPARATOR, constraints);
+		return limited(seed, MmrLottery.MAX_COMPARATOR, constraints, 1.1d);
 	}
 
 	public static StrategyFactory limited(long seed, ComparatorWithDescription<MmrLottery> comparator,
-			List<QuestioningConstraint> constraints) {
+			List<QuestioningConstraint> constraints, double penalty) {
 		LOGGER.info("Using seed {}.", seed);
 		final Random random = new Random(seed);
 
 		final String comparatorDescription = comparator.toString();
 		final PrintableJsonObject json = JsonbUtils.toJsonObject(ImmutableMap.of("family", StrategyType.LIMITED, "seed",
-				seed, "comparator", comparatorDescription, "constraints", constraints));
+				seed, "comparator", comparatorDescription, "constraints", constraints, "penalty", penalty));
 
-		final String prefix = ", constrained to [";
-		final String suffix = "]";
+		final String prefix = constraints.isEmpty() ? "" : ", constrained to [";
+		final String suffix = constraints.isEmpty() ? "" : "]";
 		final String constraintsDescription = constraints.stream()
 				.map(c -> (c.getNumber() == Integer.MAX_VALUE ? "∞" : c.getNumber())
 						+ (c.getKind() == QuestionType.COMMITTEE_QUESTION ? "c" : "v"))
 				.collect(Collectors.joining(", ", prefix, suffix));
 
 		return new StrategyFactory(() -> {
-			final StrategyByMmr strategy = StrategyByMmr.limited(comparator, constraints);
+			final StrategyByMmr strategy = StrategyByMmr.build(comparator, true, constraints, penalty);
 			strategy.setRandom(random);
 			return strategy;
-		}, json, "Limited " + comparator.toString() + constraintsDescription);
+		}, json, String.format("Limited (×%s) %s%s", penalty, comparator.toString(), constraintsDescription));
 	}
 
 	public static StrategyFactory elitist() {

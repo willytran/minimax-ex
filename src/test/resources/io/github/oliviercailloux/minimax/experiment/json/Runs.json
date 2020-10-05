@@ -12,7 +12,8 @@
                 "kind": "COMMITTEE_QUESTION",
                 "number": 2147483647
             }
-        ]
+        ],
+        "penalty": 1.0
     },
     "runs": [
         {
