@@ -1,0 +1,99 @@
+Story: we can find by experiments the optimal proportion of questions to ask to the committee. But we see that interleaving does it quite well, automatically!
+
+m = 5, n = 5, k = 20, first oracle [50 runs each time].
+ Limited, unconstrained: 0.6 ± 0.5 or 0.72 ± 0.56.
+ Limited, ∞ voters: 1.2 ± 0.3.
+
+m = 7, n = 7, k = 30, first oracle [50 runs each time].
+ Limited, unconstrained: 3.44 ± 0.7 or 3.49 ± 0.7.
+ Limited, ∞ voters: 3.41 ± 0.7.
+
+m = 9, n = 9, k = 40, first oracle [50 runs each time].
+ Limited, unconstrained: 5.4 ± 0.7.
+ Limited, ∞ voters: 
+
+m = 6, n = 6, k = 30, first oracle [10 runs each time].
+ Limited, unconstrained: 1.23 ± 1.09 or 1.16 ± 0.99 or 1.0 ± 1.0.
+ Limited, ∞ voters: 
+  
+m = 6, n = 6, k = 70, first oracle [10 runs each time].
+ Limited, unconstrained: 0.2 ± 0.3 (max is 0.8).
+ Limited, ∞ voters: 
+ 
+Question: can we do better by asking questions to the committee? Certainly we should be able to. Perhaps with more questions, or with a ≠ heuristic?
+
+10, 20, 300. 20m for one run, 15h for one strat (50 runs).
+7, 20, 300. 8m for one run, 6.5h for one strat (50 runs). Require 280q (first oracle).
+6, 20, 200. 2m for one run, 2h for one strat (50 runs).
+
+m = 6, n = 6, k = 30, weights geometric [50 runs].
+ Elitist: loss is 0.1 ± 0.2 (max is 1).
+ Limited, ∞ voters: loss is 0.2 ± 0.4 (max is 1.5).
+
+== With patch all ranks
+m = 6, n = 6, k = 30, oracle 0.
+ Limited, unconstrained: 0.38 ± 0.58 [50 runs]; 0.79 ± 0.78 [20 runs]; 0.51 ± 0.78 [20 runs]; 0.56 ± 0.65 [50 runs].
+ Limited, ∞ voters: 0.89 ± 0.61 [50 runs, previously]; 1.01 ± 0.66 [50 runs].
+
+m = 6, n = 6, k = 30, oracle 1 [50 runs each time].
+ Limited, unconstrained: 2 ± 0.7; 1.98 ± 0.69.
+ Limited, ∞ voters: 1.9 ± 0.71; 1.86 ± 0.69.
+
+m = 6, n = 6, k = 30, oracle 2 [50 runs each time].
+ Limited, unconstrained: 2.1 ± 0.4.
+ Limited, ∞ voters: 1.9 ± 0.4.
+
+m = 6, n = 6, k = 50, oracle 0 [50 runs each time].
+ Limited, unconstrained (asking about 20 qC counting those with 0 MMR at the end, penalty is 1.1): 0.01 ± 0.05 (@ k = 20: 2.4; @ k = 25: 1.62; @ k = 30: 0.67; @ k = 40: 0.07). 0 ± 0 (@ k = 20: 2.3; @ k = 25: 1.57; @ k = 30: 0.53; @ k = 40: 0.06)
+ Limited, ∞ voters: 0 ± 0 (@ k = 20: 2.17; @ k = 25: 1.46; @ k = 30: 0.81; @ k = 40: 0.05); 0 (@ k = 20: 2.43; @ k = 25: 1.52; @ k = 30: 0.8; @ k = 40: 0.05)
+ Going to penalty 1.2 seems to slightly improve.
+ Limited, unconstrained, penalty 1.2x + ε, MIN: 0 ± 0 (@ k = 20: 2.2; @ k = 25: 1.2; @ k = 30: 0.42; @ k = 40: 0.01).
+ Limited, unconstrained, penalty 1.2x + ε, MIN (asked about 3 qC per run): 0 ± 0 (@ k = 20: 2.37; @ k = 25: 1.39; @ k = 30: 0.5; @ k = 40: 0.05).
+
+m = 6, n = 6, k = 50, oracle 1 [50 runs each time].
+ Limited, unconstrained: 0.19 ± 0.21.
+ Limited, ∞ voters: 0.06 ± 0.14.
+
+m = 6, n = 10, k = 100, oracle 0 [50 runs each time].
+ Limited, unconstrained: 0.22 ± 0.59 (@ k = 60: 2.44 ± 0.41); 0.15 ± 0.59 (@ k = 60: 2.47).
+ Limited, ∞ voters: 0.27 ± 0.14 (@ k = 60: 2.23 ± 0.59); 0.25 (@ k = 60: 2.14).
+
+m = 6, n = 6, k = 50, weights geometric [50 runs each time].
+ Limited, unconstrained: 0.26 ± 0.36 (@ k = 30: 1.69; @ k = 40: 0.77).
+ Elitist: 0.85 ± 0.57 (@ k = 30: 2.08; @ k = 40: 1.21); 1.04 ± 0.52.
+ Limited, ∞ voters: 0.33 ± 0.41 (@ k = 30: 1.62; @ k = 40: 0.77).
+
+m = 6, n = 6, k = 50, weights uniformly distributed [50 runs each time].
+ Limited, unconstrained, penalty 1.2 (asked 6% to 40% qC): 0.32 (@ k = 30: 1.55; @ k = 40: 0.77); 0.33 (@ k = 30: 1.73; @ k = 40: 0.86).
+ Limited, ∞ voters: 0.28 (@ k = 30: 1.39; @ k = 40: 0.73); 0.24 (@ k = 30: 1.55; @ k = 40: 0.73).
+ Limited, unconstrained, penalty 1.3 (asked 15% qC): 0.25 (@ k = 30: 1.5; @ k = 40: 0.68).
+ Limited, unconstrained, penalty 1.4 (asked 14% qC): 0.26 (@ k = 30: 1.52; @ k = 40: 0.78).
+ Limited, unconstrained, penalty 1.6 (asked 12% qC): 0.33 (@ k = 30: 1.58; @ k = 40: 0.71).
+ Limited, unconstrained, penalty 1.2 (not exactly lexicographic): 0.37 (@ k = 30: 1.75; @ k = 40: 0.87).
+ Limited, unconstrained, penalty 1.2x + ε, MIN (asked 10%, 8% qC): 0.33 (@ k = 30: 1.68; @ k = 40: 0.85); 0.25 (@ k = 30: 1.82; @ k = 40: 0.78).
+ Limited, unconstrained, penalty 1.9x + ε, MAX (asked 4% qC): 0.3 (@ k = 30: 1.56; @ k = 40: 0.71).
+ [200 runs each time] 
+ Limited, unconstrained, penalty 1.1x + ε: 0.35 (@ k = 30: 1.76; @ k = 40: 0.91).
+ Limited, unconstrained, penalty 1.9x + ε: 0.3 ± 0.38 (@ k = 30: 1.63; @ k = 40: 0.76).
+ Limited, ∞ voters (XP takes 33 min): 0.3 ± 0.39 (@ k = 30: 1.67; @ k = 40: 0.72).
+
+m = 10, n = 20, k = 300, weights uniformly distributed [about 30 runs each time].
+ Limited, unconstrained, penalty 1.2 (lexicographic with floating point errors): 1.56 ± 0.69 (@ k = 200: 6.79 ± 2.03).
+ Limited, ∞ voters: 1.16 ± 0.67 (@ k = 200: 6.52 ± 1.57).
+
+m = 6, n = 10, k = 100, weights uniformly distributed [400 runs each time].
+ Limited, unconstrained, penalty 1.1x + ε: 0.1 ± 0.23 (@ k = 30: 5.32; @ k = 70: 1.36).
+ Limited, ∞ voters (XP takes 4 h): 0.31 ± 0.42 (@ k = 30: 5.31; @ k = 70: 1.05).
+
+
+== function regret by k
+(5, 10): regret 1 at k = 60 = 1.2mn
+(5, 15): regret 1.5 at k = 92 = 1.2mn
+(5, 20): regret 2 at k = 120 = 1.2mn
+(10, 20): regret 2 at k = 400 = 2mn
+(10, 30): regret 3 at k = 600 = 2mn
+(15, 30): regret 9.5 at k = 800 thus assuming about regret 3 at k = 1020 = 2.3mn
+
+== how complete?
+TODO Olivier: Ask 2m questions randomly to a voter. Then compute the proportion of number of edges known (in the transitive closure) compared to the total number of edges = m × (m − 1) / 2.
+
