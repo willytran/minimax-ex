@@ -56,7 +56,8 @@ public class StrategyFactory implements Supplier<Strategy> {
 		case ELITIST:
 			return elitist();
 		case RANDOM:
-			return random(json.getJsonNumber("seed").longValue(), json.getBoolean("toVoters", false));
+			return random(json.getJsonNumber("seed").longValue(),
+					json.getJsonNumber("probabilityCommittee").doubleValue(), json.getBoolean("toVoters", false));
 		case TWO_PHASES_HEURISTIC:
 		default:
 			throw new UnsupportedOperationException("" + family);
@@ -139,23 +140,24 @@ public class StrategyFactory implements Supplier<Strategy> {
 		}, json, "Elitist");
 	}
 
-	public static StrategyFactory random() {
+	public static StrategyFactory random(double probabilityCommittee) {
 		final long seed = ThreadLocalRandom.current().nextLong();
-		return random(seed, false);
+		return random(seed, probabilityCommittee, false);
 	}
 
-	public static StrategyFactory randomToVoters() {
+	public static StrategyFactory randomToVoters(double probabilityCommittee) {
 		final long seed = ThreadLocalRandom.current().nextLong();
-		return random(seed, true);
+		return random(seed, probabilityCommittee, true);
 	}
 
-	private static StrategyFactory random(long seed, boolean toVoters) {
-		final PrintableJsonObject json = JsonbUtils
-				.toJsonObject(ImmutableMap.of("family", StrategyType.RANDOM, "seed", seed, "toVoters", toVoters));
+	private static StrategyFactory random(long seed, double probabilityCommittee, boolean toVoters) {
+		final PrintableJsonObject json = JsonbUtils.toJsonObject(ImmutableMap.of("family", StrategyType.RANDOM, "seed",
+				seed, "probabilityCommittee", probabilityCommittee, "toVoters", toVoters));
 
 		final Random random = new Random(seed);
 		return new StrategyFactory(() -> {
-			final StrategyRandom strategy = toVoters ? StrategyRandom.onlyVoters() : StrategyRandom.newInstance();
+			final StrategyRandom strategy = toVoters ? StrategyRandom.onlyVoters(probabilityCommittee)
+					: StrategyRandom.newInstance(probabilityCommittee);
 			strategy.setRandom(random);
 			return strategy;
 		}, json, "Random");

@@ -1,5 +1,6 @@
 package io.github.oliviercailloux.minimax.strategies;
 
+import static com.google.common.base.Preconditions.checkArgument;
 import static com.google.common.base.Verify.verify;
 
 import java.util.Comparator;
@@ -24,18 +25,23 @@ public class StrategyRandom implements Strategy {
 	@SuppressWarnings("unused")
 	private static final Logger LOGGER = LoggerFactory.getLogger(StrategyRandom.class);
 
-	public static StrategyRandom newInstance() {
-		return new StrategyRandom(false);
+	public static StrategyRandom newInstance(double probabilityCommittee) {
+		return new StrategyRandom(probabilityCommittee, false);
 	}
 
-	public static StrategyRandom onlyVoters() {
-		return new StrategyRandom(true);
+	public static StrategyRandom onlyVoters(double probabilityCommittee) {
+		return new StrategyRandom(probabilityCommittee, true);
 	}
 
 	private final StrategyHelper helper;
 	private final boolean onlyVoters;
+	private double probabilityCommittee;
 
-	private StrategyRandom(boolean onlyVoters) {
+	private StrategyRandom(double probabilityCommittee, boolean onlyVoters) {
+		checkArgument(Double.isFinite(probabilityCommittee));
+		checkArgument(probabilityCommittee >= 0d);
+		checkArgument(probabilityCommittee <= 1d);
+		this.probabilityCommittee = probabilityCommittee;
 		helper = StrategyHelper.newInstance();
 		this.onlyVoters = onlyVoters;
 	}
@@ -69,7 +75,8 @@ public class StrategyRandom implements Strategy {
 			if (m == 2) {
 				askVoters = true;
 			} else {
-				askVoters = helper.getRandom().nextBoolean();
+				final double rnd = helper.getRandom().nextDouble();
+				askVoters = rnd > probabilityCommittee;
 			}
 		}
 

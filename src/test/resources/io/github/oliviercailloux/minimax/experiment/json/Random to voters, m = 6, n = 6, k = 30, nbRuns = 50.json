@@ -2,6 +2,7 @@
     "factory": {
         "family": "RANDOM",
         "seed": 1791142937519856070,
+        "probabilityCommittee": 0.5,
         "toVoters": false
     },
     "runs": [
