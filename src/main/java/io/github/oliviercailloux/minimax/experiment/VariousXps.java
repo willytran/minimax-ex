@@ -60,8 +60,8 @@ public class VariousXps {
 		final int n = 6;
 		final int k = 50;
 //		final StrategyFactory factory = StrategyFactory.limitedCommitteeThenVoters(0);
-//		final long seed = ThreadLocalRandom.current().nextLong();
 		final StrategyFactory factory = StrategyFactory.limited();
+//		final long seed = ThreadLocalRandom.current().nextLong();
 //		final StrategyFactory factory = StrategyFactory.limited(seed, MmrLottery.MIN_COMPARATOR, ImmutableList.of());
 //		final StrategyFactory factory = StrategyFactory.elitist();
 
