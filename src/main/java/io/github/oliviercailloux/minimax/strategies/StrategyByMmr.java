@@ -195,16 +195,16 @@ public class StrategyByMmr implements Strategy {
 		final ImmutableSet.Builder<Question> questionsBuilder = ImmutableSet.builder();
 
 		if (limited) {
-			final ImmutableSetMultimap<Alternative, PairwiseMaxRegret> mmrs = helper.getMinimalMaxRegrets()
-					.asMultimap();
-
-			final Alternative xStar = helper.drawFromStrictlyIncreasing(mmrs.keySet().asList(),
-					Comparator.naturalOrder());
-			final ImmutableSet<PairwiseMaxRegret> pmrs = mmrs.get(xStar).stream()
-					.collect(ImmutableSet.toImmutableSet());
-			final PairwiseMaxRegret pmr = helper.drawFromStrictlyIncreasing(pmrs.asList(),
-					PairwiseMaxRegret.BY_ALTERNATIVES);
 			if (allowVoters) {
+				final ImmutableSetMultimap<Alternative, PairwiseMaxRegret> mmrs = helper.getMinimalMaxRegrets()
+						.asMultimap();
+
+				final Alternative xStar = helper.drawFromStrictlyIncreasing(mmrs.keySet().asList(),
+						Comparator.naturalOrder());
+				final ImmutableSet<PairwiseMaxRegret> pmrs = mmrs.get(xStar).stream()
+						.collect(ImmutableSet.toImmutableSet());
+				final PairwiseMaxRegret pmr = helper.drawFromStrictlyIncreasing(pmrs.asList(),
+						PairwiseMaxRegret.BY_ALTERNATIVES);
 				final Alternative yBar = pmr.getY();
 				helper.getQuestionableVoters().stream().map(v -> getLimitedQuestion(xStar, yBar, v))
 						.forEach(q -> questionsBuilder.add(Question.toVoter(q)));

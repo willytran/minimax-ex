@@ -46,12 +46,12 @@ public class VariousXps {
 
 	public static void main(String[] args) throws Exception {
 		final VariousXps variousXps = new VariousXps();
-		variousXps.runWithRandomOracles();
+//		variousXps.runWithRandomOracles();
 //		variousXps.showFinalStats();
 //		variousXps.exportOracles(10, 20, 100);
 //		variousXps.tiesWithOracle1();
 //		variousXps.runWithOracle0();
-//		variousXps.analyzeQuestions();
+		variousXps.analyzeQuestions();
 //		variousXps.summarizeXps();
 	}
 
@@ -211,8 +211,8 @@ public class VariousXps {
 		final int m = 6;
 		final int n = 6;
 		final int k = 50;
-		final int nbRuns = 50;
-		final Path json = Path.of("experiments", String
+		final int nbRuns = 200;
+		final Path json = Path.of("experiments", "m = 6, n = 6, uniform weights, penalty = 1.9", String
 				.format("Limited MAX, constrained to [], m = %d, n = %d, k = %d, nbRuns = %d.json", m, n, k, nbRuns));
 		final Runs runs = JsonConverter.toRuns(Files.readString(json));
 		for (Run run : runs.getRuns()) {

@@ -13,7 +13,7 @@ import java.util.Map;
 import java.util.Random;
 import java.util.function.Supplier;
 import java.util.stream.Collectors;
-import java.util.stream.IntStream;
+import java.util.stream.Stream;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -83,8 +83,8 @@ public class Generator {
 			return PSRWeights.given(weightsBuilder.build());
 		}
 
-		final ImmutableList<Double> differences = IntStream.range(0, nbAlternatives - 1)
-				.mapToObj(i -> differenceSupplier.get()).collect(ImmutableList.toImmutableList());
+		final ImmutableList<Double> differences = Stream.generate(differenceSupplier).limit(nbAlternatives - 1)
+				.collect(ImmutableList.toImmutableList());
 
 		final double sum = differences.stream().mapToDouble(d -> d).sum();
 		verify(sum > 0d);
