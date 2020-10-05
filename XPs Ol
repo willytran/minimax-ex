@@ -74,7 +74,7 @@ m = 6, n = 6, k = 50, weights uniformly distributed [50 runs each time].
  Limited, unconstrained, penalty 1.9x + ε, MAX (asked 4% qC): 0.3 (@ k = 30: 1.56; @ k = 40: 0.71).
  [200 runs each time] 
  Limited, unconstrained, penalty 1.1x + ε: 0.35 (@ k = 30: 1.76; @ k = 40: 0.91).
- Limited, unconstrained, penalty 1.9x + ε: 0.3 ± 0.38 (@ k = 30: 1.63; @ k = 40: 0.76).
+ Limited, unconstrained, penalty 1.9x + ε (asked 4% qC): 0.3 ± 0.38 (@ k = 30: 1.63; @ k = 40: 0.76).
  Limited, ∞ voters (XP takes 33 min): 0.3 ± 0.39 (@ k = 30: 1.67; @ k = 40: 0.72).
 
 m = 10, n = 20, k = 300, weights uniformly distributed [about 30 runs each time].
