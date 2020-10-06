@@ -1,12 +1,13 @@
 package io.github.oliviercailloux.minimax.experiment.json;
 
-import static io.github.oliviercailloux.minimax.Basics.factory;
+import static io.github.oliviercailloux.minimax.Basics.cConstraint;
 import static io.github.oliviercailloux.minimax.Basics.oracle;
 import static io.github.oliviercailloux.minimax.Basics.p1;
 import static io.github.oliviercailloux.minimax.Basics.profile;
 import static io.github.oliviercailloux.minimax.Basics.run;
 import static io.github.oliviercailloux.minimax.Basics.runs;
 import static io.github.oliviercailloux.minimax.Basics.v1;
+import static io.github.oliviercailloux.minimax.Basics.vConstraint;
 import static io.github.oliviercailloux.minimax.Basics.w;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
@@ -25,6 +26,8 @@ import io.github.oliviercailloux.json.PrintableJsonValue;
 import io.github.oliviercailloux.minimax.elicitation.Oracle;
 import io.github.oliviercailloux.minimax.experiment.Run;
 import io.github.oliviercailloux.minimax.experiment.Runs;
+import io.github.oliviercailloux.minimax.strategies.MmrLottery;
+import io.github.oliviercailloux.minimax.strategies.StrategyFactory;
 
 public class JsonConverterTests {
 	@SuppressWarnings("unused")
@@ -93,7 +96,9 @@ public class JsonConverterTests {
 
 	@Test
 	void testRuns() throws Exception {
-		final PrintableJsonObject json = JsonConverter.toJson(Runs.of(factory, ImmutableList.of(run, run)));
+		final PrintableJsonObject json = JsonConverter
+				.toJson(Runs.of(StrategyFactory.limited(100l, MmrLottery.MAX_COMPARATOR,
+						ImmutableList.of(vConstraint, cConstraint), 1d), ImmutableList.of(run, run)));
 		final String expected = Files.readString(Path.of(getClass().getResource("Runs.json").toURI()));
 		assertEquals(expected, json.toString());
 	}

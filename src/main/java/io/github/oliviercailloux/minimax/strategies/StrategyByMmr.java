@@ -112,20 +112,20 @@ public class StrategyByMmr implements Strategy {
 	}
 
 	public static StrategyByMmr build(Comparator<MmrLottery> comparator) {
-		return new StrategyByMmr(comparator, false, ImmutableList.of());
+		return new StrategyByMmr(comparator, false, ImmutableList.of(), 1.1d);
 	}
 
 	public static StrategyByMmr build(Comparator<MmrLottery> comparator, List<QuestioningConstraint> constraints) {
-		return new StrategyByMmr(comparator, false, constraints);
+		return new StrategyByMmr(comparator, false, constraints, 1.1d);
 	}
 
 	public static StrategyByMmr build(Comparator<MmrLottery> comparator, boolean limited,
-			List<QuestioningConstraint> constraints) {
-		return new StrategyByMmr(comparator, limited, constraints);
+			List<QuestioningConstraint> constraints, double penalty) {
+		return new StrategyByMmr(comparator, limited, constraints, penalty);
 	}
 
 	public static StrategyByMmr limited(Comparator<MmrLottery> comparator, List<QuestioningConstraint> constraints) {
-		return build(comparator, true, constraints);
+		return build(comparator, true, constraints, 1.1d);
 	}
 
 	public static StrategyByMmr limited(List<QuestioningConstraint> constraints) {
@@ -138,13 +138,17 @@ public class StrategyByMmr implements Strategy {
 	private final Comparator<MmrLottery> lotteryComparator;
 
 	private ImmutableMap<Question, MmrLottery> questions;
+	private double penalty;
 
 	private StrategyByMmr(Comparator<MmrLottery> lotteryComparator, boolean limited,
-			List<QuestioningConstraint> constraints) {
-		helper = StrategyHelper.newInstance();
+			List<QuestioningConstraint> constraints, double penalty) {
+		checkArgument(penalty >= 1d);
+		this.lotteryComparator = checkNotNull(lotteryComparator);
 		this.limited = limited;
 		this.constraints = QuestioningConstraints.of(constraints);
-		this.lotteryComparator = checkNotNull(lotteryComparator);
+		this.penalty = penalty;
+
+		helper = StrategyHelper.newInstance();
 		questions = null;
 		LOGGER.debug("Creating with constraints: {}.", constraints);
 	}
@@ -320,9 +324,9 @@ public class StrategyByMmr implements Strategy {
 		switch (question.getType()) {
 		case COMMITTEE_QUESTION:
 			if (lottery.getMmrIfYes() <= lottery.getMmrIfNo()) {
-				output = MmrLottery.given(lottery.getMmrIfYes() * 1.1d + 1e-6, lottery.getMmrIfNo());
+				output = MmrLottery.given(lottery.getMmrIfYes() * penalty + 1e-6, lottery.getMmrIfNo());
 			} else {
-				output = MmrLottery.given(lottery.getMmrIfYes(), lottery.getMmrIfNo() * 1.1d + 1e-6);
+				output = MmrLottery.given(lottery.getMmrIfYes(), lottery.getMmrIfNo() * penalty + 1e-6);
 			}
 			break;
 		case VOTER_QUESTION:
