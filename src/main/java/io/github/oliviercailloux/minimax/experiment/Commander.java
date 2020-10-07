@@ -10,6 +10,7 @@ import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.Arrays;
 import java.util.List;
+import java.util.Objects;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -36,12 +37,14 @@ public class Commander {
 
 	@Parameters
 	private static class TimingCommand {
-		@Parameter(names = "-m", required = true)
+		@Parameter(names = "-m")
 		public int m = 5;
-		@Parameter(names = "-n", required = true)
+		@Parameter(names = "-n")
 		public int n = 5;
-		@Parameter(names = "-k", required = true)
+		@Parameter(names = "-k")
 		public int k = 30;
+		@Parameter(names = "-r")
+		public int nbRuns = 5;
 	}
 
 	private static class StrategyTypeConverter implements IStringConverter<StrategyType> {
@@ -61,12 +64,18 @@ public class Commander {
 	private static class StrategyCommand {
 		@Parameter(names = "--oracles", required = true)
 		public String oracles;
+		@Parameter(names = "--osi")
+		public int oraclesStartIndex = 0;
+		@Parameter(names = "--oei")
+		public Integer oraclesEndIndex = null;
+
 		@Parameter(names = "--family", required = true, converter = StrategyTypeConverter.class)
 		public StrategyType family;
 		@Parameter(names = "--qC")
 		public int qC;
 		@Parameter(names = "--qV")
 		public int qV;
+
 		@Parameter(names = "-k", required = true)
 		public int k;
 	}
@@ -93,9 +102,14 @@ public class Commander {
 				.build();
 		jc.parse(args);
 
-		switch (jc.getParsedCommand()) {
+		final String parsedCommand = jc.getParsedCommand();
+		if (parsedCommand == null) {
+			throw new ParameterException("Unspecified command.");
+		}
+
+		switch (parsedCommand) {
 		case "timing":
-			TimingXp.time(timing.m, timing.n, timing.k);
+			TimingXp.time(timing.m, timing.n, timing.k, timing.nbRuns);
 			break;
 		case "strategy":
 			strategy(strategy);
@@ -137,8 +151,10 @@ public class Commander {
 
 		final Path json = Path.of(command.oracles);
 		final List<Oracle> oracles = JsonConverter.toOracles(Files.readString(json));
+		final int endIndex = Objects.requireNonNullElse(command.oraclesEndIndex, oracles.size());
+		final List<Oracle> oraclesSlice = oracles.subList(command.oraclesStartIndex, endIndex);
 
-		final Runs runs = new VariousXps().runs(factory, oracles, command.k);
+		final Runs runs = new VariousXps().runs(factory, oraclesSlice, command.k);
 		final Stats stats = runs.getMinimalMaxRegretStats().get(runs.getK());
 		final String descr = Runner.asStringEstimator(stats);
 		LOGGER.info("Got final estimator: {}.", descr);

@@ -44,18 +44,19 @@
 		<appender-ref ref="File" />
 	</root>
 	<logger
-		name="io.github.oliviercailloux.y2018.j_voting.Alternative"
+		name="io.github.oliviercailloux.j_voting.Alternative"
 		level="ERROR" />
 	<logger
-		name="io.github.oliviercailloux.y2018.j_voting.Generator"
+		name="io.github.oliviercailloux.j_voting.Voter"
+		level="ERROR" />
+	<logger
+		name="io.github.oliviercailloux.j_voting.Generator"
 		level="ERROR" />
 	<logger
 		name="io.github.oliviercailloux.y2018.j_voting.Preference"
 		level="ERROR" />
 	<logger
 		name="io.github.oliviercailloux.y2018.j_voting.StrictPreference"
-		level="ERROR" />
-	<logger name="io.github.oliviercailloux.y2018.j_voting.Voter"
 		level="ERROR" />
 	<logger
 		name="io.github.oliviercailloux.jlp.or_tools.OrToolsSolver"
