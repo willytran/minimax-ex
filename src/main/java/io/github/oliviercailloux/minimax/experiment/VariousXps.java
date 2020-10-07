@@ -144,7 +144,7 @@ public class VariousXps {
 		return runs(factory, oracles, k);
 	}
 
-	public Runs runs(StrategyFactory factory, ImmutableList<Oracle> oracles, int k) throws IOException {
+	public Runs runs(StrategyFactory factory, List<Oracle> oracles, int k) throws IOException {
 		final int m = oracles.stream().map(Oracle::getM).distinct().collect(MoreCollectors.onlyElement());
 		final int n = oracles.stream().map(Oracle::getN).distinct().collect(MoreCollectors.onlyElement());
 		final int nbRuns = oracles.size();
@@ -160,17 +160,14 @@ public class VariousXps {
 		LOGGER.info("Started '{}'.", factory.getDescription());
 		for (int i = 0; i < nbRuns; ++i) {
 			final Oracle oracle = oracles.get(i);
-			LOGGER.info("Before run.");
 			final Run run = Runner.run(factory, oracle, k);
 			LOGGER.info("Time (run {}): {}.", i, run.getTotalTime());
 			runsBuilder.add(run);
 			final Runs runs = Runs.of(factory, runsBuilder.build());
-			LOGGER.info("Runs.");
-			// Runner.summarize(runs);
 			Files.writeString(tmpJson, JsonConverter.toJson(runs).toString());
-			LOGGER.info("Written json.");
+			LOGGER.debug("Written json.");
 			Files.writeString(tmpCsv, ToCsv.toCsv(runs, 1));
-			LOGGER.info("Written csv.");
+			LOGGER.debug("Written csv.");
 		}
 
 		final String prefix = prefixDescription + ", nbRuns = " + nbRuns;
