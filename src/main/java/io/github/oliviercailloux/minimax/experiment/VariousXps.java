@@ -46,29 +46,29 @@ public class VariousXps {
 
 	public static void main(String[] args) throws Exception {
 		final VariousXps variousXps = new VariousXps();
-//		variousXps.runWithRandomOracles();
+		variousXps.runWithRandomOracles();
 //		variousXps.showFinalStats();
 //		variousXps.exportOracles(10, 20, 100);
 //		variousXps.tiesWithOracle1();
 //		variousXps.runWithOracle0();
-		variousXps.analyzeQuestions();
+//		variousXps.analyzeQuestions();
 //		variousXps.summarizeXps();
 	}
 
 	public void runWithRandomOracles() throws IOException {
-		final int m = 6;
-		final int n = 6;
-		final int k = 50;
+		final int m = 10;
+		final int n = 20;
+		final int k = 500;
 //		final StrategyFactory factory = StrategyFactory.limitedCommitteeThenVoters(0);
-		final StrategyFactory factory = StrategyFactory.limited();
+//		final StrategyFactory factory = StrategyFactory.limited();
 //		final long seed = ThreadLocalRandom.current().nextLong();
 //		final StrategyFactory factory = StrategyFactory.limited(seed, MmrLottery.MIN_COMPARATOR, ImmutableList.of());
-//		final StrategyFactory factory = StrategyFactory.elitist();
+		final StrategyFactory factory = StrategyFactory.elitist();
 
-		final ImmutableList<Oracle> oracles = Stream
-				.generate(
-						() -> Oracle.build(Generator.genProfile(m, n), Generator.genWeightsWithUniformDistribution(m)))
-				.limit(200).collect(ImmutableList.toImmutableList());
+		final ImmutableList<Oracle> oracles = Stream.generate(
+//						() -> Oracle.build(Generator.genProfile(m, n), Generator.genWeightsWithUniformDistribution(m)))
+				() -> Oracle.build(Generator.genProfile(m, n), Generator.genWeightsGeometric(m))).limit(200)
+				.collect(ImmutableList.toImmutableList());
 
 		final Runs runs = runs(factory, oracles, k);
 		final Stats stats = runs.getMinimalMaxRegretStats().get(runs.getK());
