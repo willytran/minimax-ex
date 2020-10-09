@@ -9,6 +9,7 @@ import java.nio.file.Path;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.Arrays;
+import java.util.Objects;
 import java.util.stream.Stream;
 
 import org.slf4j.Logger;
@@ -82,8 +83,6 @@ public class Commander {
 
 	@Parameters
 	private static class StrategyCommand {
-		@Parameter(names = "--og")
-		public String oraclesGenerator = null;
 		@Parameter(names = "--family", converter = StrategyTypeConverter.class)
 		public StrategyType family = StrategyType.LIMITED;
 		@Parameter(names = "--qC")
@@ -99,6 +98,9 @@ public class Commander {
 		public int k = 30;
 		@Parameter(names = "-r")
 		public int nbRuns = 5;
+
+		@Parameter(names = "-o")
+		public String outputDirectory = null;
 	}
 
 	public static void main(String[] args) {
@@ -185,7 +187,9 @@ public class Commander {
 						Generator.genWeightsWithUniformDistribution(command.m)))
 				.limit(command.nbRuns).collect(ImmutableList.toImmutableList());
 
-		final Runs runs = new VariousXps().runs(factory, oracles, command.k);
+		final Path outDir = Path.of(Objects.requireNonNullElse(command.outputDirectory, "experiments/"));
+
+		final Runs runs = new VariousXps().runs(factory, oracles, command.k, outDir);
 		final Stats stats = runs.getMinimalMaxRegretStats().get(runs.getK());
 		final String descr = Runner.asStringEstimator(stats);
 		LOGGER.info("Got final estimator: {}.", descr);

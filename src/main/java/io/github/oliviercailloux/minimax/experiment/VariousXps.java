@@ -199,11 +199,14 @@ public class VariousXps {
 	}
 
 	public Runs runs(StrategyFactory factory, List<Oracle> oracles, int k) throws IOException {
+		return runs(factory, oracles, k, Path.of("experiments/"));
+	}
+
+	public Runs runs(StrategyFactory factory, List<Oracle> oracles, int k, Path outDir) throws IOException {
 		final int m = oracles.stream().map(Oracle::getM).distinct().collect(MoreCollectors.onlyElement());
 		final int n = oracles.stream().map(Oracle::getN).distinct().collect(MoreCollectors.onlyElement());
 		final int nbRuns = oracles.size();
 
-		final Path outDir = Path.of("experiments/");
 		Files.createDirectories(outDir);
 		final String prefixDescription = factory.getDescription() + ", m = " + m + ", n = " + n + ", k = " + k;
 		final String prefixTemp = prefixDescription + ", ongoing";
