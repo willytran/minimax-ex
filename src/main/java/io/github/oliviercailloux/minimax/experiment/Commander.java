@@ -9,8 +9,8 @@ import java.nio.file.Path;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.Arrays;
-import java.util.List;
 import java.util.Objects;
+import java.util.stream.Stream;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -21,15 +21,16 @@ import com.beust.jcommander.Parameter;
 import com.beust.jcommander.ParameterException;
 import com.beust.jcommander.Parameters;
 import com.google.common.base.VerifyException;
+import com.google.common.collect.ImmutableList;
 import com.google.common.math.Stats;
 
 import ch.qos.logback.classic.spi.ILoggingEvent;
 import ch.qos.logback.core.FileAppender;
 import io.github.oliviercailloux.jaris.exceptions.Unchecker;
 import io.github.oliviercailloux.minimax.elicitation.Oracle;
-import io.github.oliviercailloux.minimax.experiment.json.JsonConverter;
 import io.github.oliviercailloux.minimax.strategies.StrategyFactory;
 import io.github.oliviercailloux.minimax.strategies.StrategyType;
+import io.github.oliviercailloux.minimax.utils.Generator;
 
 public class Commander {
 	@SuppressWarnings("unused")
@@ -61,9 +62,9 @@ public class Commander {
 	}
 
 	@Parameters
-	private static class StrategyCommand {
-		@Parameter(names = "--oracles", required = true)
-		public String oracles;
+	private static class StrategyFromFileCommand {
+		@Parameter(names = "--of", required = true)
+		public String oraclesFile;
 		@Parameter(names = "--osi")
 		public int oraclesStartIndex = 0;
 		@Parameter(names = "--oei")
@@ -78,6 +79,28 @@ public class Commander {
 
 		@Parameter(names = "-k", required = true)
 		public int k;
+	}
+
+	@Parameters
+	private static class StrategyCommand {
+		@Parameter(names = "--family", converter = StrategyTypeConverter.class)
+		public StrategyType family = StrategyType.LIMITED;
+		@Parameter(names = "--qC")
+		public int qC;
+		@Parameter(names = "--qV")
+		public int qV;
+
+		@Parameter(names = "-m")
+		public int m = 5;
+		@Parameter(names = "-n")
+		public int n = 5;
+		@Parameter(names = "-k")
+		public int k = 30;
+		@Parameter(names = "-r")
+		public int nbRuns = 5;
+
+		@Parameter(names = "-o")
+		public String outputDirectory = null;
 	}
 
 	public static void main(String[] args) {
@@ -121,20 +144,26 @@ public class Commander {
 	}
 
 	private void strategy(StrategyCommand command) throws IOException {
-		if (command.qC != 0 && command.qV != 0) {
+		final int qC = command.qC;
+		final int qV = command.qV;
+		final StrategyType family = command.family;
+		if (qC != 0 && qV != 0) {
 			throw new ParameterException("At most one of the qC and qV parameters can be specified.");
+		}
+		if (family != StrategyType.LIMITED) {
+			throw new ParameterException("The qC and qV parameters can only be used with the LIMITED family.");
 		}
 
 		final StrategyFactory factory;
-		switch (command.family) {
+		switch (family) {
 		case ELITIST:
 			factory = StrategyFactory.elitist();
 			break;
 		case LIMITED:
-			if (command.qC != 0) {
-				factory = StrategyFactory.limitedCommitteeThenVoters(command.qC);
-			} else if (command.qV != 0) {
-				factory = StrategyFactory.limitedVotersThenCommittee(command.qV);
+			if (qC != 0) {
+				factory = StrategyFactory.limitedCommitteeThenVoters(qC);
+			} else if (qV != 0) {
+				factory = StrategyFactory.limitedVotersThenCommittee(qV);
 			} else {
 				factory = StrategyFactory.limited();
 			}
@@ -149,12 +178,18 @@ public class Commander {
 			throw new VerifyException();
 		}
 
-		final Path json = Path.of(command.oracles);
-		final List<Oracle> oracles = JsonConverter.toOracles(Files.readString(json));
-		final int endIndex = Objects.requireNonNullElse(command.oraclesEndIndex, oracles.size());
-		final List<Oracle> oraclesSlice = oracles.subList(command.oraclesStartIndex, endIndex);
+//			final Path json = Path.of(command.oraclesFile);
+//			final List<Oracle> oraclesFile = JsonConverter.toOracles(Files.readString(json));
+//			final int endIndex = Objects.requireNonNullElse(command.oraclesEndIndex, oraclesFile.size());
+//			oracles = ImmutableList.copyOf(oraclesFile.subList(command.oraclesStartIndex, endIndex));
+		final ImmutableList<Oracle> oracles = Stream
+				.generate(() -> Oracle.build(Generator.genProfile(command.m, command.n),
+						Generator.genWeightsWithUniformDistribution(command.m)))
+				.limit(command.nbRuns).collect(ImmutableList.toImmutableList());
 
-		final Runs runs = new VariousXps().runs(factory, oraclesSlice, command.k);
+		final Path outDir = Path.of(Objects.requireNonNullElse(command.outputDirectory, "experiments/"));
+
+		final Runs runs = new VariousXps().runs(factory, oracles, command.k, outDir);
 		final Stats stats = runs.getMinimalMaxRegretStats().get(runs.getK());
 		final String descr = Runner.asStringEstimator(stats);
 		LOGGER.info("Got final estimator: {}.", descr);
