@@ -46,29 +46,29 @@ public class VariousXps {
 
 	public static void main(String[] args) throws Exception {
 		final VariousXps variousXps = new VariousXps();
-//		variousXps.runWithRandomOracles();
+		variousXps.runWithRandomOracles();
 //		variousXps.showFinalStats();
 //		variousXps.exportOracles(10, 20, 100);
 //		variousXps.tiesWithOracle1();
 //		variousXps.runWithOracle0();
-		variousXps.analyzeQuestions();
+//		variousXps.analyzeQuestions();
 //		variousXps.summarizeXps();
 	}
 
 	public void runWithRandomOracles() throws IOException {
-		final int m = 6;
-		final int n = 6;
-		final int k = 50;
+		final int m = 10;
+		final int n = 20;
+		final int k = 500;
 //		final StrategyFactory factory = StrategyFactory.limitedCommitteeThenVoters(0);
-		final StrategyFactory factory = StrategyFactory.limited();
+//		final StrategyFactory factory = StrategyFactory.limited();
 //		final long seed = ThreadLocalRandom.current().nextLong();
 //		final StrategyFactory factory = StrategyFactory.limited(seed, MmrLottery.MIN_COMPARATOR, ImmutableList.of());
-//		final StrategyFactory factory = StrategyFactory.elitist();
+		final StrategyFactory factory = StrategyFactory.elitist();
 
-		final ImmutableList<Oracle> oracles = Stream
-				.generate(
-						() -> Oracle.build(Generator.genProfile(m, n), Generator.genWeightsWithUniformDistribution(m)))
-				.limit(200).collect(ImmutableList.toImmutableList());
+		final ImmutableList<Oracle> oracles = Stream.generate(
+//						() -> Oracle.build(Generator.genProfile(m, n), Generator.genWeightsWithUniformDistribution(m)))
+				() -> Oracle.build(Generator.genProfile(m, n), Generator.genWeightsGeometric(m))).limit(200)
+				.collect(ImmutableList.toImmutableList());
 
 		final Runs runs = runs(factory, oracles, k);
 		final Stats stats = runs.getMinimalMaxRegretStats().get(runs.getK());
@@ -144,7 +144,7 @@ public class VariousXps {
 		return runs(factory, oracles, k);
 	}
 
-	public Runs runs(StrategyFactory factory, ImmutableList<Oracle> oracles, int k) throws IOException {
+	public Runs runs(StrategyFactory factory, List<Oracle> oracles, int k) throws IOException {
 		final int m = oracles.stream().map(Oracle::getM).distinct().collect(MoreCollectors.onlyElement());
 		final int n = oracles.stream().map(Oracle::getN).distinct().collect(MoreCollectors.onlyElement());
 		final int nbRuns = oracles.size();
@@ -160,17 +160,14 @@ public class VariousXps {
 		LOGGER.info("Started '{}'.", factory.getDescription());
 		for (int i = 0; i < nbRuns; ++i) {
 			final Oracle oracle = oracles.get(i);
-			LOGGER.info("Before run.");
 			final Run run = Runner.run(factory, oracle, k);
 			LOGGER.info("Time (run {}): {}.", i, run.getTotalTime());
 			runsBuilder.add(run);
 			final Runs runs = Runs.of(factory, runsBuilder.build());
-			LOGGER.info("Runs.");
-			// Runner.summarize(runs);
 			Files.writeString(tmpJson, JsonConverter.toJson(runs).toString());
-			LOGGER.info("Written json.");
+			LOGGER.debug("Written json.");
 			Files.writeString(tmpCsv, ToCsv.toCsv(runs, 1));
-			LOGGER.info("Written csv.");
+			LOGGER.debug("Written csv.");
 		}
 
 		final String prefix = prefixDescription + ", nbRuns = " + nbRuns;

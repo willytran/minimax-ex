@@ -21,10 +21,11 @@ public class TimingXp {
 		final int m = 5;
 		final int n = 5;
 		final int k = 30;
-		time(m, n, k);
+		final int nbRuns = 5;
+		time(m, n, k, nbRuns);
 	}
 
-	public static void time(int m, int n, int k) {
+	public static void time(int m, int n, int k, int nbRuns) {
 		final long seed = ThreadLocalRandom.current().nextLong();
 		final StrategyFactory factory = StrategyFactory.byMmrs(seed, MmrLottery.MAX_COMPARATOR);
 
@@ -35,7 +36,7 @@ public class TimingXp {
 		}
 
 		final ImmutableList.Builder<Run> runsBuilder = ImmutableList.builder();
-		for (int i = 0; i < 5; ++i) {
+		for (int i = 0; i < nbRuns; ++i) {
 			final Run run = Runner.run(factory, m, n, k);
 			LOGGER.info("Time run {}: {}.", i, run.getTotalTime());
 			runsBuilder.add(run);

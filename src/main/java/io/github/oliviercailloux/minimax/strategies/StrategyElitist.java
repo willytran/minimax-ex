@@ -18,7 +18,6 @@ import com.google.common.graph.ImmutableGraph;
 
 import io.github.oliviercailloux.j_voting.Alternative;
 import io.github.oliviercailloux.j_voting.VoterPartialPreference;
-import io.github.oliviercailloux.minimax.elicitation.PSRWeights;
 import io.github.oliviercailloux.minimax.elicitation.PrefKnowledge;
 import io.github.oliviercailloux.minimax.elicitation.Question;
 import io.github.oliviercailloux.minimax.elicitation.QuestionType;
@@ -78,7 +77,7 @@ public class StrategyElitist implements Strategy {
 		LOGGER.debug("Best questions: {}.", bestQuestions);
 		final Question winner = helper.sortAndDraw(bestQuestions.asList(), Comparator.naturalOrder());
 		verify(winner.getType() == QuestionType.COMMITTEE_QUESTION);
-		LOGGER.info("Questioning committee: {}, best lotteries: {}.", winner.asQuestionCommittee(),
+		LOGGER.debug("Questioning committee: {}, best lotteries: {}.", winner.asQuestionCommittee(),
 				sortedQuestions.entrySet().stream().limit(6).collect(ImmutableList.toImmutableList()));
 
 		return winner;
