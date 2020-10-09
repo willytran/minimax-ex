@@ -25,6 +25,7 @@ import com.google.common.collect.ImmutableSet;
 import com.google.common.collect.Iterables;
 import com.google.common.collect.MoreCollectors;
 import com.google.common.math.Stats;
+import com.google.common.math.StatsAccumulator;
 import com.univocity.parsers.csv.CsvWriter;
 import com.univocity.parsers.csv.CsvWriterSettings;
 
@@ -35,6 +36,8 @@ import io.github.oliviercailloux.minimax.elicitation.PreferenceInformation;
 import io.github.oliviercailloux.minimax.elicitation.Question;
 import io.github.oliviercailloux.minimax.experiment.json.JsonConverter;
 import io.github.oliviercailloux.minimax.experiment.other_formats.ToCsv;
+import io.github.oliviercailloux.minimax.strategies.MmrLottery;
+import io.github.oliviercailloux.minimax.strategies.Strategy;
 import io.github.oliviercailloux.minimax.strategies.StrategyByMmr;
 import io.github.oliviercailloux.minimax.strategies.StrategyFactory;
 import io.github.oliviercailloux.minimax.strategies.StrategyHelper;
@@ -46,7 +49,8 @@ public class VariousXps {
 
 	public static void main(String[] args) throws Exception {
 		final VariousXps variousXps = new VariousXps();
-		variousXps.runWithRandomOracles();
+//		variousXps.runWithRandomOracles();
+		variousXps.runWithRandomOraclesOneVoter();
 //		variousXps.showFinalStats();
 //		variousXps.exportOracles(10, 20, 100);
 //		variousXps.tiesWithOracle1();
@@ -56,24 +60,74 @@ public class VariousXps {
 	}
 
 	public void runWithRandomOracles() throws IOException {
-		final int m = 10;
-		final int n = 20;
-		final int k = 500;
+		final int m = 4;
+		final int n = 4;
+		final int k = 50;
 //		final StrategyFactory factory = StrategyFactory.limitedCommitteeThenVoters(0);
-//		final StrategyFactory factory = StrategyFactory.limited();
+		final StrategyFactory factory = StrategyFactory.byMmrs(ThreadLocalRandom.current().nextLong(),
+				MmrLottery.MAX_COMPARATOR);
 //		final long seed = ThreadLocalRandom.current().nextLong();
 //		final StrategyFactory factory = StrategyFactory.limited(seed, MmrLottery.MIN_COMPARATOR, ImmutableList.of());
-		final StrategyFactory factory = StrategyFactory.elitist();
+//		final StrategyFactory factory = StrategyFactory.elitist();
 
-		final ImmutableList<Oracle> oracles = Stream.generate(
-//						() -> Oracle.build(Generator.genProfile(m, n), Generator.genWeightsWithUniformDistribution(m)))
-				() -> Oracle.build(Generator.genProfile(m, n), Generator.genWeightsGeometric(m))).limit(200)
+		final ImmutableList<Oracle> oracles = Stream
+				.generate(
+						() -> Oracle.build(Generator.genProfile(m, n), Generator.genWeightsWithUniformDistribution(m)))
+				.limit(200)
+//				() -> Oracle.build(Generator.genProfile(m, n), Generator.genWeightsGeometric(m))).limit(200)
 				.collect(ImmutableList.toImmutableList());
 
 		final Runs runs = runs(factory, oracles, k);
 		final Stats stats = runs.getMinimalMaxRegretStats().get(runs.getK());
 		final String descr = Runner.asStringEstimator(stats);
 		LOGGER.info("Got final estimator: {}.", descr);
+	}
+
+	public void runWithRandomOraclesOneVoter() {
+		final int m = 15;
+		final int n = 1;
+		final StrategyFactory factory = StrategyFactory.limitedCommitteeThenVoters(0);
+
+		final ImmutableList<Oracle> oracles = Stream
+				.generate(
+						() -> Oracle.build(Generator.genProfile(m, n), Generator.genWeightsWithUniformDistribution(m)))
+				.limit(200)
+				// () -> Oracle.build(Generator.genProfile(m, n),
+				// Generator.genWeightsGeometric(m))).limit(200)
+				.collect(ImmutableList.toImmutableList());
+		final int nbRuns = oracles.size();
+
+		LOGGER.info("Started '{}'.", factory.getDescription());
+		final StatsAccumulator statsAccumulator = new StatsAccumulator();
+		for (int i = 0; i < nbRuns; ++i) {
+			final Oracle oracle = oracles.get(i);
+			final Strategy strategy = factory.get();
+
+			final PrefKnowledge knowledge = PrefKnowledge.given(oracle.getAlternatives(), oracle.getProfile().keySet());
+			strategy.setKnowledge(knowledge);
+
+			final ImmutableList.Builder<Question> qBuilder = ImmutableList.builder();
+			final ImmutableList.Builder<Long> tBuilder = ImmutableList.builder();
+			while (true) {
+				final long startTime = System.currentTimeMillis();
+				final Question q = strategy.nextQuestion();
+				final PreferenceInformation a = oracle.getPreferenceInformation(q);
+				knowledge.update(a);
+				if (knowledge.isProfileComplete()) {
+					break;
+				}
+				LOGGER.debug("Asked {}.", q);
+				qBuilder.add(q);
+				tBuilder.add(startTime);
+			}
+			final long endTime = System.currentTimeMillis();
+			final Run run = Run.of(oracle, tBuilder.build(), qBuilder.build(), endTime);
+			LOGGER.info("Time (run {}): {}.", i, run.getTotalTime());
+			statsAccumulator.add(run.getK());
+			LOGGER.info("Asked {} questions.", run.getK());
+		}
+		final Stats stats = statsAccumulator.snapshot();
+		LOGGER.info("Stats k: {}.", stats);
 	}
 
 	public void runWithOracle0() throws IOException {
