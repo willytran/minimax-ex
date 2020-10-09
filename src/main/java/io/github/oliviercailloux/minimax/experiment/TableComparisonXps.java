@@ -24,20 +24,20 @@ public class TableComparisonXps {
 
 	public static void main(String[] args) throws Exception {
 		final TableComparisonXps table1Xps = new TableComparisonXps();
-		int m = 5;
-		int n = 10;
-		int k = 150;
-		int nbRuns = 200;
+		int m = 10;
+		int n = 20;
+		int k = 400;
+		int nbRuns = 10;
 		table1Xps.runWithOracles(m, n, k, nbRuns);
 	}
 
 	public void runWithOracles(int m, int n, int k, int nbRuns) throws IOException {
 		final long seed = ThreadLocalRandom.current().nextLong();
-		final ImmutableList<StrategyFactory> factoryList = ImmutableList.of(StrategyFactory.random(),
-				StrategyFactory.byMmrs(seed, MmrLottery.MAX_COMPARATOR), StrategyFactory.limited(),
+		final ImmutableList<StrategyFactory> factoryList = ImmutableList.of(StrategyFactory.limited(),
 				StrategyFactory.elitist());
-		
-		final Path json = Path.of("experiments/Oracles/", String.format("Oracles m = %d, n = %d, %d.json", m, n,nbRuns));
+
+		final Path json = Path.of("experiments/Oracles/",
+				String.format("Oracles m = %d, n = %d, %d, geometric.json", m, n, nbRuns));
 		final ImmutableList<Oracle> oracles = ImmutableList.copyOf(JsonConverter.toOracles(Files.readString(json)));
 
 		for (StrategyFactory factory : factoryList) {
@@ -48,7 +48,6 @@ public class TableComparisonXps {
 		}
 	}
 
-
 	public Runs runs(StrategyFactory factory, ImmutableList<Oracle> oracles, int k) throws IOException {
 		final int m = oracles.stream().map(Oracle::getM).distinct().collect(MoreCollectors.onlyElement());
 		final int n = oracles.stream().map(Oracle::getN).distinct().collect(MoreCollectors.onlyElement());
@@ -56,7 +55,8 @@ public class TableComparisonXps {
 
 		final Path outDir = Path.of("experiments/TableComparison");
 		Files.createDirectories(outDir);
-		final String prefixDescription = factory.getDescription() + ", m = " + m + ", n = " + n + ", k = " + k;
+		final String prefixDescription = factory.getDescription() + ", m = " + m + ", n = " + n + ", k = " + k
+				+ ", geometric";
 		final String prefixTemp = prefixDescription + ", ongoing";
 		final Path tmpJson = outDir.resolve(prefixTemp + ".json");
 		final Path tmpCsv = outDir.resolve(prefixTemp + ".csv");
