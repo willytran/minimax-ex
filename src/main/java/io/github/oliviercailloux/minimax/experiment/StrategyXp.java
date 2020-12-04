@@ -10,9 +10,11 @@ import org.slf4j.LoggerFactory;
 
 import com.google.common.collect.ImmutableList;
 
+import io.github.oliviercailloux.minimax.elicitation.Oracle;
 import io.github.oliviercailloux.minimax.experiment.json.JsonConverter;
 import io.github.oliviercailloux.minimax.experiment.other_formats.ToCsv;
 import io.github.oliviercailloux.minimax.strategies.StrategyFactory;
+import io.github.oliviercailloux.minimax.utils.Generator;
 
 public class StrategyXp {
 	@SuppressWarnings("unused")
@@ -22,9 +24,9 @@ public class StrategyXp {
 		final int m = 6;
 		final int n = 6;
 		final int k = 30;
-		final StrategyFactory factory = StrategyFactory.limited();
-//		final long seed = ThreadLocalRandom.current().nextLong();
 //		final StrategyFactory factory = StrategyFactory.limited();
+//		final long seed = ThreadLocalRandom.current().nextLong();
+		final StrategyFactory factory = StrategyFactory.elitist();
 //		final StrategyFactory factory = StrategyFactory.limited(seed,
 //				ImmutableList.of(QuestioningConstraint.of(QuestionType.VOTER_QUESTION, Integer.MAX_VALUE)));
 //		final StrategyFactory factory = StrategyFactory.byMmrs(seed, MmrLottery.MAX_COMPARATOR);
@@ -46,7 +48,9 @@ public class StrategyXp {
 		final ImmutableList.Builder<Run> runsBuilder = ImmutableList.builder();
 		LOGGER.info("Started '{}'.", factory.getDescription());
 		for (int i = 0; i < nbRuns; ++i) {
-			final Run run = Runner.run(factory, m, n, k);
+			final Oracle oracle = Oracle.build(Generator.genProfile(m, n),
+					Generator.genWeightsWithUnbalancedDistribution(m));
+			final Run run = Runner.run(factory, oracle, k);
 			LOGGER.info("Time (run {}): {}.", i, run.getTotalTime());
 			Files.writeString(Path.of("run " + i + ".json"), JsonConverter.toJson(run).toString());
 			runsBuilder.add(run);

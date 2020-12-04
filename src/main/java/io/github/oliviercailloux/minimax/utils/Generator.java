@@ -56,6 +56,17 @@ public class Generator {
 		return genWeights(nbAlternatives, differenceSupplier);
 	}
 
+	/**
+	 * One weight is one, all the others are zero.
+	 */
+	public static PSRWeights genWeightsOne(int nbAlternatives) {
+		checkArgument(nbAlternatives >= 1);
+		final ImmutableList<Double> weights = Stream
+				.concat(Stream.of(1d), Stream.generate(() -> 0d).limit(nbAlternatives - 1))
+				.collect(ImmutableList.toImmutableList());
+		return PSRWeights.given(weights);
+	}
+
 	public static PSRWeights genWeightsWithUniformDistribution(int nbAlternatives) {
 		final Random r = new Random();
 		final Supplier<Double> differenceSupplier = () -> r.nextDouble();

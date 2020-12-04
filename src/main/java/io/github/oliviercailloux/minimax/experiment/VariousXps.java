@@ -36,7 +36,6 @@ import io.github.oliviercailloux.minimax.elicitation.PreferenceInformation;
 import io.github.oliviercailloux.minimax.elicitation.Question;
 import io.github.oliviercailloux.minimax.experiment.json.JsonConverter;
 import io.github.oliviercailloux.minimax.experiment.other_formats.ToCsv;
-import io.github.oliviercailloux.minimax.strategies.MmrLottery;
 import io.github.oliviercailloux.minimax.strategies.Strategy;
 import io.github.oliviercailloux.minimax.strategies.StrategyByMmr;
 import io.github.oliviercailloux.minimax.strategies.StrategyFactory;
@@ -49,8 +48,8 @@ public class VariousXps {
 
 	public static void main(String[] args) throws Exception {
 		final VariousXps variousXps = new VariousXps();
-//		variousXps.runWithRandomOracles();
-		variousXps.runWithRandomOraclesOneVoter();
+		variousXps.runWithRandomOracles();
+//		variousXps.runWithRandomOraclesOneVoter();
 //		variousXps.showFinalStats();
 //		variousXps.exportOracles(10, 20, 100);
 //		variousXps.tiesWithOracle1();
@@ -60,27 +59,29 @@ public class VariousXps {
 	}
 
 	public void runWithRandomOracles() throws IOException {
-		final int m = 4;
-		final int n = 4;
-		final int k = 50;
-//		final StrategyFactory factory = StrategyFactory.limitedCommitteeThenVoters(0);
-		final StrategyFactory factory = StrategyFactory.byMmrs(ThreadLocalRandom.current().nextLong(),
-				MmrLottery.MAX_COMPARATOR);
+		final int m = 5;
+		final int n = 10;
+		final int k = 60;
+		final int nbRuns = 1;
+
+		final ImmutableList.Builder<StrategyFactory> factoriesBuilder = ImmutableList.<StrategyFactory>builder();
+		factoriesBuilder.add(StrategyFactory.limitedCommitteeThenVoters(0));
+//		final StrategyFactory factory = StrategyFactory.byMmrs(ThreadLocalRandom.current().nextLong(),
+//				MmrLottery.MAX_COMPARATOR);
 //		final long seed = ThreadLocalRandom.current().nextLong();
 //		final StrategyFactory factory = StrategyFactory.limited(seed, MmrLottery.MIN_COMPARATOR, ImmutableList.of());
-//		final StrategyFactory factory = StrategyFactory.elitist();
+		factoriesBuilder.add(StrategyFactory.elitist());
 
 		final ImmutableList<Oracle> oracles = Stream
-				.generate(
-						() -> Oracle.build(Generator.genProfile(m, n), Generator.genWeightsWithUniformDistribution(m)))
-				.limit(200)
-//				() -> Oracle.build(Generator.genProfile(m, n), Generator.genWeightsGeometric(m))).limit(200)
+				.generate(() -> Oracle.build(Generator.genProfile(m, n), Generator.genWeightsOne(m))).limit(nbRuns)
 				.collect(ImmutableList.toImmutableList());
 
-		final Runs runs = runs(factory, oracles, k);
-		final Stats stats = runs.getMinimalMaxRegretStats().get(runs.getK());
-		final String descr = Runner.asStringEstimator(stats);
-		LOGGER.info("Got final estimator: {}.", descr);
+		for (StrategyFactory factory : factoriesBuilder.build()) {
+			final Runs runs = runs(factory, oracles, k);
+			final Stats stats = runs.getMinimalMaxRegretStats().get(runs.getK());
+			final String descr = Runner.asStringEstimator(stats);
+			LOGGER.info("Got final estimator: {}.", descr);
+		}
 	}
 
 	public void runWithRandomOraclesOneVoter() {
