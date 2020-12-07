@@ -49,9 +49,9 @@ public class VariousXps {
 	public static void main(String[] args) throws Exception {
 		final VariousXps variousXps = new VariousXps();
 
-//		variousXps.runWithRandomOracles();
+		variousXps.runWithRandomOracles();
 //		variousXps.runWithRandomOraclesOneVoter();
-		variousXps.showFinalStats();
+//		variousXps.showFinalStats();
 //		variousXps.exportOracles(10, 20, 100);
 //		variousXps.tiesWithOracle1();
 //		variousXps.runWithOracle0();
