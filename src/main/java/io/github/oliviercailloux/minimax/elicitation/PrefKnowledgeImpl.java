@@ -21,13 +21,14 @@ import io.github.oliviercailloux.j_voting.Voter;
 import io.github.oliviercailloux.j_voting.VoterPartialPreference;
 import io.github.oliviercailloux.jlp.elements.ComparisonOperator;
 
-public class PrefKnowledge {
-	public static PrefKnowledge given(Set<Alternative> alternatives, Set<Voter> voters) {
-		return new PrefKnowledge(alternatives, voters);
+public class PrefKnowledgeImpl implements PreferenceKnowledge {
+
+	public static PrefKnowledgeImpl given(Set<Alternative> alternatives, Set<Voter> voters) {
+		return new PrefKnowledgeImpl(alternatives, voters);
 	}
 
-	public static PrefKnowledge copyOf(PrefKnowledge knowledge) {
-		return new PrefKnowledge(knowledge.alternatives, knowledge.partialProfile, knowledge.cow,
+	public static PrefKnowledgeImpl copyOf(PrefKnowledgeImpl knowledge) {
+		return new PrefKnowledgeImpl(knowledge.alternatives, knowledge.partialProfile, knowledge.cow,
 				knowledge.lambdaRanges);
 	}
 
@@ -36,7 +37,7 @@ public class PrefKnowledge {
 	private ConstraintsOnWeights cow;
 	private Map<Integer, Range<Aprational>> lambdaRanges;
 
-	private PrefKnowledge(Set<Alternative> alternatives, Set<Voter> voters) {
+	private PrefKnowledgeImpl(Set<Alternative> alternatives, Set<Voter> voters) {
 		this.alternatives = ImmutableSet.copyOf(alternatives);
 
 		final int m = alternatives.size();
@@ -80,7 +81,7 @@ public class PrefKnowledge {
 	 * Copy constructor. The parameters should come from an existing instance, to
 	 * ensure coherence.
 	 */
-	private PrefKnowledge(Set<Alternative> alternatives, Map<Voter, VoterPartialPreference> profile,
+	private PrefKnowledgeImpl(Set<Alternative> alternatives, Map<Voter, VoterPartialPreference> profile,
 			ConstraintsOnWeights cow, Map<Integer, Range<Aprational>> lambdaRanges) {
 		this.alternatives = ImmutableSet.copyOf(alternatives);
 		partialProfile = profile.entrySet().stream().collect(

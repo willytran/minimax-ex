@@ -28,6 +28,7 @@ import com.google.common.math.IntMath;
 
 import io.github.oliviercailloux.j_voting.Alternative;
 import io.github.oliviercailloux.j_voting.Voter;
+import io.github.oliviercailloux.minimax.elicitation.DelegatingPrefKnowledge;
 import io.github.oliviercailloux.minimax.elicitation.PrefKnowledgeImpl;
 import io.github.oliviercailloux.minimax.elicitation.Question;
 import io.github.oliviercailloux.minimax.elicitation.QuestionType;
@@ -48,9 +49,9 @@ import io.github.oliviercailloux.minimax.regret.RegretComputer;
  * will anyway ask a question to the committee.
  * </p>
  **/
-public class StrategyByMmr implements Strategy {
+public class StrategyByMmrNew implements Strategy {
 
-	private static final Logger LOGGER = LoggerFactory.getLogger(StrategyByMmr.class);
+	private static final Logger LOGGER = LoggerFactory.getLogger(StrategyByMmrNew.class);
 
 	private static class QuestioningConstraints {
 		public static QuestioningConstraints of(List<QuestioningConstraint> constraints) {
@@ -107,28 +108,28 @@ public class StrategyByMmr implements Strategy {
 
 	}
 
-	public static StrategyByMmr build() {
+	public static StrategyByMmrNew build() {
 		return build(MmrLottery.MAX_COMPARATOR);
 	}
 
-	public static StrategyByMmr build(Comparator<MmrLottery> comparator) {
-		return new StrategyByMmr(comparator, false, ImmutableList.of(), 1.1d);
+	public static StrategyByMmrNew build(Comparator<MmrLottery> comparator) {
+		return new StrategyByMmrNew(comparator, false, ImmutableList.of(), 1.1d);
 	}
 
-	public static StrategyByMmr build(Comparator<MmrLottery> comparator, List<QuestioningConstraint> constraints) {
-		return new StrategyByMmr(comparator, false, constraints, 1.1d);
+	public static StrategyByMmrNew build(Comparator<MmrLottery> comparator, List<QuestioningConstraint> constraints) {
+		return new StrategyByMmrNew(comparator, false, constraints, 1.1d);
 	}
 
-	public static StrategyByMmr build(Comparator<MmrLottery> comparator, boolean limited,
+	public static StrategyByMmrNew build(Comparator<MmrLottery> comparator, boolean limited,
 			List<QuestioningConstraint> constraints, double penalty) {
-		return new StrategyByMmr(comparator, limited, constraints, penalty);
+		return new StrategyByMmrNew(comparator, limited, constraints, penalty);
 	}
 
-	public static StrategyByMmr limited(Comparator<MmrLottery> comparator, List<QuestioningConstraint> constraints) {
+	public static StrategyByMmrNew limited(Comparator<MmrLottery> comparator, List<QuestioningConstraint> constraints) {
 		return build(comparator, true, constraints, 1.1d);
 	}
 
-	public static StrategyByMmr limited(List<QuestioningConstraint> constraints) {
+	public static StrategyByMmrNew limited(List<QuestioningConstraint> constraints) {
 		return limited(MmrLottery.MAX_COMPARATOR, constraints);
 	}
 
@@ -140,7 +141,7 @@ public class StrategyByMmr implements Strategy {
 	private ImmutableMap<Question, MmrLottery> questions;
 	private double penalty;
 
-	private StrategyByMmr(Comparator<MmrLottery> lotteryComparator, boolean limited,
+	private StrategyByMmrNew(Comparator<MmrLottery> lotteryComparator, boolean limited,
 			List<QuestioningConstraint> constraints, double penalty) {
 		checkArgument(penalty >= 1d);
 		this.lotteryComparator = checkNotNull(lotteryComparator);
@@ -302,17 +303,15 @@ public class StrategyByMmr implements Strategy {
 	private MmrLottery toLottery(Question question) {
 		final double yesMMR;
 		{
-			final PrefKnowledgeImpl updatedKnowledge = PrefKnowledgeImpl.copyOf(helper.getKnowledge());
-			updatedKnowledge.update(question.getPositiveInformation());
-			final RegretComputer rc = new RegretComputer(updatedKnowledge);
+			final DelegatingPrefKnowledge delegatedKnowledge = DelegatingPrefKnowledge.given(helper.getKnowledge(), question.getPositiveInformation());			
+			final RegretComputer rc = new RegretComputer(delegatedKnowledge);
 			yesMMR = rc.getMinimalMaxRegrets().getMinimalMaxRegretValue();
 		}
 
 		final double noMMR;
 		{
-			final PrefKnowledgeImpl updatedKnowledge = PrefKnowledgeImpl.copyOf(helper.getKnowledge());
-			updatedKnowledge.update(question.getNegativeInformation());
-			final RegretComputer rc = new RegretComputer(updatedKnowledge);
+			final DelegatingPrefKnowledge delegatedKnowledge = DelegatingPrefKnowledge.given(helper.getKnowledge(), question.getNegativeInformation());
+			final RegretComputer rc = new RegretComputer(delegatedKnowledge);
 			noMMR = rc.getMinimalMaxRegrets().getMinimalMaxRegretValue();
 		}
 		final MmrLottery lottery = MmrLottery.given(yesMMR, noMMR);
