@@ -28,30 +28,31 @@ public class TableLinearityXps {
 //		tableLinXps.runWithOracles(5, 20, 200, 10);
 //		tableLinXps.runWithOracles(10, 20, 500, 10);
 //		tableLinXps.runWithOracles(10, 30, 800, 10);
-		tableLinXps.runWithOracles(15, 30, 1000, 1);
+		tableLinXps.runWithOracles(15, 30, 1000, 1, 5);
+		tableLinXps.runWithOracles(15, 30, 1000, 1, 6);
 	}
 
-	public void runWithOracles(int m, int n, int k, int nbRuns) throws IOException {
+	public void runWithOracles(int m, int n, int k, int nbRuns, int or) throws IOException {
 		StrategyFactory factory = StrategyFactory.limited();
 
 		final Path json = Path.of("experiments/Oracles/",
-				String.format("Oracles m = %d, n = %d, %d.json", m, n, nbRuns));
+				String.format("Oracles m = %d, n = %d, %d, %d.json", m, n, nbRuns,or));
 		final ImmutableList<Oracle> oracles = ImmutableList.copyOf(JsonConverter.toOracles(Files.readString(json)));
 
-		final Runs runs = runs(factory, oracles, k);
+		final Runs runs = runs(factory, oracles, k,or);
 		final Stats stats = runs.getMinimalMaxRegretStats().get(runs.getK());
 		final String descr = Runner.asStringEstimator(stats);
 		LOGGER.info("Got final estimator: {}.", descr);
 	}
 
-	public Runs runs(StrategyFactory factory, ImmutableList<Oracle> oracles, int k) throws IOException {
+	public Runs runs(StrategyFactory factory, ImmutableList<Oracle> oracles, int k, int or) throws IOException {
 		final int m = oracles.stream().map(Oracle::getM).distinct().collect(MoreCollectors.onlyElement());
 		final int n = oracles.stream().map(Oracle::getN).distinct().collect(MoreCollectors.onlyElement());
 		final int nbRuns = oracles.size();
 
 		final Path outDir = Path.of("experiments/TableLinearity");
 		Files.createDirectories(outDir);
-		final String prefixDescription = factory.getDescription() + ", m = " + m + ", n = " + n + ", k = " + k;
+		final String prefixDescription = factory.getDescription() + ", m = " + m + ", n = " + n + ", k = " + k+", "+or;
 		final String prefixTemp = prefixDescription + ", ongoing";
 		final Path tmpJson = outDir.resolve(prefixTemp + ".json");
 		final Path tmpCsv = outDir.resolve(prefixTemp + ".csv");

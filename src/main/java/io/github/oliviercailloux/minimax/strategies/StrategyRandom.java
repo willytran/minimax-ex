@@ -16,7 +16,7 @@ import com.google.common.graph.ImmutableGraph;
 
 import io.github.oliviercailloux.j_voting.Alternative;
 import io.github.oliviercailloux.j_voting.Voter;
-import io.github.oliviercailloux.minimax.elicitation.PrefKnowledge;
+import io.github.oliviercailloux.minimax.elicitation.PrefKnowledgeImpl;
 import io.github.oliviercailloux.minimax.elicitation.Question;
 import io.github.oliviercailloux.minimax.elicitation.QuestionCommittee;
 
@@ -51,7 +51,7 @@ public class StrategyRandom implements Strategy {
 	}
 
 	@Override
-	public void setKnowledge(PrefKnowledge knowledge) {
+	public void setKnowledge(PrefKnowledgeImpl knowledge) {
 		helper.setKnowledge(knowledge);
 	}
 

@@ -15,21 +15,21 @@ import com.google.common.collect.ImmutableSet;
 import io.github.oliviercailloux.j_voting.Alternative;
 import io.github.oliviercailloux.j_voting.Generator;
 import io.github.oliviercailloux.j_voting.Voter;
-import io.github.oliviercailloux.minimax.elicitation.PrefKnowledge;
+import io.github.oliviercailloux.minimax.elicitation.PrefKnowledgeImpl;
 import io.github.oliviercailloux.minimax.elicitation.Question;
 
 public class StrategyPessimisticTest {
 
 	@Test
 	void testOneAlt() {
-		final PrefKnowledge k = PrefKnowledge.given(Generator.getAlternatives(1), Generator.getVoters(1));
+		final PrefKnowledgeImpl k = PrefKnowledgeImpl.given(Generator.getAlternatives(1), Generator.getVoters(1));
 		final StrategyByMmr s = StrategyByMmr.build();
 		assertThrows(IllegalArgumentException.class, () -> s.setKnowledge(k));
 	}
 
 	@Test
 	void testTwoAltsOneVKnown() {
-		final PrefKnowledge k = PrefKnowledge.given(Generator.getAlternatives(2), Generator.getVoters(1));
+		final PrefKnowledgeImpl k = PrefKnowledgeImpl.given(Generator.getAlternatives(2), Generator.getVoters(1));
 		final StrategyByMmr s = StrategyByMmr.build();
 		s.setKnowledge(k);
 		k.getProfile().get(Voter.withId(1)).asGraph().putEdge(Alternative.withId(1), Alternative.withId(2));
@@ -38,7 +38,7 @@ public class StrategyPessimisticTest {
 
 	@Test
 	void testTwoAltsOneV() {
-		final PrefKnowledge k = PrefKnowledge.given(Generator.getAlternatives(2), Generator.getVoters(1));
+		final PrefKnowledgeImpl k = PrefKnowledgeImpl.given(Generator.getAlternatives(2), Generator.getVoters(1));
 		final StrategyByMmr s = StrategyByMmr.build();
 		s.setKnowledge(k);
 		final Question q1 = Question.toVoter(Voter.withId(1), Alternative.withId(1), Alternative.withId(2));
@@ -49,7 +49,7 @@ public class StrategyPessimisticTest {
 
 	@Test
 	void testTwoAltsTwoVsOneKnown() {
-		final PrefKnowledge k = PrefKnowledge.given(Generator.getAlternatives(2), Generator.getVoters(2));
+		final PrefKnowledgeImpl k = PrefKnowledgeImpl.given(Generator.getAlternatives(2), Generator.getVoters(2));
 		final StrategyByMmr s = StrategyByMmr.build();
 		s.setKnowledge(k);
 		k.getProfile().get(Voter.withId(1)).asGraph().putEdge(Alternative.withId(1), Alternative.withId(2));
@@ -61,7 +61,7 @@ public class StrategyPessimisticTest {
 
 	@Test
 	void testTwoAltsTwoVs() {
-		final PrefKnowledge k = PrefKnowledge.given(Generator.getAlternatives(2), Generator.getVoters(2));
+		final PrefKnowledgeImpl k = PrefKnowledgeImpl.given(Generator.getAlternatives(2), Generator.getVoters(2));
 		final StrategyByMmr s = StrategyByMmr.build();
 		s.setKnowledge(k);
 		s.nextQuestion();
@@ -78,7 +78,7 @@ public class StrategyPessimisticTest {
 
 	@Test
 	void testThreeAltsTwoVs() {
-		final PrefKnowledge k = PrefKnowledge.given(Generator.getAlternatives(3), Generator.getVoters(2));
+		final PrefKnowledgeImpl k = PrefKnowledgeImpl.given(Generator.getAlternatives(3), Generator.getVoters(2));
 		k.getProfile().get(Voter.withId(1)).asGraph().putEdge(Alternative.withId(1), Alternative.withId(2));
 		k.getProfile().get(Voter.withId(1)).asGraph().putEdge(Alternative.withId(2), Alternative.withId(3));
 		k.getProfile().get(Voter.withId(2)).asGraph().putEdge(Alternative.withId(1), Alternative.withId(2));

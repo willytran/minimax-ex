@@ -18,7 +18,7 @@ import io.github.oliviercailloux.j_voting.Alternative;
 import io.github.oliviercailloux.j_voting.Generator;
 import io.github.oliviercailloux.j_voting.Voter;
 import io.github.oliviercailloux.jlp.elements.ComparisonOperator;
-import io.github.oliviercailloux.minimax.elicitation.PrefKnowledge;
+import io.github.oliviercailloux.minimax.elicitation.PrefKnowledgeImpl;
 import io.github.oliviercailloux.minimax.elicitation.Question;
 import io.github.oliviercailloux.minimax.elicitation.QuestionType;
 
@@ -29,14 +29,14 @@ class StrategyRandomTest {
 
 	@Test
 	void testOneAlt() {
-		final PrefKnowledge k = PrefKnowledge.given(Generator.getAlternatives(1), Generator.getVoters(1));
+		final PrefKnowledgeImpl k = PrefKnowledgeImpl.given(Generator.getAlternatives(1), Generator.getVoters(1));
 		final StrategyRandom s = StrategyRandom.newInstance(0.5d);
 		assertThrows(IllegalArgumentException.class, () -> s.setKnowledge(k));
 	}
 
 	@Test
 	void testTwoAltsOneVKnown() {
-		final PrefKnowledge k = PrefKnowledge.given(Generator.getAlternatives(2), Generator.getVoters(1));
+		final PrefKnowledgeImpl k = PrefKnowledgeImpl.given(Generator.getAlternatives(2), Generator.getVoters(1));
 		final StrategyRandom s = StrategyRandom.newInstance(0.5d);
 		s.setKnowledge(k);
 		final Random notRandom = new Random(0);
@@ -47,7 +47,7 @@ class StrategyRandomTest {
 
 	@Test
 	void testTwoAltsOneV() {
-		final PrefKnowledge k = PrefKnowledge.given(Generator.getAlternatives(2), Generator.getVoters(1));
+		final PrefKnowledgeImpl k = PrefKnowledgeImpl.given(Generator.getAlternatives(2), Generator.getVoters(1));
 		final StrategyRandom s = StrategyRandom.newInstance(0.5d);
 		s.setKnowledge(k);
 		final Random notRandom = new Random(0);
@@ -57,7 +57,7 @@ class StrategyRandomTest {
 
 	@Test
 	void testTwoAltsTwoVsOneKnown() {
-		final PrefKnowledge k = PrefKnowledge.given(Generator.getAlternatives(2), Generator.getVoters(2));
+		final PrefKnowledgeImpl k = PrefKnowledgeImpl.given(Generator.getAlternatives(2), Generator.getVoters(2));
 		final StrategyRandom s = StrategyRandom.newInstance(0.5d);
 		s.setKnowledge(k);
 		final Random notRandom = new Random(0);
@@ -68,7 +68,7 @@ class StrategyRandomTest {
 
 	@Test
 	void testFourAltsTwoVKnown() {
-		final PrefKnowledge k = PrefKnowledge.given(Generator.getAlternatives(4), Generator.getVoters(2));
+		final PrefKnowledgeImpl k = PrefKnowledgeImpl.given(Generator.getAlternatives(4), Generator.getVoters(2));
 		final StrategyRandom s = StrategyRandom.newInstance(0.5d);
 		final Random notRandom = new Random(0);
 		s.setRandom(notRandom);
@@ -87,7 +87,7 @@ class StrategyRandomTest {
 
 	@Test
 	void testThreeAltsTwoVKnown() {
-		final PrefKnowledge k = PrefKnowledge.given(Generator.getAlternatives(3), Generator.getVoters(2));
+		final PrefKnowledgeImpl k = PrefKnowledgeImpl.given(Generator.getAlternatives(3), Generator.getVoters(2));
 		final StrategyRandom s = StrategyRandom.newInstance(0.5d);
 		final Random notRandom = new Random(0);
 		s.setRandom(notRandom);
@@ -103,7 +103,7 @@ class StrategyRandomTest {
 
 	@Test
 	void testThreeAltsTwoVAllKnown() {
-		final PrefKnowledge k = PrefKnowledge.given(Generator.getAlternatives(3), Generator.getVoters(2));
+		final PrefKnowledgeImpl k = PrefKnowledgeImpl.given(Generator.getAlternatives(3), Generator.getVoters(2));
 		final StrategyRandom s = StrategyRandom.newInstance(0.5d);
 		final Random notRandom = new Random(0);
 		s.setRandom(notRandom);
@@ -122,7 +122,7 @@ class StrategyRandomTest {
 
 	@Test
 	void testThreeAltsOneVKnown() {
-		final PrefKnowledge k = PrefKnowledge.given(Generator.getAlternatives(3), Generator.getVoters(1));
+		final PrefKnowledgeImpl k = PrefKnowledgeImpl.given(Generator.getAlternatives(3), Generator.getVoters(1));
 		final StrategyRandom s = StrategyRandom.newInstance(0.5d);
 		final Random notRandom = new Random(0);
 		s.setRandom(notRandom);

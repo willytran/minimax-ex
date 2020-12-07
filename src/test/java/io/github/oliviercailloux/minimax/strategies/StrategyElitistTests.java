@@ -8,7 +8,7 @@ import org.junit.jupiter.api.Test;
 import io.github.oliviercailloux.j_voting.Alternative;
 import io.github.oliviercailloux.j_voting.Voter;
 import io.github.oliviercailloux.minimax.elicitation.Oracle;
-import io.github.oliviercailloux.minimax.elicitation.PrefKnowledge;
+import io.github.oliviercailloux.minimax.elicitation.PrefKnowledgeImpl;
 import io.github.oliviercailloux.minimax.elicitation.PreferenceInformation;
 import io.github.oliviercailloux.minimax.elicitation.Question;
 import io.github.oliviercailloux.minimax.elicitation.QuestionType;
@@ -19,7 +19,7 @@ public class StrategyElitistTests {
 	void testQuestions() throws Exception {
 		final StrategyElitist strategy = StrategyElitist.newInstance();
 		final Oracle oracle = Generator.generateOracle(4, 2);
-		final PrefKnowledge knowledge = PrefKnowledge.given(oracle.getAlternatives(), oracle.getProfile().keySet());
+		final PrefKnowledgeImpl knowledge = PrefKnowledgeImpl.given(oracle.getAlternatives(), oracle.getProfile().keySet());
 		strategy.setKnowledge(knowledge);
 		final Alternative a1 = Alternative.withId(1);
 		final Alternative a2 = Alternative.withId(2);

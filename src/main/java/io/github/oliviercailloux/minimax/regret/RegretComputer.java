@@ -21,12 +21,12 @@ import io.github.oliviercailloux.j_voting.VoterPartialPreference;
 import io.github.oliviercailloux.jlp.elements.SumTerms;
 import io.github.oliviercailloux.jlp.elements.SumTermsBuilder;
 import io.github.oliviercailloux.jlp.elements.Term;
-import io.github.oliviercailloux.minimax.elicitation.PrefKnowledge;
+import io.github.oliviercailloux.minimax.elicitation.PreferenceKnowledge;
 
 public class RegretComputer {
-	private final PrefKnowledge knowledge;
+	private final PreferenceKnowledge knowledge;
 
-	public RegretComputer(PrefKnowledge knowledge) {
+	public RegretComputer(PreferenceKnowledge knowledge) {
 		this.knowledge = requireNonNull(knowledge);
 	}
 

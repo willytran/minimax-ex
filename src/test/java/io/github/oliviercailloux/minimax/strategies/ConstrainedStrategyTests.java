@@ -5,14 +5,14 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import org.junit.jupiter.api.Test;
 
 import io.github.oliviercailloux.j_voting.Generator;
-import io.github.oliviercailloux.minimax.elicitation.PrefKnowledge;
+import io.github.oliviercailloux.minimax.elicitation.PrefKnowledgeImpl;
 import io.github.oliviercailloux.minimax.elicitation.QuestionType;
 
 class ConstrainedStrategyTests {
 
 	@Test
 	void test() {
-		final PrefKnowledge k = PrefKnowledge.given(Generator.getAlternatives(3), Generator.getVoters(1));
+		final PrefKnowledgeImpl k = PrefKnowledgeImpl.given(Generator.getAlternatives(3), Generator.getVoters(1));
 		final StrategyFactory factory = StrategyFactory.limitedCommitteeThenVoters(10);
 		final Strategy twoPhase = factory.get();
 		assertEquals("Limited (×1.1) MAX, constrained to [10c, ∞v]", factory.getDescription());

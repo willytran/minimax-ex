@@ -12,7 +12,7 @@ import com.google.common.graph.MutableGraph;
 
 import io.github.oliviercailloux.j_voting.Alternative;
 import io.github.oliviercailloux.j_voting.Voter;
-import io.github.oliviercailloux.minimax.elicitation.PrefKnowledge;
+import io.github.oliviercailloux.minimax.elicitation.PrefKnowledgeImpl;
 
 class SetOperationsTest {
 
@@ -53,7 +53,7 @@ class SetOperationsTest {
 		alt.add(d1);
 		alt.add(u1);
 
-		PrefKnowledge knowledge = PrefKnowledge.given(alt, voters);
+		PrefKnowledgeImpl knowledge = PrefKnowledgeImpl.given(alt, voters);
 
 		MutableGraph<Alternative> pref = knowledge.getProfile().get(v1).asGraph();
 
@@ -142,7 +142,7 @@ class SetOperationsTest {
 		alt.add(d1);
 		alt.add(u1);
 
-		PrefKnowledge knowledge = PrefKnowledge.given(alt, voters);
+		PrefKnowledgeImpl knowledge = PrefKnowledgeImpl.given(alt, voters);
 
 		MutableGraph<Alternative> pref = knowledge.getProfile().get(v1).asGraph();
 
