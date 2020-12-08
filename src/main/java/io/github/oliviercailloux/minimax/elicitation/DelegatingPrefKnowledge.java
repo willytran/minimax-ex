@@ -29,7 +29,7 @@ public class DelegatingPrefKnowledge implements PreferenceKnowledge {
 	}
 
 	private DelegatingPrefKnowledge(PrefKnowledgeImpl knowledge, PreferenceInformation newInfo) {
-		prefKnowledge = PrefKnowledgeImpl.copyOf(knowledge);
+		prefKnowledge = knowledge;
 		newInformation = newInfo;
 	}
 
@@ -61,7 +61,7 @@ public class DelegatingPrefKnowledge implements PreferenceKnowledge {
 		if (!voter.equals(newVotPref.getVoter()))
 			return prefKnowledge.getPartialPreference(voter);
 
-		VoterPartialPreference partialPref = prefKnowledge.getPartialPreference(voter);
+		VoterPartialPreference partialPref = VoterPartialPreference.copyOf(prefKnowledge.getPartialPreference(voter));
 		partialPref.asGraph().putEdge(newVotPref.getBetterAlternative(), newVotPref.getWorstAlternative());
 		return partialPref;
 	}
@@ -82,33 +82,25 @@ public class DelegatingPrefKnowledge implements PreferenceKnowledge {
 	public boolean isProfileComplete() {
 		if (newInformation.getType() == QuestionType.COMMITTEE_QUESTION)
 			return prefKnowledge.isProfileComplete();
-
-		VoterPreferenceInformation newVotPref = newInformation.asVoterInformation();
-
-		boolean questionable = false;
-
+		
+		int m = prefKnowledge.getAlternatives().size();
+		VoterPreferenceInformation newVotPref = newInformation.asVoterInformation();	
+		
 		for (Voter voter : prefKnowledge.getProfile().keySet()) {
 			Graph<Alternative> graph;
 			if (voter.equals(newVotPref.getVoter())) {
-				MutableGraph<Alternative> tempGraph = prefKnowledge.getPartialPreference(voter).asGraph();
+				MutableGraph<Alternative> tempGraph = Graphs.copyOf(prefKnowledge.getPartialPreference(voter).asGraph());
 				tempGraph.putEdge(newVotPref.getBetterAlternative(), newVotPref.getWorstAlternative());
-				tempGraph = Graphs.copyOf(Graphs.transitiveClosure(tempGraph));
+				tempGraph = (MutableGraph<Alternative>) Graphs.transitiveClosure(tempGraph);
 				graph = ImmutableGraph.copyOf(tempGraph);
 			} else {
 				graph = prefKnowledge.getPartialPreference(voter).asTransitiveGraph();
 			}
-			for (Alternative a1 : prefKnowledge.getAlternatives()) {
-				if (graph.adjacentNodes(a1).size() != prefKnowledge.getAlternatives().size() - 1) {
-					for (Alternative a2 : prefKnowledge.getAlternatives()) {
-						if (!a1.equals(a2) && !graph.adjacentNodes(a1).contains(a2)) {
-							questionable = true;
-							break;
-						}
-					}
-				}
+			if (graph.edges().size() != m * (m - 1)/2) {
+				return false;
 			}
 		}
-		return !questionable;
+		return true;
 	}
 
 	@Override

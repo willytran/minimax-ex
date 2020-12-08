@@ -15,6 +15,7 @@ import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.ImmutableSet;
 import com.google.common.collect.Range;
 import com.google.common.graph.Graph;
+import com.google.common.graph.Graphs;
 
 import io.github.oliviercailloux.j_voting.Alternative;
 import io.github.oliviercailloux.j_voting.Voter;
@@ -158,22 +159,15 @@ public class PrefKnowledgeImpl implements PreferenceKnowledge {
 		return lambdaRanges.get(rank);
 	}
 
+	// check the number of edges for each graph
 	public boolean isProfileComplete() {
-		boolean questionable = false;
 		for (Voter voter : partialProfile.keySet()) {
 			final Graph<Alternative> graph = partialProfile.get(voter).asTransitiveGraph();
-			for (Alternative a1 : alternatives) {
-				if (graph.adjacentNodes(a1).size() != alternatives.size() - 1) {
-					for (Alternative a2 : alternatives) {
-						if (!a1.equals(a2) && !graph.adjacentNodes(a1).contains(a2)) {
-							questionable = true;
-							break;
-						}
-					}
-				}
+			if (graph.edges().size() != alternatives.size() * (alternatives.size() - 1)/2) {
+				return false;
 			}
 		}
-		return !questionable;
+		return true;
 	}
 
 	public void update(PreferenceInformation information) {
