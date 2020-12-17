@@ -18,7 +18,7 @@ import com.google.common.math.Stats;
 import io.github.oliviercailloux.jlp.elements.ComparisonOperator;
 import io.github.oliviercailloux.minimax.elicitation.Oracle;
 import io.github.oliviercailloux.minimax.elicitation.PSRWeights;
-import io.github.oliviercailloux.minimax.elicitation.PrefKnowledgeImpl;
+import io.github.oliviercailloux.minimax.elicitation.UpdateablePreferenceKnowledge;
 import io.github.oliviercailloux.minimax.elicitation.PreferenceInformation;
 import io.github.oliviercailloux.minimax.elicitation.Question;
 import io.github.oliviercailloux.minimax.experiment.json.JsonConverter;
@@ -54,7 +54,7 @@ public class Runner {
 	public static Run runWeights(StrategyFactory strategyFactory, Oracle oracle, int k) throws IOException {
 		final Strategy strategy = strategyFactory.get();
 
-		final PrefKnowledgeImpl knowledge = PrefKnowledgeImpl.given(oracle.getAlternatives(), oracle.getProfile().keySet());
+		final UpdateablePreferenceKnowledge knowledge = UpdateablePreferenceKnowledge.given(oracle.getAlternatives(), oracle.getProfile().keySet());
 		PSRWeights p = oracle.getWeights();
 		/**
 		 * We’d need to find l, u so that we can say that λ ∈ [l, u] thus such that l ≤
@@ -106,7 +106,7 @@ public class Runner {
 	public static Run run(StrategyFactory strategyFactory, Oracle oracle, int k) {
 		final Strategy strategy = strategyFactory.get();
 
-		final PrefKnowledgeImpl knowledge = PrefKnowledgeImpl.given(oracle.getAlternatives(), oracle.getProfile().keySet());
+		final UpdateablePreferenceKnowledge knowledge = UpdateablePreferenceKnowledge.given(oracle.getAlternatives(), oracle.getProfile().keySet());
 		strategy.setKnowledge(knowledge);
 
 		final ImmutableList.Builder<Question> qBuilder = ImmutableList.builder();
@@ -126,11 +126,11 @@ public class Runner {
 		return Run.of(oracle, tBuilder.build(), qBuilder.build(), endTime);
 	}
 
-	public static Run run(Strategy strategy, Oracle oracle, PrefKnowledgeImpl startingKnowledge, int k) {
+	public static Run run(Strategy strategy, Oracle oracle, UpdateablePreferenceKnowledge startingKnowledge, int k) {
 //		final PrefKnowledge knowledge = PrefKnowledge.given(oracle.getAlternatives(), oracle.getProfile().keySet());
 		strategy.setKnowledge(startingKnowledge);
 		/** Rename for clarity. */
-		final PrefKnowledgeImpl knowledge = startingKnowledge;
+		final UpdateablePreferenceKnowledge knowledge = startingKnowledge;
 
 		final ImmutableList.Builder<Question> qBuilder = ImmutableList.builder();
 		final ImmutableList.Builder<Long> tBuilder = ImmutableList.builder();

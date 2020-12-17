@@ -28,7 +28,7 @@ import com.google.common.math.IntMath;
 
 import io.github.oliviercailloux.j_voting.Alternative;
 import io.github.oliviercailloux.j_voting.Voter;
-import io.github.oliviercailloux.minimax.elicitation.PrefKnowledgeImpl;
+import io.github.oliviercailloux.minimax.elicitation.UpdateablePreferenceKnowledge;
 import io.github.oliviercailloux.minimax.elicitation.Question;
 import io.github.oliviercailloux.minimax.elicitation.QuestionType;
 import io.github.oliviercailloux.minimax.elicitation.QuestionVoter;
@@ -162,7 +162,7 @@ public class StrategyByMmr implements Strategy {
 	}
 
 	@Override
-	public void setKnowledge(PrefKnowledgeImpl knowledge) {
+	public void setKnowledge(UpdateablePreferenceKnowledge knowledge) {
 		helper.setKnowledge(knowledge);
 	}
 
@@ -302,7 +302,7 @@ public class StrategyByMmr implements Strategy {
 	private MmrLottery toLottery(Question question) {
 		final double yesMMR;
 		{
-			final PrefKnowledgeImpl updatedKnowledge = PrefKnowledgeImpl.copyOf(helper.getKnowledge());
+			final UpdateablePreferenceKnowledge updatedKnowledge = UpdateablePreferenceKnowledge.copyOf(helper.getKnowledge());
 			updatedKnowledge.update(question.getPositiveInformation());
 			final RegretComputer rc = new RegretComputer(updatedKnowledge);
 			yesMMR = rc.getMinimalMaxRegrets().getMinimalMaxRegretValue();
@@ -310,7 +310,7 @@ public class StrategyByMmr implements Strategy {
 
 		final double noMMR;
 		{
-			final PrefKnowledgeImpl updatedKnowledge = PrefKnowledgeImpl.copyOf(helper.getKnowledge());
+			final UpdateablePreferenceKnowledge updatedKnowledge = UpdateablePreferenceKnowledge.copyOf(helper.getKnowledge());
 			updatedKnowledge.update(question.getNegativeInformation());
 			final RegretComputer rc = new RegretComputer(updatedKnowledge);
 			noMMR = rc.getMinimalMaxRegrets().getMinimalMaxRegretValue();

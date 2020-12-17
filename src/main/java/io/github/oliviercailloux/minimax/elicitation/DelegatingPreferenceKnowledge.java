@@ -1,5 +1,7 @@
 package io.github.oliviercailloux.minimax.elicitation;
 
+import static com.google.common.base.Preconditions.checkNotNull;
+
 import org.apfloat.Aprational;
 
 import com.google.common.collect.ImmutableMap;
@@ -13,24 +15,28 @@ import com.google.common.graph.MutableGraph;
 import io.github.oliviercailloux.j_voting.Alternative;
 import io.github.oliviercailloux.j_voting.Voter;
 import io.github.oliviercailloux.j_voting.VoterPartialPreference;
-import io.github.oliviercailloux.jlp.elements.ComparisonOperator;
 
-public class DelegatingPrefKnowledge implements PreferenceKnowledge {
+public class DelegatingPreferenceKnowledge implements PreferenceKnowledge {
 
-	private PrefKnowledgeImpl prefKnowledge;
-	private PreferenceInformation newInformation;
+	final private UpdateablePreferenceKnowledge prefKnowledge;
+	final private PreferenceInformation newInformation;
+	private ImmutableMap<Voter, VoterPartialPreference> newProfile;
 
-	public static DelegatingPrefKnowledge given(PrefKnowledgeImpl prefKnowledge, PreferenceInformation newInfo) {
-		return new DelegatingPrefKnowledge(prefKnowledge, newInfo);
+	public static DelegatingPreferenceKnowledge given(UpdateablePreferenceKnowledge prefKnowledge,
+			PreferenceInformation newInfo) {
+		checkNotNull(prefKnowledge);
+		checkNotNull(newInfo);
+		return new DelegatingPreferenceKnowledge(prefKnowledge, newInfo);
 	}
 
-	public static DelegatingPrefKnowledge copyOf(DelegatingPrefKnowledge delKnowledge) {
-		return new DelegatingPrefKnowledge(delKnowledge.prefKnowledge, delKnowledge.newInformation);
+	public static DelegatingPreferenceKnowledge copyOf(DelegatingPreferenceKnowledge delKnowledge) {
+		return new DelegatingPreferenceKnowledge(delKnowledge.prefKnowledge, delKnowledge.newInformation);
 	}
 
-	private DelegatingPrefKnowledge(PrefKnowledgeImpl knowledge, PreferenceInformation newInfo) {
+	private DelegatingPreferenceKnowledge(UpdateablePreferenceKnowledge knowledge, PreferenceInformation newInfo) {
 		prefKnowledge = knowledge;
 		newInformation = newInfo;
+		newProfile = null;
 	}
 
 	public ImmutableSet<Alternative> getAlternatives() {
@@ -42,14 +48,17 @@ public class DelegatingPrefKnowledge implements PreferenceKnowledge {
 	}
 
 	public ImmutableMap<Voter, VoterPartialPreference> getProfile() {
-		if (newInformation.getType() == QuestionType.COMMITTEE_QUESTION)
-			return prefKnowledge.getProfile();
+		if (newProfile == null) {
+			if (newInformation.getType() == QuestionType.COMMITTEE_QUESTION)
+				return prefKnowledge.getProfile();
 
-		final ImmutableMap.Builder<Voter, VoterPartialPreference> builder = ImmutableMap.builder();
-		for (Voter voter : prefKnowledge.getVoters()) {
-			builder.put(voter, getPartialPreference(voter));
+			final ImmutableMap.Builder<Voter, VoterPartialPreference> builder = ImmutableMap.builder();
+			for (Voter voter : prefKnowledge.getVoters()) {
+				builder.put(voter, getPartialPreference(voter));
+			}
+			newProfile = builder.build();
 		}
-		return builder.build();
+		return newProfile;
 	}
 
 	@Override
@@ -68,13 +77,11 @@ public class DelegatingPrefKnowledge implements PreferenceKnowledge {
 
 	@Override
 	public ConstraintsOnWeights getConstraintsOnWeights() {
-		// TODO
 		return prefKnowledge.getConstraintsOnWeights();
 	}
 
 	@Override
 	public Range<Aprational> getLambdaRange(int rank) {
-		// TODO
 		return prefKnowledge.getLambdaRange(rank);
 	}
 
@@ -82,37 +89,26 @@ public class DelegatingPrefKnowledge implements PreferenceKnowledge {
 	public boolean isProfileComplete() {
 		if (newInformation.getType() == QuestionType.COMMITTEE_QUESTION)
 			return prefKnowledge.isProfileComplete();
-		
+
 		int m = prefKnowledge.getAlternatives().size();
-		VoterPreferenceInformation newVotPref = newInformation.asVoterInformation();	
-		
+		VoterPreferenceInformation newVotPref = newInformation.asVoterInformation();
+
 		for (Voter voter : prefKnowledge.getProfile().keySet()) {
 			Graph<Alternative> graph;
 			if (voter.equals(newVotPref.getVoter())) {
-				MutableGraph<Alternative> tempGraph = Graphs.copyOf(prefKnowledge.getPartialPreference(voter).asGraph());
+				MutableGraph<Alternative> tempGraph = Graphs
+						.copyOf(prefKnowledge.getPartialPreference(voter).asGraph());
 				tempGraph.putEdge(newVotPref.getBetterAlternative(), newVotPref.getWorstAlternative());
 				tempGraph = (MutableGraph<Alternative>) Graphs.transitiveClosure(tempGraph);
 				graph = ImmutableGraph.copyOf(tempGraph);
 			} else {
 				graph = prefKnowledge.getPartialPreference(voter).asTransitiveGraph();
 			}
-			if (graph.edges().size() != m * (m - 1)/2) {
+			if (graph.edges().size() != m * (m - 1) / 2) {
 				return false;
 			}
 		}
 		return true;
-	}
-
-	@Override
-	public void addConstraint(int rank, ComparisonOperator op, Aprational lambda) {
-		// TODO Auto-generated method stub
-		
-	}
-
-	@Override
-	public void update(PreferenceInformation information) {
-		// TODO Auto-generated method stub
-		
 	}
 
 }

@@ -16,7 +16,6 @@ import com.google.common.math.Stats;
 import io.github.oliviercailloux.minimax.elicitation.Oracle;
 import io.github.oliviercailloux.minimax.experiment.json.JsonConverter;
 import io.github.oliviercailloux.minimax.experiment.other_formats.ToCsv;
-import io.github.oliviercailloux.minimax.strategies.MmrLottery;
 import io.github.oliviercailloux.minimax.strategies.StrategyFactory;
 
 public class TableComparisonXps {

@@ -26,7 +26,7 @@ import com.google.common.math.Stats;
 
 import io.github.oliviercailloux.j_voting.Alternative;
 import io.github.oliviercailloux.minimax.elicitation.Oracle;
-import io.github.oliviercailloux.minimax.elicitation.PrefKnowledgeImpl;
+import io.github.oliviercailloux.minimax.elicitation.UpdateablePreferenceKnowledge;
 import io.github.oliviercailloux.minimax.elicitation.Question;
 import io.github.oliviercailloux.minimax.elicitation.QuestionType;
 import io.github.oliviercailloux.minimax.regret.RegretComputer;
@@ -162,7 +162,7 @@ public class Run {
 	@JsonbTransient
 	public ImmutableList<Regrets> getMinimalMaxRegrets() {
 		if (regrets == null) {
-			final PrefKnowledgeImpl knowledge = PrefKnowledgeImpl.given(oracle.getAlternatives(), oracle.getProfile().keySet());
+			final UpdateablePreferenceKnowledge knowledge = UpdateablePreferenceKnowledge.given(oracle.getAlternatives(), oracle.getProfile().keySet());
 			final RegretComputer rc = new RegretComputer(knowledge);
 
 			final ImmutableList.Builder<Regrets> builder = ImmutableList.builderWithExpectedSize(questions.size() + 1);

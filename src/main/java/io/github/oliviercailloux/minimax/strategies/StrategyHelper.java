@@ -37,7 +37,7 @@ import io.github.oliviercailloux.j_voting.Voter;
 import io.github.oliviercailloux.jlp.elements.SumTerms;
 import io.github.oliviercailloux.minimax.elicitation.ConstraintsOnWeights;
 import io.github.oliviercailloux.minimax.elicitation.PSRWeights;
-import io.github.oliviercailloux.minimax.elicitation.PrefKnowledgeImpl;
+import io.github.oliviercailloux.minimax.elicitation.UpdateablePreferenceKnowledge;
 import io.github.oliviercailloux.minimax.elicitation.QuestionCommittee;
 import io.github.oliviercailloux.minimax.elicitation.QuestionVoter;
 import io.github.oliviercailloux.minimax.regret.PairwiseMaxRegret;
@@ -104,7 +104,7 @@ public class StrategyHelper {
 		return new StrategyHelper();
 	}
 
-	private PrefKnowledgeImpl knowledge;
+	private UpdateablePreferenceKnowledge knowledge;
 	private Random random;
 
 	private StrategyHelper() {
@@ -112,7 +112,7 @@ public class StrategyHelper {
 		random = null;
 	}
 
-	public PrefKnowledgeImpl getKnowledge() {
+	public UpdateablePreferenceKnowledge getKnowledge() {
 		checkState(knowledge != null);
 		return knowledge;
 	}
@@ -122,7 +122,7 @@ public class StrategyHelper {
 	 *
 	 * @see #drawFromStrictlyIncreasing(List, Comparator)
 	 */
-	public void setKnowledge(PrefKnowledgeImpl knowledge) {
+	public void setKnowledge(UpdateablePreferenceKnowledge knowledge) {
 		checkArgument(checkNotNull(knowledge).getAlternatives().size() >= 2);
 		checkArgument(isStrictlyIncreasing(knowledge.getAlternatives(), Comparator.naturalOrder()));
 		checkArgument(isStrictlyIncreasing(knowledge.getVoters(), Comparator.naturalOrder()));

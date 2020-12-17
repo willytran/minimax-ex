@@ -9,7 +9,6 @@ import com.google.common.collect.Range;
 import io.github.oliviercailloux.j_voting.Alternative;
 import io.github.oliviercailloux.j_voting.Voter;
 import io.github.oliviercailloux.j_voting.VoterPartialPreference;
-import io.github.oliviercailloux.jlp.elements.ComparisonOperator;
 
 public interface PreferenceKnowledge {
 
@@ -30,7 +29,6 @@ public interface PreferenceKnowledge {
 	 * @param op     the operator.
 	 * @param lambda a finite value.
 	 */
-	public void addConstraint(int rank, ComparisonOperator op, Aprational lambda);
 
 	public ImmutableMap<Voter, VoterPartialPreference> getProfile();
 
@@ -42,8 +40,5 @@ public interface PreferenceKnowledge {
 
 	public boolean isProfileComplete();
 
-	public void update(PreferenceInformation information);
-
-	public String toString();
 	
 }

@@ -18,7 +18,7 @@ import com.google.common.graph.MutableGraph;
 import io.github.oliviercailloux.j_voting.Alternative;
 import io.github.oliviercailloux.j_voting.Voter;
 import io.github.oliviercailloux.minimax.elicitation.PSRWeights;
-import io.github.oliviercailloux.minimax.elicitation.PrefKnowledgeImpl;
+import io.github.oliviercailloux.minimax.elicitation.UpdateablePreferenceKnowledge;
 
 class RegretComputerTest {
 
@@ -28,7 +28,7 @@ class RegretComputerTest {
 		final Alternative b = Alternative.withId(2);
 		final Voter v1 = Voter.withId(1);
 		final Voter v2 = Voter.withId(2);
-		final PrefKnowledgeImpl k = PrefKnowledgeImpl.given(ImmutableSet.of(a, b), ImmutableSet.of(v1, v2));
+		final UpdateablePreferenceKnowledge k = UpdateablePreferenceKnowledge.given(ImmutableSet.of(a, b), ImmutableSet.of(v1, v2));
 		final RegretComputer regretComputer = new RegretComputer(k);
 
 		final ImmutableMap<Voter, Integer> allSecond = ImmutableMap.of(v1, 2, v2, 2);
@@ -51,7 +51,7 @@ class RegretComputerTest {
 	void testEmptyKSizeOne() {
 		final Alternative a = Alternative.withId(1);
 		final Voter v1 = Voter.withId(1);
-		final PrefKnowledgeImpl k = PrefKnowledgeImpl.given(ImmutableSet.of(a), ImmutableSet.of(v1));
+		final UpdateablePreferenceKnowledge k = UpdateablePreferenceKnowledge.given(ImmutableSet.of(a), ImmutableSet.of(v1));
 		final RegretComputer regretComputer = new RegretComputer(k);
 		final ImmutableMap<Voter, Integer> allFirst = ImmutableMap.of(v1, 1);
 		final PairwiseMaxRegret pmrAVsA = PairwiseMaxRegret.given(a, a, allFirst, allFirst,
@@ -66,7 +66,7 @@ class RegretComputerTest {
 		final Alternative b = Alternative.withId(2);
 		final Voter v1 = Voter.withId(1);
 		final Voter v2 = Voter.withId(2);
-		final PrefKnowledgeImpl k = PrefKnowledgeImpl.given(ImmutableSet.of(a, b), ImmutableSet.of(v1, v2));
+		final UpdateablePreferenceKnowledge k = UpdateablePreferenceKnowledge.given(ImmutableSet.of(a, b), ImmutableSet.of(v1, v2));
 		final RegretComputer regretComputer = new RegretComputer(k);
 		final ImmutableMap<Voter, Integer> allSecond = ImmutableMap.of(v1, 2, v2, 2);
 		final ImmutableMap<Voter, Integer> allFirst = ImmutableMap.of(v1, 1, v2, 1);
@@ -100,7 +100,7 @@ class RegretComputerTest {
 		alt.add(c);
 		alt.add(d);
 
-		PrefKnowledgeImpl knowledge = PrefKnowledgeImpl.given(alt, voters);
+		UpdateablePreferenceKnowledge knowledge = UpdateablePreferenceKnowledge.given(alt, voters);
 
 		MutableGraph<Alternative> pref1 = knowledge.getProfile().get(v1).asGraph();
 		pref1.putEdge(a, b);
@@ -166,7 +166,7 @@ class RegretComputerTest {
 		alt.add(d1);
 		alt.add(u1);
 
-		PrefKnowledgeImpl knowledge = PrefKnowledgeImpl.given(alt, voters);
+		UpdateablePreferenceKnowledge knowledge = UpdateablePreferenceKnowledge.given(alt, voters);
 
 		MutableGraph<Alternative> pref = knowledge.getProfile().get(v1).asGraph();
 
@@ -217,7 +217,7 @@ class RegretComputerTest {
 		alt.add(u);
 		alt.add(f);
 
-		PrefKnowledgeImpl knowledge = PrefKnowledgeImpl.given(alt, voters);
+		UpdateablePreferenceKnowledge knowledge = UpdateablePreferenceKnowledge.given(alt, voters);
 
 		MutableGraph<Alternative> pref = knowledge.getProfile().get(v1).asGraph();
 
@@ -272,7 +272,7 @@ class RegretComputerTest {
 		alt.add(d1);
 		alt.add(u1);
 
-		PrefKnowledgeImpl knowledge = PrefKnowledgeImpl.given(alt, voters);
+		UpdateablePreferenceKnowledge knowledge = UpdateablePreferenceKnowledge.given(alt, voters);
 
 		MutableGraph<Alternative> pref = knowledge.getProfile().get(v1).asGraph();
 
@@ -323,7 +323,7 @@ class RegretComputerTest {
 		alt.add(u);
 		alt.add(f);
 
-		PrefKnowledgeImpl knowledge = PrefKnowledgeImpl.given(alt, voters);
+		UpdateablePreferenceKnowledge knowledge = UpdateablePreferenceKnowledge.given(alt, voters);
 
 		MutableGraph<Alternative> pref = knowledge.getProfile().get(v1).asGraph();
 
@@ -371,7 +371,7 @@ class RegretComputerTest {
 		alt.add(u);
 		alt.add(f);
 
-		PrefKnowledgeImpl knowledge = PrefKnowledgeImpl.given(alt, voters);
+		UpdateablePreferenceKnowledge knowledge = UpdateablePreferenceKnowledge.given(alt, voters);
 
 		MutableGraph<Alternative> pref = knowledge.getProfile().get(v1).asGraph();
 
@@ -431,7 +431,7 @@ class RegretComputerTest {
 		alt.add(d1);
 		alt.add(u1);
 
-		PrefKnowledgeImpl knowledge = PrefKnowledgeImpl.given(alt, voters);
+		UpdateablePreferenceKnowledge knowledge = UpdateablePreferenceKnowledge.given(alt, voters);
 
 		MutableGraph<Alternative> pref = knowledge.getProfile().get(v1).asGraph();
 

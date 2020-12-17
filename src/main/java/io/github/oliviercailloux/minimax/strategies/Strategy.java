@@ -1,6 +1,6 @@
 package io.github.oliviercailloux.minimax.strategies;
 
-import io.github.oliviercailloux.minimax.elicitation.PrefKnowledgeImpl;
+import io.github.oliviercailloux.minimax.elicitation.UpdateablePreferenceKnowledge;
 import io.github.oliviercailloux.minimax.elicitation.Question;
 
 /**
@@ -18,7 +18,7 @@ public interface Strategy {
 	/**
 	 * @param knowledge must have at least two alternatives
 	 */
-	public void setKnowledge(PrefKnowledgeImpl knowledge);
+	public void setKnowledge(UpdateablePreferenceKnowledge knowledge);
 
 	/**
 	 * Returns the next question that this strategy thinks is best asking. If the

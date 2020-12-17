@@ -31,7 +31,7 @@ import com.univocity.parsers.csv.CsvWriterSettings;
 
 import io.github.oliviercailloux.json.PrintableJsonObject;
 import io.github.oliviercailloux.minimax.elicitation.Oracle;
-import io.github.oliviercailloux.minimax.elicitation.PrefKnowledgeImpl;
+import io.github.oliviercailloux.minimax.elicitation.UpdateablePreferenceKnowledge;
 import io.github.oliviercailloux.minimax.elicitation.PreferenceInformation;
 import io.github.oliviercailloux.minimax.elicitation.Question;
 import io.github.oliviercailloux.minimax.experiment.json.JsonConverter;
@@ -105,7 +105,7 @@ public class VariousXps {
 			final Oracle oracle = oracles.get(i);
 			final Strategy strategy = factory.get();
 
-			final PrefKnowledgeImpl knowledge = PrefKnowledgeImpl.given(oracle.getAlternatives(), oracle.getProfile().keySet());
+			final UpdateablePreferenceKnowledge knowledge = UpdateablePreferenceKnowledge.given(oracle.getAlternatives(), oracle.getProfile().keySet());
 			strategy.setKnowledge(knowledge);
 
 			final ImmutableList.Builder<Question> qBuilder = ImmutableList.builder();
@@ -240,7 +240,7 @@ public class VariousXps {
 
 	public void runShowTies(StrategyByMmr strategy, Oracle oracle, int k) {
 		LOGGER.info("Running with {}, {}.", oracle, k);
-		final PrefKnowledgeImpl knowledge = PrefKnowledgeImpl.given(oracle.getAlternatives(), oracle.getProfile().keySet());
+		final UpdateablePreferenceKnowledge knowledge = UpdateablePreferenceKnowledge.given(oracle.getAlternatives(), oracle.getProfile().keySet());
 		strategy.setKnowledge(knowledge);
 
 		final ImmutableList.Builder<Question> qBuilder = ImmutableList.builder();

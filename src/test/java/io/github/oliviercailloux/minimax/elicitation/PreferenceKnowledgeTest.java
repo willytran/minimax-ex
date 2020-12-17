@@ -18,7 +18,7 @@ class PreferenceKnowledgeTest {
 
 	@Test
 	void testLambdaRange() throws Exception {
-		final PrefKnowledgeImpl k = PrefKnowledgeImpl.given(Generator.getAlternatives(5), Generator.getVoters(10));
+		final UpdateablePreferenceKnowledge k = UpdateablePreferenceKnowledge.given(Generator.getAlternatives(5), Generator.getVoters(10));
 		final Range<Aprational> startRange = k.getLambdaRange(1);
 		assertEquals(1d, startRange.lowerEndpoint().doubleValue());
 		final Aprational startUpper = startRange.upperEndpoint();
@@ -38,9 +38,9 @@ class PreferenceKnowledgeTest {
 
 	@Test
 	void testDelegate() throws Exception {
-		final PrefKnowledgeImpl k = PrefKnowledgeImpl.given(Generator.getAlternatives(2), Generator.getVoters(3));
+		final UpdateablePreferenceKnowledge k = UpdateablePreferenceKnowledge.given(Generator.getAlternatives(2), Generator.getVoters(3));
 		final PreferenceInformation p1 = PreferenceInformation.aboutVoter(Basics.v1, Basics.a1, Basics.a2); 
-		final DelegatingPrefKnowledge del = DelegatingPrefKnowledge.given(k, p1);
+		final DelegatingPreferenceKnowledge del = DelegatingPreferenceKnowledge.given(k, p1);
 		VoterPartialPreference vp = del.getPartialPreference(Basics.v1);
 		k.update(p1);
 		

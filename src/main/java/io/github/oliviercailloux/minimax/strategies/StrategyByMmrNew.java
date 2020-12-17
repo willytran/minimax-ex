@@ -28,8 +28,8 @@ import com.google.common.math.IntMath;
 
 import io.github.oliviercailloux.j_voting.Alternative;
 import io.github.oliviercailloux.j_voting.Voter;
-import io.github.oliviercailloux.minimax.elicitation.DelegatingPrefKnowledge;
-import io.github.oliviercailloux.minimax.elicitation.PrefKnowledgeImpl;
+import io.github.oliviercailloux.minimax.elicitation.DelegatingPreferenceKnowledge;
+import io.github.oliviercailloux.minimax.elicitation.UpdateablePreferenceKnowledge;
 import io.github.oliviercailloux.minimax.elicitation.Question;
 import io.github.oliviercailloux.minimax.elicitation.QuestionType;
 import io.github.oliviercailloux.minimax.elicitation.QuestionVoter;
@@ -163,7 +163,7 @@ public class StrategyByMmrNew implements Strategy {
 	}
 
 	@Override
-	public void setKnowledge(PrefKnowledgeImpl knowledge) {
+	public void setKnowledge(UpdateablePreferenceKnowledge knowledge) {
 		helper.setKnowledge(knowledge);
 	}
 
@@ -303,15 +303,15 @@ public class StrategyByMmrNew implements Strategy {
 	private MmrLottery toLottery(Question question) {
 		final double yesMMR;
 		{
-			final DelegatingPrefKnowledge delegatedKnowledge = DelegatingPrefKnowledge.given(helper.getKnowledge(), question.getPositiveInformation());			
-			final RegretComputer rc = new RegretComputer(delegatedKnowledge);
+			final DelegatingPreferenceKnowledge delegatingKnowledge = DelegatingPreferenceKnowledge.given(helper.getKnowledge(), question.getPositiveInformation());			
+			final RegretComputer rc = new RegretComputer(delegatingKnowledge);
 			yesMMR = rc.getMinimalMaxRegrets().getMinimalMaxRegretValue();
 		}
 
 		final double noMMR;
 		{
-			final DelegatingPrefKnowledge delegatedKnowledge = DelegatingPrefKnowledge.given(helper.getKnowledge(), question.getNegativeInformation());
-			final RegretComputer rc = new RegretComputer(delegatedKnowledge);
+			final DelegatingPreferenceKnowledge delegatingKnowledge = DelegatingPreferenceKnowledge.given(helper.getKnowledge(), question.getNegativeInformation());
+			final RegretComputer rc = new RegretComputer(delegatingKnowledge);
 			noMMR = rc.getMinimalMaxRegrets().getMinimalMaxRegretValue();
 		}
 		final MmrLottery lottery = MmrLottery.given(yesMMR, noMMR);

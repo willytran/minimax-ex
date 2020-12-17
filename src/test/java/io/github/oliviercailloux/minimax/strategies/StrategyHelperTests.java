@@ -13,7 +13,7 @@ import com.google.common.graph.MutableGraph;
 import io.github.oliviercailloux.j_voting.Alternative;
 import io.github.oliviercailloux.j_voting.Generator;
 import io.github.oliviercailloux.j_voting.Voter;
-import io.github.oliviercailloux.minimax.elicitation.PrefKnowledgeImpl;
+import io.github.oliviercailloux.minimax.elicitation.UpdateablePreferenceKnowledge;
 
 public class StrategyHelperTests {
 	@Test
@@ -34,7 +34,7 @@ public class StrategyHelperTests {
 
 	@Test
 	void testGetVoters() {
-		final PrefKnowledgeImpl k = PrefKnowledgeImpl.given(Generator.getAlternatives(4), Generator.getVoters(2));
+		final UpdateablePreferenceKnowledge k = UpdateablePreferenceKnowledge.given(Generator.getAlternatives(4), Generator.getVoters(2));
 		final MutableGraph<Alternative> g1 = k.getProfile().get(Voter.withId(1)).asGraph();
 		g1.putEdge(Alternative.withId(1), Alternative.withId(2));
 		g1.putEdge(Alternative.withId(2), Alternative.withId(3));

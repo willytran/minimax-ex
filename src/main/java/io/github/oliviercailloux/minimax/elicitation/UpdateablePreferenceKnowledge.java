@@ -15,21 +15,21 @@ import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.ImmutableSet;
 import com.google.common.collect.Range;
 import com.google.common.graph.Graph;
-import com.google.common.graph.Graphs;
+
 
 import io.github.oliviercailloux.j_voting.Alternative;
 import io.github.oliviercailloux.j_voting.Voter;
 import io.github.oliviercailloux.j_voting.VoterPartialPreference;
 import io.github.oliviercailloux.jlp.elements.ComparisonOperator;
 
-public class PrefKnowledgeImpl implements PreferenceKnowledge {
+public class UpdateablePreferenceKnowledge implements PreferenceKnowledge {
 
-	public static PrefKnowledgeImpl given(Set<Alternative> alternatives, Set<Voter> voters) {
-		return new PrefKnowledgeImpl(alternatives, voters);
+	public static UpdateablePreferenceKnowledge given(Set<Alternative> alternatives, Set<Voter> voters) {
+		return new UpdateablePreferenceKnowledge(alternatives, voters);
 	}
 
-	public static PrefKnowledgeImpl copyOf(PrefKnowledgeImpl knowledge) {
-		return new PrefKnowledgeImpl(knowledge.alternatives, knowledge.partialProfile, knowledge.cow,
+	public static UpdateablePreferenceKnowledge copyOf(UpdateablePreferenceKnowledge knowledge) {
+		return new UpdateablePreferenceKnowledge(knowledge.alternatives, knowledge.partialProfile, knowledge.cow,
 				knowledge.lambdaRanges);
 	}
 
@@ -38,7 +38,7 @@ public class PrefKnowledgeImpl implements PreferenceKnowledge {
 	private ConstraintsOnWeights cow;
 	private Map<Integer, Range<Aprational>> lambdaRanges;
 
-	private PrefKnowledgeImpl(Set<Alternative> alternatives, Set<Voter> voters) {
+	private UpdateablePreferenceKnowledge(Set<Alternative> alternatives, Set<Voter> voters) {
 		this.alternatives = ImmutableSet.copyOf(alternatives);
 
 		final int m = alternatives.size();
@@ -82,7 +82,7 @@ public class PrefKnowledgeImpl implements PreferenceKnowledge {
 	 * Copy constructor. The parameters should come from an existing instance, to
 	 * ensure coherence.
 	 */
-	private PrefKnowledgeImpl(Set<Alternative> alternatives, Map<Voter, VoterPartialPreference> profile,
+	private UpdateablePreferenceKnowledge(Set<Alternative> alternatives, Map<Voter, VoterPartialPreference> profile,
 			ConstraintsOnWeights cow, Map<Integer, Range<Aprational>> lambdaRanges) {
 		this.alternatives = ImmutableSet.copyOf(alternatives);
 		partialProfile = profile.entrySet().stream().collect(
@@ -159,7 +159,9 @@ public class PrefKnowledgeImpl implements PreferenceKnowledge {
 		return lambdaRanges.get(rank);
 	}
 
-	// check the number of edges for each graph
+	/**
+	 *  Check the number of edges in the transitive graphs associated to each voter preference.
+	 */
 	public boolean isProfileComplete() {
 		for (Voter voter : partialProfile.keySet()) {
 			final Graph<Alternative> graph = partialProfile.get(voter).asTransitiveGraph();
