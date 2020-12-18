@@ -8,9 +8,6 @@ import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.ImmutableSet;
 import com.google.common.collect.Range;
 import com.google.common.graph.Graph;
-import com.google.common.graph.Graphs;
-import com.google.common.graph.ImmutableGraph;
-import com.google.common.graph.MutableGraph;
 
 import io.github.oliviercailloux.j_voting.Alternative;
 import io.github.oliviercailloux.j_voting.Voter;
@@ -29,24 +26,23 @@ public class DelegatingPreferenceKnowledge implements PreferenceKnowledge {
 		return new DelegatingPreferenceKnowledge(prefKnowledge, newInfo);
 	}
 
-	public static DelegatingPreferenceKnowledge copyOf(DelegatingPreferenceKnowledge delKnowledge) {
-		return new DelegatingPreferenceKnowledge(delKnowledge.prefKnowledge, delKnowledge.newInformation);
-	}
-
 	private DelegatingPreferenceKnowledge(UpdateablePreferenceKnowledge knowledge, PreferenceInformation newInfo) {
 		prefKnowledge = knowledge;
 		newInformation = newInfo;
 		newProfile = null;
 	}
 
+	@Override
 	public ImmutableSet<Alternative> getAlternatives() {
 		return prefKnowledge.getAlternatives();
 	}
 
+	@Override
 	public ImmutableSet<Voter> getVoters() {
 		return prefKnowledge.getVoters();
 	}
 
+	@Override
 	public ImmutableMap<Voter, VoterPartialPreference> getProfile() {
 		if (newProfile == null) {
 			if (newInformation.getType() == QuestionType.COMMITTEE_QUESTION)
@@ -91,19 +87,9 @@ public class DelegatingPreferenceKnowledge implements PreferenceKnowledge {
 			return prefKnowledge.isProfileComplete();
 
 		int m = prefKnowledge.getAlternatives().size();
-		VoterPreferenceInformation newVotPref = newInformation.asVoterInformation();
-
+		
 		for (Voter voter : prefKnowledge.getProfile().keySet()) {
-			Graph<Alternative> graph;
-			if (voter.equals(newVotPref.getVoter())) {
-				MutableGraph<Alternative> tempGraph = Graphs
-						.copyOf(prefKnowledge.getPartialPreference(voter).asGraph());
-				tempGraph.putEdge(newVotPref.getBetterAlternative(), newVotPref.getWorstAlternative());
-				tempGraph = (MutableGraph<Alternative>) Graphs.transitiveClosure(tempGraph);
-				graph = ImmutableGraph.copyOf(tempGraph);
-			} else {
-				graph = prefKnowledge.getPartialPreference(voter).asTransitiveGraph();
-			}
+			final Graph<Alternative> graph = getPartialPreference(voter).asTransitiveGraph();
 			if (graph.edges().size() != m * (m - 1) / 2) {
 				return false;
 			}

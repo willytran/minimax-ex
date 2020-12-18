@@ -28,11 +28,6 @@ public class UpdateablePreferenceKnowledge implements PreferenceKnowledge {
 		return new UpdateablePreferenceKnowledge(alternatives, voters);
 	}
 
-	public static UpdateablePreferenceKnowledge copyOf(UpdateablePreferenceKnowledge knowledge) {
-		return new UpdateablePreferenceKnowledge(knowledge.alternatives, knowledge.partialProfile, knowledge.cow,
-				knowledge.lambdaRanges);
-	}
-
 	private ImmutableSet<Alternative> alternatives;
 	private ImmutableMap<Voter, VoterPartialPreference> partialProfile;
 	private ConstraintsOnWeights cow;
@@ -94,6 +89,7 @@ public class UpdateablePreferenceKnowledge implements PreferenceKnowledge {
 	/**
 	 * @return a non empty set.
 	 */
+	@Override
 	public ImmutableSet<Alternative> getAlternatives() {
 		return alternatives;
 	}
@@ -101,6 +97,7 @@ public class UpdateablePreferenceKnowledge implements PreferenceKnowledge {
 	/**
 	 * @return a non-empty set.
 	 */
+	@Override
 	public ImmutableSet<Voter> getVoters() {
 		return partialProfile.keySet();
 	}
@@ -141,18 +138,22 @@ public class UpdateablePreferenceKnowledge implements PreferenceKnowledge {
 		lambdaRanges.put(rank, restr);
 	}
 
+	@Override
 	public ImmutableMap<Voter, VoterPartialPreference> getProfile() {
 		return partialProfile;
 	}
 
+	@Override
 	public VoterPartialPreference getPartialPreference(Voter voter) {
 		return partialProfile.get(voter);
 	}
 
+	@Override
 	public ConstraintsOnWeights getConstraintsOnWeights() {
 		return cow;
 	}
 
+	@Override
 	public Range<Aprational> getLambdaRange(int rank) {
 		checkArgument(rank >= 1);
 		checkArgument(rank <= alternatives.size() - 2);
@@ -162,9 +163,10 @@ public class UpdateablePreferenceKnowledge implements PreferenceKnowledge {
 	/**
 	 *  Check the number of edges in the transitive graphs associated to each voter preference.
 	 */
+	@Override
 	public boolean isProfileComplete() {
 		for (Voter voter : partialProfile.keySet()) {
-			final Graph<Alternative> graph = partialProfile.get(voter).asTransitiveGraph();
+			final Graph<Alternative> graph = getPartialPreference(voter).asTransitiveGraph();
 			if (graph.edges().size() != alternatives.size() * (alternatives.size() - 1)/2) {
 				return false;
 			}

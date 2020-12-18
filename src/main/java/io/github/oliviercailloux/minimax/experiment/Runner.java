@@ -7,6 +7,7 @@ import java.text.NumberFormat;
 import java.util.Locale;
 import java.util.stream.IntStream;
 
+import org.apfloat.Apcomplex;
 import org.apfloat.Aprational;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -69,7 +70,7 @@ public class Runner {
 				knowledge.addConstraint(i, ComparisonOperator.EQ, new Aprational(oracle.getN() - 1));
 			} else {
 				Aprational lambda = new Aprational(n / d);
-				if (lambda.compareTo(new Aprational(oracle.getN() - 1)) == 1 || lambda.compareTo(Aprational.ZERO) < 1) {
+				if (lambda.compareTo(new Aprational(oracle.getN() - 1)) == 1 || lambda.compareTo(Apcomplex.ZERO) < 1) {
 					knowledge.addConstraint(i, ComparisonOperator.EQ, new Aprational(oracle.getN() - 1));
 				} else {
 					knowledge.addConstraint(i, ComparisonOperator.EQ, lambda);

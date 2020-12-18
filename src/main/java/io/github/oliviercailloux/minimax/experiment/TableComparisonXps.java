@@ -31,6 +31,7 @@ public class TableComparisonXps {
 	}
 
 	public void runWithOracles(int m, int n, int k, int nbRuns) throws IOException {
+		@SuppressWarnings("unused")
 		final long seed = ThreadLocalRandom.current().nextLong();
 		final ImmutableList<StrategyFactory> factoryList = ImmutableList.of(StrategyFactory.limited(),
 				StrategyFactory.elitist());

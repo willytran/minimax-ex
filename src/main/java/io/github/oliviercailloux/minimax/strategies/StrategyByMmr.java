@@ -29,6 +29,7 @@ import com.google.common.math.IntMath;
 import io.github.oliviercailloux.j_voting.Alternative;
 import io.github.oliviercailloux.j_voting.Voter;
 import io.github.oliviercailloux.minimax.elicitation.UpdateablePreferenceKnowledge;
+import io.github.oliviercailloux.minimax.elicitation.DelegatingPreferenceKnowledge;
 import io.github.oliviercailloux.minimax.elicitation.Question;
 import io.github.oliviercailloux.minimax.elicitation.QuestionType;
 import io.github.oliviercailloux.minimax.elicitation.QuestionVoter;
@@ -298,21 +299,19 @@ public class StrategyByMmr implements Strategy {
 	private QuestionVoter getQuestionAbout(Voter voter, EndpointPair<Alternative> incomparablePair) {
 		return QuestionVoter.given(voter, incomparablePair.nodeU(), incomparablePair.nodeV());
 	}
-
+	
 	private MmrLottery toLottery(Question question) {
 		final double yesMMR;
 		{
-			final UpdateablePreferenceKnowledge updatedKnowledge = UpdateablePreferenceKnowledge.copyOf(helper.getKnowledge());
-			updatedKnowledge.update(question.getPositiveInformation());
-			final RegretComputer rc = new RegretComputer(updatedKnowledge);
+			final DelegatingPreferenceKnowledge delegatingKnowledge = DelegatingPreferenceKnowledge.given(helper.getKnowledge(), question.getPositiveInformation());			
+			final RegretComputer rc = new RegretComputer(delegatingKnowledge);
 			yesMMR = rc.getMinimalMaxRegrets().getMinimalMaxRegretValue();
 		}
 
 		final double noMMR;
 		{
-			final UpdateablePreferenceKnowledge updatedKnowledge = UpdateablePreferenceKnowledge.copyOf(helper.getKnowledge());
-			updatedKnowledge.update(question.getNegativeInformation());
-			final RegretComputer rc = new RegretComputer(updatedKnowledge);
+			final DelegatingPreferenceKnowledge delegatingKnowledge = DelegatingPreferenceKnowledge.given(helper.getKnowledge(), question.getNegativeInformation());
+			final RegretComputer rc = new RegretComputer(delegatingKnowledge);
 			noMMR = rc.getMinimalMaxRegrets().getMinimalMaxRegretValue();
 		}
 		final MmrLottery lottery = MmrLottery.given(yesMMR, noMMR);
