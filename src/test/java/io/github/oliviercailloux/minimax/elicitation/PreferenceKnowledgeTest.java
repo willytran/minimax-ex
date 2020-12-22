@@ -36,16 +36,5 @@ class PreferenceKnowledgeTest {
 		assertThrows(IllegalArgumentException.class, () -> k.addConstraint(1, ComparisonOperator.LE, ap1));
 	}
 
-	@Test
-	void testDelegate() throws Exception {
-		final UpdateablePreferenceKnowledge k = UpdateablePreferenceKnowledge.given(Generator.getAlternatives(2), Generator.getVoters(3));
-		final PreferenceInformation p1 = PreferenceInformation.aboutVoter(Basics.v1, Basics.a1, Basics.a2); 
-		final DelegatingPreferenceKnowledge del = DelegatingPreferenceKnowledge.given(k, p1);
-		VoterPartialPreference vp = del.getPartialPreference(Basics.v1);
-		k.update(p1);
-		
-		assertEquals(k.getPartialPreference(Basics.v1), vp);
-		assertEquals(k.getProfile(), del.getProfile());
-	}
 	
 }
