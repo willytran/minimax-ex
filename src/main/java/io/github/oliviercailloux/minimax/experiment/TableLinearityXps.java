@@ -38,7 +38,7 @@ public class TableLinearityXps {
 //		tableLinXps.runWithOracles(10, 30, 800, 10);
 //		tableLinXps.runWithOracles(15, 30, 1000, 1, 5);
 //		tableLinXps.runWithOracles(15, 30, 1000, 1, 6);
-		tableLinXps.runWithFile("courses.soc", 10, 1);
+		tableLinXps.runWithFile("courses.soc", 10000, 10);
 	}
 
 	public void runWithOracles(int m, int n, int k, int nbRuns) throws IOException {
