@@ -12,6 +12,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import com.google.common.collect.ImmutableList;
+import com.google.common.collect.ImmutableSet;
 import com.google.common.collect.MoreCollectors;
 import com.google.common.math.Stats;
 
@@ -20,6 +21,7 @@ import io.github.oliviercailloux.j_voting.VoterStrictPreference;
 import io.github.oliviercailloux.j_voting.profiles.ProfileI;
 import io.github.oliviercailloux.j_voting.profiles.management.ReadProfile;
 import io.github.oliviercailloux.minimax.elicitation.Oracle;
+import io.github.oliviercailloux.minimax.elicitation.Question;
 import io.github.oliviercailloux.minimax.experiment.json.JsonConverter;
 import io.github.oliviercailloux.minimax.experiment.other_formats.ToCsv;
 import io.github.oliviercailloux.minimax.strategies.StrategyFactory;
@@ -38,7 +40,7 @@ public class TableLinearityXps {
 //		tableLinXps.runWithOracles(10, 30, 800, 10);
 //		tableLinXps.runWithOracles(15, 30, 1000, 1, 5);
 //		tableLinXps.runWithOracles(15, 30, 1000, 1, 6);
-		tableLinXps.runWithFile("courses.soc", 10000, 10);
+		tableLinXps.runWithFile("courses.soc", 1000, 10);
 	}
 
 	public void runWithOracles(int m, int n, int k, int nbRuns) throws IOException {
@@ -59,7 +61,6 @@ public class TableLinearityXps {
 		StrategyFactory factory = StrategyFactory.limited();
 
 		String path = "experiments/Oracles/" + file;
-		System.out.println(path);
 		try (InputStream socStream = new FileInputStream(path)) {
 			final ProfileI p = new ReadProfile().createProfileFromStream(socStream);
 			LinkedList<VoterStrictPreference> profile = new LinkedList<>();
@@ -68,9 +69,12 @@ public class TableLinearityXps {
 						p.getPreference(voter).toStrictPreference().getAlternatives());
 				profile.add(vpref);
 			}
-			final Oracle o = Oracle.build(profile, Generator.genWeightsWithUniformDistribution(p.getNbAlternatives()));
-			System.out.println(o.toString());
-			final ImmutableList<Oracle> oracles = ImmutableList.of(o);
+			final ImmutableList.Builder<Oracle> oraclesBuilder = ImmutableList.builder();
+			for(int i=0; i<nbRuns;i++) {
+				final Oracle o = Oracle.build(profile, Generator.genWeightsWithUniformDistribution(p.getNbAlternatives()));
+				oraclesBuilder.add(o);
+			}
+			final ImmutableList<Oracle> oracles = oraclesBuilder.build();
 			final String prefixDescription = factory.getDescription() + ", " + file + ", k = " + k ;
 
 			final Runs runs = runs(factory, oracles, k, prefixDescription, nbRuns);
