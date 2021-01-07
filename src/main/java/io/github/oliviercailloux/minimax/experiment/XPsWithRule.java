@@ -36,7 +36,6 @@ public class XPsWithRule {
 		final ImmutableList<Oracle> oracles = ImmutableList.copyOf(JsonConverter.toOracles(Files.readString(json)));
 		final String prefixDescription = rule + ", m = " + m + ", n = " + n + ", k = " + k;
 
-		
 		final Path outDir = Path.of("experiments/TableLinearity");
 		Files.createDirectories(outDir);
 		final String prefixTemp = prefixDescription + ", ongoing";
@@ -48,19 +47,20 @@ public class XPsWithRule {
 		for (int i = 0; i < nbRuns; ++i) {
 			final Oracle oracle = oracles.get(i);
 			LOGGER.info("Before run.");
-			
-			final UpdateablePreferenceKnowledge knowledge = UpdateablePreferenceKnowledge.given(oracle.getAlternatives(), oracle.getProfile().keySet());
+
+			final UpdateablePreferenceKnowledge knowledge = UpdateablePreferenceKnowledge
+					.given(oracle.getAlternatives(), oracle.getProfile().keySet());
 			System.out.println(knowledge.getLambdaRange(1));
 			ImmutableList<Alternative> al = oracle.getAlternatives().asList();
-			for (int j = 1; j <= m-2; j++) {
-				Aprational a = new Aprational (oracle.getScore(al.get(j-1))-oracle.getScore(al.get(j)));
-				Aprational b = new Aprational (oracle.getScore(al.get(j))-oracle.getScore(al.get(j+1)));
-				Aprational lambda= a.divide(b);
-				System.out.println(j+" "+ lambda.doubleValue());
+			for (int j = 1; j <= m - 2; j++) {
+				Aprational a = new Aprational(oracle.getScore(al.get(j - 1)) - oracle.getScore(al.get(j)));
+				Aprational b = new Aprational(oracle.getScore(al.get(j)) - oracle.getScore(al.get(j + 1)));
+				Aprational lambda = a.divide(b);
+				System.out.println(j + " " + lambda.doubleValue());
 				knowledge.addConstraint(j, ComparisonOperator.EQ, lambda);
 			}
-			
-			final Run run = Runner.run(factory.get(), oracle,knowledge, k);
+
+			final Run run = Runner.run(factory.get(), oracle, knowledge, k);
 			LOGGER.info("Time (run {}): {}.", i, run.getTotalTime());
 			runsBuilder.add(run);
 			final Runs runs = Runs.of(factory, runsBuilder.build());
@@ -77,12 +77,12 @@ public class XPsWithRule {
 		final Path outCsv = outDir.resolve(prefix + ".csv");
 		Files.move(tmpJson, outJson, StandardCopyOption.REPLACE_EXISTING);
 		Files.move(tmpCsv, outCsv, StandardCopyOption.REPLACE_EXISTING);
-		
+
 		final Runs runs = Runs.of(factory, runsBuilder.build());
-		
+
 		final Stats stats = runs.getMinimalMaxRegretStats().get(runs.getK());
 		final String descr = Runner.asStringEstimator(stats);
 		LOGGER.info("Got final estimator: {}.", descr);
 	}
-	
+
 }
