@@ -8,20 +8,22 @@ import java.nio.file.Path;
 import java.nio.file.StandardCopyOption;
 import java.util.LinkedList;
 
+import org.apfloat.Apint;
+import org.apfloat.Aprational;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import com.google.common.collect.ImmutableList;
-import com.google.common.collect.ImmutableSet;
-import com.google.common.collect.MoreCollectors;
 import com.google.common.math.Stats;
 
+import io.github.oliviercailloux.j_voting.Alternative;
 import io.github.oliviercailloux.j_voting.Voter;
 import io.github.oliviercailloux.j_voting.VoterStrictPreference;
 import io.github.oliviercailloux.j_voting.profiles.ProfileI;
 import io.github.oliviercailloux.j_voting.profiles.management.ReadProfile;
+import io.github.oliviercailloux.jlp.elements.ComparisonOperator;
 import io.github.oliviercailloux.minimax.elicitation.Oracle;
-import io.github.oliviercailloux.minimax.elicitation.Question;
+import io.github.oliviercailloux.minimax.elicitation.UpdateablePreferenceKnowledge;
 import io.github.oliviercailloux.minimax.experiment.json.JsonConverter;
 import io.github.oliviercailloux.minimax.experiment.other_formats.ToCsv;
 import io.github.oliviercailloux.minimax.strategies.StrategyFactory;
@@ -40,14 +42,15 @@ public class TableLinearityXps {
 //		tableLinXps.runWithOracles(10, 30, 800, 10);
 //		tableLinXps.runWithOracles(15, 30, 1000, 1, 5);
 //		tableLinXps.runWithOracles(15, 30, 1000, 1, 6);
-		tableLinXps.runWithFile("courses.soc", 1000, 10);
+		tableLinXps.runWithFile("sushi_short.soc", 800, 10);
+		tableLinXps.runWithFile("skate.soc", 1000, 10);
 	}
 
 	public void runWithOracles(int m, int n, int k, int nbRuns) throws IOException {
 		StrategyFactory factory = StrategyFactory.limited();
 
 		final Path json = Path.of("experiments/Oracles/",
-				String.format("Oracles m = %d, n = %d, %d, %d.json", m, n, nbRuns));
+				String.format("Oracles m = %d, n = %d, %d.json", m, n, nbRuns));
 		final ImmutableList<Oracle> oracles = ImmutableList.copyOf(JsonConverter.toOracles(Files.readString(json)));
 		final String prefixDescription = factory.getDescription() + ", m = " + m + ", n = " + n + ", k = " + k;
 
@@ -84,7 +87,7 @@ public class TableLinearityXps {
 		}
 
 	}
-
+	
 	public Runs runs(StrategyFactory factory, ImmutableList<Oracle> oracles, int k, String prefixDescription,
 			int nbRuns) throws IOException {
 		final Path outDir = Path.of("experiments/TableLinearity");
@@ -118,5 +121,6 @@ public class TableLinearityXps {
 
 		return Runs.of(factory, runsBuilder.build());
 	}
+	
 
 }
