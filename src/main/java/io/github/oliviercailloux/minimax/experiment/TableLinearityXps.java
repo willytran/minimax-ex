@@ -35,15 +35,9 @@ public class TableLinearityXps {
 	public static void main(String[] args) throws Exception {
 		final TableLinearityXps tableLinXps = new TableLinearityXps();
 //		tableLinXps.runWithOracles(m, n, k, nbRuns);
-//		tableLinXps.runWithOracles(5, 10, 100, 10);
-//		tableLinXps.runWithOracles(5, 15, 150, 10);
-//		tableLinXps.runWithOracles(5, 20, 200, 10);
-//		tableLinXps.runWithOracles(10, 20, 500, 10);
-//		tableLinXps.runWithOracles(10, 30, 800, 10);
-//		tableLinXps.runWithOracles(15, 30, 1000, 1, 5);
-//		tableLinXps.runWithOracles(15, 30, 1000, 1, 6);
-		tableLinXps.runWithFile("sushi_short.soc", 800, 10);
-		tableLinXps.runWithFile("skate.soc", 1000, 10);
+		tableLinXps.runWithOracles(9, 14, 300, 10);
+//		tableLinXps.runWithFile("sushi_short.soc", 800, 10);
+//		tableLinXps.runWithFile("skate.soc", 1000, 10);
 	}
 
 	public void runWithOracles(int m, int n, int k, int nbRuns) throws IOException {
