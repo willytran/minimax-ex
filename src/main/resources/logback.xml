@@ -61,4 +61,7 @@
 	<logger
 		name="io.github.oliviercailloux.jlp.or_tools.OrToolsSolver"
 		level="ERROR" />
+	<logger
+		name="io.github.oliviercailloux.minimax.regret.RegretComputer"
+		level="INFO" />
 </configuration>
