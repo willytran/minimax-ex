@@ -10,12 +10,12 @@ import java.util.Set;
 import org.apfloat.Apint;
 import org.apfloat.Aprational;
 
+import com.google.common.base.MoreObjects;
 import com.google.common.base.VerifyException;
 import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.ImmutableSet;
 import com.google.common.collect.Range;
 import com.google.common.graph.Graph;
-
 
 import io.github.oliviercailloux.j_voting.Alternative;
 import io.github.oliviercailloux.j_voting.Voter;
@@ -71,19 +71,6 @@ public class UpdateablePreferenceKnowledge implements PreferenceKnowledge {
 				lambdaRanges.put(rank, Range.closed(new Apint(1), new Apint(n)));
 			}
 		}
-	}
-
-	/**
-	 * Copy constructor. The parameters should come from an existing instance, to
-	 * ensure coherence.
-	 */
-	private UpdateablePreferenceKnowledge(Set<Alternative> alternatives, Map<Voter, VoterPartialPreference> profile,
-			ConstraintsOnWeights cow, Map<Integer, Range<Aprational>> lambdaRanges) {
-		this.alternatives = ImmutableSet.copyOf(alternatives);
-		partialProfile = profile.entrySet().stream().collect(
-				ImmutableMap.toImmutableMap(Entry::getKey, (e) -> VoterPartialPreference.copyOf(e.getValue())));
-		this.cow = ConstraintsOnWeights.copyOf(cow);
-		this.lambdaRanges = new LinkedHashMap<>(lambdaRanges);
 	}
 
 	/**
@@ -161,13 +148,14 @@ public class UpdateablePreferenceKnowledge implements PreferenceKnowledge {
 	}
 
 	/**
-	 *  Check the number of edges in the transitive graphs associated to each voter preference.
+	 * Check the number of edges in the transitive graphs associated to each voter
+	 * preference.
 	 */
 	@Override
 	public boolean isProfileComplete() {
 		for (Voter voter : partialProfile.keySet()) {
 			final Graph<Alternative> graph = getPartialPreference(voter).asTransitiveGraph();
-			if (graph.edges().size() != alternatives.size() * (alternatives.size() - 1)/2) {
+			if (graph.edges().size() != alternatives.size() * (alternatives.size() - 1) / 2) {
 				return false;
 			}
 		}
@@ -198,13 +186,8 @@ public class UpdateablePreferenceKnowledge implements PreferenceKnowledge {
 
 	@Override
 	public String toString() {
-		StringBuilder sb = new StringBuilder();
-		sb.append("Constraints on weights: \n" + cow.rangesAsString() + "\n");
-		sb.append("Preference profile \n");
-		for (int i = 1; i <= partialProfile.size(); i++) {
-			sb.append("Voter " + i + " " + partialProfile.get(Voter.withId(i)) + "\n");
-		}
-		return sb.toString();
+		return MoreObjects.toStringHelper(this).add("Partial profile", partialProfile)
+				.add("Lambda ranges", lambdaRanges).add("Constraints on weights", cow).toString();
 	}
 
 }
