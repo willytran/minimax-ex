@@ -43,14 +43,11 @@
 		<appender-ref ref="STDERR" />
 		<appender-ref ref="File" />
 	</root>
-	<logger
-		name="io.github.oliviercailloux.j_voting.Alternative"
+	<logger name="io.github.oliviercailloux.j_voting.Alternative"
 		level="ERROR" />
-	<logger
-		name="io.github.oliviercailloux.j_voting.Voter"
+	<logger name="io.github.oliviercailloux.j_voting.Voter"
 		level="ERROR" />
-	<logger
-		name="io.github.oliviercailloux.j_voting.Generator"
+	<logger name="io.github.oliviercailloux.j_voting.Generator"
 		level="ERROR" />
 	<logger
 		name="io.github.oliviercailloux.y2018.j_voting.Preference"
@@ -63,5 +60,8 @@
 		level="ERROR" />
 	<logger
 		name="io.github.oliviercailloux.minimax.regret.RegretComputer"
+		level="INFO" />
+	<logger
+		name="io.github.oliviercailloux.minimax.strategies.StrategyCss"
 		level="INFO" />
 </configuration>

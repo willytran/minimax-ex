@@ -7,7 +7,6 @@ import org.slf4j.LoggerFactory;
 
 import com.google.common.collect.ImmutableList;
 
-import io.github.oliviercailloux.minimax.strategies.MmrLottery;
 import io.github.oliviercailloux.minimax.strategies.StrategyFactory;
 
 public class TimingXp {
@@ -18,16 +17,17 @@ public class TimingXp {
 		/** (Pessimistic, 5, 5, 1), Saucisson: 0.77 ± 0.03 sec. */
 		/** (Pessimistic, 5, 5, 30), Saucisson: 18.2 ± 1.1 sec. */
 		/** (Pessimistic, 5, 5, 30), BriBri: 13.7 ± 2.9 sec. */
-		final int m = 5;
-		final int n = 5;
-		final int k = 30;
+		/** (Css, 15, 30, 1000), Saucisson: 3.0 min. */
+		final int m = 9;
+		final int n = 5000;
+		final int k = 10_000;
 		final int nbRuns = 5;
 		time(m, n, k, nbRuns);
 	}
 
 	public static void time(int m, int n, int k, int nbRuns) {
 		final long seed = ThreadLocalRandom.current().nextLong();
-		final StrategyFactory factory = StrategyFactory.byMmrs(seed, MmrLottery.MAX_COMPARATOR);
+		final StrategyFactory factory = StrategyFactory.css(seed);
 
 		/** Warm up the VM. */
 		for (int i = 0; i < 1; ++i) {
