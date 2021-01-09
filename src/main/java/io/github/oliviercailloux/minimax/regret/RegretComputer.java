@@ -9,6 +9,9 @@ import java.util.Map;
 import java.util.Set;
 import java.util.function.Function;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.ImmutableSet;
 import com.google.common.collect.ImmutableSortedMultiset;
@@ -24,6 +27,9 @@ import io.github.oliviercailloux.jlp.elements.Term;
 import io.github.oliviercailloux.minimax.elicitation.PreferenceKnowledge;
 
 public class RegretComputer {
+	@SuppressWarnings("unused")
+	private static final Logger LOGGER = LoggerFactory.getLogger(RegretComputer.class);
+
 	private final PreferenceKnowledge knowledge;
 
 	public RegretComputer(PreferenceKnowledge knowledge) {
@@ -50,7 +56,9 @@ public class RegretComputer {
 	public Regrets getAllPairwiseMaxRegrets() {
 		final ImmutableMap<Alternative, ImmutableSet<PairwiseMaxRegret>> allPmrs = knowledge.getAlternatives().stream()
 				.collect(ImmutableMap.toImmutableMap(Function.identity(), this::getPairwiseMaxRegrets));
-		return Regrets.given(allPmrs);
+		final Regrets regrets = Regrets.given(allPmrs);
+		LOGGER.debug("Computed from {}: {}.", knowledge, regrets);
+		return regrets;
 	}
 
 	private PairwiseMaxRegret getPmr(Alternative x, Alternative y, Map<Voter, Integer> ranksOfX,
