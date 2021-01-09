@@ -57,6 +57,8 @@ public class StrategyFactory implements Supplier<Strategy> {
 					json.getJsonNumber("penalty").doubleValue());
 		case ELITIST:
 			return elitist();
+		case CSS:
+			return css(json.getJsonNumber("seed").longValue());
 		case RANDOM:
 			return random(json.getJsonNumber("seed").longValue(),
 					json.getJsonNumber("probabilityCommittee").doubleValue(), json.getBoolean("toVoters", false));
@@ -76,6 +78,24 @@ public class StrategyFactory implements Supplier<Strategy> {
 			strategy.setRandom(random);
 			return strategy;
 		}, json, "By MMR " + comparator);
+	}
+
+	public static StrategyFactory css() {
+		final long seed = ThreadLocalRandom.current().nextLong();
+		return css(seed);
+	}
+
+	public static StrategyFactory css(long seed) {
+		final Random random = new Random(seed);
+
+		final PrintableJsonObject json = JsonbUtils
+				.toJsonObject(ImmutableMap.of("family", StrategyType.CSS, "seed", seed));
+
+		return new StrategyFactory(() -> {
+			final StrategyCss strategy = StrategyCss.newInstance();
+			strategy.setRandom(random);
+			return strategy;
+		}, json, "Css");
 	}
 
 	public static StrategyFactory limited() {

@@ -171,6 +171,9 @@ public class Commander {
 		case RANDOM:
 			factory = StrategyFactory.random(0.5d);
 			break;
+		case CSS:
+			factory = StrategyFactory.css();
+			break;
 		case TWO_PHASES_HEURISTIC:
 		case PESSIMISTIC:
 		case PESSIMISTIC_HEURISTIC:
