@@ -31,9 +31,9 @@ import com.univocity.parsers.csv.CsvWriterSettings;
 
 import io.github.oliviercailloux.json.PrintableJsonObject;
 import io.github.oliviercailloux.minimax.elicitation.Oracle;
-import io.github.oliviercailloux.minimax.elicitation.UpdateablePreferenceKnowledge;
 import io.github.oliviercailloux.minimax.elicitation.PreferenceInformation;
 import io.github.oliviercailloux.minimax.elicitation.Question;
+import io.github.oliviercailloux.minimax.elicitation.UpdateablePreferenceKnowledge;
 import io.github.oliviercailloux.minimax.experiment.json.JsonConverter;
 import io.github.oliviercailloux.minimax.experiment.other_formats.ToCsv;
 import io.github.oliviercailloux.minimax.strategies.Strategy;
@@ -105,7 +105,8 @@ public class VariousXps {
 			final Oracle oracle = oracles.get(i);
 			final Strategy strategy = factory.get();
 
-			final UpdateablePreferenceKnowledge knowledge = UpdateablePreferenceKnowledge.given(oracle.getAlternatives(), oracle.getProfile().keySet());
+			final UpdateablePreferenceKnowledge knowledge = UpdateablePreferenceKnowledge
+					.given(oracle.getAlternatives(), oracle.getProfile().keySet());
 			strategy.setKnowledge(knowledge);
 
 			final ImmutableList.Builder<Question> qBuilder = ImmutableList.builder();
@@ -240,7 +241,8 @@ public class VariousXps {
 
 	public void runShowTies(StrategyByMmr strategy, Oracle oracle, int k) {
 		LOGGER.info("Running with {}, {}.", oracle, k);
-		final UpdateablePreferenceKnowledge knowledge = UpdateablePreferenceKnowledge.given(oracle.getAlternatives(), oracle.getProfile().keySet());
+		final UpdateablePreferenceKnowledge knowledge = UpdateablePreferenceKnowledge.given(oracle.getAlternatives(),
+				oracle.getProfile().keySet());
 		strategy.setKnowledge(knowledge);
 
 		final ImmutableList.Builder<Question> qBuilder = ImmutableList.builder();
@@ -268,9 +270,10 @@ public class VariousXps {
 		final int n = 20;
 		final int k = 500;
 		final int nbRuns = 10;
-//		final Path json = Path.of("experiments", "TableLinearity", String
-//				.format("Limited MAX, constrained to [], m = %d, n = %d, k = %d, nbRuns = %d.json", m, n, k, nbRuns));
-		final Path json = Path.of("experiments","Limited MAX, constrained to [], m = 10, n = 20, k = 500, nbRuns = 10.json");
+		final Path json = Path.of("experiments", "TableLinearity", String
+				.format("Limited MAX, constrained to [], m = %d, n = %d, k = %d, nbRuns = %d.json", m, n, k, nbRuns));
+//		final Path json = Path.of("experiments",
+//				"Limited MAX, constrained to [], m = 10, n = 20, k = 500, nbRuns = 10.json");
 		final Runs runs = JsonConverter.toRuns(Files.readString(json));
 		for (Run run : runs.getRuns()) {
 			LOGGER.info("Run: {} qC, {} qV, mmr {}.", run.getNbQCommittee(), run.getNbQVoters(),
@@ -284,9 +287,10 @@ public class VariousXps {
 		final int n = 6;
 		final int k = 30;
 		final int nbRuns = 50;
-		final Path json = Path.of("experiments","By MMR MAX, m = 5, n = 10, k = 150, nbRuns = 200.json");
+		final Path json = Path.of("experiments",
+				String.format("By MMR MAX, m = %d, n = %d, k = %d, nbRuns = %d.json", m, n, k, nbRuns));
 		final Runs runs = JsonConverter.toRuns(Files.readString(json));
-		LOGGER.info("qst {} , tot {}",runs.getQuestionTimeStats(),runs.getTotalTimeStats());
+		LOGGER.info("qst {} , tot {}", runs.getQuestionTimeStats(), runs.getTotalTimeStats());
 //		LOGGER.info("Loss after k: {}.", Runner.asStringEstimator(runs.getLossesStats().get(k)));
 //		LOGGER.info("MMR after k: {}.", Runner.asStringEstimator(runs.getMinimalMaxRegretStats().get(k)));
 	}
