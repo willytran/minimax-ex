@@ -22,6 +22,7 @@ import io.github.oliviercailloux.minimax.elicitation.Oracle;
 import io.github.oliviercailloux.minimax.elicitation.PSRWeights;
 import io.github.oliviercailloux.minimax.experiment.Run;
 import io.github.oliviercailloux.minimax.experiment.Runs;
+import io.github.oliviercailloux.minimax.strategies.StrategyFactory;
 
 public class JsonConverter {
 	@SuppressWarnings("unused")
@@ -103,5 +104,13 @@ public class JsonConverter {
 	public static Runs toRuns(String json) {
 		return JsonbUtils.fromJson(json, Runs.class, ProfileAdapter.INSTANCE, PreferenceAdapter.INSTANCE,
 				QuestionAdapter.INSTANCE, WeightsAdapter.INSTANCE, FactoryAdapter.INSTANCE);
+	}
+
+	public static PrintableJsonObject toJson(StrategyFactory factory) {
+		return JsonbUtils.toJsonObject(factory, FactoryAdapter.INSTANCE);
+	}
+
+	public static StrategyFactory toFactory(String json) {
+		return JsonbUtils.fromJson(json, StrategyFactory.class, FactoryAdapter.INSTANCE);
 	}
 }
