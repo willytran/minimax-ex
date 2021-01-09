@@ -6,6 +6,7 @@ import static com.google.common.base.Preconditions.checkState;
 import java.util.LinkedList;
 import java.util.List;
 
+import com.google.common.base.MoreObjects;
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.ImmutableSet;
 import com.google.common.collect.Range;
@@ -122,7 +123,7 @@ public class ConstraintsOnWeights {
 
 	/**
 	 * Copy constructor.
-	 * 
+	 *
 	 * @param mp                     should come from another COW instance (to
 	 *                               guarantee that the structure conforms to
 	 *                               expectations).
@@ -274,5 +275,10 @@ public class ConstraintsOnWeights {
 			sb.append("\n");
 		}
 		return sb.toString();
+	}
+
+	@Override
+	public String toString() {
+		return MoreObjects.toStringHelper(this).add("Builder", builder).toString();
 	}
 }
