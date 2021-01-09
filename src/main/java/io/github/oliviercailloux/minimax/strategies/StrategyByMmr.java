@@ -28,11 +28,11 @@ import com.google.common.math.IntMath;
 
 import io.github.oliviercailloux.j_voting.Alternative;
 import io.github.oliviercailloux.j_voting.Voter;
-import io.github.oliviercailloux.minimax.elicitation.UpdateablePreferenceKnowledge;
 import io.github.oliviercailloux.minimax.elicitation.DelegatingPreferenceKnowledge;
 import io.github.oliviercailloux.minimax.elicitation.Question;
 import io.github.oliviercailloux.minimax.elicitation.QuestionType;
 import io.github.oliviercailloux.minimax.elicitation.QuestionVoter;
+import io.github.oliviercailloux.minimax.elicitation.UpdateablePreferenceKnowledge;
 import io.github.oliviercailloux.minimax.regret.PairwiseMaxRegret;
 import io.github.oliviercailloux.minimax.regret.RegretComputer;
 
@@ -206,8 +206,7 @@ public class StrategyByMmr implements Strategy {
 
 				final Alternative xStar = helper.drawFromStrictlyIncreasing(mmrs.keySet().asList(),
 						Comparator.naturalOrder());
-				final ImmutableSet<PairwiseMaxRegret> pmrs = mmrs.get(xStar).stream()
-						.collect(ImmutableSet.toImmutableSet());
+				final ImmutableSet<PairwiseMaxRegret> pmrs = mmrs.get(xStar);
 				final PairwiseMaxRegret pmr = helper.drawFromStrictlyIncreasing(pmrs.asList(),
 						PairwiseMaxRegret.BY_ALTERNATIVES);
 				final Alternative yBar = pmr.getY();
@@ -299,18 +298,20 @@ public class StrategyByMmr implements Strategy {
 	private QuestionVoter getQuestionAbout(Voter voter, EndpointPair<Alternative> incomparablePair) {
 		return QuestionVoter.given(voter, incomparablePair.nodeU(), incomparablePair.nodeV());
 	}
-	
+
 	private MmrLottery toLottery(Question question) {
 		final double yesMMR;
 		{
-			final DelegatingPreferenceKnowledge delegatingKnowledge = DelegatingPreferenceKnowledge.given(helper.getKnowledge(), question.getPositiveInformation());			
+			final DelegatingPreferenceKnowledge delegatingKnowledge = DelegatingPreferenceKnowledge
+					.given(helper.getKnowledge(), question.getPositiveInformation());
 			final RegretComputer rc = new RegretComputer(delegatingKnowledge);
 			yesMMR = rc.getMinimalMaxRegrets().getMinimalMaxRegretValue();
 		}
 
 		final double noMMR;
 		{
-			final DelegatingPreferenceKnowledge delegatingKnowledge = DelegatingPreferenceKnowledge.given(helper.getKnowledge(), question.getNegativeInformation());
+			final DelegatingPreferenceKnowledge delegatingKnowledge = DelegatingPreferenceKnowledge
+					.given(helper.getKnowledge(), question.getNegativeInformation());
 			final RegretComputer rc = new RegretComputer(delegatingKnowledge);
 			noMMR = rc.getMinimalMaxRegrets().getMinimalMaxRegretValue();
 		}
