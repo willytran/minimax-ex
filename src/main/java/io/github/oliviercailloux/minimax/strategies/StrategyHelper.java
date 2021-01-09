@@ -37,9 +37,9 @@ import io.github.oliviercailloux.j_voting.Voter;
 import io.github.oliviercailloux.jlp.elements.SumTerms;
 import io.github.oliviercailloux.minimax.elicitation.ConstraintsOnWeights;
 import io.github.oliviercailloux.minimax.elicitation.PSRWeights;
-import io.github.oliviercailloux.minimax.elicitation.UpdateablePreferenceKnowledge;
 import io.github.oliviercailloux.minimax.elicitation.QuestionCommittee;
 import io.github.oliviercailloux.minimax.elicitation.QuestionVoter;
+import io.github.oliviercailloux.minimax.elicitation.UpdateablePreferenceKnowledge;
 import io.github.oliviercailloux.minimax.regret.PairwiseMaxRegret;
 import io.github.oliviercailloux.minimax.regret.RegretComputer;
 import io.github.oliviercailloux.minimax.regret.Regrets;
@@ -247,6 +247,15 @@ public class StrategyHelper {
 		final Aprational avg = AprationalMath.sum(lambdaRange.lowerEndpoint(), lambdaRange.upperEndpoint())
 				.divide(new Apint(2));
 		return QuestionCommittee.given(avg, rank);
+	}
+
+	/**
+	 * @param m ≥ 3
+	 */
+	public QuestionCommittee getQuestionAboutWidestRange() {
+		final int maxWidthRank = IntStream.rangeClosed(1, getM() - 2).boxed()
+				.max(Comparator.comparing(this::getWidthOfLambdaRangeAtRank)).get();
+		return getQuestionAboutHalfRange(maxWidthRank);
 	}
 
 	public RegretComputer getRegretComputer() {
