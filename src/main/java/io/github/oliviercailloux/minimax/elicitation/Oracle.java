@@ -41,122 +41,124 @@ import io.github.oliviercailloux.minimax.experiment.json.WeightsAdapter;
  */
 @JsonbPropertyOrder({ "profile", "weights" })
 public class Oracle {
-	@SuppressWarnings("unused")
-	private static final Logger LOGGER = LoggerFactory.getLogger(Oracle.class);
+   @SuppressWarnings("unused")
+   private static final Logger LOGGER = LoggerFactory.getLogger(Oracle.class);
 
-	/**
-	 * @param profile is a list so that JsonB will keep read ordering. Should
-	 *                contain no duplicate.
-	 */
-	@JsonbCreator
-	public static Oracle build(@JsonbProperty("profile") List<VoterStrictPreference> profile,
-			@JsonbProperty("weights") PSRWeights weights) {
-		LOGGER.debug("Received profiles: {}, weights: {}.", profile, weights);
-		final ImmutableSet<VoterStrictPreference> profileSet = ImmutableSet.copyOf(profile);
-		checkArgument(profile.size() == profileSet.size());
-		return new Oracle(profileSet, weights);
-	}
+   /**
+    * @param profile is a list so that JsonB will keep read ordering. Should
+    * contain no duplicate.
+    */
+   @JsonbCreator
+   public static Oracle build(@JsonbProperty("profile") List<VoterStrictPreference> profile,
+         @JsonbProperty("weights") PSRWeights weights) {
+      LOGGER.debug("Received profiles: {}, weights: {}.", profile, weights);
+      final ImmutableSet<VoterStrictPreference> profileSet = ImmutableSet.copyOf(profile);
+      checkArgument(profile.size() == profileSet.size());
+      return new Oracle(profileSet, weights);
+   }
 
-	public static Oracle build(Map<Voter, VoterStrictPreference> profile, PSRWeights weights) {
-		checkArgument(profile.entrySet().stream().allMatch((e) -> e.getValue().getVoter().equals(e.getKey())));
-		return new Oracle(ImmutableSet.copyOf(profile.values()), weights);
-	}
+   public static Oracle build(Map<Voter, VoterStrictPreference> profile, PSRWeights weights) {
+      checkArgument(profile.entrySet().stream().allMatch((e) -> e.getValue().getVoter().equals(e.getKey())));
+      return new Oracle(ImmutableSet.copyOf(profile.values()), weights);
+   }
 
-	private final ImmutableMap<Voter, VoterStrictPreference> profile;
-	@JsonbTypeAdapter(WeightsAdapter.class)
-	private final PSRWeights weights;
-	@JsonbTransient
-	private final ImmutableSortedSet<Alternative> alternatives;
+   private final ImmutableMap<Voter, VoterStrictPreference> profile;
 
-	private Oracle(Set<VoterStrictPreference> profile, PSRWeights weights) {
-		checkArgument(profile.size() >= 1);
-		this.profile = profile.stream().collect(ImmutableMap.toImmutableMap(VoterStrictPreference::getVoter, p -> p));
-		this.weights = checkNotNull(weights);
+   @JsonbTypeAdapter(WeightsAdapter.class)
+   private final PSRWeights weights;
 
-		final ImmutableSet<Set<Alternative>> allAlternativeSets = profile.stream()
-				.map(VoterStrictPreference::getAlternatives).map(ImmutableSet::copyOf)
-				.collect(ImmutableSet.toImmutableSet());
-		checkArgument(allAlternativeSets.size() == 1, allAlternativeSets);
-		this.alternatives = ImmutableSortedSet.copyOf(Comparator.comparingInt(Alternative::getId),
-				Iterables.getOnlyElement(allAlternativeSets));
+   @JsonbTransient
+   private final ImmutableSortedSet<Alternative> alternatives;
 
-		final int nbAlts = alternatives.size();
-		checkArgument(weights.size() == nbAlts);
-	}
+   private Oracle(Set<VoterStrictPreference> profile, PSRWeights weights) {
+      checkArgument(profile.size() >= 1);
+      this.profile = profile.stream().collect(ImmutableMap.toImmutableMap(VoterStrictPreference::getVoter, p -> p));
+      this.weights = checkNotNull(weights);
 
-	public PreferenceInformation getPreferenceInformation(Question q) {
-		switch (q.getType()) {
-		case VOTER_QUESTION: {
-			QuestionVoter qv = q.asQuestionVoter();
-			Voter v = qv.getVoter();
-			checkArgument(profile.containsKey(v));
-			VoterStrictPreference vsp = profile.get(v);
-			return PreferenceInformation.aboutVoter(vsp.askQuestion(qv));
-		}
-		case COMMITTEE_QUESTION: {
-			QuestionCommittee qc = q.asQuestionCommittee();
-			return PreferenceInformation.aboutCommittee(weights.askQuestion(qc));
-		}
-		default:
-			throw new VerifyException();
-		}
-	}
+      final ImmutableSet<Set<Alternative>> allAlternativeSets = profile.stream()
+            .map(VoterStrictPreference::getAlternatives).map(ImmutableSet::copyOf)
+            .collect(ImmutableSet.toImmutableSet());
+      checkArgument(allAlternativeSets.size() == 1, allAlternativeSets);
+      this.alternatives = ImmutableSortedSet.copyOf(Comparator.comparingInt(Alternative::getId),
+            Iterables.getOnlyElement(allAlternativeSets));
 
-	public ImmutableMap<Voter, VoterStrictPreference> getProfile() {
-		return profile;
-	}
+      final int nbAlts = alternatives.size();
+      checkArgument(weights.size() == nbAlts);
+   }
 
-	/**
-	 * Returns the alternatives this profile is about. The size of the weights
-	 * vector is also the size of the returned set.
-	 *
-	 * @return the alternatives all voters’ preferences are about.
-	 */
-	public ImmutableSet<Alternative> getAlternatives() {
-		return alternatives;
-	}
+   public PreferenceInformation getPreferenceInformation(Question q) {
+      switch (q.getType()) {
+      case VOTER_QUESTION: {
+         QuestionVoter qv = q.asQuestionVoter();
+         Voter v = qv.getVoter();
+         checkArgument(profile.containsKey(v));
+         VoterStrictPreference vsp = profile.get(v);
+         return PreferenceInformation.aboutVoter(vsp.askQuestion(qv));
+      }
+      case COMMITTEE_QUESTION: {
+         QuestionCommittee qc = q.asQuestionCommittee();
+         return PreferenceInformation.aboutCommittee(weights.askQuestion(qc));
+      }
+      default:
+         throw new VerifyException();
+      }
+   }
 
-	public PSRWeights getWeights() {
-		return weights;
-	}
+   public ImmutableMap<Voter, VoterStrictPreference> getProfile() {
+      return profile;
+   }
 
-	@JsonbTransient
-	public int getM() {
-		return alternatives.size();
-	}
+   /**
+    * Returns the alternatives this profile is about. The size of the weights
+    * vector is also the size of the returned set.
+    *
+    * @return the alternatives all voters’ preferences are about.
+    */
+   public ImmutableSet<Alternative> getAlternatives() {
+      return alternatives;
+   }
 
-	@JsonbTransient
-	public int getN() {
-		return profile.size();
-	}
+   public PSRWeights getWeights() {
+      return weights;
+   }
 
-	public double getScore(Alternative x) {
-		final ImmutableCollection<VoterStrictPreference> preferences = profile.values();
-		return preferences.stream().mapToDouble(p -> weights.getWeightAtRank(p.getAlternativeRank(x))).sum();
-	}
+   @JsonbTransient
+   public int getM() {
+      return alternatives.size();
+   }
 
-	@JsonbTransient
-	public double getBestScore() {
-		return alternatives.stream().mapToDouble(this::getScore).max().getAsDouble();
-	}
+   @JsonbTransient
+   public int getN() {
+      return profile.size();
+   }
 
-	@Override
-	public boolean equals(Object o2) {
-		if (!(o2 instanceof Oracle)) {
-			return false;
-		}
+   public double getScore(Alternative x) {
+      final ImmutableCollection<VoterStrictPreference> preferences = profile.values();
+      return preferences.stream().mapToDouble(p -> weights.getWeightAtRank(p.getAlternativeRank(x))).sum();
+   }
 
-		final Oracle or2 = (Oracle) o2;
-		return profile.equals(or2.profile) && weights.equals(or2.weights);
-	}
+   @JsonbTransient
+   public double getBestScore() {
+      return alternatives.stream().mapToDouble(this::getScore).max().getAsDouble();
+   }
 
-	@Override
-	public int hashCode() {
-		return Objects.hash(profile, weights);
-	}
+   @Override
+   public boolean equals(Object o2) {
+      if (!(o2 instanceof Oracle)) {
+         return false;
+      }
 
-	@Override
-	public String toString() {
-		return MoreObjects.toStringHelper(this).add("profile", profile).add("weights", weights).toString();
-	}
+      final Oracle or2 = (Oracle) o2;
+      return profile.equals(or2.profile) && weights.equals(or2.weights);
+   }
+
+   @Override
+   public int hashCode() {
+      return Objects.hash(profile, weights);
+   }
+
+   @Override
+   public String toString() {
+      return MoreObjects.toStringHelper(this).add("profile", profile).add("weights", weights).toString();
+   }
 }

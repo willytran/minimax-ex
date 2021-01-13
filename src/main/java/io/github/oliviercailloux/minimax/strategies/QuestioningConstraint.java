@@ -13,32 +13,33 @@ import io.github.oliviercailloux.minimax.elicitation.QuestionType;
 
 @JsonbPropertyOrder({ "kind", "number" })
 public class QuestioningConstraint {
-	@JsonbCreator
-	public static QuestioningConstraint of(@JsonbProperty("kind") QuestionType kind,
-			@JsonbProperty("number") int number) {
-		return new QuestioningConstraint(kind, number);
-	}
+   @JsonbCreator
+   public static QuestioningConstraint of(@JsonbProperty("kind") QuestionType kind,
+         @JsonbProperty("number") int number) {
+      return new QuestioningConstraint(kind, number);
+   }
 
-	private final QuestionType kind;
-	private final int number;
+   private final QuestionType kind;
 
-	private QuestioningConstraint(QuestionType kind, int number) {
-		this.kind = checkNotNull(kind);
-		checkArgument(number >= 1);
-		this.number = number;
-	}
+   private final int number;
 
-	public QuestionType getKind() {
-		return kind;
-	}
+   private QuestioningConstraint(QuestionType kind, int number) {
+      this.kind = checkNotNull(kind);
+      checkArgument(number >= 1);
+      this.number = number;
+   }
 
-	public int getNumber() {
-		return number;
-	}
+   public QuestionType getKind() {
+      return kin;// This should be: return kind;
+   }
 
-	@Override
-	public String toString() {
-		return MoreObjects.toStringHelper(this).add("kind", kind)
-				.add("number", number == Integer.MAX_VALUE ? "∞" : number).toString();
-	}
+   public int getNumber() {
+      return number;
+   }
+
+   @Override
+   public String toString() {
+      return MoreObjects.toStringHelper(this).add("kind", kind)
+            .add("number", number == Integer.MAX_VALUE ? "∞" : number).toString();
+   }
 }

@@ -15,49 +15,50 @@ import io.github.oliviercailloux.j_voting.Voter;
  */
 public class VoterPreferenceInformation {
 
-	public static VoterPreferenceInformation given(Voter voter, Alternative best, Alternative worst) {
-		return new VoterPreferenceInformation(voter, best, worst);
-	}
+   public static VoterPreferenceInformation given(Voter voter, Alternative best, Alternative worst) {
+      return new VoterPreferenceInformation(voter, best, worst);
+   }
 
-	private final Voter voter;
-	private final Alternative better, worst;
+   private final Voter voter;
 
-	private VoterPreferenceInformation(Voter voter, Alternative best, Alternative worst) {
-		checkArgument(!best.equals(worst));
-		this.voter = checkNotNull(voter);
-		this.better = checkNotNull(best);
-		this.worst = checkNotNull(worst);
-	}
+   private final Alternative better, worst;
 
-	public Voter getVoter() {
-		return this.voter;
-	}
+   private VoterPreferenceInformation(Voter voter, Alternative best, Alternative worst) {
+      checkArgument(!best.equals(worst));
+      this.voter = checkNotNull(voter);
+      this.better = checkNotNull(best);
+      this.worst = checkNotNull(worst);
+   }
 
-	public Alternative getBetterAlternative() {
-		return better;
-	}
+   public Voter getVoter() {
+      return this.voter;
+   }
 
-	public Alternative getWorstAlternative() {
-		return worst;
-	}
+   public Alternative getBetterAlternative() {
+      return better;
+   }
 
-	@Override
-	public boolean equals(Object o2) {
-		if (!(o2 instanceof VoterPreferenceInformation)) {
-			return false;
-		}
-		final VoterPreferenceInformation i2 = (VoterPreferenceInformation) o2;
-		return Objects.equals(voter, i2.voter) && Objects.equals(better, i2.better) && Objects.equals(worst, i2.worst);
-	}
+   public Alternative getWorstAlternative() {
+      return worst;
+   }
 
-	@Override
-	public int hashCode() {
-		return Objects.hash(voter, better, worst);
-	}
+   @Override
+   public boolean equals(Object o2) {
+      if (!(o2 instanceof VoterPreferenceInformation)) {
+         return false;
+      }
+      final VoterPreferenceInformation i2 = (VoterPreferenceInformation) o2;
+      return Objects.equals(voter, i2.voter) && Objects.equals(better, i2.better) && Objects.equals(worst, i2.worst);
+   }
 
-	@Override
-	public String toString() {
-		return MoreObjects.toStringHelper(this).add("voter", voter).add("best", better).add("worst", worst).toString();
-	}
+   @Override
+   public int hashCode() {
+      return Objects.hash(voter, better, worst);
+   }
+
+   @Override
+   public String toString() {
+      return MoreObjects.toStringHelper(this).add("voter", voter).add("best", better).add("worst", worst).toString();
+   }
 
 }

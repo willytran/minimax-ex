@@ -80,205 +80,207 @@ import io.github.oliviercailloux.jlp.solve.Solver;
  *
  */
 public class ConstraintsOnWeights {
-	/**
-	 * TODO Its value must be at least the tolerance that the solver admits.
-	 */
-	public static final double EPSILON = 1e-6;
+   /**
+    * TODO Its value must be at least the tolerance that the solver admits.
+    */
+   public static final double EPSILON = 1e-6;
 
-	/**
-	 * @param m at least one: the number of ranks, or equivalently, the number of
-	 *          alternatives.
-	 */
-	public static ConstraintsOnWeights withRankNumber(int m) {
-		return new ConstraintsOnWeights(m);
-	}
+   /**
+    * @param m at least one: the number of ranks, or equivalently, the number of
+    * alternatives.
+    */
+   public static ConstraintsOnWeights withRankNumber(int m) {
+      return new ConstraintsOnWeights(m);
+   }
 
-	public static ConstraintsOnWeights copyOf(ConstraintsOnWeights cw) {
-		ConstraintsOnWeights c = new ConstraintsOnWeights(cw.builder, cw.convexityConstraintSet);
-		return c;
-	}
+   public static ConstraintsOnWeights copyOf(ConstraintsOnWeights cw) {
+      ConstraintsOnWeights c = new ConstraintsOnWeights(cw.builder, cw.convexityConstraintSet);
+      return c;
+   }
 
-	private MPBuilder builder;
-	private final Solver solver;
-	private Solution lastSolution;
-	private boolean convexityConstraintSet;
+   private MPBuilder builder;
 
-	private ConstraintsOnWeights(int m) {
-		checkArgument(m >= 1);
-		builder = MP.builder();
-		builder.addVariable(
-				Variable.of("w", VariableDomain.REAL_DOMAIN, RangeOfDouble.closed(1d, 1d), ImmutableSet.of(1)));
-		for (int rank = 2; rank < m; ++rank) {
-			builder.addVariable(
-					Variable.of("w", VariableDomain.REAL_DOMAIN, RangeOfDouble.ZERO_ONE_RANGE, ImmutableSet.of(rank)));
-		}
-		if (m >= 2) {
-			builder.addVariable(
-					Variable.of("w", VariableDomain.REAL_DOMAIN, RangeOfDouble.closed(0d, 0d), ImmutableSet.of(m)));
-		}
-		solver = new OrToolsSolver();
-		lastSolution = null;
-		convexityConstraintSet = false;
-	}
+   private final Solver solver;
 
-	/**
-	 * Copy constructor.
-	 *
-	 * @param mp                     should come from another COW instance (to
-	 *                               guarantee that the structure conforms to
-	 *                               expectations).
-	 * @param convexityConstraintSet should come from the same instance (to
-	 *                               guarantee coherence).
-	 */
-	private ConstraintsOnWeights(MPBuilder mp, boolean convexityConstraintSet) {
-		builder = MPBuilder.copyOf(mp);
-		solver = new OrToolsSolver();
-		lastSolution = null;
-		this.convexityConstraintSet = convexityConstraintSet;
-	}
+   private Solution lastSolution;
 
-	/**
-	 * May be called only once.
-	 */
-	public void setConvexityConstraint() {
-		checkState(!convexityConstraintSet);
-		for (int rank = 1; rank <= getM() - 2; ++rank) {
-			builder.addConstraint(Constraint.of("Convexity rank " + rank,
-					SumTerms.of(1d, getVariable(rank), -2d, getVariable(rank + 1), 1d, getVariable(rank + 2)),
-					ComparisonOperator.GE, EPSILON));
-		}
-		convexityConstraintSet = true;
-	}
+   private boolean convexityConstraintSet;
 
-	/**
-	 * Adds the constraint: (w_i − w_{i+1}) OP λ (w_{i+1} − w_{i+2}).
-	 *
-	 * @param i      1 ≤ i ≤ m-2.
-	 * @param op     the operator.
-	 * @param lambda a finite double.
-	 */
-	void addConstraint(int i, ComparisonOperator op, double lambda) {
-		checkArgument(i >= 1);
-		checkArgument(i <= getM() - 2);
-		checkArgument(Double.isFinite(lambda));
+   private ConstraintsOnWeights(int m) {
+      checkArgument(m >= 1);
+      builder = MP.builder();
+      builder.addVariable(
+            Variable.of("w", VariableDomain.REAL_DOMAIN, RangeOfDouble.closed(1d, 1d), ImmutableSet.of(1)));
+      for (int rank = 2; rank < m; ++rank) {
+         builder.addVariable(
+               Variable.of("w", VariableDomain.REAL_DOMAIN, RangeOfDouble.ZERO_ONE_RANGE, ImmutableSet.of(rank)));
+      }
+      if (m >= 2) {
+         builder.addVariable(
+               Variable.of("w", VariableDomain.REAL_DOMAIN, RangeOfDouble.closed(0d, 0d), ImmutableSet.of(m)));
+      }
+      solver = new OrToolsSolver();
+      lastSolution = null;
+      convexityConstraintSet = false;
+   }
 
-		final SumTermsBuilder sumBuilder = SumTerms.builder();
-		sumBuilder.addTerm(1, getVariable(i));
-		sumBuilder.addTerm(-lambda - 1d, getVariable(i + 1));
-		sumBuilder.addTerm(lambda, getVariable(i + 2));
-		final Constraint cst = Constraint.of(sumBuilder.build(), op, 0d);
-		builder.addConstraint(cst);
-	}
+   /**
+    * Copy constructor.
+    *
+    * @param mp should come from another COW instance (to guarantee that the
+    * structure conforms to expectations).
+    * @param convexityConstraintSet should come from the same instance (to
+    * guarantee coherence).
+    */
+   private ConstraintsOnWeights(MPBuilder mp, boolean convexityConstraintSet) {
+      builder = MPBuilder.copyOf(mp);
+      solver = new OrToolsSolver();
+      lastSolution = null;
+      this.convexityConstraintSet = convexityConstraintSet;
+   }
 
-	/**
-	 * @return at least one.
-	 */
-	public int getM() {
-		return builder.getVariables().size();
-	}
+   /**
+    * May be called only once.
+    */
+   public void setConvexityConstraint() {
+      checkState(!convexityConstraintSet);
+      for (int rank = 1; rank <= getM() - 2; ++rank) {
+         builder.addConstraint(Constraint.of("Convexity rank " + rank,
+               SumTerms.of(1d, getVariable(rank), -2d, getVariable(rank + 1), 1d, getVariable(rank + 2)),
+               ComparisonOperator.GE, EPSILON));
+      }
+      convexityConstraintSet = true;
+   }
 
-	public Range<Double> getWeightRange(int rank) {
-		checkArgument(rank >= 1);
-		checkArgument(rank <= getM());
+   /**
+    * Adds the constraint: (w_i − w_{i+1}) OP λ (w_{i+1} − w_{i+2}).
+    *
+    * @param i 1 ≤ i ≤ m-2.
+    * @param op the operator.
+    * @param lambda a finite double.
+    */
+   void addConstraint(int i, ComparisonOperator op, double lambda) {
+      checkArgument(i >= 1);
+      checkArgument(i <= getM() - 2);
+      checkArgument(Double.isFinite(lambda));
 
-		return boundObjective(SumTerms.of(1d, getVariable(rank)));
-	}
+      final SumTermsBuilder sumBuilder = SumTerms.builder();
+      sumBuilder.addTerm(1, getVariable(i));
+      sumBuilder.addTerm(-lambda - 1d, getVariable(i + 1));
+      sumBuilder.addTerm(lambda, getVariable(i + 2));
+      final Constraint cst = Constraint.of(sumBuilder.build(), op, 0d);
+      builder.addConstraint(cst);
+   }
 
-	public Term getTerm(double coefficient, int rank) {
-		return Term.of(coefficient, getVariable(rank));
-	}
+   /**
+    * @return at least one.
+    */
+   public int getM() {
+      return builder.getVariables().size();
+   }
 
-	public double maximize(SumTerms sum) {
-		final Objective obj = Objective.max(sum);
-		return optimize(obj);
-	}
+   public Range<Double> getWeightRange(int rank) {
+      checkArgument(rank >= 1);
+      checkArgument(rank <= getM());
 
-	public double minimize(SumTerms sum) {
-		final Objective obj;
-		if (sum.size() == 0) {
-			obj = Objective.ZERO;
-		} else {
-			obj = Objective.min(sum);
-		}
-		return optimize(obj);
-	}
+      return boundObjective(SumTerms.of(1d, getVariable(rank)));
+   }
 
-	public PSRWeights getLastSolution() {
-		/** PSRWeights only accept convex weights. */
-		checkState(convexityConstraintSet);
-		final List<Double> weights = new LinkedList<>();
-		for (int r = 1; r <= getM(); ++r) {
-			final double value = lastSolution.getValue(getVariable(r));
-			weights.add(value);
-		}
-		return PSRWeights.given(weights);
-	}
+   public Term getTerm(double coefficient, int rank) {
+      return Term.of(coefficient, getVariable(rank));
+   }
 
-	private Variable getVariable(int rank) {
-		checkArgument(rank >= 1);
-		checkArgument(rank <= getM());
-		return builder.getVariable(getVariableDescription(rank));
-	}
+   public double maximize(SumTerms sum) {
+      final Objective obj = Objective.max(sum);
+      return optimize(obj);
+   }
 
-	private String getVariableDescription(int rank) {
-		return Variable.getDefaultDescription("w", ImmutableList.of(rank));
-	}
+   public double minimize(SumTerms sum) {
+      final Objective obj;
+      if (sum.size() == 0) {
+         obj = Objective.ZERO;
+      } else {
+         obj = Objective.min(sum);
+      }
+      return optimize(obj);
+   }
 
-	private double optimize(Objective obj) {
-		builder.setObjective(obj);
-		final Result result = solver.solve(builder);
-		checkArgument(result.getResultStatus().equals(ResultStatus.OPTIMAL));
-		lastSolution = result.getSolution().get();
-		return lastSolution.getObjectiveValue();
-	}
+   public PSRWeights getLastSolution() {
+      /** PSRWeights only accept convex weights. */
+      checkState(convexityConstraintSet);
+      final List<Double> weights = new LinkedList<>();
+      for (int r = 1; r <= getM(); ++r) {
+         final double value = lastSolution.getValue(getVariable(r));
+         weights.add(value);
+      }
+      return PSRWeights.given(weights);
+   }
 
-	private double bound(IMP mp) {
-		final double bound;
+   private Variable getVariable(int rank) {
+      checkArgument(rank >= 1);
+      checkArgument(rank <= getM());
+      return builder.getVariable(getVariableDescription(rank));
+   }
 
-		final Result result = solver.solve(mp);
-		switch (result.getResultStatus()) {
-		case INFEASIBLE:
-		case MEMORY_LIMIT_REACHED:
-		case TIME_LIMIT_REACHED:
-			throw new IllegalStateException();
-		case UNBOUNDED:
-			if (mp.getObjective().getSense() == Sense.MAX) {
-				bound = Double.POSITIVE_INFINITY;
-			} else {
-				bound = Double.NEGATIVE_INFINITY;
-			}
-			break;
-		case OPTIMAL:
-			bound = result.getSolution().get().getObjectiveValue();
-			break;
-		default:
-			throw new AssertionError();
-		}
-		return bound;
-	}
+   private String getVariableDescription(int rank) {
+      return Variable.getDefaultDescription("w", ImmutableList.of(rank));
+   }
 
-	private Range<Double> boundObjective(SumTerms objectiveFunction) {
-		builder.setObjective(Objective.min(objectiveFunction));
-		final double lBound = bound(builder);
+   private double optimize(Objective obj) {
+      builder.setObjective(obj);
+      final Result result = solver.solve(builder);
+      checkArgument(result.getResultStatus().equals(ResultStatus.OPTIMAL));
+      lastSolution = result.getSolution().get();
+      return lastSolution.getObjectiveValue();
+   }
 
-		builder.setObjective(Objective.max(objectiveFunction));
-		final double uBound = bound(builder);
+   private double bound(IMP mp) {
+      final double bound;
 
-		return RangeOfDouble.using(lBound, uBound);
-	}
+      final Result result = solver.solve(mp);
+      switch (result.getResultStatus()) {
+      case INFEASIBLE:
+      case MEMORY_LIMIT_REACHED:
+      case TIME_LIMIT_REACHED:
+         throw new IllegalStateException();
+      case UNBOUNDED:
+         if (mp.getObjective().getSense() == Sense.MAX) {
+            bound = Double.POSITIVE_INFINITY;
+         } else {
+            bound = Double.NEGATIVE_INFINITY;
+         }
+         break;
+      case OPTIMAL:
+         bound = result.getSolution().get().getObjectiveValue();
+         break;
+      default:
+         throw new AssertionError();
+      }
+      return bound;
+   }
 
-	public String rangesAsString() {
-		StringBuilder sb = new StringBuilder();
-		for (int i = 1; i <= builder.getVariables().size(); i++) {
-			sb.append("Rank " + i + " ");
-			sb.append(getWeightRange(i).toString());
-			sb.append("\n");
-		}
-		return sb.toString();
-	}
+   private Range<Double> boundObjective(SumTerms objectiveFunction) {
+      builder.setObjective(Objective.min(objectiveFunction));
+      final double lBound = bound(builder);
 
-	@Override
-	public String toString() {
-		return MoreObjects.toStringHelper(this).add("Builder", builder).toString();
-	}
+      builder.setObjective(Objective.max(objectiveFunction));
+      final double uBound = bound(builder);
+
+      return RangeOfDouble.using(lBound, uBound);
+   }
+
+   public String rangesAsString() {
+      StringBuilder sb = new StringBuilder();
+      for (int i = 1; i <= builder.getVariables().size(); i++) {
+         sb.append("Rank " + i + " ");
+         sb.append(getWeightRange(i).toString());
+         sb.append("\n");
+      }
+      return sb.toString();
+   }
+
+   @Override
+   public String toString() {
+      return MoreObjects.toStringHelper(this).add("Builder", builder).toString();
+   }
 }

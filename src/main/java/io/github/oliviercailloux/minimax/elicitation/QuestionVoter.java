@@ -34,83 +34,84 @@ import io.github.oliviercailloux.minimax.experiment.json.VoterAdapter;
 @JsonbPropertyOrder({ "voter", "alternatives" })
 public class QuestionVoter implements Comparable<QuestionVoter> {
 
-	@JsonbCreator
-	public static QuestionVoter given(@JsonbProperty("voter") Voter voter,
-			@JsonbProperty("alternatives") Set<Alternative> alternatives) {
-		checkArgument(alternatives.size() == 2);
-		final Iterator<Alternative> iterator = alternatives.iterator();
-		return new QuestionVoter(voter, iterator.next(), iterator.next());
-	}
+   @JsonbCreator
+   public static QuestionVoter given(@JsonbProperty("voter") Voter voter,
+         @JsonbProperty("alternatives") Set<Alternative> alternatives) {
+      checkArgument(alternatives.size() == 2);
+      final Iterator<Alternative> iterator = alternatives.iterator();
+      return new QuestionVoter(voter, iterator.next(), iterator.next());
+   }
 
-	public static QuestionVoter given(Voter voter, Alternative a, Alternative b) {
-		return new QuestionVoter(voter, a, b);
-	}
+   public static QuestionVoter given(Voter voter, Alternative a, Alternative b) {
+      return new QuestionVoter(voter, a, b);
+   }
 
-	public static final Comparator<QuestionVoter> BY_VOTER_THEN_ALTERNATIVES = Comparator
-			.comparing(QuestionVoter::getVoter).thenComparing(QuestionVoter::getFirstAlternative)
-			.thenComparing(QuestionVoter::getSecondAlternative);
+   public static final Comparator<QuestionVoter> BY_VOTER_THEN_ALTERNATIVES = Comparator
+         .comparing(QuestionVoter::getVoter).thenComparing(QuestionVoter::getFirstAlternative)
+         .thenComparing(QuestionVoter::getSecondAlternative);
 
-	@JsonbTypeAdapter(VoterAdapter.class)
-	private final Voter voter;
-	private final Alternative a, b;
+   @JsonbTypeAdapter(VoterAdapter.class)
+   private final Voter voter;
 
-	private QuestionVoter(Voter voter, Alternative a, Alternative b) {
-		checkArgument(!a.equals(b));
-		this.voter = checkNotNull(voter);
-		this.a = checkNotNull(a);
-		this.b = checkNotNull(b);
-	}
+   private final Alternative a, b;
 
-	public Voter getVoter() {
-		return this.voter;
-	}
+   private QuestionVoter(Voter voter, Alternative a, Alternative b) {
+      checkArgument(!a.equals(b));
+      this.voter = checkNotNull(voter);
+      this.a = checkNotNull(a);
+      this.b = checkNotNull(b);
+   }
 
-	public ImmutableSet<Alternative> getAlternatives() {
-		return ImmutableSortedSet.orderedBy(Comparator.comparing(Alternative::getId)).add(a, b).build();
-	}
+   public Voter getVoter() {
+      return this.voter;
+   }
 
-	@JsonbTransient
-	public Alternative getFirstAlternative() {
-		return a;
-	}
+   public ImmutableSet<Alternative> getAlternatives() {
+      return ImmutableSortedSet.orderedBy(Comparator.comparing(Alternative::getId)).add(a, b).build();
+   }
 
-	@JsonbTransient
-	public Alternative getSecondAlternative() {
-		return b;
-	}
+   @JsonbTransient
+   public Alternative getFirstAlternative() {
+      return a;
+   }
 
-	@JsonbTransient
-	public VoterPreferenceInformation getPositiveInformation() {
-		return VoterPreferenceInformation.given(voter, a, b);
-	}
+   @JsonbTransient
+   public Alternative getSecondAlternative() {
+      return b;
+   }
 
-	@JsonbTransient
-	public VoterPreferenceInformation getNegativeInformation() {
-		return VoterPreferenceInformation.given(voter, b, a);
-	}
+   @JsonbTransient
+   public VoterPreferenceInformation getPositiveInformation() {
+      return VoterPreferenceInformation.given(voter, a, b);
+   }
 
-	@Override
-	public int compareTo(QuestionVoter q2) {
-		return BY_VOTER_THEN_ALTERNATIVES.compare(this, q2);
-	}
+   @JsonbTransient
+   public VoterPreferenceInformation getNegativeInformation() {
+      return VoterPreferenceInformation.given(voter, b, a);
+   }
 
-	@Override
-	public boolean equals(Object o2) {
-		if (!(o2 instanceof QuestionVoter)) {
-			return false;
-		}
-		final QuestionVoter q2 = (QuestionVoter) o2;
-		return Objects.equals(voter, q2.voter) && Objects.equals(getAlternatives(), q2.getAlternatives());
-	}
+   @Override
+   public int compareTo(QuestionVoter q2) {
+      return BY_VOTER_THEN_ALTERNATIVES.compare(this, q2);
+   }
 
-	@Override
-	public int hashCode() {
-		return Objects.hash(voter, getAlternatives());
-	}
+   @Override
+   public boolean equals(Object o2) {
+      if (!(o2 instanceof QuestionVoter)) {
+         return false;
+      }
+      final QuestionVoter q2 = (QuestionVoter) o2;
+      return Objects.equals(voter, q2.voter) && Objects.equals(getAlternatives(), q2.getAlternatives());
+   }
 
-	@Override
-	public String toString() {
-		return MoreObjects.toStringHelper(this).add("voter", voter).add("alternatives", getAlternatives()).toString();
-	}
+   @Override
+   public int hashCode() {
+      return Objects.hash(voter, getAlternatives());
+   }
+
+   @Override
+   public String toString() {
+      return MoreObjects.toStringHelper(this).add("voter", voter).add("alternatives", getAlternatives()).toString();
+   }
 
 }
