@@ -15,18 +15,18 @@ import io.github.oliviercailloux.minimax.elicitation.Question;
  */
 public interface Strategy {
 
-    /**
-     * @param knowledge must have at least two alternatives
-     */
-    public void setKnowledge(UpdateablePreferenceKnowledge knowledge);
+	/**
+	 * @param knowledge must have at least two alternatives
+	 */
+	public void setKnowledge(UpdateablePreferenceKnowledge knowledge);
 
-    /**
-     * Returns the next question that this strategy thinks is best asking. If the
-     * profile is complete the strategy refines the scoring vector.
-     *
-     * @return a question.
-     * @throws IllegalStateException if there are exactly two alternatives and the
-     *                               profile is complete.
-     */
-    public Question nextQuestion();
+	/**
+	 * Returns the next question that this strategy thinks is best asking. If the
+	 * profile is complete the strategy refines the scoring vector.
+	 *
+	 * @return a question.
+	 * @throws IllegalStateException if there are exactly two alternatives and the
+	 *                               profile is complete.
+	 */
+	public Question nextQuestion();
 }

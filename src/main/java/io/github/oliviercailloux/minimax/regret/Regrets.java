@@ -60,143 +60,143 @@ import io.github.oliviercailloux.minimax.elicitation.ConstraintsOnWeights;
  *
  */
 public class Regrets {
-    @SuppressWarnings("unused")
-    private static final Logger LOGGER = LoggerFactory.getLogger(Regrets.class);
+	@SuppressWarnings("unused")
+	private static final Logger LOGGER = LoggerFactory.getLogger(Regrets.class);
 
-    public static Regrets given(SetMultimap<Alternative, PairwiseMaxRegret> regrets) {
-	return new Regrets(regrets);
-    }
-
-    public static Regrets given(Map<Alternative, ImmutableSet<PairwiseMaxRegret>> regrets) {
-	return given(regrets.entrySet().stream().collect(
-		ImmutableSetMultimap.flatteningToImmutableSetMultimap(Entry::getKey, (e) -> e.getValue().stream())));
-    }
-
-    private final ImmutableSetMultimap<Alternative, PairwiseMaxRegret> regrets;
-
-    /**
-     * For each alternative x, the pairwise max regrets concerning x, indexed by the
-     * level of the regret, iterating from lowest to highest regret.
-     */
-    private ImmutableMap<Alternative, SetMultimap<Double, PairwiseMaxRegret>> regretsSorted;
-
-    private double value0;
-
-    private Regrets(SetMultimap<Alternative, PairwiseMaxRegret> regrets) {
-	this.regrets = ImmutableSetMultimap.copyOf(regrets);
-	checkArgument(!regrets.isEmpty());
-	checkArgument(regrets.entries().stream().allMatch((e) -> e.getValue().getX().equals(e.getKey())));
-	regretsSorted = null;
-	value0 = Double.NaN;
-    }
-
-    public ImmutableSetMultimap<Alternative, PairwiseMaxRegret> asMultimap() {
-	return regrets;
-    }
-
-    private void initSorted() {
-	if (regretsSorted != null) {
-	    return;
+	public static Regrets given(SetMultimap<Alternative, PairwiseMaxRegret> regrets) {
+		return new Regrets(regrets);
 	}
 
-	@SuppressWarnings("rawtypes")
-	final SetMultimapBuilder<Comparable, Object> builder = MultimapBuilder.treeKeys().linkedHashSetValues();
-
-	regretsSorted = regrets.asMap().entrySet().stream()
-		.collect(ImmutableMap.toImmutableMap(Entry::getKey, (e) -> e.getValue().stream().collect(
-			Multimaps.toMultimap(PairwiseMaxRegret::getPmrValue, Function.identity(), builder::build))));
-    }
-
-    private ImmutableSortedMap<Double, ImmutableSet<PairwiseMaxRegret>> getRegretsSorted(
-	    ImmutableSetMultimap<Double, PairwiseMaxRegret> e) {
-	return Multimaps.asMap(e).entrySet().stream().collect(ImmutableSortedMap.toImmutableSortedMap(
-		Comparator.naturalOrder(), Entry::getKey, (e2) -> ImmutableSet.copyOf(e2.getValue())));
-    }
-
-    private SortedMap<Double, Set<PairwiseMaxRegret>> getRegretsSorted(Alternative x) {
-	initSorted();
-	return (SortedMap<Double, Set<PairwiseMaxRegret>>) Multimaps.asMap(regretsSorted.get(x));
-    }
-
-    private double getMaxRegret(Alternative x) {
-	return getRegretsSorted(x).lastKey();
-    }
-
-    /**
-     * @return for each alternative x, the pairwise max regrets concerning x,
-     *         indexed by the level of the regret, iterating from lowest to highest
-     *         regret.
-     *
-     */
-    public ImmutableMap<Alternative, SortedMap<Double, Set<PairwiseMaxRegret>>> getRegretsSorted() {
-	return regrets.keySet().stream()
-		.collect(ImmutableMap.toImmutableMap(Function.identity(), this::getRegretsSorted));
-    }
-
-    /**
-     * @return min_x {max {PMR(x, …)}}.
-     */
-    public double getMinimalMaxRegretValue() {
-	return getMinimalMaxRegretValue(0d);
-    }
-
-    /**
-     * Define m = min_x {max {PMR(x, …)}}. If epsilon = 0d, returns m.
-     *
-     * @return max_x {max {PMR(x, …) | PMR(x, …) ≤ m + epsilon}}.
-     */
-    public double getMinimalMaxRegretValue(double epsilon) {
-	checkArgument(epsilon >= 0d);
-	checkArgument(Double.isFinite(epsilon));
-	if (epsilon == 0d && !Double.isNaN(value0)) {
-	    return value0;
+	public static Regrets given(Map<Alternative, ImmutableSet<PairwiseMaxRegret>> regrets) {
+		return given(regrets.entrySet().stream().collect(
+				ImmutableSetMultimap.flatteningToImmutableSetMultimap(Entry::getKey, (e) -> e.getValue().stream())));
 	}
 
-	final double m = regrets.keySet().stream().map(this::getMaxRegret).min(Comparator.naturalOrder()).get();
-	final double mIncreased = regrets.keySet().stream().map(this::getMaxRegret).filter((v) -> v <= m + epsilon)
-		.max(Comparator.naturalOrder()).get();
-	verify(regrets.keySet().stream().map(this::getMaxRegret)
-		.allMatch((v) -> v <= mIncreased || v >= mIncreased + epsilon),
-		"Using an epsilon for considering regret values as equal, but some are separated by more than epsilon but ≤ 2 epsilon. "
-			+ regretsSorted.values());
+	private final ImmutableSetMultimap<Alternative, PairwiseMaxRegret> regrets;
 
-	if (epsilon == 0d) {
-	    verify(m == mIncreased);
-	    value0 = m;
+	/**
+	 * For each alternative x, the pairwise max regrets concerning x, indexed by the
+	 * level of the regret, iterating from lowest to highest regret.
+	 */
+	private ImmutableMap<Alternative, SetMultimap<Double, PairwiseMaxRegret>> regretsSorted;
+
+	private double value0;
+
+	private Regrets(SetMultimap<Alternative, PairwiseMaxRegret> regrets) {
+		this.regrets = ImmutableSetMultimap.copyOf(regrets);
+		checkArgument(!regrets.isEmpty());
+		checkArgument(regrets.entries().stream().allMatch((e) -> e.getValue().getX().equals(e.getKey())));
+		regretsSorted = null;
+		value0 = Double.NaN;
 	}
-	return mIncreased;
-    }
 
-    /**
-     * @return a non-empty map whose key set contains each alternative whose max
-     *         regret is {@link #getMinimalMaxRegretValue()}, and for each such
-     *         alternative x, the non-empty set of PMRs(x, …) whose regret value is
-     *         {@link #getMinimalMaxRegretValue()}.
-     */
-    public Regrets getMinimalMaxRegrets() {
-	final ImmutableSetMultimap<Alternative, PairwiseMaxRegret> minimalMaxRegrets = getMinimalMaxRegrets(0d);
-	verify(minimalMaxRegrets.values().stream().map(PairwiseMaxRegret::getPmrValue).distinct().count() == 1);
-	return Regrets.given(minimalMaxRegrets);
-    }
+	public ImmutableSetMultimap<Alternative, PairwiseMaxRegret> asMultimap() {
+		return regrets;
+	}
 
-    /**
-     * @param epsilon ≥ 0d.
-     * @return a non-empty map whose key set contains each alternative whose max
-     *         regret is ≤ {@link #getMinimalMaxRegretValue(epsilon)}, and for each
-     *         such alternative x, the non-empty set of PMRs(x, …) whose regret
-     *         value is in [{@link #getMinimalMaxRegretValue(epsilon)} - epsilon,
-     *         {@link #getMinimalMaxRegretValue(epsilon)}].
-     */
-    public ImmutableSetMultimap<Alternative, PairwiseMaxRegret> getMinimalMaxRegrets(double epsilon) {
-	final double value = getMinimalMaxRegretValue(epsilon);
-	return regrets.keySet().stream().filter((x) -> getMaxRegret(x) <= value)
-		.collect(ImmutableSetMultimap.flatteningToImmutableSetMultimap(Function.identity(),
-			x -> getRegretsSorted(x).tailMap(value - epsilon).values().stream().flatMap(Set::stream)));
-    }
+	private void initSorted() {
+		if (regretsSorted != null) {
+			return;
+		}
 
-    @Override
-    public String toString() {
-	initSorted();
-	return MoreObjects.toStringHelper(this).addValue(regretsSorted).toString();
-    }
+		@SuppressWarnings("rawtypes")
+		final SetMultimapBuilder<Comparable, Object> builder = MultimapBuilder.treeKeys().linkedHashSetValues();
+
+		regretsSorted = regrets.asMap().entrySet().stream()
+				.collect(ImmutableMap.toImmutableMap(Entry::getKey, (e) -> e.getValue().stream().collect(
+						Multimaps.toMultimap(PairwiseMaxRegret::getPmrValue, Function.identity(), builder::build))));
+	}
+
+	private ImmutableSortedMap<Double, ImmutableSet<PairwiseMaxRegret>> getRegretsSorted(
+			ImmutableSetMultimap<Double, PairwiseMaxRegret> e) {
+		return Multimaps.asMap(e).entrySet().stream().collect(ImmutableSortedMap.toImmutableSortedMap(
+				Comparator.naturalOrder(), Entry::getKey, (e2) -> ImmutableSet.copyOf(e2.getValue())));
+	}
+
+	private SortedMap<Double, Set<PairwiseMaxRegret>> getRegretsSorted(Alternative x) {
+		initSorted();
+		return (SortedMap<Double, Set<PairwiseMaxRegret>>) Multimaps.asMap(regretsSorted.get(x));
+	}
+
+	private double getMaxRegret(Alternative x) {
+		return getRegretsSorted(x).lastKey();
+	}
+
+	/**
+	 * @return for each alternative x, the pairwise max regrets concerning x,
+	 *         indexed by the level of the regret, iterating from lowest to highest
+	 *         regret.
+	 *
+	 */
+	public ImmutableMap<Alternative, SortedMap<Double, Set<PairwiseMaxRegret>>> getRegretsSorted() {
+		return regrets.keySet().stream()
+				.collect(ImmutableMap.toImmutableMap(Function.identity(), this::getRegretsSorted));
+	}
+
+	/**
+	 * @return min_x {max {PMR(x, …)}}.
+	 */
+	public double getMinimalMaxRegretValue() {
+		return getMinimalMaxRegretValue(0d);
+	}
+
+	/**
+	 * Define m = min_x {max {PMR(x, …)}}. If epsilon = 0d, returns m.
+	 *
+	 * @return max_x {max {PMR(x, …) | PMR(x, …) ≤ m + epsilon}}.
+	 */
+	public double getMinimalMaxRegretValue(double epsilon) {
+		checkArgument(epsilon >= 0d);
+		checkArgument(Double.isFinite(epsilon));
+		if (epsilon == 0d && !Double.isNaN(value0)) {
+			return value0;
+		}
+
+		final double m = regrets.keySet().stream().map(this::getMaxRegret).min(Comparator.naturalOrder()).get();
+		final double mIncreased = regrets.keySet().stream().map(this::getMaxRegret).filter((v) -> v <= m + epsilon)
+				.max(Comparator.naturalOrder()).get();
+		verify(regrets.keySet().stream().map(this::getMaxRegret)
+				.allMatch((v) -> v <= mIncreased || v >= mIncreased + epsilon),
+				"Using an epsilon for considering regret values as equal, but some are separated by more than epsilon but ≤ 2 epsilon. "
+						+ regretsSorted.values());
+
+		if (epsilon == 0d) {
+			verify(m == mIncreased);
+			value0 = m;
+		}
+		return mIncreased;
+	}
+
+	/**
+	 * @return a non-empty map whose key set contains each alternative whose max
+	 *         regret is {@link #getMinimalMaxRegretValue()}, and for each such
+	 *         alternative x, the non-empty set of PMRs(x, …) whose regret value is
+	 *         {@link #getMinimalMaxRegretValue()}.
+	 */
+	public Regrets getMinimalMaxRegrets() {
+		final ImmutableSetMultimap<Alternative, PairwiseMaxRegret> minimalMaxRegrets = getMinimalMaxRegrets(0d);
+		verify(minimalMaxRegrets.values().stream().map(PairwiseMaxRegret::getPmrValue).distinct().count() == 1);
+		return Regrets.given(minimalMaxRegrets);
+	}
+
+	/**
+	 * @param epsilon ≥ 0d.
+	 * @return a non-empty map whose key set contains each alternative whose max
+	 *         regret is ≤ {@link #getMinimalMaxRegretValue(epsilon)}, and for each
+	 *         such alternative x, the non-empty set of PMRs(x, …) whose regret
+	 *         value is in [{@link #getMinimalMaxRegretValue(epsilon)} - epsilon,
+	 *         {@link #getMinimalMaxRegretValue(epsilon)}].
+	 */
+	public ImmutableSetMultimap<Alternative, PairwiseMaxRegret> getMinimalMaxRegrets(double epsilon) {
+		final double value = getMinimalMaxRegretValue(epsilon);
+		return regrets.keySet().stream().filter((x) -> getMaxRegret(x) <= value)
+				.collect(ImmutableSetMultimap.flatteningToImmutableSetMultimap(Function.identity(),
+						x -> getRegretsSorted(x).tailMap(value - epsilon).values().stream().flatMap(Set::stream)));
+	}
+
+	@Override
+	public String toString() {
+		initSorted();
+		return MoreObjects.toStringHelper(this).addValue(regretsSorted).toString();
+	}
 }
