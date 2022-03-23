@@ -59,7 +59,7 @@ public class PreferenceInformation {
 
     public VoterPreferenceInformation asVoterInformation() {
 	checkState(c == null);
-	  verify(v != null);
+	verify(v != null);
 	return v;
     }
 
